@@ -79,12 +79,12 @@ local machines. Virtual machine definitions can therefore easily be
 ported to other computers.
 
 %description -l pl
-InnoTek VirtualBox jest emulatorem sprzêtu x86. Kireowany do
+InnoTek VirtualBox jest emulatorem sprzêtu x86. Kierowany do
 zastosowañ serwerowych, desktopowych oraz embedded jest obecnie
 jedynym wysokiej jako¶ci rozwi±zaniem wirtualizacyjnym dostêpnym
 równie¿ jako Otwarte Oprogramowanie.
 
-Przyk³adowe mo¿liwo¶ci VirtualBox:
+Przyk³adowe cechy VirtualBox:
 
 Modularno¶æ: VirtualBox jest wysoce zmodularyzowanym produktem z
 dobrze zaprojektowanym wewnêtrznym interfejsem programowym typu
