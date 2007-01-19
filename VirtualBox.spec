@@ -142,7 +142,9 @@ Modu³ j±dra SMP vboxdrv dla VirtualBox.
 %patch1 -p0
 
 %build
-./configure
+./configure \
+	--with-gcc="%{__cc}" \
+	--with-g++="%{__cxx}"
 . ./env.sh
 kmk
 
