@@ -49,6 +49,12 @@ BuildRequires:	zlib-devel
 ExclusiveArch:	%{ix86} amd64
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
+%ifarch amd64
+%define		_outdir	amd64
+%else
+%define		_outdir	x86
+%endif
+
 %description
 InnoTek VirtualBox is a general-purpose full virtualizer for x86
 hardware. Targeted at server, desktop and embedded use, it is now the
@@ -140,7 +146,7 @@ Modu³ j±dra SMP vboxdrv dla VirtualBox.
 . ./env.sh
 kmk
 
-cd out/linux.x86/release/bin/src
+cd out/linux.%{_outdir}/release/bin/src
 for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
 	if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
 		exit 1
@@ -179,17 +185,17 @@ install -d \
 	$RPM_BUILD_ROOT%{_bindir} \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
 
-install out/linux.x86/release/bin/{VBox{BFE,Manage,SDL,SVC,XPCOMIPCD},VirtualBox} \
+install out/linux.%{_outdir}/release/bin/{VBox{BFE,Manage,SDL,SVC,XPCOMIPCD},VirtualBox} \
 	$RPM_BUILD_ROOT%{_bindir}
-install out/linux.x86/release/bin/VBox{DD,DD2,REM,REMImp,RT,VMM,XML,XPCOM,XPCOMIPCC}.so \
+install out/linux.%{_outdir}/release/bin/VBox{DD,DD2,REM,REMImp,RT,VMM,XML,XPCOM,XPCOMIPCC}.so \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
-install out/linux.x86/release/bin/{VBox{DD,DD2}{GC.gc,R0.r0},VMM{GC.gc,R0.r0}} \
+install out/linux.%{_outdir}/release/bin/{VBox{DD,DD2}{GC.gc,R0.r0},VMM{GC.gc,R0.r0}} \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
 
 %if %{with kernel}
 install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/misc
 %if %{with smp} && %{with dist_kernel}
-install out/linux.x86/release/bin/src/vboxdrv-smp.ko \
+install out/linux.%{_outdir}/release/bin/src/vboxdrv-smp.ko \
 	$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc/vboxdrv.ko
 %endif
 %endif
