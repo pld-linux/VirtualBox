@@ -32,6 +32,7 @@ Patch0:		%{name}-configure.patch
 Patch1:		%{name}-qt-paths.patch
 URL:		http://www.virtualbox.org/
 BuildRequires:	SDL-devel
+BuildRequires:	bash
 BuildRequires:	bcc
 BuildRequires:	bin86
 BuildRequires:	gcc >= 3.2.3
@@ -39,13 +40,13 @@ BuildRequires:	iasl
 %{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.7}
 BuildRequires:	libIDL-devel
 BuildRequires:	libuuid-devel
-BuildRequires:	libxslt-devel
-BuildRequires:	qt-devel
+BuildRequires:	libxslt-progs
+BuildRequires:	qt-devel >= 6:3.3.6
 BuildRequires:	rpmbuild(macros) >= 1.329
-BuildRequires:	xalan-c-devel
+BuildRequires:	xalan-c-devel >= 1.10.0
 BuildRequires:	xcursor-devel
-BuildRequires:	xerces-c-devel
-BuildRequires:	zlib-devel
+BuildRequires:	xerces-c-devel >= 2.6.0
+BuildRequires:	zlib-devel >= 1.2.1
 ExclusiveArch:	%{ix86} amd64
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
