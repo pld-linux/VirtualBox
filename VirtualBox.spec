@@ -21,7 +21,7 @@
 #
 %define		_snap	20070116
 Summary:	VirtualBox
-Summary(pl):	VirtualBox
+Summary(pl.UTF-8):   VirtualBox
 Name:		VirtualBox
 Version:	1.3.3
 Release:	0.1
@@ -80,30 +80,30 @@ virtual machines are stored entirely in XML and are independent of the
 local machines. Virtual machine definitions can therefore easily be
 ported to other computers.
 
-%description -l pl
-InnoTek VirtualBox jest emulatorem sprzêtu x86. Kierowany do
-zastosowañ serwerowych, desktopowych oraz wbudowanych jest obecnie
-jedynym wysokiej jako¶ci rozwi±zaniem wirtualizacyjnym dostêpnym
-równie¿ jako Otwarte Oprogramowanie.
+%description -l pl.UTF-8
+InnoTek VirtualBox jest emulatorem sprzÄ™tu x86. Kierowany do
+zastosowaÅ„ serwerowych, desktopowych oraz wbudowanych jest obecnie
+jedynym wysokiej jakoÅ›ci rozwiÄ…zaniem wirtualizacyjnym dostÄ™pnym
+rÃ³wnieÅ¼ jako Otwarte Oprogramowanie.
 
-Przyk³adowe cechy VirtualBoksa:
+PrzykÅ‚adowe cechy VirtualBoksa:
 
-Modularno¶æ: VirtualBox jest wysoce zmodularyzowanym produktem z
-dobrze zaprojektowanym wewnêtrznym interfejsem programowym typu
-klient/serwer. Dziêki temu mo¿na ³atwo kontrolowaæ go za pomoc±
-ró¿nych interfejsów. Mo¿na na przyk³ad uruchomiæ maszynê wirtualn± z
-poziomu interfejsu graficznego, a pó¼niej kontrolowaæ j± z linii
-poleceñ. VirtualBox dostarcza równie¿ pe³ny pakiet deweloperski, co
-pozwala stworzyæ dowolny inny interfejs zarz±dzania maszyn± wirtualn±.
+ModularnoÅ›Ä‡: VirtualBox jest wysoce zmodularyzowanym produktem z
+dobrze zaprojektowanym wewnÄ™trznym interfejsem programowym typu
+klient/serwer. DziÄ™ki temu moÅ¼na Å‚atwo kontrolowaÄ‡ go za pomocÄ…
+rÃ³Å¼nych interfejsÃ³w. MoÅ¼na na przykÅ‚ad uruchomiÄ‡ maszynÄ™ wirtualnÄ… z
+poziomu interfejsu graficznego, a pÃ³Åºniej kontrolowaÄ‡ jÄ… z linii
+poleceÅ„. VirtualBox dostarcza rÃ³wnieÅ¼ peÅ‚ny pakiet deweloperski, co
+pozwala stworzyÄ‡ dowolny inny interfejs zarzÄ…dzania maszynÄ… wirtualnÄ….
 
-Opisy maszyn wirtualnych w XML-u: konfiguracje poszczególnych maszyn
-wirtualnych s± w ca³o¶ci przechowywane w XML-u i s± niezale¿ne od
-lokalnej maszyny. Dziêki temu mo¿na szybko i ³atwo przenie¶æ
-konfiguracjê maszyny wirtualnej na inny komputer.
+Opisy maszyn wirtualnych w XML-u: konfiguracje poszczegÃ³lnych maszyn
+wirtualnych sÄ… w caÅ‚oÅ›ci przechowywane w XML-u i sÄ… niezaleÅ¼ne od
+lokalnej maszyny. DziÄ™ki temu moÅ¼na szybko i Å‚atwo przenieÅ›Ä‡
+konfiguracjÄ™ maszyny wirtualnej na inny komputer.
 
 %package -n kernel%{_alt_kernel}-misc-vboxdrv
 Summary:	Linux kernel module for VirtualBox
-Summary(pl):	Modu³ j±dra Linuksa dla VirtualBoksa
+Summary(pl.UTF-8):   ModuÅ‚ jÄ…dra Linuksa dla VirtualBoksa
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
@@ -117,12 +117,12 @@ Provides:	kernel(vboxdrv) = %{version}-%{_rel}
 %description -n kernel%{_alt_kernel}-misc-vboxdrv
 Linux kernel module vboxdrv for VirtualBox.
 
-%description -n kernel%{_alt_kernel}-misc-vboxdrv -l pl
-Modu³ j±dra Linuksa vboxdrv dla VirtualBoksa.
+%description -n kernel%{_alt_kernel}-misc-vboxdrv -l pl.UTF-8
+ModuÅ‚ jÄ…dra Linuksa vboxdrv dla VirtualBoksa.
 
 %package -n kernel%{_alt_kernel}-smp-misc-vboxdrv
 Summary:	Linux SMP kernel module for VirtualBox
-Summary(pl):	Modu³ j±dra Linuksa SMP dla VirtualBoksa
+Summary(pl.UTF-8):   ModuÅ‚ jÄ…dra Linuksa SMP dla VirtualBoksa
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
@@ -136,8 +136,8 @@ Provides:	kernel(vboxdrv) = %{version}-%{_rel}
 %description -n kernel%{_alt_kernel}-smp-misc-vboxdrv
 Linux SMP kernel module vboxdrv for VirtualBox.
 
-%description -n kernel%{_alt_kernel}-smp-misc-vboxdrv -l pl
-Modu³ j±dra Linuksa SMP vboxdrv dla VirtualBoksa.
+%description -n kernel%{_alt_kernel}-smp-misc-vboxdrv -l pl.UTF-8
+ModuÅ‚ jÄ…dra Linuksa SMP vboxdrv dla VirtualBoksa.
 
 %prep
 %setup -q -n vbox
