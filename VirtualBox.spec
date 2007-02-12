@@ -21,7 +21,7 @@
 #
 %define		_snap	20070116
 Summary:	VirtualBox
-Summary(pl.UTF-8):   VirtualBox
+Summary(pl.UTF-8):	VirtualBox
 Name:		VirtualBox
 Version:	1.3.3
 Release:	0.1
@@ -103,7 +103,7 @@ konfigurację maszyny wirtualnej na inny komputer.
 
 %package -n kernel%{_alt_kernel}-misc-vboxdrv
 Summary:	Linux kernel module for VirtualBox
-Summary(pl.UTF-8):   Moduł jądra Linuksa dla VirtualBoksa
+Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
@@ -122,7 +122,7 @@ Moduł jądra Linuksa vboxdrv dla VirtualBoksa.
 
 %package -n kernel%{_alt_kernel}-smp-misc-vboxdrv
 Summary:	Linux SMP kernel module for VirtualBox
-Summary(pl.UTF-8):   Moduł jądra Linuksa SMP dla VirtualBoksa
+Summary(pl.UTF-8):	Moduł jądra Linuksa SMP dla VirtualBoksa
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
