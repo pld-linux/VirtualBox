@@ -22,12 +22,12 @@
 Summary:	VirtualBox
 Summary(pl.UTF-8):	VirtualBox
 Name:		VirtualBox
-Version:	1.3.4
+Version:	1.3.6
 Release:	0.1
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://www.virtualbox.org/download/%{version}/VirtualBox-OSE-%{version}.tar.bz2
-# Source0-md5:	67853add4afc2eace5d8f45cfe9a32c5
+# Source0-md5:	70c24ccee8b5778efd8d22f9996fbec9
 Patch0:		%{name}-configure.patch
 Patch1:		%{name}-qt-paths.patch
 URL:		http://www.virtualbox.org/
