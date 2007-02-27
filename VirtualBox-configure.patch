@@ -4,7 +4,7 @@
  LIBZ="-lz"
  INCPNG=""
  LIBPNG="-lpng"
--QTDIR="/usr/qt/3 /usr/share/qt3"
+-QTDIR="/usr/qt/3 /usr/lib/qt3 /usr/share/qt3"
  KBUILDDIR="`cd $(dirname $0); pwd`/kBuild"
  DEVDIR="`cd $(dirname $0); pwd`/tools"
  if [ -d /lib/modules/`uname -r`/build ]; then
@@ -19,7 +19,7 @@
    if (($?!=0)); then
      if [ -z "$4" ]; then
        echo -e "\n  $2 not found at $1 or $3 headers not found"
-@@ -804,29 +803,25 @@
+@@ -873,29 +873,25 @@
  }
  ' > .tmp_src.cc
    found_qt=0
@@ -27,7 +27,7 @@
 -    echo "compiling the following source file:" >> $LOG
 -    cat .tmp_src.cc >> $LOG
 -    echo "using the following command line:" >> $LOG
--    echo "$CXX -O -Wall -o .tmp_out .tmp_src.cc \"-I$q/include -L$q/lib -lqt-mt\"" >> $LOG
+-    echo "$CXX -O -Wall -o .tmp_out .tmp_src.cc -I$q/include -L$q/lib -lqt-mt" >> $LOG
 -    $CXX -O -Wall -o .tmp_out .tmp_src.cc -I$q/include -L$q/lib -lqt-mt >> $LOG 2>&1
 -    if (($?==0)); then
 -      if test_execute; then

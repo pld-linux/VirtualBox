@@ -24,12 +24,12 @@
  
  ifeq ($(BUILD_TARGET),win)
   TEMPLATE_VBOXQTGUIEXE_TOOL = $(VBOX_VCC_TOOL)
-@@ -1498,7 +1498,7 @@
+@@ -1616,7 +1616,7 @@
   	$(PATH_LIB)/VBoxXPCOMGlue$(VBOX_SUFF_LIB)
  
   TEMPLATE_VBOXQTGUIEXE_LIBPATH = \
 - 	$(VBOX_PATH_QT)/lib \
 + 	/usr/lib \
-  	/usr/X11R6/lib
+ 	$(VBOX_LIBPATH_X11)
  
  endif
