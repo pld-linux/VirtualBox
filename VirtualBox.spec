@@ -139,7 +139,7 @@ Linux SMP kernel module vboxdrv for VirtualBox.
 Moduł jądra Linuksa SMP vboxdrv dla VirtualBoksa.
 
 %prep
-%setup -q -n vbox
+%setup -q -n %{name}-OSE-%{version}
 %patch0 -p0
 %patch1 -p0
 
