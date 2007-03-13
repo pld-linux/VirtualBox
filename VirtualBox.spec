@@ -144,6 +144,25 @@ Moduł jądra Linuksa SMP vboxdrv dla VirtualBoksa.
 %patch0 -p0
 %patch1 -p0
 
+cat > VBox.sh <<'EOF'
+#!/bin/sh
+
+if [ ! -c /dev/vboxdrv ]; then
+	echo "Special character device /dev/vboxdrv doesn't exists!"
+	echo "Check your installation and if vboxdrv kernel module is loaded."
+	exit 1
+fi
+
+if [ ! -w /dev/vboxdrv ]; then
+	echo "You don't have write access to /dev/vboxdrv!"
+	echo "Correct this situation or contact with your system administrator."
+	exit 1
+fi
+
+BINFILE=$(basename "$0")
+LD_LIBRARY_PATH=%{_libdir}/VirtualBox %{_libdir}/VirtualBox/$BINFILE ${1:+"$@"}
+EOF
+
 %build
 KDIR="%{_builddir}/%{buildsubdir}/kernel"
 mkdir -p $KDIR
@@ -202,29 +221,9 @@ install -d \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox \
 	$RPM_BUILD_ROOT/etc/rc.d/init.d
 
-cat > VBox.sh <<'EOF'
-#!/bin/sh
-
-if [ ! -c /dev/vboxdrv ]; then
-	echo "Special character device /dev/vboxdrv doesn't exists!"
-	echo "Check your installation and if vboxdrv kernel module is loaded."
-	exit 1
-fi
-
-if [ ! -w /dev/vboxdrv ]; then
-	echo "You don't have write access to /dev/vboxdrv!"
-	echo "Correct this situation or contact with your system administrator."
-	exit 1
-fi
-
-BINFILE=$(basename "$0")
-LD_LIBRARY_PATH=%{_libdir}/VirtualBox %{_libdir}/VirtualBox/$BINFILE ${1:+"$@"}
-EOF
-
-for f in {VBox{BFE,Manage,SDL,SVC,XPCOMIPCD},VirtualBox}
-do
-install out/linux.%{_outdir}/release/bin/$f $RPM_BUILD_ROOT%{_libdir}/VirtualBox/$f
-install VBox.sh $RPM_BUILD_ROOT%{_bindir}/$f
+for f in {VBox{BFE,Manage,SDL,SVC,XPCOMIPCD},VirtualBox}; do
+	install out/linux.%{_outdir}/release/bin/$f $RPM_BUILD_ROOT%{_libdir}/VirtualBox/$f
+	install VBox.sh $RPM_BUILD_ROOT%{_bindir}/$f
 done
 
 install out/linux.%{_outdir}/release/bin/VBox{C,DD,DD2,REM,REMImp,RT,VMM,XML,XPCOM,XPCOMIPCC}.so \
