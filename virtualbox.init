@@ -52,7 +52,6 @@ case "$1" in
   restart)
 	stop
 	start
-	exit $?
 	;;
   status)
 	status virtualbox
@@ -64,6 +63,3 @@ case "$1" in
 esac
 
 exit $RETVAL
-
-# This must be last line !
-# vi:syntax=sh
