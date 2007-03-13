@@ -28,6 +28,8 @@ Group:		Applications/Emulators
 Source0:	http://www.virtualbox.org/download/%{version}/VirtualBox-OSE-%{version}.tar.bz2
 # Source0-md5:	70c24ccee8b5778efd8d22f9996fbec9
 Source1:	virtualbox.init
+Source2:	http://www.virtualbox.org/download/UserManual.pdf
+# Source2-md5:	2e5458bd5b4b9acd18cc86866e8a7284
 Patch0:		%{name}-configure.patch
 Patch1:		%{name}-qt-paths.patch
 URL:		http://www.virtualbox.org/
@@ -240,6 +242,8 @@ install vboxdrv-smp.ko $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc/vboxdr
 cp -a out/linux.%{_outdir}/release/bin/components $RPM_BUILD_ROOT%{_libdir}/VirtualBox
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/virtualbox
 
+cp %{SOURCE2} .
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -269,6 +273,7 @@ fi
 
 %files
 %defattr(644,root,root,755)
+%doc UserManual.pdf
 %dir %{_libdir}/VirtualBox
 %dir %{_libdir}/VirtualBox/components
 %attr(755,root,root) %{_bindir}/VBox*
