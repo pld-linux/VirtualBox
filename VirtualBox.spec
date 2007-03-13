@@ -165,6 +165,8 @@ BINFILE=$(basename "$0")
 LD_LIBRARY_PATH=%{_libdir}/VirtualBox %{_libdir}/VirtualBox/$BINFILE ${1:+"$@"}
 EOF
 
+cp %{SOURCE2} .
+
 %build
 KDIR="%{_builddir}/%{buildsubdir}/kernel"
 mkdir -p $KDIR
@@ -241,8 +243,6 @@ install vboxdrv-smp.ko $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc/vboxdr
 
 cp -a out/linux.%{_outdir}/release/bin/components $RPM_BUILD_ROOT%{_libdir}/VirtualBox
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/virtualbox
-
-cp %{SOURCE2} .
 
 %clean
 rm -rf $RPM_BUILD_ROOT
