@@ -165,7 +165,7 @@ BINFILE=$(basename "$0")
 LD_LIBRARY_PATH=%{_libdir}/VirtualBox %{_libdir}/VirtualBox/$BINFILE ${1:+"$@"}
 EOF
 
-cp %{SOURCE2} .
+install %{SOURCE2} .
 
 %build
 KDIR="%{_builddir}/%{buildsubdir}/kernel"
