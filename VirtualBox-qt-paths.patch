@@ -18,18 +18,23 @@
 @@ -1441,7 +1441,7 @@
  TEMPLATE_VBOXQTGUIEXE_DEFS = IN_RING3 QT_NO_DEBUG QT_THREAD_SUPPORT $(ARCH_BITS_DEFS)
  TEMPLATE_VBOXQTGUIEXE_INCS = \
- 	$(PATH_BIN)/sdk/include \
+ 	$(VBOX_PATH_SDK)/include \
 -	$(VBOX_PATH_QT)/include
 +	/usr/include/qt
  
  ifeq ($(BUILD_TARGET),win)
   TEMPLATE_VBOXQTGUIEXE_TOOL = $(VBOX_VCC_TOOL)
-@@ -1616,7 +1616,7 @@
-  	$(PATH_LIB)/VBoxXPCOMGlue$(VBOX_SUFF_LIB)
++++ Config.kmk	2007-08-23 21:58:52.000000000 +0200
+@@ -1843,10 +1843,10 @@
  
-  TEMPLATE_VBOXQTGUIEXE_LIBPATH = \
-- 	$(VBOX_PATH_QT)/lib \
-+ 	/usr/lib \
- 	$(VBOX_LIBPATH_X11)
+  ifeq ($(BUILD_TARGET_ARCH),amd64)
+   TEMPLATE_VBOXQTGUIEXE_LIBPATH = \
+- 	$(VBOX_PATH_QT)/lib64 $(VBOX_PATH_QT)/lib
++ 	/usr/lib64 /usr/lib
+  else
+   TEMPLATE_VBOXQTGUIEXE_LIBPATH = \
+- 	$(VBOX_PATH_QT)/lib
++ 	/usr/lib
+  endif
  
- endif
+  ifeq ($(BUILD_TARGET),darwin)

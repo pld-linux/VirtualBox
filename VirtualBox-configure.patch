@@ -1,14 +1,14 @@
---- configure.orig	2007-01-16 11:39:32.000000000 +0100
-+++ configure	2007-01-18 11:20:42.000000000 +0100
-@@ -51,7 +51,6 @@
- LIBZ="-lz"
- INCPNG=""
- LIBPNG="-lpng"
--QTDIR="/usr/qt/3 /usr/lib/qt3 /usr/share/qt3"
+--- configure.orig	2007-08-23 21:34:25.000000000 +0200
++++ configure	2007-08-23 21:39:54.000000000 +0200
+@@ -57,7 +57,6 @@
+ CFLAGSHAL="-I/usr/include/hal -I/usr/include/dbus-1.0 -I/usr/lib/dbus-1.0/include"
+ LIBPATHHAL=""
+ LIBHAL="-lhal -ldbus-1"
+-QTDIR="/usr/qt/3 /usr/lib/qt3 /usr/lib/qt-3.3 /usr/share/qt3 /usr/lib64/qt-3.3"
  KBUILDDIR="`cd $(dirname $0); pwd`/kBuild"
  DEVDIR="`cd $(dirname $0); pwd`/tools"
  if [ -d /lib/modules/`uname -r`/build ]; then
-@@ -148,8 +147,8 @@
+@@ -167,8 +166,8 @@
    echo "compiling the following source file:" >> $LOG
    cat .tmp_src.cc >> $LOG
    echo "using the following command line:" >> $LOG
@@ -19,26 +19,34 @@
    if (($?!=0)); then
      if [ -z "$4" ]; then
        echo -e "\n  $2 not found at $1 or $3 headers not found"
-@@ -873,29 +873,25 @@
+@@ -873,37 +872,26 @@
  }
  ' > .tmp_src.cc
    found_qt=0
+-  libs="lib"
+-  [ "$LIB" = "lib64" ] && libs="$libs lib64"
 -  for q in $QTDIR; do
--    echo "compiling the following source file:" >> $LOG
--    cat .tmp_src.cc >> $LOG
--    echo "using the following command line:" >> $LOG
--    echo "$CXX -O -Wall -o .tmp_out .tmp_src.cc -I$q/include -L$q/lib -lqt-mt" >> $LOG
--    $CXX -O -Wall -o .tmp_out .tmp_src.cc -I$q/include -L$q/lib -lqt-mt >> $LOG 2>&1
--    if (($?==0)); then
--      if test_execute; then
--        cnf_append "QTDIR" `cd $q ; pwd`
--        found_qt=1
--        break
--      fi
+-    for l in $libs; do
+-      echo "compiling the following source file:" >> $LOG
+-      cat .tmp_src.cc >> $LOG
+-      echo "using the following command line:" >> $LOG
+-      echo "$CXX -O -Wall -o .tmp_out .tmp_src.cc -I$q/include -L$q/$l -lqt-mt" >> $LOG
 +  echo "compiling the following source file:" >> $LOG
 +  cat .tmp_src.cc >> $LOG
 +  echo "using the following command line:" >> $LOG
 +  echo "$CXX -O -Wall -o .tmp_out .tmp_src.cc -I/usr/include/qt -L/usr/lib -lqt-mt" >> $LOG
+     
+-      $CXX -O -Wall -o .tmp_out .tmp_src.cc -I$q/include -L$q/$l -lqt-mt >> $LOG 2>&1
+-      if (($?==0)); then
+-        if test_execute; then
+-          cnf_append "QTDIR" "`cd $q ; pwd`"
+-          found_qt=1
+-          break
+-        fi
+-      fi
+-    done
+-    if (($found_qt==1)); then
+-      break
 +  $CXX -O -Wall -o .tmp_out .tmp_src.cc -I/usr/include/qt -L/usr/lib -lqt-mt >> $LOG 2>&1
 +  if (($?==0)); then
 +    if test_execute; then
@@ -61,21 +69,21 @@
      if (($?!=0)); then
        log_failure "not found"
        fail
-@@ -937,7 +932,6 @@
-   --with-iasl=PATH        the position of the iasl compiler [$IASL]
+@@ -1081,7 +1069,6 @@
+   --with-hal=LIB          location of the libhal libraries [$LIBHAL]
    --with-linux=DIR        Linux kernel source directory [$LINUX]
-   --with-mkisofs=PATH     position of mkisofs [$MKISOFS]
+   --with-mkisofs=PATH     location of mkisofs [$MKISOFS]
 -  --with-qt-dir=DIR       directory for QT headers/libraries [$QTDIR]
-   --with-xalan=LIB        position of the xalan library [$LIBXALAN]
-   --with-xerces=LIB       position of the xerces library [$LIBXERCES]
+   --with-xalan=LIB        location of the xalan library [$LIBXALAN]
+   --with-xerces=LIB       location of the xerces library [$LIBXERCES]
  
-@@ -970,9 +964,6 @@
-     --with-kbuild=*)
-       KBUILDDIR=`echo $option | cut -d'=' -f2`
+@@ -1118,9 +1105,6 @@
+         exit 1
+       fi
        ;;
 -    --with-qt-dir=*)
 -      QTDIR=`echo $option | cut -d'=' -f2`
 -      ;;
-     --with-iasl=*)
-       IASL=`echo $option | cut -d'=' -f2`
+     --with-hal-dir=*)
+       INCHAL=`echo $option | cut -d'=' -f2`
        ;;

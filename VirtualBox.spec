@@ -16,17 +16,17 @@
 %bcond_without	up		# without up packages
 %bcond_without	smp		# without SMP kernel modules
 
-%define		_rel		0.2
+%define		_rel		0.1
 
 Summary:	VirtualBox
 Summary(pl.UTF-8):	VirtualBox
 Name:		VirtualBox
-Version:	1.3.6
+Version:	1.4.0
 Release:	%{_rel}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://www.virtualbox.org/download/%{version}/VirtualBox-OSE-%{version}.tar.bz2
-# Source0-md5:	70c24ccee8b5778efd8d22f9996fbec9
+# Source0-md5:	8e89d32a67a3a39271f44039d0583a16
 Source1:	virtualbox.init
 Source2:	http://www.virtualbox.org/download/UserManual.pdf
 # Source2-md5:	2e5458bd5b4b9acd18cc86866e8a7284
@@ -230,7 +230,7 @@ for f in {VBox{BFE,Manage,SDL,SVC,XPCOMIPCD},VirtualBox}; do
 	install VBox.sh $RPM_BUILD_ROOT%{_bindir}/$f
 done
 
-install out/linux.%{_outdir}/release/bin/VBox{C,DD,DD2,REM,REMImp,RT,VMM,XML,XPCOM,XPCOMIPCC}.so \
+install out/linux.%{_outdir}/release/bin/VBox{C,DD,DD2,DDU,REM,REMImp,RT,SVCM,VMM,XML,XPCOM,XPCOMIPCC}.so \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
 install out/linux.%{_outdir}/release/bin/{VBox{DD,DD2}{GC.gc,R0.r0},VMM{GC.gc,R0.r0},*.xpt} \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
