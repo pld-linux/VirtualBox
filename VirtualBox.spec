@@ -1,5 +1,6 @@
 #
 # TODO:
+# - finish kernel/userspace bconds (deps, limit build to only selected part)
 # - Home page says that some addons should be compiled, I don't see any except.
 #   vboxaddon kernel module and {vboxmouse,vboxvideo)_drv.so. Are they required?
 # - .desktop file
@@ -13,13 +14,15 @@
 #
 # Conditional build:
 %bcond_without	dist_kernel	# without distribution kernel
+%bcond_without	kernel		# don't build kernel module
 %bcond_without	up		# without up packages
 %bcond_without	smp		# without SMP kernel modules
+%bcond_without	userspace	# don't build userspace package
 
 %define		_rel		0.1
 
-Summary:	VirtualBox
-Summary(pl.UTF-8):	VirtualBox
+Summary:	VirtualBox - x86 hardware virtualizer
+Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		VirtualBox
 Version:	1.4.0
 Release:	%{_rel}
@@ -50,7 +53,6 @@ BuildRequires:	xalan-c-devel >= 1.10.0
 BuildRequires:	xerces-c-devel >= 2.6.0
 BuildRequires:	xorg-lib-libXcursor-devel
 BuildRequires:	zlib-devel >= 1.2.1
-Requires:	kernel(vboxdrv) = %{version}-%{_rel}
 ExclusiveArch:	%{ix86} %{x8664}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -185,6 +187,7 @@ ln -sf $KDIR/include/linux/autoconf-up.h $KDIR/include/linux/autoconf.h
 . ./env.sh
 kmk
 
+%if %{with kernel}
 cd out/linux.%{_outdir}/release/bin/src
 for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
 	if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
@@ -216,10 +219,12 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
 		%{?with_verbose:V=1}
 	mv vboxdrv.ko ../../../../../vboxdrv-$cfg.ko
 done
+%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
+%if %{with userspace}
 install -d \
 	$RPM_BUILD_ROOT%{_bindir} \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox \
@@ -235,14 +240,17 @@ install out/linux.%{_outdir}/release/bin/VBox{C,DD,DD2,DDU,REM,REMImp,RT,SVCM,VM
 install out/linux.%{_outdir}/release/bin/{VBox{DD,DD2}{GC.gc,R0.r0},VMM{GC.gc,R0.r0},*.xpt} \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
 
+cp -a out/linux.%{_outdir}/release/bin/components $RPM_BUILD_ROOT%{_libdir}/VirtualBox
+install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/virtualbox
+%endif
+
+%if %{with kernel}
 install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/misc
 install vboxdrv-up.ko $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/vboxdrv.ko
 %if %{with smp} && %{with dist_kernel}
 install vboxdrv-smp.ko $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc/vboxdrv.ko
 %endif
-
-cp -a out/linux.%{_outdir}/release/bin/components $RPM_BUILD_ROOT%{_libdir}/VirtualBox
-install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/virtualbox
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -263,21 +271,19 @@ fi
 %postun	-n kernel%{_alt_kernel}-misc-vboxdrv
 %depmod %{_kernel_ver}
 
-%if %{with smp} && %{with dist_kernel}
 %post	-n kernel%{_alt_kernel}-smp-misc-vboxdrv
 %depmod %{_kernel_ver}smp
 
 %postun	-n kernel%{_alt_kernel}-smp-misc-vboxdrv
 %depmod %{_kernel_ver}smp
-%endif
 
+%if %{with userspace}
 %files
 %defattr(644,root,root,755)
 %doc UserManual.pdf
-%dir %{_libdir}/VirtualBox
-%dir %{_libdir}/VirtualBox/components
 %attr(755,root,root) %{_bindir}/VBox*
 %attr(755,root,root) %{_bindir}/VirtualBox
+%dir %{_libdir}/VirtualBox
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxSVC
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxBFE
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxManage
@@ -286,19 +292,23 @@ fi
 %attr(755,root,root) %{_libdir}/VirtualBox/VirtualBox
 %{_libdir}/VirtualBox/*.gc
 %{_libdir}/VirtualBox/*.r0
-%{_libdir}/VirtualBox/VBox*.so
+%attr(755,root,root) %{_libdir}/VirtualBox/VBox*.so
 %{_libdir}/VirtualBox/*.xpt
+%dir %{_libdir}/VirtualBox/components
 %{_libdir}/VirtualBox/components/*
 %attr(754,root,root) /etc/rc.d/init.d/virtualbox
+%endif
 
+%if %{with kernel}
 %if %{with up} || %{without dist_kernel}
-%files	-n kernel%{_alt_kernel}-misc-vboxdrv
+%files -n kernel%{_alt_kernel}-misc-vboxdrv
 %defattr(644,root,root,755)
-/lib/modules/%{_kernel_ver}/misc/vboxdrv.ko.gz
+/lib/modules/%{_kernel_ver}/misc/vboxdrv.ko*
 %endif
 
 %if %{with smp} && %{with dist_kernel}
-%files	-n kernel%{_alt_kernel}-smp-misc-vboxdrv
+%files -n kernel%{_alt_kernel}-smp-misc-vboxdrv
 %defattr(644,root,root,755)
-/lib/modules/%{_kernel_ver}smp/misc/vboxdrv.ko.gz
+/lib/modules/%{_kernel_ver}smp/misc/vboxdrv.ko*
+%endif
 %endif
