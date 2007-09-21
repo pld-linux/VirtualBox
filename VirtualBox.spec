@@ -17,7 +17,7 @@
 %bcond_without	kernel		# don't build kernel module
 %bcond_without	userspace	# don't build userspace package
 
-%define		_rel		0.1
+%define		_rel		0.2
 
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
@@ -31,6 +31,7 @@ Source0:	http://www.virtualbox.org/download/%{version}/VirtualBox-%{version}_OSE
 Source1:	virtualbox.init
 Source2:	http://www.virtualbox.org/download/UserManual.pdf
 # Source2-md5:	2e5458bd5b4b9acd18cc86866e8a7284
+Source3:	%{name}.desktop
 Patch0:		%{name}-configure.patch
 Patch1:		%{name}-qt-paths.patch
 URL:		http://www.virtualbox.org/
@@ -207,7 +208,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %if %{with userspace}
 install -d \
-	$RPM_BUILD_ROOT%{_bindir} \
+	$RPM_BUILD_ROOT{%{_bindir},%{_pixmapsdir},%{_desktopdir}} \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox \
 	$RPM_BUILD_ROOT/etc/rc.d/init.d
 
@@ -223,6 +224,9 @@ install out/linux.%{_outdir}/release/bin/{VBox{DD,DD2}{GC.gc,R0.r0},VMM{GC.gc,R0
 
 cp -a out/linux.%{_outdir}/release/bin/components $RPM_BUILD_ROOT%{_libdir}/VirtualBox
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/virtualbox
+
+install ./out/linux.x86/release/bin/VBox.png $RPM_BUILD_ROOT%{_pixmapsdir}/VBox.png
+install %{SOURCE3} $RPM_BUILD_ROOT%{_desktopdir}/%{name}.desktop
 %endif
 
 %if %{with kernel}
@@ -269,6 +273,8 @@ fi
 %dir %{_libdir}/VirtualBox/components
 %{_libdir}/VirtualBox/components/*
 %attr(754,root,root) /etc/rc.d/init.d/virtualbox
+%{_pixmapsdir}/VBox.png
+%{_desktopdir}/%{name}.desktop
 %endif
 
 %if %{with kernel}
