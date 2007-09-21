@@ -24,17 +24,16 @@
  
  ifeq ($(BUILD_TARGET),win)
   TEMPLATE_VBOXQTGUIEXE_TOOL = $(VBOX_VCC_TOOL)
-+++ Config.kmk	2007-08-23 21:58:52.000000000 +0200
 @@ -1843,10 +1843,10 @@
  
   ifeq ($(BUILD_TARGET_ARCH),amd64)
    TEMPLATE_VBOXQTGUIEXE_LIBPATH = \
-- 	$(VBOX_PATH_QT)/lib64 $(VBOX_PATH_QT)/lib
-+ 	/usr/lib64 /usr/lib
+-	$(VBOX_PATH_QT)/lib64 $(VBOX_PATH_QT)/lib
++	/usr/lib64 /usr/lib
   else
    TEMPLATE_VBOXQTGUIEXE_LIBPATH = \
-- 	$(VBOX_PATH_QT)/lib
-+ 	/usr/lib
+-	$(VBOX_PATH_QT)/lib
++	/usr/lib
   endif
  
   ifeq ($(BUILD_TARGET),darwin)
