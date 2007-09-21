@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=VirtualBox
+Type=Application
+Comment=VirtualBox
+Comment[pl]=VirtualBox
+Exec=VirtualBox
+Icon=VBox.png
+Terminal=false
+Categories=Utility;Emulator;
+Encoding=UTF-8
+# vi: encoding=utf-8
