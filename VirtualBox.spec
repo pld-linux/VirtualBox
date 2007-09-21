@@ -15,8 +15,6 @@
 # Conditional build:
 %bcond_without	dist_kernel	# without distribution kernel
 %bcond_without	kernel		# don't build kernel module
-%bcond_without	up		# without up packages
-%bcond_without	smp		# without SMP kernel modules
 %bcond_without	userspace	# don't build userspace package
 
 %define		_rel		0.1
@@ -24,12 +22,12 @@
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		VirtualBox
-Version:	1.4.0
+Version:	1.5.0
 Release:	%{_rel}
 License:	GPL v2
 Group:		Applications/Emulators
-Source0:	http://www.virtualbox.org/download/%{version}/VirtualBox-OSE-%{version}.tar.bz2
-# Source0-md5:	8e89d32a67a3a39271f44039d0583a16
+Source0:	http://www.virtualbox.org/download/%{version}/VirtualBox-%{version}_OSE.tar.bz2
+# Source0-md5:	56c074900260c109ed735c08e726fe81
 Source1:	virtualbox.init
 Source2:	http://www.virtualbox.org/download/UserManual.pdf
 # Source2-md5:	2e5458bd5b4b9acd18cc86866e8a7284
@@ -44,9 +42,11 @@ BuildRequires:	gcc >= 5:3.2.3
 BuildRequires:	iasl
 %{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.7}
 BuildRequires:	libIDL-devel
+BuildRequires:	libstdc++-static
 BuildRequires:	libuuid-devel
 BuildRequires:	libxslt-progs
 BuildRequires:	qt-devel >= 6:3.3.6
+BuildRequires:	qt-linguist
 BuildRequires:	rpmbuild(macros) >= 1.329
 BuildRequires:	xalan-c-devel >= 1.10.0
 #BuildRequires:	xcursor-devel
@@ -113,8 +113,8 @@ Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 Requires:	dev >= 2.9.0-7
 %if %{with dist_kernel}
-%requires_releq_kernel_up
-Requires(postun):	%releq_kernel_up
+%requires_releq_kernel
+Requires(postun):	%releq_kernel
 %endif
 Provides:	kernel(vboxdrv) = %{version}-%{_rel}
 
@@ -124,27 +124,8 @@ Linux kernel module vboxdrv for VirtualBox.
 %description -n kernel%{_alt_kernel}-misc-vboxdrv -l pl.UTF-8
 Moduł jądra Linuksa vboxdrv dla VirtualBoksa.
 
-%package -n kernel%{_alt_kernel}-smp-misc-vboxdrv
-Summary:	Linux SMP kernel module for VirtualBox
-Summary(pl.UTF-8):	Moduł jądra Linuksa SMP dla VirtualBoksa
-Release:	%{_rel}@%{_kernel_ver_str}
-Group:		Base/Kernel
-Requires(post,postun):	/sbin/depmod
-Requires:	dev >= 2.9.0-7
-%if %{with dist_kernel}
-%requires_releq_kernel_smp
-Requires(postun):	%releq_kernel_smp
-%endif
-Provides:	kernel(vboxdrv) = %{version}-%{_rel}
-
-%description -n kernel%{_alt_kernel}-smp-misc-vboxdrv
-Linux SMP kernel module vboxdrv for VirtualBox.
-
-%description -n kernel%{_alt_kernel}-smp-misc-vboxdrv -l pl.UTF-8
-Moduł jądra Linuksa SMP vboxdrv dla VirtualBoksa.
-
 %prep
-%setup -q -n %{name}-OSE-%{version}
+%setup -q -n %{name}-%{version}_OSE
 %patch0 -p0
 %patch1 -p0
 
@@ -178,7 +159,7 @@ ln -sf $KDIR/include/asm-x86_64 $KDIR/include/asm
 %else
 ln -sf $KDIR/include/asm-i386 $KDIR/include/asm
 %endif
-ln -sf $KDIR/include/linux/autoconf-up.h $KDIR/include/linux/autoconf.h
+ln -sf $KDIR/include/linux/autoconf-dist.h $KDIR/include/linux/autoconf.h
 
 ./configure \
 	--with-gcc="%{__cc}" \
@@ -189,7 +170,7 @@ kmk
 
 %if %{with kernel}
 cd out/linux.%{_outdir}/release/bin/src
-for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
+for cfg in %{?with_dist_kernel:dist}%{!?with_dist_kernel:nondist}; do
 	if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
 		exit 1
 	fi
@@ -235,7 +216,7 @@ for f in {VBox{BFE,Manage,SDL,SVC,XPCOMIPCD},VirtualBox}; do
 	install VBox.sh $RPM_BUILD_ROOT%{_bindir}/$f
 done
 
-install out/linux.%{_outdir}/release/bin/VBox{C,DD,DD2,DDU,REM,REMImp,RT,SVCM,VMM,XML,XPCOM,XPCOMIPCC}.so \
+install out/linux.%{_outdir}/release/bin/VBox*.so \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
 install out/linux.%{_outdir}/release/bin/{VBox{DD,DD2}{GC.gc,R0.r0},VMM{GC.gc,R0.r0},*.xpt} \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
@@ -245,11 +226,8 @@ install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/virtualbox
 %endif
 
 %if %{with kernel}
-install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/misc
-install vboxdrv-up.ko $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/vboxdrv.ko
-%if %{with smp} && %{with dist_kernel}
-install vboxdrv-smp.ko $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc/vboxdrv.ko
-%endif
+install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc
+install vboxdrv-dist.ko $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/vboxdrv.ko
 %endif
 
 %clean
@@ -270,12 +248,6 @@ fi
 
 %postun	-n kernel%{_alt_kernel}-misc-vboxdrv
 %depmod %{_kernel_ver}
-
-%post	-n kernel%{_alt_kernel}-smp-misc-vboxdrv
-%depmod %{_kernel_ver}smp
-
-%postun	-n kernel%{_alt_kernel}-smp-misc-vboxdrv
-%depmod %{_kernel_ver}smp
 
 %if %{with userspace}
 %files
@@ -300,15 +272,7 @@ fi
 %endif
 
 %if %{with kernel}
-%if %{with up} || %{without dist_kernel}
 %files -n kernel%{_alt_kernel}-misc-vboxdrv
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}/misc/vboxdrv.ko*
-%endif
-
-%if %{with smp} && %{with dist_kernel}
-%files -n kernel%{_alt_kernel}-smp-misc-vboxdrv
-%defattr(644,root,root,755)
-/lib/modules/%{_kernel_ver}smp/misc/vboxdrv.ko*
-%endif
 %endif
