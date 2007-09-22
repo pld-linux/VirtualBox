@@ -4,7 +4,7 @@
 # - Home page says that some addons should be compiled, I don't see any except.
 #   vboxaddon kernel module and {vboxmouse,vboxvideo)_drv.so. Are they required?
 # - .desktop file
-# - it seems that VBoxSVC should not be started by init script but I'm still 
+# - it seems that VBoxSVC should not be started by init script but I'm still
 #   testing this
 # - /dev/vboxdrv should belong to vboxusers group and have rw rights to it
 # - Devel stuff is not packaged yet.
@@ -26,7 +26,7 @@ Version:	1.5.0
 Release:	%{_rel}
 License:	GPL v2
 Group:		Applications/Emulators
-Source0:	http://www.virtualbox.org/download/%{version}/VirtualBox-%{version}_OSE.tar.bz2
+Source0:	http://www.virtualbox.org/download/%{version}/%{name}-%{version}_OSE.tar.bz2
 # Source0-md5:	56c074900260c109ed735c08e726fe81
 Source1:	virtualbox.init
 Source2:	http://www.virtualbox.org/download/UserManual.pdf
@@ -35,11 +35,6 @@ Source3:	%{name}.desktop
 Patch0:		%{name}-configure.patch
 Patch1:		%{name}-qt-paths.patch
 URL:		http://www.virtualbox.org/
-Requires(postun):	/usr/sbin/groupdel
-Requires(postun):	/usr/sbin/userdel
-Requires(pre):	/bin/id
-Requires(pre):	/usr/sbin/groupadd
-Requires(pre):	/usr/sbin/useradd
 BuildRequires:	SDL-devel
 BuildRequires:	bash
 BuildRequires:	bcc
@@ -59,6 +54,10 @@ BuildRequires:	xalan-c-devel >= 1.10.0
 BuildRequires:	xerces-c-devel >= 2.6.0
 BuildRequires:	xorg-lib-libXcursor-devel
 BuildRequires:	zlib-devel >= 1.2.1
+Requires(postun):	/usr/sbin/groupdel
+Requires(pre):	/usr/bin/getgid
+Requires(pre):	/usr/sbin/groupadd
+Provides:	group(vbox)
 ExclusiveArch:	%{ix86} %{x8664}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -256,7 +255,7 @@ EOF
 #'
 fi
 
-%preun 
+%preun
 if [ "$1" = "0" ]; then
 	%service virtualbox stop
 	/sbin/chkconfig --del virtualbox
