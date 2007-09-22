@@ -17,7 +17,7 @@
 %bcond_without	kernel		# don't build kernel module
 %bcond_without	userspace	# don't build userspace package
 
-%define		_rel		0.2
+%define		_rel		0.3
 
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
@@ -35,6 +35,11 @@ Source3:	%{name}.desktop
 Patch0:		%{name}-configure.patch
 Patch1:		%{name}-qt-paths.patch
 URL:		http://www.virtualbox.org/
+Requires(postun):	/usr/sbin/groupdel
+Requires(postun):	/usr/sbin/userdel
+Requires(pre):	/bin/id
+Requires(pre):	/usr/sbin/groupadd
+Requires(pre):	/usr/sbin/useradd
 BuildRequires:	SDL-devel
 BuildRequires:	bash
 BuildRequires:	bcc
@@ -237,14 +242,29 @@ install vboxdrv-dist.ko $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/vboxdrv.
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%pre
+%groupadd -g 221 -r -f vbox
+
 %post
 /sbin/chkconfig --add virtualbox
 %service virtualbox restart "VBoxSVC daemon"
+if [ "$1" = 1 ]; then
+%banner -e %{name} <<'EOF'
+Remember to add users which will use VirtualBox to vbox group or they won't be
+able to write to /dev/vboxdrv.
+EOF
+#'
+fi
 
 %preun 
 if [ "$1" = "0" ]; then
 	%service virtualbox stop
 	/sbin/chkconfig --del virtualbox
+fi
+
+%postun
+if [ "$1" = "0" ]; then
+	%groupremove vbox
 fi
 
 %post	-n kernel%{_alt_kernel}-misc-vboxdrv
