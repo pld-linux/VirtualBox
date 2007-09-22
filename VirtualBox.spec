@@ -151,7 +151,7 @@ ln -sf $KDIR/include/linux/autoconf-dist.h $KDIR/include/linux/autoconf.h
 	--with-g++="%{__cxx}" \
 	--with-linux="$KDIR"
 . ./env.sh
-kmk
+kmk -j1
 
 %if %{with kernel}
 cd out/linux.%{_outdir}/release/bin/src
