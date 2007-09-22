@@ -21,7 +21,7 @@ start() {
 		msg_starting virtualbox
 
 		_modprobe single die vboxdrv
-		# XXX: patch udev/dev instead
+		# XXX: include %dev in virtualbox.spec (+udev rule?)
 		chown root:vbox /dev/vboxdrv
 
 		daemon --fork VBoxSVC
