@@ -5,10 +5,7 @@ VBOXDIR=/usr/lib/VirtualBox
 
 show_message() {
 	if [ ! -z "$DISPLAY" ] && [ -x /usr/bin/gxmessage ]; then
-		local BAK=$IFS
-		IFS=""
-		gxmessage --center --buttons GTK_STOCK_OK -wrap -geometry 400x150 -name $BINFILE $(echo -e "$1")
-		IFS=$BAK
+		echo -e "$1" | gxmessage --center --buttons GTK_STOCK_OK -wrap -geometry 400x150 -name $BINFILE -file -
 	else
 		echo -e "$1"
 	fi
