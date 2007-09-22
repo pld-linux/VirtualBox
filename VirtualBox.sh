@@ -1,17 +1,16 @@
 #!/bin/sh
-
 BINFILE=$(basename "$0")
 VBOXDIR=/usr/lib/VirtualBox
 [ ! -d "$VBOXDIR" ] && VBOXDIR=/usr/lib64/VirtualBox
 
 show_message() {
 	if [ ! -z "$DISPLAY" ] && [ -x /usr/bin/gxmessage ]; then
-		BAK=$IFS
+		local BAK=$IFS
 		IFS=""
-		gxmessage --center --buttons GTK_STOCK_OK -wrap -geometry 400x150 -name $BINFILE `echo -e $1`
+		gxmessage --center --buttons GTK_STOCK_OK -wrap -geometry 400x150 -name $BINFILE $(echo -e "$1")
 		IFS=$BAK
 	else
-		echo -e $1
+		echo -e "$1"
 	fi
 }
 
@@ -30,4 +29,5 @@ if [ ! -w /dev/vboxdrv ]; then
 	exit 1
 fi
 
-LD_LIBRARY_PATH=$VBOXDIR $VBOXDIR/$BINFILE ${1:+"$@"}
+export LD_LIBRARY_PATH=$VBOXDIR
+exec $VBOXDIR/$BINFILE ${1:+"$@"}
