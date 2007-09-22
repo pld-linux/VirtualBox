@@ -19,7 +19,7 @@ start() {
 	# Check if the service is already running?
 	if [ ! -f /var/lock/subsys/virtualbox ]; then
 		_modprobe single die vboxdrv
-		chown root.vbox /dev/vboxdrv
+		chown root:vbox /dev/vboxdrv
 		msg_starting virtualbox
 		daemon --fork VBoxSVC
 		RETVAL=$?
