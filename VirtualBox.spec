@@ -2,7 +2,7 @@
 # TODO:
 # - Find how to compile with PLD CFLAGS/CXXFLAGS/LDFLAGS.
 # - How to package video and mouse drivers for Guest OS ?
-#   (There are binaries for multiple versions of X11)
+#   (There are several binaries for multiple versions of X11)
 # - Package SDK.
 #
 # Conditional build:
@@ -11,6 +11,10 @@
 %bcond_without	userspace	# don't build userspace package
 
 %define		_rel		1
+
+%if %{without kernel}
+%undefine	with_dist_kernel
+%endif
 
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
@@ -230,6 +234,10 @@ install out/linux.%{_outdir}/release/bin/{VBox{DD,DD2}{GC.gc,R0.r0},VMM{GC.gc,R0
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
 
 cp -a out/linux.%{_outdir}/release/bin/components $RPM_BUILD_ROOT%{_libdir}/VirtualBox
+
+install -d $RPM_BUILD_ROOT%{_libdir}/VirtualBox/nls
+cp -a out/linux.%{_outdir}/release/bin/nls/VirtualBox* $RPM_BUILD_ROOT%{_libdir}/VirtualBox/nls
+
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/virtualbox
 
 install out/linux.%{_outdir}/release/bin/VBox.png $RPM_BUILD_ROOT%{_pixmapsdir}/VBox.png
@@ -298,21 +306,39 @@ fi
 %files
 %defattr(644,root,root,755)
 %doc UserManual.pdf
+%dir %{_libdir}/VirtualBox
+%dir %{_libdir}/VirtualBox/components
+%dir %{_libdir}/VirtualBox/nls
 %attr(755,root,root) %{_bindir}/VBox*
 %attr(755,root,root) %{_bindir}/VirtualBox
-%dir %{_libdir}/VirtualBox
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxSVC
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxBFE
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxManage
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxSDL
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxXPCOMIPCD
 %attr(755,root,root) %{_libdir}/VirtualBox/VirtualBox
+%attr(755,root,root) %{_libdir}/VirtualBox/VBox*.so
 %{_libdir}/VirtualBox/*.gc
 %{_libdir}/VirtualBox/*.r0
-%attr(755,root,root) %{_libdir}/VirtualBox/VBox*.so
 %{_libdir}/VirtualBox/*.xpt
-%dir %{_libdir}/VirtualBox/components
 %{_libdir}/VirtualBox/components/*
+%lang(ar) %{_libdir}/VirtualBox/nls/VirtualBox_ar.qm
+%lang(cs) %{_libdir}/VirtualBox/nls/VirtualBox_cs.qm
+%lang(de) %{_libdir}/VirtualBox/nls/VirtualBox_de.qm
+%lang(es) %{_libdir}/VirtualBox/nls/VirtualBox_es.qm
+%lang(fi) %{_libdir}/VirtualBox/nls/VirtualBox_fi.qm
+%lang(fr) %{_libdir}/VirtualBox/nls/VirtualBox_fr.qm
+%lang(hu) %{_libdir}/VirtualBox/nls/VirtualBox_hu.qm
+%lang(it) %{_libdir}/VirtualBox/nls/VirtualBox_it.qm
+%lang(ja) %{_libdir}/VirtualBox/nls/VirtualBox_ja.qm
+%lang(ko) %{_libdir}/VirtualBox/nls/VirtualBox_ko.qm
+%lang(pl) %{_libdir}/VirtualBox/nls/VirtualBox_pl.qm
+%lang(pt_BR) %{_libdir}/VirtualBox/nls/VirtualBox_pt_BR.qm
+%lang(ro) %{_libdir}/VirtualBox/nls/VirtualBox_ro.qm
+%lang(ru) %{_libdir}/VirtualBox/nls/VirtualBox_ru.qm
+%lang(sv) %{_libdir}/VirtualBox/nls/VirtualBox_sv.qm
+%lang(zh_CN) %{_libdir}/VirtualBox/nls/VirtualBox_zh_CN.qm
+%lang(zh_TW) %{_libdir}/VirtualBox/nls/VirtualBox_zh_TW.qm
 %attr(754,root,root) /etc/rc.d/init.d/virtualbox
 %{_pixmapsdir}/VBox.png
 %{_desktopdir}/%{name}.desktop
