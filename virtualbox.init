@@ -18,10 +18,10 @@
 start() {
 	# Check if the service is already running?
 	if [ ! -f /var/lock/subsys/virtualbox ]; then
-		msg_starting virtualbox
-
 		_modprobe single die vboxdrv
-		# XXX: include %dev in virtualbox.spec (+udev rule?)
+
+		msg_starting virtualbox
+		# TODO: include %dev in virtualbox.spec (+udev rule?)
 		chown root:vbox /dev/vboxdrv
 
 		daemon --fork VBoxSVC
