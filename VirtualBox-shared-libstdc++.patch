@@ -1,0 +1,18 @@
+diff -urN VirtualBox-1.5.0_OSE.orig/src/VBox/Additions/linux/xclient/Makefile.kmk VirtualBox-1.5.0_OSE/src/VBox/Additions/linux/xclient/Makefile.kmk
+--- VirtualBox-1.5.0_OSE.orig/src/VBox/Additions/linux/xclient/Makefile.kmk	2007-08-30 17:16:27.000000000 +0200
++++ VirtualBox-1.5.0_OSE/src/VBox/Additions/linux/xclient/Makefile.kmk	2007-09-29 20:05:24.000000000 +0200
+@@ -32,10 +32,10 @@
+ vboxadd-xclient_DEFS     = _GNU_SOURCE VBOX_HGCM
+ 
+ # link agaginst libstdc++.a (http://www.trilithium.com/johan/2005/06/static-libstdc/)
+-$(PATH_TARGET)/vboxadd-xclient/vboxadd-xclient: $(PATH_TARGET)/vboxadd-xclient/libstdc++.a
++# $(PATH_TARGET)/vboxadd-xclient/vboxadd-xclient: $(PATH_TARGET)/vboxadd-xclient/libstdc++.a
+ 
+-$(PATH_TARGET)/vboxadd-xclient/libstdc++.a:
+-	$(call MSG_L1,Forcing static libstdc++)
+-	$(QUIET)ln -s `$(TOOL_$(VBOX_GCC32_TOOL)_CXX) -print-file-name=libstdc++.a` $@ || cp `$(TOOL_$(VBOX_GCC32_TOOL)_CXX) -print-file-name=libstdc++.a` $@
++# $(PATH_TARGET)/vboxadd-xclient/libstdc++.a:
++# 	$(call MSG_L1,Forcing static libstdc++)
++# 	$(QUIET)ln -s `$(TOOL_$(VBOX_GCC32_TOOL)_CXX) -print-file-name=libstdc++.a` $@ || cp `$(TOOL_$(VBOX_GCC32_TOOL)_CXX) -print-file-name=libstdc++.a` $@
+ 
+ include	$(PATH_KBUILD)/footer.kmk
