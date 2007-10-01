@@ -3,6 +3,7 @@
 # - Find how to compile with PLD CFLAGS/CXXFLAGS/LDFLAGS.
 # - Package SDK.
 # - Package utils (and write initscripts ?) for Guest OS.
+# - Add udev rule.
 #
 # Conditional build:
 %bcond_without	dist_kernel	# without distribution kernel
@@ -24,11 +25,10 @@ License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://www.virtualbox.org/download/%{version}/%{name}-%{version}_OSE.tar.bz2
 # Source0-md5:	56c074900260c109ed735c08e726fe81
-Source1:	virtualbox.init
-Source2:	http://www.virtualbox.org/download/UserManual.pdf
+Source1:	http://www.virtualbox.org/download/UserManual.pdf
 # Source2-md5:	2e5458bd5b4b9acd18cc86866e8a7284
-Source3:	%{name}.desktop
-Source4:	%{name}.sh
+Source2:	%{name}.desktop
+Source3:	%{name}.sh
 Patch0:		%{name}-configure.patch
 Patch1:		%{name}-qt-paths.patch
 Patch2:		%{name}-shared-libstdc++.patch
@@ -47,7 +47,6 @@ BuildRequires:	qt-devel >= 6:3.3.6
 BuildRequires:	qt-linguist
 BuildRequires:	rpmbuild(macros) >= 1.329
 BuildRequires:	xalan-c-devel >= 1.10.0
-#BuildRequires:	xcursor-devel
 BuildRequires:	xerces-c-devel >= 2.6.0
 BuildRequires:	xorg-lib-libXcursor-devel
 BuildRequires:	zlib-devel >= 1.2.1
@@ -196,7 +195,7 @@ Sterownik grafiki dla systemu gościa w VirtualBox'ie.
 %patch0 -p0
 %patch1 -p0
 %patch2 -p1
-install %{SOURCE2} .
+install %{SOURCE1} .
 
 %build
 KDIR="%{_builddir}/%{buildsubdir}/kernel"
@@ -246,13 +245,13 @@ rm -rf $RPM_BUILD_ROOT
 install -d \
 	$RPM_BUILD_ROOT{%{_bindir},%{_pixmapsdir},%{_desktopdir}} \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox \
-	$RPM_BUILD_ROOT/etc/rc.d/init.d \
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/drivers \
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/input
 
+install %{SOURCE3} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/VirtualBox-wrapper.sh
 for f in {VBox{BFE,Manage,SDL,SVC,XPCOMIPCD},VirtualBox,vditool}; do
 	install out/linux.%{_outdir}/release/bin/$f $RPM_BUILD_ROOT%{_libdir}/VirtualBox/$f
-	install %{SOURCE4} $RPM_BUILD_ROOT%{_bindir}/$f
+	ln -s %{_libdir}/VirtualBox/VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_bindir}/$f
 done
 
 install out/linux.%{_outdir}/release/bin/VBox*.so \
@@ -274,10 +273,8 @@ install out/linux.%{_outdir}/release/bin/additions/vboxmouse_drv_71.so	\
 install out/linux.%{_outdir}/release/bin/additions/vboxvideo_drv_71.so	\
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so
 
-install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/virtualbox
-
 install out/linux.%{_outdir}/release/bin/VBox.png $RPM_BUILD_ROOT%{_pixmapsdir}/VBox.png
-install %{SOURCE3} $RPM_BUILD_ROOT%{_desktopdir}/%{name}.desktop
+install %{SOURCE2} $RPM_BUILD_ROOT%{_desktopdir}/%{name}.desktop
 %endif
 
 %if %{with kernel}
@@ -297,23 +294,6 @@ rm -rf $RPM_BUILD_ROOT
 
 %pre
 %groupadd -g 221 -r -f vbox
-
-%post
-/sbin/chkconfig --add virtualbox
-%service virtualbox restart "VBoxSVC daemon"
-if [ "$1" = 1 ]; then
-%banner -e %{name} <<'EOF'
-Remember to add users which will use VirtualBox to vbox group or they won't be
-able to write to /dev/vboxdrv.
-EOF
-#'
-fi
-
-%preun
-if [ "$1" = "0" ]; then
-	%service virtualbox stop
-	/sbin/chkconfig --del virtualbox
-fi
 
 %postun
 if [ "$1" = "0" ]; then
@@ -349,14 +329,15 @@ fi
 %attr(755,root,root) %{_bindir}/vditool
 %attr(755,root,root) %{_bindir}/VBox*
 %attr(755,root,root) %{_bindir}/VirtualBox
+%attr(755,root,root) %{_libdir}/VirtualBox/vditool
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxSVC
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxBFE
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxManage
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxSDL
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxXPCOMIPCD
-%attr(755,root,root) %{_libdir}/VirtualBox/VirtualBox
 %attr(755,root,root) %{_libdir}/VirtualBox/VBox*.so
-%attr(755,root,root) %{_libdir}/VirtualBox/vditool
+%attr(755,root,root) %{_libdir}/VirtualBox/VirtualBox
+%attr(755,root,root) %{_libdir}/VirtualBox/VirtualBox-wrapper.sh
 %{_libdir}/VirtualBox/*.gc
 %{_libdir}/VirtualBox/*.r0
 %{_libdir}/VirtualBox/*.xpt
@@ -378,7 +359,6 @@ fi
 %lang(sv) %{_libdir}/VirtualBox/nls/VirtualBox_sv.qm
 %lang(zh_CN) %{_libdir}/VirtualBox/nls/VirtualBox_zh_CN.qm
 %lang(zh_TW) %{_libdir}/VirtualBox/nls/VirtualBox_zh_TW.qm
-%attr(754,root,root) /etc/rc.d/init.d/virtualbox
 %{_pixmapsdir}/VBox.png
 %{_desktopdir}/%{name}.desktop
 
