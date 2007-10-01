@@ -264,7 +264,7 @@ install out/linux.%{_outdir}/release/bin/{VBox{DD,DD2}{GC.gc,R0.r0},VMM{GC.gc,R0
 install -d $RPM_BUILD_ROOT%{_libdir}/VirtualBox/additions
 install -d $RPM_BUILD_ROOT%{_libdir}/VirtualBox/nls
 
-install %{SOURCE2} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/additions
+install %{SOURCE2} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/additions/VBoxGuestAdditions.iso
 cp -a out/linux.%{_outdir}/release/bin/components $RPM_BUILD_ROOT%{_libdir}/VirtualBox
 cp -a out/linux.%{_outdir}/release/bin/nls/VirtualBox* $RPM_BUILD_ROOT%{_libdir}/VirtualBox/nls
 
