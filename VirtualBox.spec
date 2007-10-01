@@ -345,6 +345,8 @@ fi
 %dir %{_libdir}/VirtualBox
 %dir %{_libdir}/VirtualBox/components
 %dir %{_libdir}/VirtualBox/nls
+%attr(755,root,root) %{_bindir}/mountvboxsf
+%attr(755,root,root) %{_bindir}/vditool
 %attr(755,root,root) %{_bindir}/VBox*
 %attr(755,root,root) %{_bindir}/VirtualBox
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxSVC
@@ -354,12 +356,10 @@ fi
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxXPCOMIPCD
 %attr(755,root,root) %{_libdir}/VirtualBox/VirtualBox
 %attr(755,root,root) %{_libdir}/VirtualBox/VBox*.so
-%attr(755,root,root) %{_bindir}/mountvboxsf
-%attr(755,root,root) %{_bindir}/vditool
+%attr(755,root,root) %{_libdir}/VirtualBox/vditool
 %{_libdir}/VirtualBox/*.gc
 %{_libdir}/VirtualBox/*.r0
 %{_libdir}/VirtualBox/*.xpt
-%{_libdir}/VirtualBox/vditool
 %{_libdir}/VirtualBox/components/*
 %lang(ar) %{_libdir}/VirtualBox/nls/VirtualBox_ar.qm
 %lang(cs) %{_libdir}/VirtualBox/nls/VirtualBox_cs.qm
