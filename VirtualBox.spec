@@ -26,9 +26,11 @@ Group:		Applications/Emulators
 Source0:	http://www.virtualbox.org/download/%{version}/%{name}-%{version}_OSE.tar.bz2
 # Source0-md5:	56c074900260c109ed735c08e726fe81
 Source1:	http://www.virtualbox.org/download/UserManual.pdf
-# Source2-md5:	2e5458bd5b4b9acd18cc86866e8a7284
-Source2:	%{name}.desktop
-Source3:	%{name}.sh
+# Source1-md5:	2e5458bd5b4b9acd18cc86866e8a7284
+Source2:	http://www.virtualbox.org/download/%{version}_OSE/VBoxGuestAdditions_%{version}_OSE.iso
+# Source2-md5:	ed3ce6537350ab3e3557dc1b1e7e1b5c
+Source3:	%{name}.desktop
+Source4:	%{name}.sh
 Patch0:		%{name}-configure.patch
 Patch1:		%{name}-qt-paths.patch
 Patch2:		%{name}-shared-libstdc++.patch
@@ -248,7 +250,7 @@ install -d \
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/drivers \
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/input
 
-install %{SOURCE3} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/VirtualBox-wrapper.sh
+install %{SOURCE4} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/VirtualBox-wrapper.sh
 for f in {VBox{BFE,Manage,SDL,SVC,XPCOMIPCD},VirtualBox,vditool}; do
 	install out/linux.%{_outdir}/release/bin/$f $RPM_BUILD_ROOT%{_libdir}/VirtualBox/$f
 	ln -s %{_libdir}/VirtualBox/VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_bindir}/$f
@@ -259,9 +261,11 @@ install out/linux.%{_outdir}/release/bin/VBox*.so \
 install out/linux.%{_outdir}/release/bin/{VBox{DD,DD2}{GC.gc,R0.r0},VMM{GC.gc,R0.r0},*.xpt} \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
 
-cp -a out/linux.%{_outdir}/release/bin/components $RPM_BUILD_ROOT%{_libdir}/VirtualBox
-
+install -d $RPM_BUILD_ROOT%{_libdir}/VirtualBox/additions
 install -d $RPM_BUILD_ROOT%{_libdir}/VirtualBox/nls
+
+install %{SOURCE2} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/additions
+cp -a out/linux.%{_outdir}/release/bin/components $RPM_BUILD_ROOT%{_libdir}/VirtualBox
 cp -a out/linux.%{_outdir}/release/bin/nls/VirtualBox* $RPM_BUILD_ROOT%{_libdir}/VirtualBox/nls
 
 install out/linux.%{_outdir}/release/bin/additions/mountvboxsf		\
@@ -274,7 +278,7 @@ install out/linux.%{_outdir}/release/bin/additions/vboxvideo_drv_71.so	\
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so
 
 install out/linux.%{_outdir}/release/bin/VBox.png $RPM_BUILD_ROOT%{_pixmapsdir}/VBox.png
-install %{SOURCE2} $RPM_BUILD_ROOT%{_desktopdir}/%{name}.desktop
+install %{SOURCE3} $RPM_BUILD_ROOT%{_desktopdir}/%{name}.desktop
 %endif
 
 %if %{with kernel}
@@ -323,6 +327,7 @@ fi
 %defattr(644,root,root,755)
 %doc UserManual.pdf
 %dir %{_libdir}/VirtualBox
+%dir %{_libdir}/VirtualBox/additions
 %dir %{_libdir}/VirtualBox/components
 %dir %{_libdir}/VirtualBox/nls
 %attr(755,root,root) %{_bindir}/mountvboxsf
@@ -341,6 +346,7 @@ fi
 %{_libdir}/VirtualBox/*.gc
 %{_libdir}/VirtualBox/*.r0
 %{_libdir}/VirtualBox/*.xpt
+%{_libdir}/VirtualBox/additions/*
 %{_libdir}/VirtualBox/components/*
 %lang(ar) %{_libdir}/VirtualBox/nls/VirtualBox_ar.qm
 %lang(cs) %{_libdir}/VirtualBox/nls/VirtualBox_cs.qm
