@@ -1,9 +1,8 @@
 #
 # TODO:
 # - Find how to compile with PLD CFLAGS/CXXFLAGS/LDFLAGS.
-# - How to package video and mouse drivers for Guest OS ?
-#   (There are several binaries for multiple versions of X11)
 # - Package SDK.
+# - Package utils (and write initscripts ?) for Guest OS.
 #
 # Conditional build:
 %bcond_without	dist_kernel	# without distribution kernel
@@ -166,6 +165,32 @@ Linux kernel module vboxvfs for VirtualBox.
 %description -n kernel%{_alt_kernel}-misc-vboxvfs -l pl.UTF-8
 Moduł jądra Linuksa vboxvfs dla VirtualBoksa.
 
+%package -n xorg-driver-input-vboxmouse
+Summary:	X.org mouse driver for VirtualBox guest OS
+Summary(pl.UTF-8):	Sterownik myszy dla systemu gościa w VirtualBox'ie
+Release:	%{_rel}
+Group:		X11/Applications
+Requires:	xorg-xserver-server >= 1.0.99.901
+
+%description -n xorg-driver-input-vboxmouse
+X.org mouse driver for VirtualBox guest OS.
+
+%description -n xorg-driver-input-vboxmouse  -l pl.UTF-8
+Sterownik myszy dla systemu gościa w VirtualBox'ie.
+
+%package -n xorg-driver-video-vboxvideo
+Summary:	X.org video driver for VirtualBox guest OS
+Summary(pl.UTF-8):	Sterownik grafiki dla systemu gościa w VirtualBox'ie
+Release:	%{_rel}
+Group:		X11/Applications
+Requires:	xorg-xserver-server >= 1.0.99.901
+
+%description -n xorg-driver-video-vboxvideo
+X.org video driver for VirtualBox guest OS.
+
+%description -n xorg-driver-video-vboxvideo -l pl.UTF-8
+Sterownik grafiki dla systemu gościa w VirtualBox'ie.
+
 %prep
 %setup -q -n %{name}-%{version}_OSE
 %patch0 -p0
@@ -221,9 +246,11 @@ rm -rf $RPM_BUILD_ROOT
 install -d \
 	$RPM_BUILD_ROOT{%{_bindir},%{_pixmapsdir},%{_desktopdir}} \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox \
-	$RPM_BUILD_ROOT/etc/rc.d/init.d
+	$RPM_BUILD_ROOT/etc/rc.d/init.d \
+	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/drivers \
+	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/input
 
-for f in {VBox{BFE,Manage,SDL,SVC,XPCOMIPCD},VirtualBox}; do
+for f in {VBox{BFE,Manage,SDL,SVC,XPCOMIPCD},VirtualBox,vditool}; do
 	install out/linux.%{_outdir}/release/bin/$f $RPM_BUILD_ROOT%{_libdir}/VirtualBox/$f
 	install %{SOURCE4} $RPM_BUILD_ROOT%{_bindir}/$f
 done
@@ -237,6 +264,15 @@ cp -a out/linux.%{_outdir}/release/bin/components $RPM_BUILD_ROOT%{_libdir}/Virt
 
 install -d $RPM_BUILD_ROOT%{_libdir}/VirtualBox/nls
 cp -a out/linux.%{_outdir}/release/bin/nls/VirtualBox* $RPM_BUILD_ROOT%{_libdir}/VirtualBox/nls
+
+install out/linux.%{_outdir}/release/bin/additions/mountvboxsf		\
+	$RPM_BUILD_ROOT%{_bindir}
+
+install out/linux.%{_outdir}/release/bin/additions/vboxmouse_drv_71.so	\
+	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/input/vboxmouse_drv.so
+
+install out/linux.%{_outdir}/release/bin/additions/vboxvideo_drv_71.so	\
+	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so
 
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/virtualbox
 
@@ -318,9 +354,12 @@ fi
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxXPCOMIPCD
 %attr(755,root,root) %{_libdir}/VirtualBox/VirtualBox
 %attr(755,root,root) %{_libdir}/VirtualBox/VBox*.so
+%attr(755,root,root) %{_bindir}/mountvboxsf
+%attr(755,root,root) %{_bindir}/vditool
 %{_libdir}/VirtualBox/*.gc
 %{_libdir}/VirtualBox/*.r0
 %{_libdir}/VirtualBox/*.xpt
+%{_libdir}/VirtualBox/vditool
 %{_libdir}/VirtualBox/components/*
 %lang(ar) %{_libdir}/VirtualBox/nls/VirtualBox_ar.qm
 %lang(cs) %{_libdir}/VirtualBox/nls/VirtualBox_cs.qm
@@ -342,6 +381,14 @@ fi
 %attr(754,root,root) /etc/rc.d/init.d/virtualbox
 %{_pixmapsdir}/VBox.png
 %{_desktopdir}/%{name}.desktop
+
+%files -n xorg-driver-input-vboxmouse
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/xorg/modules/input/vboxmouse_drv.so
+
+%files -n xorg-driver-video-vboxvideo
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/xorg/modules/drivers/vboxvideo_drv.so
 %endif
 
 %if %{with kernel}
