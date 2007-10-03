@@ -36,6 +36,7 @@ Patch1:		%{name}-qt-paths.patch
 Patch2:		%{name}-shared-libstdc++.patch
 URL:		http://www.virtualbox.org/
 BuildRequires:	SDL-devel
+BuildRequires:	alsa-lib-devel
 BuildRequires:	bash
 BuildRequires:	bcc
 BuildRequires:	bin86
@@ -45,9 +46,11 @@ BuildRequires:	iasl
 BuildRequires:	libIDL-devel
 BuildRequires:	libuuid-devel
 BuildRequires:	libxslt-progs
+BuildRequires:	pkgconfig
 BuildRequires:	qt-devel >= 6:3.3.6
 BuildRequires:	qt-linguist
 BuildRequires:	rpmbuild(macros) >= 1.329
+BuildRequires:	which
 BuildRequires:	xalan-c-devel >= 1.10.0
 BuildRequires:	xerces-c-devel >= 2.6.0
 BuildRequires:	xorg-lib-libXcursor-devel
