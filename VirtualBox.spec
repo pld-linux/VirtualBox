@@ -34,6 +34,7 @@ Source4:	%{name}.sh
 Patch0:		%{name}-configure.patch
 Patch1:		%{name}-qt-paths.patch
 Patch2:		%{name}-shared-libstdc++.patch
+Patch3:		%{name}-disable-xclient-build.patch
 URL:		http://www.virtualbox.org/
 BuildRequires:	SDL-devel
 BuildRequires:	alsa-lib-devel
@@ -55,6 +56,11 @@ BuildRequires:	xalan-c-devel >= 1.10.0
 BuildRequires:	xerces-c-devel >= 2.6.0
 BuildRequires:	xorg-lib-libXcursor-devel
 BuildRequires:	zlib-devel >= 1.2.1
+%ifarch %{x8664}
+BuildRequires:	gcc-multilib
+BuildRequires:	libstdc++-multilib-devel
+# TODO: How to add glibc-devel.i686 here ?
+%endif
 Requires(postun):	/usr/sbin/groupdel
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
@@ -200,6 +206,11 @@ Sterownik grafiki dla systemu gościa w VirtualBox'ie.
 %patch0 -p0
 %patch1 -p0
 %patch2 -p1
+
+%ifarch %{x8664}
+%patch3 -p1
+%endif
+
 install %{SOURCE1} .
 
 %build
@@ -213,11 +224,9 @@ ln -sf $KDIR/include/asm-i386 $KDIR/include/asm
 %endif
 
 %if %{with dist_kernel}
-[ ! -f $KDIR/include/linux/autoconf.h ] && \
-    ln -sf $KDIR/include/linux/autoconf-dist.h $KDIR/include/linux/autoconf.h
+ln -sf $KDIR/include/linux/autoconf-dist.h $KDIR/include/linux/autoconf.h
 %else
-[ ! -f $KDIR/include/linux/autoconf.h ] && \
-    ln -sf $KDIR/include/linux/autoconf-nondist.h $KDIR/include/linux/autoconf.h
+ln -sf $KDIR/include/linux/autoconf-nondist.h $KDIR/include/linux/autoconf.h
 %endif
 
 ./configure \
@@ -236,7 +245,7 @@ rm -rf PLD-MODULE-BUILD && mkdir PLD-MODULE-BUILD && cd PLD-MODULE-BUILD
 	tar -zxf modules.tar.gz && rm -f modules.tar.gz
 ../src/VBox/Additions/linux/export_modules modules.tar.gz
 	tar -zxf modules.tar.gz && rm -f modules.tar.gz
-
+	
 %build_kernel_modules -m vboxadd -C vboxadd
 %build_kernel_modules -m vboxdrv -C vboxdrv
 %build_kernel_modules -m vboxvfs -C vboxvfs
@@ -371,6 +380,8 @@ fi
 %{_pixmapsdir}/VBox.png
 %{_desktopdir}/%{name}.desktop
 
+# Drivers are for Guest OS, which is 32-bit.
+%ifnarch %{x8664}
 %files -n xorg-driver-input-vboxmouse
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/xorg/modules/input/vboxmouse_drv.so
@@ -378,6 +389,7 @@ fi
 %files -n xorg-driver-video-vboxvideo
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/xorg/modules/drivers/vboxvideo_drv.so
+%endif
 %endif
 
 %if %{with kernel}
