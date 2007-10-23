@@ -34,7 +34,7 @@ Source4:	%{name}.sh
 Patch0:		%{name}-configure.patch
 Patch1:		%{name}-qt-paths.patch
 Patch2:		%{name}-shared-libstdc++.patch
-Patch3:		%{name}-disable-xclient-build.patch
+#Patch3:		%{name}-disable-xclient-build.patch
 URL:		http://www.virtualbox.org/
 BuildRequires:	SDL-devel
 BuildRequires:	alsa-lib-devel
@@ -207,9 +207,9 @@ Sterownik grafiki dla systemu gościa w VirtualBox'ie.
 %patch1 -p0
 %patch2 -p1
 
-%ifarch %{x8664}
-%patch3 -p1
-%endif
+#%ifarch %{x8664}
+#%patch3 -p1
+#%endif
 
 install %{SOURCE1} .
 
