@@ -282,7 +282,7 @@ install -d $RPM_BUILD_ROOT%{_libdir}/VirtualBox/nls
 
 install %{SOURCE2} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/additions/VBoxGuestAdditions.iso
 cp -a out/linux.%{_outdir}/release/bin/components $RPM_BUILD_ROOT%{_libdir}/VirtualBox
-cp -a out/linux.%{_outdir}/release/bin/nls/VirtualBox* $RPM_BUILD_ROOT%{_libdir}/VirtualBox/nls
+cp -a out/linux.%{_outdir}/release/bin/nls/* $RPM_BUILD_ROOT%{_libdir}/VirtualBox/nls
 
 install out/linux.%{_outdir}/release/bin/additions/mountvboxsf		\
 	$RPM_BUILD_ROOT%{_bindir}
@@ -367,23 +367,26 @@ fi
 %{_libdir}/VirtualBox/*.xpt
 %{_libdir}/VirtualBox/additions/*
 %{_libdir}/VirtualBox/components/*
-%lang(ar) %{_libdir}/VirtualBox/nls/VirtualBox_ar.qm
-%lang(cs) %{_libdir}/VirtualBox/nls/VirtualBox_cs.qm
-%lang(de) %{_libdir}/VirtualBox/nls/VirtualBox_de.qm
-%lang(es) %{_libdir}/VirtualBox/nls/VirtualBox_es.qm
-%lang(fi) %{_libdir}/VirtualBox/nls/VirtualBox_fi.qm
-%lang(fr) %{_libdir}/VirtualBox/nls/VirtualBox_fr.qm
-%lang(hu) %{_libdir}/VirtualBox/nls/VirtualBox_hu.qm
-%lang(it) %{_libdir}/VirtualBox/nls/VirtualBox_it.qm
-%lang(ja) %{_libdir}/VirtualBox/nls/VirtualBox_ja.qm
-%lang(ko) %{_libdir}/VirtualBox/nls/VirtualBox_ko.qm
-%lang(pl) %{_libdir}/VirtualBox/nls/VirtualBox_pl.qm
-%lang(pt_BR) %{_libdir}/VirtualBox/nls/VirtualBox_pt_BR.qm
-%lang(ro) %{_libdir}/VirtualBox/nls/VirtualBox_ro.qm
-%lang(ru) %{_libdir}/VirtualBox/nls/VirtualBox_ru.qm
-%lang(sv) %{_libdir}/VirtualBox/nls/VirtualBox_sv.qm
-%lang(zh_CN) %{_libdir}/VirtualBox/nls/VirtualBox_zh_CN.qm
-%lang(zh_TW) %{_libdir}/VirtualBox/nls/VirtualBox_zh_TW.qm
+%lang(ar) %{_libdir}/VirtualBox/nls/*_ar.qm
+%lang(cs) %{_libdir}/VirtualBox/nls/*_cs.qm
+%lang(de) %{_libdir}/VirtualBox/nls/*_de.qm
+%lang(es) %{_libdir}/VirtualBox/nls/*_es.qm
+%lang(eu) %{_libdir}/VirtualBox/nls/*_eu.qm
+%lang(fi) %{_libdir}/VirtualBox/nls/*_fi.qm
+%lang(fr) %{_libdir}/VirtualBox/nls/*_fr.qm
+%lang(hu) %{_libdir}/VirtualBox/nls/*_hu.qm
+%lang(it) %{_libdir}/VirtualBox/nls/*_it.qm
+%lang(ja) %{_libdir}/VirtualBox/nls/*_ja.qm
+%lang(ko) %{_libdir}/VirtualBox/nls/*_ko.qm
+%lang(pl) %{_libdir}/VirtualBox/nls/*_pl.qm
+%lang(pt_BR) %{_libdir}/VirtualBox/nls/*_pt_BR.qm
+%lang(pt_PT) %{_libdir}/VirtualBox/nls/*_pt_PT.qm
+%lang(ro) %{_libdir}/VirtualBox/nls/*_ro.qm
+%lang(ru) %{_libdir}/VirtualBox/nls/*_ru.qm
+%lang(sk) %{_libdir}/VirtualBox/nls/*_sk.qm
+%lang(sv) %{_libdir}/VirtualBox/nls/*_sv.qm
+%lang(zh_CN) %{_libdir}/VirtualBox/nls/*_zh_CN.qm
+%lang(zh_TW) %{_libdir}/VirtualBox/nls/*_zh_TW.qm
 %{_pixmapsdir}/VBox.png
 %{_desktopdir}/%{name}.desktop
 
