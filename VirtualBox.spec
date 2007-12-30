@@ -4,6 +4,8 @@
 # - Package SDK.
 # - Package utils (and write initscripts ?) for Guest OS.
 # - Add udev rule.
+# - Check License of VBoxGuestAdditions_*.iso, it's propably not GPL v2.
+#   If so check if it is distributable.
 #
 # Conditional build:
 %bcond_without	dist_kernel	# without distribution kernel
@@ -19,16 +21,16 @@
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		VirtualBox
-Version:	1.5.2
+Version:	1.5.4
 Release:	%{_rel}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://www.virtualbox.org/download/%{version}/%{name}-%{version}_OSE.tar.bz2
-# Source0-md5:	2940f92160c88e241606f0fa91428b2c
+# Source0-md5:	fbebb3f04911c4c39aac27b1d3532acc
 Source1:	http://www.virtualbox.org/download/UserManual.pdf
 # Source1-md5:	2e5458bd5b4b9acd18cc86866e8a7284
-Source2:	http://www.virtualbox.org/download/%{version}/VBoxGuestAdditions_%{version}_OSE.iso
-# Source2-md5:	387912f465d450bcf4da805158a6b26d
+Source2:	http://www.virtualbox.org/download/%{version}/VBoxGuestAdditions_%{version}.iso
+# Source2-md5:	e021a51fc5946659b0789d134b1fd5ff
 Source3:	%{name}.desktop
 Source4:	%{name}.sh
 Patch0:		%{name}-configure.patch
