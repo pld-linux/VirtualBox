@@ -27,8 +27,8 @@ License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://www.virtualbox.org/download/%{version}/%{name}-%{version}_OSE.tar.bz2
 # Source0-md5:	fbebb3f04911c4c39aac27b1d3532acc
-Source1:	http://www.virtualbox.org/download/UserManual.pdf
-# Source1-md5:	2e5458bd5b4b9acd18cc86866e8a7284
+Source1:	http://www.virtualbox.org/download/%{version}/UserManual.pdf
+# Source1-md5:	f56f0d904013cbc0940108ed042e539d
 Source2:	http://www.virtualbox.org/download/%{version}/VBoxGuestAdditions_%{version}.iso
 # Source2-md5:	e021a51fc5946659b0789d134b1fd5ff
 Source3:	%{name}.desktop
