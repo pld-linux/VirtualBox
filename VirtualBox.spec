@@ -50,6 +50,7 @@ BuildRequires:	libIDL-devel
 BuildRequires:	libuuid-devel
 BuildRequires:	libxslt-progs
 BuildRequires:	pkgconfig
+BuildRequires:	pulseaudio-devel
 BuildRequires:	qt-devel >= 6:3.3.6
 BuildRequires:	qt-linguist
 BuildRequires:	rpmbuild(macros) >= 1.329
@@ -251,7 +252,7 @@ rm -rf PLD-MODULE-BUILD && mkdir PLD-MODULE-BUILD && cd PLD-MODULE-BUILD
 	tar -zxf modules.tar.gz && rm -f modules.tar.gz
 ../src/VBox/Additions/linux/export_modules modules.tar.gz
 	tar -zxf modules.tar.gz && rm -f modules.tar.gz
-	
+
 %build_kernel_modules -m vboxadd -C vboxadd
 %build_kernel_modules -m vboxdrv -C vboxdrv
 %build_kernel_modules -m vboxvfs -C vboxvfs
