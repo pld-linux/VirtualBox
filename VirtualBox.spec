@@ -1,5 +1,6 @@
 #
 # TODO:
+# - separate udev stuff from kernel package
 # - Find how to compile with PLD CFLAGS/CXXFLAGS/LDFLAGS.
 # - Package SDK.
 # - Package utils (and write initscripts ?) for Guest OS.
@@ -12,7 +13,7 @@
 %bcond_without	kernel		# don't build kernel module
 %bcond_without	userspace	# don't build userspace package
 
-%define		_rel		1
+%define		rel		1
 
 %if %{without kernel}
 %undefine	with_dist_kernel
@@ -22,7 +23,7 @@ Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		VirtualBox
 Version:	1.5.4
-Release:	%{_rel}
+Release:	%{rel}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://www.virtualbox.org/download/%{version}/%{name}-%{version}_OSE.tar.bz2
@@ -73,9 +74,9 @@ ExclusiveArch:	%{ix86} %{x8664}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %ifarch %{x8664}
-%define		_outdir	amd64
+%define		outdir	amd64
 %else
-%define		_outdir	x86
+%define		outdir	x86
 %endif
 
 %description
@@ -124,7 +125,7 @@ konfigurację maszyny wirtualnej na inny komputer.
 %package -n kernel%{_alt_kernel}-misc-vboxadd
 Summary:	Linux kernel module for VirtualBox
 Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
-Release:	%{_rel}@%{_kernel_ver_str}
+Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 Requires:	dev >= 2.9.0-7
@@ -132,7 +133,7 @@ Requires:	dev >= 2.9.0-7
 %requires_releq_kernel
 Requires(postun):	%releq_kernel
 %endif
-Provides:	kernel(vboxadd) = %{version}-%{_rel}
+Provides:	kernel(vboxadd) = %{version}-%{rel}
 
 %description -n kernel%{_alt_kernel}-misc-vboxadd
 Linux kernel module vboxadd for VirtualBox.
@@ -143,7 +144,7 @@ Moduł jądra Linuksa vboxadd dla VirtualBoksa.
 %package -n kernel%{_alt_kernel}-misc-vboxdrv
 Summary:	Linux kernel module for VirtualBox
 Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
-Release:	%{_rel}@%{_kernel_ver_str}
+Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 Requires:	dev >= 2.9.0-7
@@ -151,7 +152,7 @@ Requires:	dev >= 2.9.0-7
 %requires_releq_kernel
 Requires(postun):	%releq_kernel
 %endif
-Provides:	kernel(vboxdrv) = %{version}-%{_rel}
+Provides:	kernel(vboxdrv) = %{version}-%{rel}
 
 %description -n kernel%{_alt_kernel}-misc-vboxdrv
 Linux kernel module vboxdrv for VirtualBox.
@@ -162,7 +163,7 @@ Moduł jądra Linuksa vboxdrv dla VirtualBoksa.
 %package -n kernel%{_alt_kernel}-misc-vboxvfs
 Summary:	Linux kernel module for VirtualBox
 Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
-Release:	%{_rel}@%{_kernel_ver_str}
+Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 Requires:	dev >= 2.9.0-7
@@ -170,7 +171,7 @@ Requires:	dev >= 2.9.0-7
 %requires_releq_kernel
 Requires(postun):	%releq_kernel
 %endif
-Provides:	kernel(vboxvfs) = %{version}-%{_rel}
+Provides:	kernel(vboxvfs) = %{version}-%{rel}
 
 %description -n kernel%{_alt_kernel}-misc-vboxvfs
 Linux kernel module vboxvfs for VirtualBox.
@@ -180,8 +181,8 @@ Moduł jądra Linuksa vboxvfs dla VirtualBoksa.
 
 %package -n xorg-driver-input-vboxmouse
 Summary:	X.org mouse driver for VirtualBox guest OS
-Summary(pl.UTF-8):	Sterownik myszy dla systemu gościa w VirtualBox'ie
-Release:	%{_rel}
+Summary(pl.UTF-8):	Sterownik myszy dla systemu gościa w VirtualBoksie
+Release:	%{rel}
 Group:		X11/Applications
 Requires:	xorg-xserver-server >= 1.0.99.901
 
@@ -189,12 +190,12 @@ Requires:	xorg-xserver-server >= 1.0.99.901
 X.org mouse driver for VirtualBox guest OS.
 
 %description -n xorg-driver-input-vboxmouse  -l pl.UTF-8
-Sterownik myszy dla systemu gościa w VirtualBox'ie.
+Sterownik myszy dla systemu gościa w VirtualBoksie.
 
 %package -n xorg-driver-video-vboxvideo
 Summary:	X.org video driver for VirtualBox guest OS
-Summary(pl.UTF-8):	Sterownik grafiki dla systemu gościa w VirtualBox'ie
-Release:	%{_rel}
+Summary(pl.UTF-8):	Sterownik grafiki dla systemu gościa w VirtualBoksie
+Release:	%{rel}
 Group:		X11/Applications
 Requires:	xorg-xserver-server >= 1.0.99.901
 
@@ -202,7 +203,7 @@ Requires:	xorg-xserver-server >= 1.0.99.901
 X.org video driver for VirtualBox guest OS.
 
 %description -n xorg-driver-video-vboxvideo -l pl.UTF-8
-Sterownik grafiki dla systemu gościa w VirtualBox'ie.
+Sterownik grafiki dla systemu gościa w VirtualBoksie.
 
 %prep
 %setup -q -n %{name}-%{version}_OSE
@@ -271,32 +272,32 @@ install -d \
 
 install %{SOURCE4} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/VirtualBox-wrapper.sh
 for f in {VBox{BFE,Manage,SDL,SVC,XPCOMIPCD},VirtualBox,vditool}; do
-	install out/linux.%{_outdir}/release/bin/$f $RPM_BUILD_ROOT%{_libdir}/VirtualBox/$f
+	install out/linux.%{outdir}/release/bin/$f $RPM_BUILD_ROOT%{_libdir}/VirtualBox/$f
 	ln -s %{_libdir}/VirtualBox/VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_bindir}/$f
 done
 
-install out/linux.%{_outdir}/release/bin/VBox*.so \
+install out/linux.%{outdir}/release/bin/VBox*.so \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
-install out/linux.%{_outdir}/release/bin/{VBox{DD,DD2}{GC.gc,R0.r0},VMM{GC.gc,R0.r0},*.xpt} \
+install out/linux.%{outdir}/release/bin/{VBox{DD,DD2}{GC.gc,R0.r0},VMM{GC.gc,R0.r0},*.xpt} \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
 
 install -d $RPM_BUILD_ROOT%{_libdir}/VirtualBox/additions
 install -d $RPM_BUILD_ROOT%{_libdir}/VirtualBox/nls
 
 install %{SOURCE2} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/additions/VBoxGuestAdditions.iso
-cp -a out/linux.%{_outdir}/release/bin/components $RPM_BUILD_ROOT%{_libdir}/VirtualBox
-cp -a out/linux.%{_outdir}/release/bin/nls/* $RPM_BUILD_ROOT%{_libdir}/VirtualBox/nls
+cp -a out/linux.%{outdir}/release/bin/components $RPM_BUILD_ROOT%{_libdir}/VirtualBox
+cp -a out/linux.%{outdir}/release/bin/nls/* $RPM_BUILD_ROOT%{_libdir}/VirtualBox/nls
 
-install out/linux.%{_outdir}/release/bin/additions/mountvboxsf		\
+install out/linux.%{outdir}/release/bin/additions/mountvboxsf		\
 	$RPM_BUILD_ROOT%{_bindir}
 
-install out/linux.%{_outdir}/release/bin/additions/vboxmouse_drv_71.so	\
+install out/linux.%{outdir}/release/bin/additions/vboxmouse_drv_71.so	\
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/input/vboxmouse_drv.so
 
-install out/linux.%{_outdir}/release/bin/additions/vboxvideo_drv_71.so	\
+install out/linux.%{outdir}/release/bin/additions/vboxvideo_drv_71.so	\
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so
 
-install out/linux.%{_outdir}/release/bin/VBox.png $RPM_BUILD_ROOT%{_pixmapsdir}/VBox.png
+install out/linux.%{outdir}/release/bin/VBox.png $RPM_BUILD_ROOT%{_pixmapsdir}/VBox.png
 install %{SOURCE3} $RPM_BUILD_ROOT%{_desktopdir}/%{name}.desktop
 %endif
 
