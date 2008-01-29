@@ -12,11 +12,11 @@
 # Source function library
 . /etc/rc.d/init.d/functions
 
-# Get service config - may override defaults
-[ -f /etc/sysconfig/virtualbox ] && . /etc/sysconfig/virtualbox
-
 VBOX_DEVICE="/dev/vboxdrv"
 VBOX_MODULE="vboxdrv"
+
+# Get service config - may override defaults
+[ -f /etc/sysconfig/virtualbox ] && . /etc/sysconfig/virtualbox
 
 start() {
 	modprobe -s $VBOX_MODULE
@@ -71,13 +71,14 @@ case "$1" in
 		echo "$VBOX_MODULE module is loaded"
 	else
 		echo "$VBOX_MODULE module is not loaded"
+		RETVAL=3
 	fi
 	if [ ! -c $VBOX_DEVICE ]; then
 		echo "$VBOX_DEVICE does not exist"
+		RETVAL=3
 	else
 		echo "$VBOX_DEVICE exists with major/minor $(ls -l $VBOX_DEVICE | awk '{print $5 $6}')"
 	fi
-	RETVAL=$?
 	;;
   *)
 	msg_usage "$0 {start|stop|restart|status}"
