@@ -15,7 +15,7 @@
 %bcond_without	smp		# without SMP kernel modules
 %bcond_without	userspace	# don't build userspace package
 
-%define		rel		1
+%define		rel		2
 
 %if %{without kernel}
 %undefine	with_dist_kernel
@@ -34,8 +34,9 @@ Source1:	http://www.virtualbox.org/download/%{version}/UserManual.pdf
 # Source1-md5:	f56f0d904013cbc0940108ed042e539d
 Source2:	http://www.virtualbox.org/download/%{version}/VBoxGuestAdditions_%{version}.iso
 # Source2-md5:	e021a51fc5946659b0789d134b1fd5ff
-Source3:	%{name}.desktop
-Source4:	%{name}.sh
+Source3:	%{name}.init
+Source4:	%{name}.desktop
+Source5:	%{name}.sh
 Patch0:		%{name}-configure.patch
 Patch1:		%{name}-qt-paths.patch
 Patch2:		%{name}-shared-libstdc++.patch
@@ -326,10 +327,13 @@ rm -rf $RPM_BUILD_ROOT
 install -d \
 	$RPM_BUILD_ROOT{%{_bindir},%{_pixmapsdir},%{_desktopdir}} \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox \
+	$RPM_BUILD_ROOT/etc/rc.d/init.d \
 	$RPM_BUILD_ROOT%{_prefix}/X11R6/modules/drivers \
 	$RPM_BUILD_ROOT%{_prefix}/X11R6/modules/input
 
-install %{SOURCE4} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/VirtualBox-wrapper.sh
+install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/virtualbox
+
+install %{SOURCE5} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/VirtualBox-wrapper.sh
 for f in {VBox{BFE,Manage,SDL,SVC,XPCOMIPCD},VirtualBox,vditool}; do
 	install out/linux.%{outdir}/release/bin/$f $RPM_BUILD_ROOT%{_libdir}/VirtualBox/$f
 	ln -s %{_libdir}/VirtualBox/VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_bindir}/$f
@@ -357,7 +361,7 @@ install out/linux.%{outdir}/release/bin/additions/vboxvideo_drv_71.so	\
 	$RPM_BUILD_ROOT%{_prefix}/X11R6/modules/drivers/vboxvideo_drv.so
 
 install out/linux.%{outdir}/release/bin/VBox.png $RPM_BUILD_ROOT%{_pixmapsdir}/VBox.png
-install %{SOURCE3} $RPM_BUILD_ROOT%{_desktopdir}/%{name}.desktop
+install %{SOURCE4} $RPM_BUILD_ROOT%{_desktopdir}/%{name}.desktop
 %endif
 
 %if %{with kernel}
@@ -418,6 +422,7 @@ fi
 %dir %{_libdir}/VirtualBox/additions
 %dir %{_libdir}/VirtualBox/components
 %dir %{_libdir}/VirtualBox/nls
+%attr(754,root,root) /etc/rc.d/init.d/virtualbox
 %attr(755,root,root) %{_bindir}/mountvboxsf
 %attr(755,root,root) %{_bindir}/vditool
 %attr(755,root,root) %{_bindir}/VBox*
