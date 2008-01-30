@@ -295,10 +295,10 @@ cp -a out/linux.%{outdir}/release/bin/nls/* $RPM_BUILD_ROOT%{_libdir}/VirtualBox
 install out/linux.%{outdir}/release/bin/additions/mountvboxsf		\
 	$RPM_BUILD_ROOT%{_bindir}
 
-install out/linux.%{outdir}/release/bin/additions/vboxmouse_drv_71.so	\
+install out/linux.%{outdir}/release/bin/additions/vboxmouse_drv_14.so	\
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/input/vboxmouse_drv.so
 
-install out/linux.%{outdir}/release/bin/additions/vboxvideo_drv_71.so	\
+install out/linux.%{outdir}/release/bin/additions/vboxvideo_drv_14.so	\
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so
 
 install out/linux.%{outdir}/release/bin/VBox.png $RPM_BUILD_ROOT%{_pixmapsdir}/VBox.png
