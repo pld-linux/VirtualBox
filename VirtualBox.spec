@@ -257,6 +257,7 @@ rm -rf PLD-MODULE-BUILD && mkdir PLD-MODULE-BUILD && cd PLD-MODULE-BUILD
 
 %build_kernel_modules -m vboxadd -C vboxadd
 %build_kernel_modules -m vboxdrv -C vboxdrv
+cp -a vboxadd/Module.symvers vboxvfs
 %build_kernel_modules -m vboxvfs -C vboxvfs
 cd ..
 %endif
