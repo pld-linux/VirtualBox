@@ -13,7 +13,7 @@
 %bcond_without	kernel		# don't build kernel module
 %bcond_without	userspace	# don't build userspace package
 
-%define		rel		4
+%define		rel		5
 
 %if %{without kernel}
 %undefine	with_dist_kernel
@@ -293,7 +293,12 @@ for f in {VBox{BFE,Manage,SDL,SVC,XPCOMIPCD},VirtualBox,vditool}; do
 	ln -s %{_libdir}/VirtualBox/VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_bindir}/$f
 done
 
-install out/linux.%{outdir}/release/bin/VBox*.{so,rel} \
+%ifarch %{x8664}
+install out/linux.%{outdir}/release/bin/VBox*.rel \
+        $RPM_BUILD_ROOT%{_libdir}/VirtualBox
+%endif
+
+install out/linux.%{outdir}/release/bin/VBox*.so \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
 install out/linux.%{outdir}/release/bin/{VBox{DD,DD2}{GC.gc,R0.r0},VMM{GC.gc,R0.r0},*.xpt} \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
@@ -382,6 +387,9 @@ fi
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxSDL
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxXPCOMIPCD
 %attr(755,root,root) %{_libdir}/VirtualBox/VBox*.so
+%ifarch %{x8664}
+%attr(755,root,root) %{_libdir}/VirtualBox/VBox*.rel
+%endif
 %attr(755,root,root) %{_libdir}/VirtualBox/VirtualBox
 %attr(755,root,root) %{_libdir}/VirtualBox/VirtualBox-wrapper.sh
 %{_libdir}/VirtualBox/*.gc
