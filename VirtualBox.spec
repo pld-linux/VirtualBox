@@ -262,6 +262,11 @@ rm -rf PLD-MODULE-BUILD && mkdir PLD-MODULE-BUILD && cd PLD-MODULE-BUILD
 ../src/VBox/Additions/linux/export_modules modules.tar.gz
 	tar -zxf modules.tar.gz && rm -f modules.tar.gz
 
+%ifarch %{x8664}
+# HACK, is this really safe on x86_64?
+sed -i -e 's:#.*define.*RTMEMALLOC_EXEC_HEAP::g' vboxadd/r0drv/linux/alloc-r0drv-linux.c vboxvfs/r0drv/linux/alloc-r0drv-linux.c
+%endif
+
 %build_kernel_modules -m vboxadd -C vboxadd
 %build_kernel_modules -m vboxdrv -C vboxdrv
 cp -a vboxadd/Module.symvers vboxvfs
