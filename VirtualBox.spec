@@ -226,10 +226,17 @@ install %{SOURCE1} .
 KDIR="%{_builddir}/%{buildsubdir}/kernel"
 mkdir -p $KDIR
 cp -Ra %{_kernelsrcdir}/include $KDIR
+%ifarch %{x8664} %{ix86}
+if [ -d $KDIR/include/asm-x86 ]; then
+ln -sf $KDIR/include/asm-x86 $KDIR/include/asm
 %ifarch %{x8664}
-ln -sf $KDIR/include/asm-x86_64 $KDIR/include/asm
+else
+	ln -sf $KDIR/include/asm-x86_64 $KDIR/include/asm
 %else
-ln -sf $KDIR/include/asm-i386 $KDIR/include/asm
+else
+	ln -sf $KDIR/include/asm-i386 $KDIR/include/asm
+%endif
+fi
 %endif
 
 %if %{with dist_kernel}
