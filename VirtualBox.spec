@@ -1,10 +1,8 @@
 #
 # TODO:
-# - separate udev stuff from kernel package
 # - Find how to compile with PLD CFLAGS/CXXFLAGS/LDFLAGS.
 # - Package SDK.
 # - Package utils (and write initscripts ?) for Guest OS.
-# - Add udev rule.
 # - Check License of VBoxGuestAdditions_*.iso, it's propably not GPL v2.
 #   If so check if it is distributable.
 #
@@ -13,7 +11,7 @@
 %bcond_without	kernel		# don't build kernel module
 %bcond_without	userspace	# don't build userspace package
 
-%define		rel		5
+%define		rel		6
 
 %if %{without kernel}
 %undefine	with_dist_kernel
@@ -123,6 +121,19 @@ wirtualnych są w całości przechowywane w XML-u i są niezależne od
 lokalnej maszyny. Dzięki temu można szybko i łatwo przenieść
 konfigurację maszyny wirtualnej na inny komputer.
 
+%package udev
+Summary:	udev rules for VirtualBox kernel modules
+Summary(pl.UTF-8):	Reguły udev dla modułw jądra Linuksa dla VirtualBoksa
+Release:	%{rel}@%{_kernel_ver_str}
+Group:		Base/Kernel
+Requires:	udev
+
+%description udev
+udev rules for VirtualBox kernel modules
+
+%description udev -l pl.UTF-8
+Reguły udev dla modułw jądra Linuksa dla VirtualBoksa
+
 %package -n kernel%{_alt_kernel}-misc-vboxadd
 Summary:	Linux kernel module for VirtualBox
 Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
@@ -132,7 +143,7 @@ Requires(post,postun):	/sbin/depmod
 Requires:	dev >= 2.9.0-7
 %if %{with dist_kernel}
 %requires_releq_kernel
-Requires(postun):	%releq_kernel
+#Requires(postun):	%%releq_kernel
 %endif
 Provides:	kernel(vboxadd) = %{version}-%{rel}
 
@@ -420,6 +431,10 @@ fi
 %{_pixmapsdir}/VBox.png
 %{_desktopdir}/%{name}.desktop
 
+%files udev
+%defattr(644,root,root,755)
+%config(noreplace) %verify(not md5 mtime size) /etc/udev/rules.d/virtualbox.rules
+
 # Drivers are for Guest OS, which is 32-bit.
 %ifnarch %{x8664}
 %files -n xorg-driver-input-vboxmouse
@@ -439,7 +454,6 @@ fi
 
 %files -n kernel%{_alt_kernel}-misc-vboxdrv
 %defattr(644,root,root,755)
-%config(noreplace) %verify(not md5 mtime size) /etc/udev/rules.d/virtualbox.rules
 /lib/modules/%{_kernel_ver}/misc/vboxdrv.ko*
 
 %files -n kernel%{_alt_kernel}-misc-vboxvfs
