@@ -129,7 +129,7 @@ konfigurację maszyny wirtualnej na inny komputer.
 
 %package udev
 Summary:	udev rules for VirtualBox kernel modules
-Summary(pl.UTF-8):	Reguły udev dla modułw jądra Linuksa dla VirtualBoksa
+Summary(pl.UTF-8):	Reguły udev dla modułów jądra Linuksa dla VirtualBoksa
 Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires:	udev
@@ -138,7 +138,7 @@ Requires:	udev
 udev rules for VirtualBox kernel modules
 
 %description udev -l pl.UTF-8
-Reguły udev dla modułw jądra Linuksa dla VirtualBoksa
+Reguły udev dla modułów jądra Linuksa dla VirtualBoksa
 
 %package -n kernel%{_alt_kernel}-misc-vboxadd
 Summary:	Linux kernel module for VirtualBox
@@ -337,12 +337,12 @@ install out/linux.%{outdir}/release/bin/additions/vboxvideo_drv_14.so	\
 
 install out/linux.%{outdir}/release/bin/VBox.png $RPM_BUILD_ROOT%{_pixmapsdir}/VBox.png
 install %{SOURCE4} $RPM_BUILD_ROOT%{_desktopdir}/%{pname}.desktop
+
+install -d $RPM_BUILD_ROOT/etc/udev/rules.d
+install udev.conf $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
 %endif
 
 %if %{with kernel}
-install -d $RPM_BUILD_ROOT/etc/udev/rules.d
-install udev.conf $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
-
 cd PLD-MODULE-BUILD
 for MODULE in *; do
 	[ ! -d $MODULE ] && continue;
