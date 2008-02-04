@@ -17,26 +17,32 @@
 %undefine	with_dist_kernel
 %endif
 
+%if "%{_alt_kernel}" != "%{nil}"
+%undefine	with_userspace
+%endif
+
+%define		pname	VirtualBox
+
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
-Name:		VirtualBox
+Name:		%{pname}%{_alt_kernel}
 Version:	1.5.4
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/Emulators
-Source0:	http://www.virtualbox.org/download/%{version}/%{name}-%{version}_OSE.tar.bz2
+Source0:	http://www.virtualbox.org/download/%{version}/%{pname}-%{version}_OSE.tar.bz2
 # Source0-md5:	fbebb3f04911c4c39aac27b1d3532acc
 Source1:	http://www.virtualbox.org/download/%{version}/UserManual.pdf
 # Source1-md5:	f56f0d904013cbc0940108ed042e539d
 Source2:	http://www.virtualbox.org/download/%{version}/VBoxGuestAdditions_%{version}.iso
 # Source2-md5:	e021a51fc5946659b0789d134b1fd5ff
-Source3:	%{name}.init
-Source4:	%{name}.desktop
-Source5:	%{name}.sh
-Patch0:		%{name}-configure.patch
-Patch1:		%{name}-qt-paths.patch
-Patch2:		%{name}-shared-libstdc++.patch
-Patch3:		%{name}-disable-xclient-build.patch
+Source3:	%{pname}.init
+Source4:	%{pname}.desktop
+Source5:	%{pname}.sh
+Patch0:		%{pname}-configure.patch
+Patch1:		%{pname}-qt-paths.patch
+Patch2:		%{pname}-shared-libstdc++.patch
+Patch3:		%{pname}-disable-xclient-build.patch
 URL:		http://www.virtualbox.org/
 BuildRequires:	SDL-devel
 BuildRequires:	alsa-lib-devel
@@ -218,7 +224,7 @@ X.org video driver for VirtualBox guest OS.
 Sterownik grafiki dla systemu gościa w VirtualBoksie.
 
 %prep
-%setup -q -n %{name}-%{version}_OSE
+%setup -q -n %{pname}-%{version}_OSE
 %patch0 -p0
 %patch1 -p0
 %patch2 -p1
@@ -330,7 +336,7 @@ install out/linux.%{outdir}/release/bin/additions/vboxvideo_drv_14.so	\
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so
 
 install out/linux.%{outdir}/release/bin/VBox.png $RPM_BUILD_ROOT%{_pixmapsdir}/VBox.png
-install %{SOURCE4} $RPM_BUILD_ROOT%{_desktopdir}/%{name}.desktop
+install %{SOURCE4} $RPM_BUILD_ROOT%{_desktopdir}/%{pname}.desktop
 %endif
 
 %if %{with kernel}
@@ -428,7 +434,7 @@ fi
 %lang(zh_CN) %{_libdir}/VirtualBox/nls/*_zh_CN.qm
 %lang(zh_TW) %{_libdir}/VirtualBox/nls/*_zh_TW.qm
 %{_pixmapsdir}/VBox.png
-%{_desktopdir}/%{name}.desktop
+%{_desktopdir}/%{pname}.desktop
 
 %files udev
 %defattr(644,root,root,755)
