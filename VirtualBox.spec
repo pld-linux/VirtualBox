@@ -70,6 +70,7 @@ BuildRequires:	gcc-multilib
 BuildRequires:	libstdc++-multilib-devel
 # TODO: How to add glibc-devel.i686 here ?
 %endif
+Requires(post,preun):	/sbin/chkconfig
 Requires(postun):	/usr/sbin/groupdel
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
@@ -359,6 +360,16 @@ rm -rf $RPM_BUILD_ROOT
 
 %pre
 %groupadd -g 221 -r -f vbox
+
+%post
+/sbin/chkconfig --add virtualbox
+%service virtualbox restart "VirtualBox"
+
+%preun
+if [ "$1" = "0" ]; then
+	%service virtualbox stop
+	/sbin/chkconfig --del virtualbox
+fi
 
 %postun
 if [ "$1" = "0" ]; then
