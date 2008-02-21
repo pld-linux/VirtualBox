@@ -26,16 +26,16 @@
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{_alt_kernel}
-Version:	1.5.4
+Version:	1.5.6
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/Emulators
-Source0:	http://www.virtualbox.org/download/%{version}/%{pname}-%{version}_OSE.tar.bz2
-# Source0-md5:	fbebb3f04911c4c39aac27b1d3532acc
+Source0:	http://www.virtualbox.org/download/%{version}/%{pname}-%{version}-1_OSE.tar.bz2
+# Source0-md5:	305c65f9e91b6137cb773d578de09922
 Source1:	http://www.virtualbox.org/download/%{version}/UserManual.pdf
 # Source1-md5:	f56f0d904013cbc0940108ed042e539d
 Source2:	http://www.virtualbox.org/download/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source2-md5:	e021a51fc5946659b0789d134b1fd5ff
+# Source2-md5:	9d74dea92bd225ad59faee9fd427a55e
 Source3:	%{pname}.init
 Source4:	%{pname}.desktop
 Source5:	%{pname}.sh
@@ -425,6 +425,7 @@ fi
 %{_libdir}/VirtualBox/additions/*
 %{_libdir}/VirtualBox/components/*
 %lang(ar) %{_libdir}/VirtualBox/nls/*_ar.qm
+%lang(ca) %{_libdir}/VirtualBox/nls/*_ca.qm
 %lang(cs) %{_libdir}/VirtualBox/nls/*_cs.qm
 %lang(de) %{_libdir}/VirtualBox/nls/*_de.qm
 %lang(es) %{_libdir}/VirtualBox/nls/*_es.qm
@@ -432,16 +433,20 @@ fi
 %lang(fi) %{_libdir}/VirtualBox/nls/*_fi.qm
 %lang(fr) %{_libdir}/VirtualBox/nls/*_fr.qm
 %lang(hu) %{_libdir}/VirtualBox/nls/*_hu.qm
+%lang(id) %{_libdir}/VirtualBox/nls/*_id.qm
 %lang(it) %{_libdir}/VirtualBox/nls/*_it.qm
 %lang(ja) %{_libdir}/VirtualBox/nls/*_ja.qm
 %lang(ko) %{_libdir}/VirtualBox/nls/*_ko.qm
+%lang(nl) %{_libdir}/VirtualBox/nls/*_nl.qm
 %lang(pl) %{_libdir}/VirtualBox/nls/*_pl.qm
 %lang(pt_BR) %{_libdir}/VirtualBox/nls/*_pt_BR.qm
 %lang(pt_PT) %{_libdir}/VirtualBox/nls/*_pt_PT.qm
 %lang(ro) %{_libdir}/VirtualBox/nls/*_ro.qm
 %lang(ru) %{_libdir}/VirtualBox/nls/*_ru.qm
 %lang(sk) %{_libdir}/VirtualBox/nls/*_sk.qm
+%lang(sr) %{_libdir}/VirtualBox/nls/*_sr.qm
 %lang(sv) %{_libdir}/VirtualBox/nls/*_sv.qm
+%lang(tr) %{_libdir}/VirtualBox/nls/*_tr.qm
 %lang(zh_CN) %{_libdir}/VirtualBox/nls/*_zh_CN.qm
 %lang(zh_TW) %{_libdir}/VirtualBox/nls/*_zh_TW.qm
 %{_pixmapsdir}/VBox.png
