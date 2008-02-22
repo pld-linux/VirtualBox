@@ -33,7 +33,7 @@ Group:		Applications/Emulators
 Source0:	http://www.virtualbox.org/download/%{version}/%{pname}-%{version}-1_OSE.tar.bz2
 # Source0-md5:	305c65f9e91b6137cb773d578de09922
 Source1:	http://www.virtualbox.org/download/%{version}/UserManual.pdf
-# Source1-md5:	f56f0d904013cbc0940108ed042e539d
+# Source1-md5:	9ba7f17584fb3e9c98e026a1501cf7c0
 Source2:	http://www.virtualbox.org/download/%{version}/VBoxGuestAdditions_%{version}.iso
 # Source2-md5:	9d74dea92bd225ad59faee9fd427a55e
 Source3:	%{pname}.init
