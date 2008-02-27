@@ -1,0 +1,11 @@
+--- VirtualBox-1.5.6_OSE/configure~	2008-02-27 18:34:55.000000000 +0200
++++ VirtualBox-1.5.6_OSE/configure	2008-02-27 18:35:18.343812355 +0200
+@@ -1297,7 +1297,7 @@
+ #
+ 
+ # scan command line options
+-for option in $*; do
++for option in "$*"; do
+   case "$option" in
+     --help|-help|-h)
+       show_help
