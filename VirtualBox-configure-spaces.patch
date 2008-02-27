@@ -5,7 +5,7 @@
  
  # scan command line options
 -for option in $*; do
-+for option in "$*"; do
++for option in "$@"; do
    case "$option" in
      --help|-help|-h)
        show_help
