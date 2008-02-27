@@ -43,6 +43,7 @@ Patch0:		%{pname}-configure.patch
 Patch1:		%{pname}-qt-paths.patch
 Patch2:		%{pname}-shared-libstdc++.patch
 Patch3:		%{pname}-disable-xclient-build.patch
+Patch4:		%{pname}-configure-spaces.patch
 URL:		http://www.virtualbox.org/
 BuildRequires:	SDL-devel
 BuildRequires:	alsa-lib-devel
@@ -234,38 +235,40 @@ Sterownik grafiki dla systemu gościa w VirtualBoksie.
 %patch3 -p1
 %endif
 
+%patch4 -p1
+
 cat <<'EOF' > udev.conf
 KERNEL=="vboxdrv", NAME="%k", GROUP="vbox", MODE="0660"
 EOF
 
 install %{SOURCE1} .
 
-%build
-KDIR="%{_builddir}/%{buildsubdir}/kernel"
-mkdir -p $KDIR
-cp -Ra %{_kernelsrcdir}/include $KDIR
+# XXX: why this copying is needed? it writes there?
+install -d kernel
+cp -a %{_kernelsrcdir}/include kernel
 %ifarch %{x8664} %{ix86}
-if [ -d $KDIR/include/asm-x86 ]; then
-	ln -sf $KDIR/include/asm-x86 $KDIR/include/asm
+if [ -d kernel/include/asm-x86 ]; then
+	ln -sf asm-x86 kernel/include/asm
 else
 %ifarch %{x8664}
-	ln -sf $KDIR/include/asm-x86_64 $KDIR/include/asm
+	ln -sf asm-x86_64 kernel/include/asm
 %else
-	ln -sf $KDIR/include/asm-i386 $KDIR/include/asm
+	ln -sf asm-i386 kernel/include/asm
 %endif
 fi
 %endif
 
 %if %{with dist_kernel}
-ln -sf $KDIR/include/linux/autoconf-dist.h $KDIR/include/linux/autoconf.h
+ln -sf autoconf-dist.h kernel/include/linux/autoconf.h
 %else
-ln -sf $KDIR/include/linux/autoconf-nondist.h $KDIR/include/linux/autoconf.h
+ln -sf autoconf-nondist.h kernel/include/linux/autoconf.h
 %endif
 
+%build
 ./configure \
 	--with-gcc="%{__cc}" \
 	--with-g++="%{__cxx}" \
-	--with-linux="$KDIR"
+	--with-linux="%{_builddir}/%{buildsubdir}/kernel"
 
 %if %{with userspace}
 . ./env.sh && kmk -j1
