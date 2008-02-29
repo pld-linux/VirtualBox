@@ -260,7 +260,7 @@ rm -rf PLD-MODULE-BUILD && mkdir PLD-MODULE-BUILD && cd PLD-MODULE-BUILD
 ./configure \
 	--with-gcc="%{__cc}" \
 	--with-g++="%{__cxx}" \
-	--with-linux="%{_builddir}/%{buildsubdir}/kernel"
+	--disable-kmods
 
 . ./env.sh && kmk -j1
 %endif
