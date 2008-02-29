@@ -138,7 +138,7 @@ konfigurację maszyny wirtualnej na inny komputer.
 %package udev
 Summary:	udev rules for VirtualBox kernel modules
 Summary(pl.UTF-8):	Reguły udev dla modułów jądra Linuksa dla VirtualBoksa
-Release:	%{rel}@%{_kernel_ver_str}
+Release:	%{rel}
 Group:		Base/Kernel
 Requires:	udev
 
@@ -255,6 +255,11 @@ rm -rf PLD-MODULE-BUILD && mkdir PLD-MODULE-BUILD && cd PLD-MODULE-BUILD
 ../src/VBox/HostDrivers/Support/linux/export_modules modules.tar.gz && \
 	tar -zxf modules.tar.gz && rm -f modules.tar.gz
 
+%ifarch %{x8664}
+# HACK, is this really safe on x86_64?
+sed -i -e '/#.*define.*RTMEMALLOC_EXEC_HEAP/d' vboxadd/r0drv/linux/alloc-r0drv-linux.c vboxvfs/r0drv/linux/alloc-r0drv-linux.c
+%endif
+
 %build
 %if %{with userspace}
 ./configure \
@@ -267,11 +272,6 @@ rm -rf PLD-MODULE-BUILD && mkdir PLD-MODULE-BUILD && cd PLD-MODULE-BUILD
 
 %if %{with kernel}
 cd PLD-MODULE-BUILD
-%ifarch %{x8664}
-# HACK, is this really safe on x86_64?
-sed -i -e 's:#.*define.*RTMEMALLOC_EXEC_HEAP::g' vboxadd/r0drv/linux/alloc-r0drv-linux.c vboxvfs/r0drv/linux/alloc-r0drv-linux.c
-%endif
-
 %build_kernel_modules -m vboxadd -C vboxadd
 %build_kernel_modules -m vboxdrv -C vboxdrv
 cp -a vboxadd/Module.symvers vboxvfs
