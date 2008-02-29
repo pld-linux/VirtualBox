@@ -501,7 +501,6 @@ fi
 
 %files -n kernel%{_alt_kernel}-smp-misc-vboxdrv
 %defattr(644,root,root,755)
-%config(noreplace) %verify(not md5 mtime size) /etc/udev/rules.d/virtualbox.rules
 /lib/modules/%{_kernel_ver}smp/misc/vboxdrv.ko*
 
 %files -n kernel%{_alt_kernel}-smp-misc-vboxvfs
