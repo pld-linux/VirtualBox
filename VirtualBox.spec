@@ -57,7 +57,7 @@ BuildRequires:	bin86
 BuildRequires:	gcc >= 5:3.2.3
 BuildRequires:	iasl
 %endif
-%{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.20}
+%{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.7}
 %if %{with userspace}
 BuildRequires:	libIDL-devel
 BuildRequires:	libuuid-devel
@@ -74,9 +74,9 @@ BuildRequires:	xalan-c-devel >= 1.10.0
 BuildRequires:	xerces-c-devel >= 2.6.0
 BuildRequires:	zlib-devel >= 1.2.1
 %ifarch %{x8664}
-BuildRequires:	gcc-multilib
-BuildRequires:	libstdc++-multilib-devel
-# TODO: How to add glibc-devel.i686 here ?
+BuildRequires:	libstdc++32-devel
+# 32bit glibc-devel
+BuildRequires:	/usr/include/gnu/stubs-32.h
 %endif
 %endif
 Requires(post,preun):	/sbin/chkconfig
@@ -319,7 +319,7 @@ rm -rf PLD-MODULE-BUILD && mkdir PLD-MODULE-BUILD && cd PLD-MODULE-BUILD
 ./configure \
 	--with-gcc="%{__cc}" \
 	--with-g++="%{__cxx}" \
-	--with-linux="%{_builddir}/%{buildsubdir}/kernel"
+	--with-linux="%{_kernelsrcdir}"
 
 . ./env.sh && kmk -j1
 %endif
