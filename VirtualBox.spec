@@ -23,8 +23,8 @@
 
 %define		pname	VirtualBox
 
-Summary:	VirtualBox - x86 hardware virtualizer
-Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
+Summary:	VirtualBox OSE - x86 hardware virtualizer
+Summary(pl.UTF-8):	VirtualBox OSE - wirtualizator sprzętu x86
 Name:		%{pname}%{_alt_kernel}
 Version:	1.5.6
 Release:	%{rel}
@@ -93,21 +93,21 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %endif
 
 %description
-InnoTek VirtualBox is a general-purpose full virtualizer for x86
+InnoTek VirtualBox OSE is a general-purpose full virtualizer for x86
 hardware. Targeted at server, desktop and embedded use, it is now the
 only professional-quality virtualization solution that is also Open
 Source Software.
 
-Some of the features of VirtualBox are:
+Some of the features of VirtualBox OSE are:
 
-Modularity: VirtualBox has an extremely modular design with
+Modularity: VirtualBox OSE has an extremely modular design with
 well-defined internal programming interfaces and a client/server
 design. This makes it easy to control it from several interfaces at
 once: for example, you can start a virtual machine in a typical
 virtual machine GUI and then control that machine from the command
-line. VirtualBox also comes with a full Software Development Kit: even
+line. VirtualBox OSE also comes with a full Software Development Kit: even
 though it is Open Source Software, you don't have to hack the source
-to write a new interface for VirtualBox.
+to write a new interface for VirtualBox OSE.
 
 Virtual machine descriptions in XML: the configuration settings of
 virtual machines are stored entirely in XML and are independent of the
@@ -115,19 +115,19 @@ local machines. Virtual machine definitions can therefore easily be
 ported to other computers.
 
 %description -l pl.UTF-8
-InnoTek VirtualBox jest emulatorem sprzętu x86. Kierowany do
+InnoTek VirtualBox OSE jest emulatorem sprzętu x86. Kierowany do
 zastosowań serwerowych, desktopowych oraz wbudowanych jest obecnie
 jedynym wysokiej jakości rozwiązaniem wirtualizacyjnym dostępnym
 również jako Otwarte Oprogramowanie.
 
 Przykładowe cechy VirtualBoksa:
 
-Modularność: VirtualBox jest wysoce zmodularyzowanym produktem z
+Modularność: VirtualBox OSE jest wysoce zmodularyzowanym produktem z
 dobrze zaprojektowanym wewnętrznym interfejsem programowym typu
 klient/serwer. Dzięki temu można łatwo kontrolować go za pomocą
 różnych interfejsów. Można na przykład uruchomić maszynę wirtualną z
 poziomu interfejsu graficznego, a później kontrolować ją z linii
-poleceń. VirtualBox dostarcza również pełny pakiet deweloperski, co
+poleceń. VirtualBox OSE dostarcza również pełny pakiet deweloperski, co
 pozwala stworzyć dowolny inny interfejs zarządzania maszyną wirtualną.
 
 Opisy maszyn wirtualnych w XML-u: konfiguracje poszczególnych maszyn
@@ -136,20 +136,20 @@ lokalnej maszyny. Dzięki temu można szybko i łatwo przenieść
 konfigurację maszyny wirtualnej na inny komputer.
 
 %package udev
-Summary:	udev rules for VirtualBox kernel modules
+Summary:	udev rules for VirtualBox OSE kernel modules
 Summary(pl.UTF-8):	Reguły udev dla modułów jądra Linuksa dla VirtualBoksa
 Release:	%{rel}
 Group:		Base/Kernel
 Requires:	udev
 
 %description udev
-udev rules for VirtualBox kernel modules
+udev rules for VirtualBox OSE kernel modules
 
 %description udev -l pl.UTF-8
 Reguły udev dla modułów jądra Linuksa dla VirtualBoksa
 
 %package -n kernel%{_alt_kernel}-misc-vboxadd
-Summary:	Linux kernel module for VirtualBox
+Summary:	Linux kernel module for VirtualBox OSE
 Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
 Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
@@ -162,13 +162,13 @@ Requires:	dev >= 2.9.0-7
 Provides:	kernel(vboxadd) = %{version}-%{rel}
 
 %description -n kernel%{_alt_kernel}-misc-vboxadd
-Linux kernel module vboxadd for VirtualBox.
+Linux kernel module vboxadd for VirtualBox OSE.
 
 %description -n kernel%{_alt_kernel}-misc-vboxadd -l pl.UTF-8
 Moduł jądra Linuksa vboxadd dla VirtualBoksa.
 
 %package -n kernel%{_alt_kernel}-misc-vboxdrv
-Summary:	Linux kernel module for VirtualBox
+Summary:	Linux kernel module for VirtualBox OSE
 Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
 Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
@@ -181,13 +181,13 @@ Requires(postun):	%releq_kernel
 Provides:	kernel(vboxdrv) = %{version}-%{rel}
 
 %description -n kernel%{_alt_kernel}-misc-vboxdrv
-Linux kernel module vboxdrv for VirtualBox.
+Linux kernel module vboxdrv for VirtualBox OSE.
 
 %description -n kernel%{_alt_kernel}-misc-vboxdrv -l pl.UTF-8
 Moduł jądra Linuksa vboxdrv dla VirtualBoksa.
 
 %package -n kernel%{_alt_kernel}-misc-vboxvfs
-Summary:	Linux kernel module for VirtualBox
+Summary:	Linux kernel module for VirtualBox OSE
 Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
 Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
@@ -200,33 +200,33 @@ Requires(postun):	%releq_kernel
 Provides:	kernel(vboxvfs) = %{version}-%{rel}
 
 %description -n kernel%{_alt_kernel}-misc-vboxvfs
-Linux kernel module vboxvfs for VirtualBox.
+Linux kernel module vboxvfs for VirtualBox OSE.
 
 %description -n kernel%{_alt_kernel}-misc-vboxvfs -l pl.UTF-8
 Moduł jądra Linuksa vboxvfs dla VirtualBoksa.
 
 %package -n xorg-driver-input-vboxmouse
-Summary:	X.org mouse driver for VirtualBox guest OS
+Summary:	X.org mouse driver for VirtualBox OSE guest OS
 Summary(pl.UTF-8):	Sterownik myszy dla systemu gościa w VirtualBoksie
 Release:	%{rel}
 Group:		X11/Applications
 Requires:	xorg-xserver-server >= 1.0.99.901
 
 %description -n xorg-driver-input-vboxmouse
-X.org mouse driver for VirtualBox guest OS.
+X.org mouse driver for VirtualBox OSE guest OS.
 
 %description -n xorg-driver-input-vboxmouse  -l pl.UTF-8
 Sterownik myszy dla systemu gościa w VirtualBoksie.
 
 %package -n xorg-driver-video-vboxvideo
-Summary:	X.org video driver for VirtualBox guest OS
+Summary:	X.org video driver for VirtualBox OSE guest OS
 Summary(pl.UTF-8):	Sterownik grafiki dla systemu gościa w VirtualBoksie
 Release:	%{rel}
 Group:		X11/Applications
 Requires:	xorg-xserver-server >= 1.0.99.901
 
 %description -n xorg-driver-video-vboxvideo
-X.org video driver for VirtualBox guest OS.
+X.org video driver for VirtualBox OSE guest OS.
 
 %description -n xorg-driver-video-vboxvideo -l pl.UTF-8
 Sterownik grafiki dla systemu gościa w VirtualBoksie.
