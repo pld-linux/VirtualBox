@@ -314,6 +314,11 @@ rm -rf PLD-MODULE-BUILD && mkdir PLD-MODULE-BUILD && cd PLD-MODULE-BUILD
 ../src/VBox/HostDrivers/Support/linux/export_modules modules.tar.gz && \
 	tar -zxf modules.tar.gz && rm -f modules.tar.gz
 
+%ifarch %{x8664}
+# HACK, is this really safe on x86_64?
+sed -i -e '/#.*define.*RTMEMALLOC_EXEC_HEAP/d' vboxadd/r0drv/linux/alloc-r0drv-linux.c vboxvfs/r0drv/linux/alloc-r0drv-linux.c
+%endif
+
 %build
 %if %{with userspace}
 ./configure \
@@ -326,14 +331,9 @@ rm -rf PLD-MODULE-BUILD && mkdir PLD-MODULE-BUILD && cd PLD-MODULE-BUILD
 
 %if %{with kernel}
 cd PLD-MODULE-BUILD
-%ifarch %{x8664}
-# HACK, is this really safe on x86_64?
-sed -i -e 's:#.*define.*RTMEMALLOC_EXEC_HEAP::g' vboxadd/r0drv/linux/alloc-r0drv-linux.c vboxvfs/r0drv/linux/alloc-r0drv-linux.c
-%endif
 %build_kernel_modules -m vboxadd -C vboxadd
 %build_kernel_modules -m vboxdrv -C vboxdrv
-cp -a vboxadd/Module.symvers vboxvfs
-%build_kernel_modules -m vboxvfs -C vboxvfs -c
+%build_kernel_modules -m vboxvfs -C vboxvfs
 cd ..
 %endif
 
@@ -384,10 +384,10 @@ install out/linux.%{outdir}/release/bin/additions/vboxvideo_drv_70.so	\
 
 install out/linux.%{outdir}/release/bin/VBox.png $RPM_BUILD_ROOT%{_pixmapsdir}/VBox.png
 install %{SOURCE4} $RPM_BUILD_ROOT%{_desktopdir}/%{pname}.desktop
-%endif
 
 install -d $RPM_BUILD_ROOT/etc/udev/rules.d
 install udev.conf $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
+%endif
 
 %if %{with kernel}
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxadd/vboxadd -d misc
