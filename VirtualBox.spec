@@ -13,8 +13,6 @@
 %bcond_without	smp		# without SMP kernel modules
 %bcond_without	userspace	# don't build userspace package
 
-%define		rel		1
-
 %if %{without kernel}
 %undefine	with_dist_kernel
 %endif
@@ -29,7 +27,7 @@ Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{_alt_kernel}
 Version:	1.5.6
-Release:	%{rel}
+Release:	1
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://www.virtualbox.org/download/%{version}/%{pname}-%{version}-1_OSE.tar.bz2
@@ -140,7 +138,6 @@ konfigurację maszyny wirtualnej na inny komputer.
 %package udev
 Summary:	udev rules for VirtualBox kernel modules
 Summary(pl.UTF-8):	Reguły udev dla modułów jądra Linuksa dla VirtualBoksa
-Release:	%{rel}
 Group:		Base/Kernel
 Requires:	udev
 
@@ -153,15 +150,10 @@ Reguły udev dla modułów jądra Linuksa dla VirtualBoksa
 %package -n kernel%{_alt_kernel}-misc-vboxadd
 Summary:	Linux kernel module for VirtualBox
 Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
-Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 Requires:	dev >= 2.9.0-7
-%if %{with dist_kernel}
-%requires_releq_kernel_up
-Requires(postun):	%releq_kernel_up
-%endif
-Provides:	kernel(vboxadd) = %{version}-%{rel}
+%{?with_dist_kernel:Requires:	kernel%{_alt_kernel}(vermagic) = %{_kernel_ver}}
 
 %description -n kernel%{_alt_kernel}-misc-vboxadd
 Linux kernel module vboxadd for VirtualBox.
@@ -172,15 +164,10 @@ Moduł jądra Linuksa vboxadd dla VirtualBoksa.
 %package -n kernel%{_alt_kernel}-misc-vboxdrv
 Summary:	Linux kernel module for VirtualBox
 Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
-Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 Requires:	dev >= 2.9.0-7
-%if %{with dist_kernel}
-%requires_releq_kernel_up
-Requires(postun):	%releq_kernel_up
-%endif
-Provides:	kernel(vboxdrv) = %{version}-%{rel}
+%{?with_dist_kernel:Requires:	kernel%{_alt_kernel}(vermagic) = %{_kernel_ver}}
 
 %description -n kernel%{_alt_kernel}-misc-vboxdrv
 Linux kernel module vboxdrv for VirtualBox.
@@ -191,15 +178,10 @@ Moduł jądra Linuksa vboxdrv dla VirtualBoksa.
 %package -n kernel%{_alt_kernel}-misc-vboxvfs
 Summary:	Linux kernel module for VirtualBox
 Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
-Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 Requires:	dev >= 2.9.0-7
-%if %{with dist_kernel}
-%requires_releq_kernel_up
-Requires(postun):	%releq_kernel_up
-%endif
-Provides:	kernel(vboxvfs) = %{version}-%{rel}
+%{?with_dist_kernel:Requires:	kernel%{_alt_kernel}(vermagic) = %{_kernel_ver}}
 
 %description -n kernel%{_alt_kernel}-misc-vboxvfs
 Linux kernel module vboxvfs for VirtualBox.
@@ -210,15 +192,10 @@ Moduł jądra Linuksa vboxvfs dla VirtualBoksa.
 %package -n kernel%{_alt_kernel}-smp-misc-vboxadd
 Summary:	Linux SMP kernel module for VirtualBox
 Summary(pl.UTF-8):	Moduł jądra Linuksa SMP dla VirtualBoksa
-Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 Requires:	dev >= 2.9.0-7
-%if %{with dist_kernel}
-%requires_releq_kernel_smp
-Requires(postun):	%releq_kernel_smp
-%endif
-Provides:	kernel(vboxadd) = %{version}-%{rel}
+%{?with_dist_kernel:Requires:	kernel%{_alt_kernel}-smp(vermagic) = %{_kernel_ver}}
 
 %description -n kernel%{_alt_kernel}-smp-misc-vboxadd
 Linux SMP kernel module vboxadd for VirtualBox.
@@ -229,15 +206,10 @@ Moduł jądra Linuksa SMP vboxadd dla VirtualBoksa.
 %package -n kernel%{_alt_kernel}-smp-misc-vboxdrv
 Summary:	Linux SMP kernel module for VirtualBox
 Summary(pl.UTF-8):	Moduł jądra Linuksa SMP dla VirtualBoksa
-Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 Requires:	dev >= 2.9.0-7
-%if %{with dist_kernel}
-%requires_releq_kernel_smp
-Requires(postun):	%releq_kernel_smp
-%endif
-Provides:	kernel(vboxdrv) = %{version}-%{rel}
+%{?with_dist_kernel:Requires:	kernel%{_alt_kernel}-smp(vermagic) = %{_kernel_ver}}
 
 %description -n kernel%{_alt_kernel}-smp-misc-vboxdrv
 Linux SMP kernel module vboxdrv for VirtualBox.
@@ -248,15 +220,10 @@ Moduł jądra Linuksa SMP vboxdrv dla VirtualBoksa.
 %package -n kernel%{_alt_kernel}-smp-misc-vboxvfs
 Summary:	Linux SMP kernel module for VirtualBox
 Summary(pl.UTF-8):	Moduł jądra Linuksa SMP dla VirtualBoksa
-Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 Requires:	dev >= 2.9.0-7
-%if %{with dist_kernel}
-%requires_releq_kernel_smp
-Requires(postun):	%releq_kernel_smp
-%endif
-Provides:	kernel(vboxvfs) = %{version}-%{rel}
+%{?with_dist_kernel:Requires:	kernel%{_alt_kernel}-smp(vermagic) = %{_kernel_ver}}
 
 %description -n kernel%{_alt_kernel}-smp-misc-vboxvfs
 Linux SMP kernel module vboxvfs for VirtualBox.
@@ -267,7 +234,6 @@ Moduł jądra Linuksa SMP vboxvfs dla VirtualBoksa.
 %package -n X11-driver-input-vboxmouse
 Summary:	X.org mouse driver for VirtualBox guest OS
 Summary(pl.UTF-8):	Sterownik myszy dla systemu gościa w VirtualBoksie
-Release:	%{rel}
 Group:		X11/Applications
 Requires:	X11-Xserver >= 1:6.9.0
 
@@ -280,7 +246,6 @@ Sterownik myszy dla systemu gościa w VirtualBoksie.
 %package -n X11-driver-video-vboxvideo
 Summary:	X.org video driver for VirtualBox guest OS
 Summary(pl.UTF-8):	Sterownik grafiki dla systemu gościa w VirtualBoksie
-Release:	%{rel}
 Group:		X11/Applications
 Requires:	X11-Xserver >= 1:6.9.0
 
