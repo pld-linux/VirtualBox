@@ -45,6 +45,7 @@ Patch2:		%{pname}-shared-libstdc++.patch
 Patch3:		%{pname}-disable-xclient-build.patch
 Patch4:		%{pname}-configure-spaces.patch
 URL:		http://www.virtualbox.org/
+%if %{with userspace}
 BuildRequires:	SDL-devel
 BuildRequires:	alsa-lib-devel
 BuildRequires:	bash
@@ -52,7 +53,9 @@ BuildRequires:	bcc
 BuildRequires:	bin86
 BuildRequires:	gcc >= 5:3.2.3
 BuildRequires:	iasl
-%{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.7}
+%endif
+%{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.20}
+%if %{with userspace}
 BuildRequires:	libIDL-devel
 BuildRequires:	libuuid-devel
 BuildRequires:	libxslt-progs
@@ -60,7 +63,9 @@ BuildRequires:	pkgconfig
 BuildRequires:	pulseaudio-devel
 BuildRequires:	qt-devel >= 6:3.3.6
 BuildRequires:	qt-linguist
-BuildRequires:	rpmbuild(macros) >= 1.329
+%endif
+BuildRequires:	rpmbuild(macros) >= 1.379
+%if %{with userspace}
 BuildRequires:	which
 BuildRequires:	xalan-c-devel >= 1.10.0
 BuildRequires:	xerces-c-devel >= 2.6.0
@@ -70,6 +75,7 @@ BuildRequires:	zlib-devel >= 1.2.1
 BuildRequires:	gcc-multilib
 BuildRequires:	libstdc++-multilib-devel
 # TODO: How to add glibc-devel.i686 here ?
+%endif
 %endif
 Requires(post,preun):	/sbin/chkconfig
 Requires(postun):	/usr/sbin/groupdel
@@ -243,45 +249,24 @@ EOF
 
 install %{SOURCE1} .
 
-# XXX: why this copying is needed? it writes there?
-install -d kernel
-cp -a %{_kernelsrcdir}/include kernel
-%ifarch %{x8664} %{ix86}
-if [ -d kernel/include/asm-x86 ]; then
-	ln -sf asm-x86 kernel/include/asm
-else
-%ifarch %{x8664}
-	ln -sf asm-x86_64 kernel/include/asm
-%else
-	ln -sf asm-i386 kernel/include/asm
-%endif
-fi
-%endif
-
-%if %{with dist_kernel}
-ln -sf autoconf-dist.h kernel/include/linux/autoconf.h
-%else
-ln -sf autoconf-nondist.h kernel/include/linux/autoconf.h
-%endif
+rm -rf PLD-MODULE-BUILD && mkdir PLD-MODULE-BUILD && cd PLD-MODULE-BUILD
+../src/VBox/Additions/linux/export_modules modules.tar.gz
+	tar -zxf modules.tar.gz && rm -f modules.tar.gz
+../src/VBox/HostDrivers/Support/linux/export_modules modules.tar.gz && \
+	tar -zxf modules.tar.gz && rm -f modules.tar.gz
 
 %build
+%if %{with userspace}
 ./configure \
 	--with-gcc="%{__cc}" \
 	--with-g++="%{__cxx}" \
 	--with-linux="%{_builddir}/%{buildsubdir}/kernel"
 
-%if %{with userspace}
 . ./env.sh && kmk -j1
 %endif
 
 %if %{with kernel}
-rm -rf PLD-MODULE-BUILD && mkdir PLD-MODULE-BUILD && cd PLD-MODULE-BUILD
-
-../src/VBox/HostDrivers/Support/linux/export_modules modules.tar.gz && \
-	tar -zxf modules.tar.gz && rm -f modules.tar.gz
-../src/VBox/Additions/linux/export_modules modules.tar.gz
-	tar -zxf modules.tar.gz && rm -f modules.tar.gz
-
+cd PLD-MODULE-BUILD
 %ifarch %{x8664}
 # HACK, is this really safe on x86_64?
 sed -i -e 's:#.*define.*RTMEMALLOC_EXEC_HEAP::g' vboxadd/r0drv/linux/alloc-r0drv-linux.c vboxvfs/r0drv/linux/alloc-r0drv-linux.c
@@ -290,7 +275,7 @@ sed -i -e 's:#.*define.*RTMEMALLOC_EXEC_HEAP::g' vboxadd/r0drv/linux/alloc-r0drv
 %build_kernel_modules -m vboxadd -C vboxadd
 %build_kernel_modules -m vboxdrv -C vboxdrv
 cp -a vboxadd/Module.symvers vboxvfs
-%build_kernel_modules -m vboxvfs -C vboxvfs
+%build_kernel_modules -m vboxvfs -C vboxvfs -c
 cd ..
 %endif
 
@@ -347,15 +332,9 @@ install udev.conf $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
 %endif
 
 %if %{with kernel}
-cd PLD-MODULE-BUILD
-for MODULE in *; do
-	[ ! -d $MODULE ] && continue;
-
-	cd $MODULE
-	%install_kernel_modules -m $MODULE -d misc
-	cd ..
-done
-cd ..
+%install_kernel_modules -m PLD-MODULE-BUILD/vboxadd/vboxadd -d misc
+%install_kernel_modules -m PLD-MODULE-BUILD/vboxdrv/vboxdrv -d misc
+%install_kernel_modules -m PLD-MODULE-BUILD/vboxvfs/vboxvfs -d misc
 %endif
 
 %clean
