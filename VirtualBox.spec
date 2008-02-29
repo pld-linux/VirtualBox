@@ -140,7 +140,7 @@ konfigurację maszyny wirtualnej na inny komputer.
 %package udev
 Summary:	udev rules for VirtualBox kernel modules
 Summary(pl.UTF-8):	Reguły udev dla modułów jądra Linuksa dla VirtualBoksa
-Release:	%{rel}@%{_kernel_ver_str}
+Release:	%{rel}
 Group:		Base/Kernel
 Requires:	udev
 
