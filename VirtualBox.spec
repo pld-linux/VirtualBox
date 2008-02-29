@@ -309,9 +309,7 @@ rm -rf $RPM_BUILD_ROOT
 install -d \
 	$RPM_BUILD_ROOT{%{_bindir},%{_pixmapsdir},%{_desktopdir}} \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox \
-	$RPM_BUILD_ROOT/etc/rc.d/init.d \
-	$RPM_BUILD_ROOT%{_prefix}/X11R6/modules/drivers \
-	$RPM_BUILD_ROOT%{_prefix}/X11R6/modules/input
+	$RPM_BUILD_ROOT/etc/rc.d/init.d
 
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/virtualbox
 
@@ -341,11 +339,13 @@ cp -a out/linux.%{outdir}/release/bin/nls/* $RPM_BUILD_ROOT%{_libdir}/VirtualBox
 install out/linux.%{outdir}/release/bin/additions/mountvboxsf		\
 	$RPM_BUILD_ROOT%{_bindir}
 
+%ifnarch %{x8664}
+install -d $RPM_BUILD_ROOT%{_x_libraries}/modules/{drivers,input}
 install out/linux.%{outdir}/release/bin/additions/vboxmouse_drv_70.so	\
-	$RPM_BUILD_ROOT%{_prefix}/X11R6/modules/input/vboxmouse_drv.so
-
+	$RPM_BUILD_ROOT%{_x_libraries}/modules/input/vboxmouse_drv.so
 install out/linux.%{outdir}/release/bin/additions/vboxvideo_drv_70.so	\
-	$RPM_BUILD_ROOT%{_prefix}/X11R6/modules/drivers/vboxvideo_drv.so
+	$RPM_BUILD_ROOT%{_x_libraries}/modules/drivers/vboxvideo_drv.so
+%endif
 
 install out/linux.%{outdir}/release/bin/VBox.png $RPM_BUILD_ROOT%{_pixmapsdir}/VBox.png
 install %{SOURCE4} $RPM_BUILD_ROOT%{_desktopdir}/%{pname}.desktop
@@ -471,11 +471,11 @@ fi
 %ifnarch %{x8664}
 %files -n X11-driver-input-vboxmouse
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_prefix}/X11R6/modules/input/vboxmouse_drv.so
+%attr(755,root,root) %{_x_libraries}/modules/input/vboxmouse_drv.so
 
 %files -n X11-driver-video-vboxvideo
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_prefix}/X11R6/modules/drivers/vboxvideo_drv.so
+%attr(755,root,root) %{_x_libraries}/modules/drivers/vboxvideo_drv.so
 %endif
 %endif
 
