@@ -1,10 +1,8 @@
 #
 # TODO:
-# - separate udev stuff from kernel package
 # - Find how to compile with PLD CFLAGS/CXXFLAGS/LDFLAGS.
 # - Package SDK.
 # - Package utils (and write initscripts ?) for Guest OS.
-# - Add udev rule.
 # - Check License of VBoxGuestAdditions_*.iso, it's propably not GPL v2.
 #   If so check if it is distributable.
 #
@@ -15,33 +13,41 @@
 %bcond_without	smp		# without SMP kernel modules
 %bcond_without	userspace	# don't build userspace package
 
-%define		rel		2
+%define		rel		1
 
 %if %{without kernel}
 %undefine	with_dist_kernel
 %endif
 
+%if "%{_alt_kernel}" != "%{nil}"
+%undefine	with_userspace
+%endif
+
+%define		pname	VirtualBox
+
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
-Name:		VirtualBox
-Version:	1.5.4
+Name:		%{pname}%{_alt_kernel}
+Version:	1.5.6
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/Emulators
-Source0:	http://www.virtualbox.org/download/%{version}/%{name}-%{version}_OSE.tar.bz2
-# Source0-md5:	fbebb3f04911c4c39aac27b1d3532acc
+Source0:	http://www.virtualbox.org/download/%{version}/%{pname}-%{version}-1_OSE.tar.bz2
+# Source0-md5:	305c65f9e91b6137cb773d578de09922
 Source1:	http://www.virtualbox.org/download/%{version}/UserManual.pdf
-# Source1-md5:	f56f0d904013cbc0940108ed042e539d
+# Source1-md5:	9ba7f17584fb3e9c98e026a1501cf7c0
 Source2:	http://www.virtualbox.org/download/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source2-md5:	e021a51fc5946659b0789d134b1fd5ff
-Source3:	%{name}.init
-Source4:	%{name}.desktop
-Source5:	%{name}.sh
-Patch0:		%{name}-configure.patch
-Patch1:		%{name}-qt-paths.patch
-Patch2:		%{name}-shared-libstdc++.patch
-Patch3:		%{name}-disable-xclient-build.patch
+# Source2-md5:	9d74dea92bd225ad59faee9fd427a55e
+Source3:	%{pname}.init
+Source4:	%{pname}.desktop
+Source5:	%{pname}.sh
+Patch0:		%{pname}-configure.patch
+Patch1:		%{pname}-qt-paths.patch
+Patch2:		%{pname}-shared-libstdc++.patch
+Patch3:		%{pname}-disable-xclient-build.patch
+Patch4:		%{pname}-configure-spaces.patch
 URL:		http://www.virtualbox.org/
+%if %{with userspace}
 BuildRequires:	SDL-devel
 BuildRequires:	XFree86-devel
 BuildRequires:	alsa-lib-devel
@@ -50,7 +56,9 @@ BuildRequires:	bcc
 BuildRequires:	bin86
 BuildRequires:	gcc >= 5:3.2.3
 BuildRequires:	iasl
-%{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.7}
+%endif
+%{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.20}
+%if %{with userspace}
 BuildRequires:	libIDL-devel
 BuildRequires:	libuuid-devel
 BuildRequires:	libxslt-progs
@@ -58,7 +66,9 @@ BuildRequires:	pkgconfig
 BuildRequires:	pulseaudio-devel
 BuildRequires:	qt-devel >= 6:3.3.6
 BuildRequires:	qt-linguist
-BuildRequires:	rpmbuild(macros) >= 1.329
+%endif
+BuildRequires:	rpmbuild(macros) >= 1.379
+%if %{with userspace}
 BuildRequires:	which
 BuildRequires:	xalan-c-devel >= 1.10.0
 BuildRequires:	xerces-c-devel >= 2.6.0
@@ -68,6 +78,8 @@ BuildRequires:	gcc-multilib
 BuildRequires:	libstdc++-multilib-devel
 # TODO: How to add glibc-devel.i686 here ?
 %endif
+%endif
+Requires(post,preun):	/sbin/chkconfig
 Requires(postun):	/usr/sbin/groupdel
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
@@ -124,6 +136,19 @@ Opisy maszyn wirtualnych w XML-u: konfiguracje poszczególnych maszyn
 wirtualnych są w całości przechowywane w XML-u i są niezależne od
 lokalnej maszyny. Dzięki temu można szybko i łatwo przenieść
 konfigurację maszyny wirtualnej na inny komputer.
+
+%package udev
+Summary:	udev rules for VirtualBox kernel modules
+Summary(pl.UTF-8):	Reguły udev dla modułów jądra Linuksa dla VirtualBoksa
+Release:	%{rel}@%{_kernel_ver_str}
+Group:		Base/Kernel
+Requires:	udev
+
+%description udev
+udev rules for VirtualBox kernel modules
+
+%description udev -l pl.UTF-8
+Reguły udev dla modułów jądra Linuksa dla VirtualBoksa
 
 %package -n kernel%{_alt_kernel}-misc-vboxadd
 Summary:	Linux kernel module for VirtualBox
@@ -266,7 +291,7 @@ X.org video driver for VirtualBox guest OS.
 Sterownik grafiki dla systemu gościa w VirtualBoksie.
 
 %prep
-%setup -q -n %{name}-%{version}_OSE
+%setup -q -n %{pname}-%{version}_OSE
 %patch0 -p0
 %patch1 -p0
 %patch2 -p1
@@ -275,48 +300,40 @@ Sterownik grafiki dla systemu gościa w VirtualBoksie.
 %patch3 -p1
 %endif
 
+%patch4 -p1
+
 cat <<'EOF' > udev.conf
 KERNEL=="vboxdrv", NAME="%k", GROUP="vbox", MODE="0660"
 EOF
 
 install %{SOURCE1} .
 
+rm -rf PLD-MODULE-BUILD && mkdir PLD-MODULE-BUILD && cd PLD-MODULE-BUILD
+../src/VBox/Additions/linux/export_modules modules.tar.gz
+	tar -zxf modules.tar.gz && rm -f modules.tar.gz
+../src/VBox/HostDrivers/Support/linux/export_modules modules.tar.gz && \
+	tar -zxf modules.tar.gz && rm -f modules.tar.gz
+
 %build
-KDIR="%{_builddir}/%{buildsubdir}/kernel"
-mkdir -p $KDIR
-cp -Ra %{_kernelsrcdir}/include $KDIR
-%ifarch %{x8664}
-ln -sf $KDIR/include/asm-x86_64 $KDIR/include/asm
-%else
-ln -sf $KDIR/include/asm-i386 $KDIR/include/asm
-%endif
-
-%if %{with dist_kernel}
-ln -sf $KDIR/include/linux/autoconf-up.h $KDIR/include/linux/autoconf.h
-%else
-ln -sf $KDIR/include/linux/autoconf-nondist.h $KDIR/include/linux/autoconf.h
-%endif
-
+%if %{with userspace}
 ./configure \
 	--with-gcc="%{__cc}" \
 	--with-g++="%{__cxx}" \
-	--with-linux="$KDIR"
+	--with-linux="%{_builddir}/%{buildsubdir}/kernel"
 
-%if %{with userspace}
 . ./env.sh && kmk -j1
 %endif
 
 %if %{with kernel}
-rm -rf PLD-MODULE-BUILD && mkdir PLD-MODULE-BUILD && cd PLD-MODULE-BUILD
-
-../src/VBox/HostDrivers/Support/linux/export_modules modules.tar.gz && \
-	tar -zxf modules.tar.gz && rm -f modules.tar.gz
-../src/VBox/Additions/linux/export_modules modules.tar.gz
-	tar -zxf modules.tar.gz && rm -f modules.tar.gz
-
+cd PLD-MODULE-BUILD
+%ifarch %{x8664}
+# HACK, is this really safe on x86_64?
+sed -i -e 's:#.*define.*RTMEMALLOC_EXEC_HEAP::g' vboxadd/r0drv/linux/alloc-r0drv-linux.c vboxvfs/r0drv/linux/alloc-r0drv-linux.c
+%endif
 %build_kernel_modules -m vboxadd -C vboxadd
 %build_kernel_modules -m vboxdrv -C vboxdrv
-%build_kernel_modules -m vboxvfs -C vboxvfs
+cp -a vboxadd/Module.symvers vboxvfs
+%build_kernel_modules -m vboxvfs -C vboxvfs -c
 cd ..
 %endif
 
@@ -338,6 +355,11 @@ for f in {VBox{BFE,Manage,SDL,SVC,XPCOMIPCD},VirtualBox,vditool}; do
 	install out/linux.%{outdir}/release/bin/$f $RPM_BUILD_ROOT%{_libdir}/VirtualBox/$f
 	ln -s %{_libdir}/VirtualBox/VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_bindir}/$f
 done
+
+%ifarch %{x8664}
+install out/linux.%{outdir}/release/bin/VBox*.rel \
+        $RPM_BUILD_ROOT%{_libdir}/VirtualBox
+%endif
 
 install out/linux.%{outdir}/release/bin/VBox*.so \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
@@ -361,22 +383,16 @@ install out/linux.%{outdir}/release/bin/additions/vboxvideo_drv_70.so	\
 	$RPM_BUILD_ROOT%{_prefix}/X11R6/modules/drivers/vboxvideo_drv.so
 
 install out/linux.%{outdir}/release/bin/VBox.png $RPM_BUILD_ROOT%{_pixmapsdir}/VBox.png
-install %{SOURCE4} $RPM_BUILD_ROOT%{_desktopdir}/%{name}.desktop
+install %{SOURCE4} $RPM_BUILD_ROOT%{_desktopdir}/%{pname}.desktop
 %endif
 
-%if %{with kernel}
 install -d $RPM_BUILD_ROOT/etc/udev/rules.d
 install udev.conf $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
 
-cd PLD-MODULE-BUILD
-for MODULE in *; do
-	[ ! -d $MODULE ] && continue;
-
-	cd $MODULE
-	%install_kernel_modules -m $MODULE -d misc
-	cd ..
-done
-cd ..
+%if %{with kernel}
+%install_kernel_modules -m PLD-MODULE-BUILD/vboxadd/vboxadd -d misc
+%install_kernel_modules -m PLD-MODULE-BUILD/vboxdrv/vboxdrv -d misc
+%install_kernel_modules -m PLD-MODULE-BUILD/vboxvfs/vboxvfs -d misc
 %endif
 
 %clean
@@ -384,6 +400,16 @@ rm -rf $RPM_BUILD_ROOT
 
 %pre
 %groupadd -g 221 -r -f vbox
+
+%post
+/sbin/chkconfig --add virtualbox
+%service virtualbox restart "VirtualBox"
+
+%preun
+if [ "$1" = "0" ]; then
+	%service virtualbox stop
+	/sbin/chkconfig --del virtualbox
+fi
 
 %postun
 if [ "$1" = "0" ]; then
@@ -434,6 +460,9 @@ fi
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxSDL
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxXPCOMIPCD
 %attr(755,root,root) %{_libdir}/VirtualBox/VBox*.so
+%ifarch %{x8664}
+%attr(755,root,root) %{_libdir}/VirtualBox/VBox*.rel
+%endif
 %attr(755,root,root) %{_libdir}/VirtualBox/VirtualBox
 %attr(755,root,root) %{_libdir}/VirtualBox/VirtualBox-wrapper.sh
 %{_libdir}/VirtualBox/*.gc
@@ -442,6 +471,7 @@ fi
 %{_libdir}/VirtualBox/additions/*
 %{_libdir}/VirtualBox/components/*
 %lang(ar) %{_libdir}/VirtualBox/nls/*_ar.qm
+%lang(ca) %{_libdir}/VirtualBox/nls/*_ca.qm
 %lang(cs) %{_libdir}/VirtualBox/nls/*_cs.qm
 %lang(de) %{_libdir}/VirtualBox/nls/*_de.qm
 %lang(es) %{_libdir}/VirtualBox/nls/*_es.qm
@@ -449,20 +479,28 @@ fi
 %lang(fi) %{_libdir}/VirtualBox/nls/*_fi.qm
 %lang(fr) %{_libdir}/VirtualBox/nls/*_fr.qm
 %lang(hu) %{_libdir}/VirtualBox/nls/*_hu.qm
+%lang(id) %{_libdir}/VirtualBox/nls/*_id.qm
 %lang(it) %{_libdir}/VirtualBox/nls/*_it.qm
 %lang(ja) %{_libdir}/VirtualBox/nls/*_ja.qm
 %lang(ko) %{_libdir}/VirtualBox/nls/*_ko.qm
+%lang(nl) %{_libdir}/VirtualBox/nls/*_nl.qm
 %lang(pl) %{_libdir}/VirtualBox/nls/*_pl.qm
 %lang(pt_BR) %{_libdir}/VirtualBox/nls/*_pt_BR.qm
 %lang(pt_PT) %{_libdir}/VirtualBox/nls/*_pt_PT.qm
 %lang(ro) %{_libdir}/VirtualBox/nls/*_ro.qm
 %lang(ru) %{_libdir}/VirtualBox/nls/*_ru.qm
 %lang(sk) %{_libdir}/VirtualBox/nls/*_sk.qm
+%lang(sr) %{_libdir}/VirtualBox/nls/*_sr.qm
 %lang(sv) %{_libdir}/VirtualBox/nls/*_sv.qm
+%lang(tr) %{_libdir}/VirtualBox/nls/*_tr.qm
 %lang(zh_CN) %{_libdir}/VirtualBox/nls/*_zh_CN.qm
 %lang(zh_TW) %{_libdir}/VirtualBox/nls/*_zh_TW.qm
 %{_pixmapsdir}/VBox.png
-%{_desktopdir}/%{name}.desktop
+%{_desktopdir}/%{pname}.desktop
+
+%files udev
+%defattr(644,root,root,755)
+%config(noreplace) %verify(not md5 mtime size) /etc/udev/rules.d/virtualbox.rules
 
 # Drivers are for Guest OS, which is 32-bit.
 %ifnarch %{x8664}
@@ -484,7 +522,6 @@ fi
 
 %files -n kernel%{_alt_kernel}-misc-vboxdrv
 %defattr(644,root,root,755)
-%config(noreplace) %verify(not md5 mtime size) /etc/udev/rules.d/virtualbox.rules
 /lib/modules/%{_kernel_ver}/misc/vboxdrv.ko*
 
 %files -n kernel%{_alt_kernel}-misc-vboxvfs
