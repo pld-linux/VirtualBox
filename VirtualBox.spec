@@ -73,8 +73,8 @@ BuildRequires:	xorg-lib-libXcursor-devel
 BuildRequires:	zlib-devel >= 1.2.1
 %ifarch %{x8664}
 BuildRequires:	gcc-multilib
+BuildRequires:	glibc-devel(i686)
 BuildRequires:	libstdc++-multilib-devel
-# TODO: How to add glibc-devel.i686 here ?
 %endif
 %endif
 Requires(post,preun):	/sbin/chkconfig
