@@ -19,38 +19,43 @@ VBOX_MODULE="vboxdrv"
 [ -f /etc/sysconfig/virtualbox ] && . /etc/sysconfig/virtualbox
 
 start() {
-	modprobe -s $VBOX_MODULE
-	# set proper /dev/vboxdrv for systems with static dev
-	if ! [ -d /dev/.udev/ ]; then
-		show "Setting $VBOX_DEVICE entry"
-		busy
-		rm -f $VBOX_DEVICE
-		VBOX_MAJOR=$(awk '$2 == "vboxdrv" {print $1}' /proc/devices)
-		if [ -n "$VBOX_MAJOR" ]; then
-			VBOX_MINOR=0
-		else
-			VBOX_MINOR=$(awk '$2 == "vboxdrv" {print $1}' /proc/misc)
-			if [ -n "$VBOX_MINOR" ]; then
-				VBOX_MAJOR=$(awk '$2 == "misc" {print $1}' /proc/devices)
+	if [ ! -f /var/lock/subsys/virtualbox ]; then
+		modprobe -s $VBOX_MODULE
+		# set proper /dev/vboxdrv for systems with static dev
+		if ! [ -d /dev/.udev/ ]; then
+			show "Setting $VBOX_DEVICE entry"
+			busy
+			rm -f $VBOX_DEVICE
+			VBOX_MAJOR=$(awk '$2 == "vboxdrv" {print $1}' /proc/devices)
+			if [ -n "$VBOX_MAJOR" ]; then
+				VBOX_MINOR=0
+			else
+				VBOX_MINOR=$(awk '$2 == "vboxdrv" {print $1}' /proc/misc)
+				if [ -n "$VBOX_MINOR" ]; then
+					VBOX_MAJOR=$(awk '$2 == "misc" {print $1}' /proc/devices)
+				fi
+			fi
+			if [ -z "$VBOX_MAJOR" ]; then
+				/sbin/rmmod $VBOX_MODULE
+				fail
+			elif ! mknod -m 0660 $VBOX_DEVICE c $VBOX_MAJOR $VBOX_MINOR; then
+				rmmod $VBOX_MODNAME
+				fail
+			elif ! chown root:vbox $VBOX_DEVICE; then
+				fail
+			else
+				ok
 			fi
 		fi
-		if [ -z "$VBOX_MAJOR" ]; then
-			/sbin/rmmod $VBOX_MODULE
-			fail
-		elif ! mknod -m 0660 $VBOX_DEVICE c $VBOX_MAJOR $VBOX_MINOR; then
-			rmmod $VBOX_MODNAME
-			fail
-		elif ! chown root:vbox $VBOX_DEVICE; then
-			fail
-		else
-			ok
-		fi
+
+		touch /var/lock/subsys/virtualbox
 	fi
 }
 
 stop() {
 	# NOTE: rmmod will wait if device is in use, so automatic rmmod probably not the best idea
 	/sbin/rmmod $VBOX_MODULE
+	rm -f /var/lock/subsys/virtualbox
 }
 
 RETVAL=0
