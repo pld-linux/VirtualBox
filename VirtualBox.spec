@@ -105,9 +105,9 @@ well-defined internal programming interfaces and a client/server
 design. This makes it easy to control it from several interfaces at
 once: for example, you can start a virtual machine in a typical
 virtual machine GUI and then control that machine from the command
-line. VirtualBox OSE also comes with a full Software Development Kit: even
-though it is Open Source Software, you don't have to hack the source
-to write a new interface for VirtualBox OSE.
+line. VirtualBox OSE also comes with a full Software Development Kit:
+even though it is Open Source Software, you don't have to hack the
+source to write a new interface for VirtualBox OSE.
 
 Virtual machine descriptions in XML: the configuration settings of
 virtual machines are stored entirely in XML and are independent of the
@@ -127,8 +127,9 @@ dobrze zaprojektowanym wewnętrznym interfejsem programowym typu
 klient/serwer. Dzięki temu można łatwo kontrolować go za pomocą
 różnych interfejsów. Można na przykład uruchomić maszynę wirtualną z
 poziomu interfejsu graficznego, a później kontrolować ją z linii
-poleceń. VirtualBox OSE dostarcza również pełny pakiet deweloperski, co
-pozwala stworzyć dowolny inny interfejs zarządzania maszyną wirtualną.
+poleceń. VirtualBox OSE dostarcza również pełny pakiet deweloperski,
+co pozwala stworzyć dowolny inny interfejs zarządzania maszyną
+wirtualną.
 
 Opisy maszyn wirtualnych w XML-u: konfiguracje poszczególnych maszyn
 wirtualnych są w całości przechowywane w XML-u i są niezależne od
@@ -143,10 +144,10 @@ Group:		Base/Kernel
 Requires:	udev
 
 %description udev
-udev rules for VirtualBox OSE kernel modules
+udev rules for VirtualBox OSE kernel modules.
 
 %description udev -l pl.UTF-8
-Reguły udev dla modułów jądra Linuksa dla VirtualBoksa
+Reguły udev dla modułów jądra Linuksa dla VirtualBoksa.
 
 %package -n kernel%{_alt_kernel}-misc-vboxadd
 Summary:	Linux kernel module for VirtualBox OSE
