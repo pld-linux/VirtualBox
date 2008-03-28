@@ -167,9 +167,9 @@ if [ -z "$OFFSET" ]; then
 fi
 
 if [ -z "$MOUNTOPTIONS" ]; then
-	MOUNTOPTIONS="offset=$OFFSET"
+	MOUNTOPTIONS="loop,offset=$OFFSET"
 else
-	MOUNTOPTIONS="$MOUNTOPTIONS,offset=$OFFSET"
+	MOUNTOPTIONS="$MOUNTOPTIONS,loop,offset=$OFFSET"
 fi
 
 # $MOUNTPOINT might not exist as mount can try to read it from /etc/fstab
