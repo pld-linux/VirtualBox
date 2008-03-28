@@ -27,13 +27,15 @@ export PATH=/bin:/sbin:/usr/bin:/usr/sbin
 # Commands
 LOSETUP=/sbin/losetup
 MOUNT=/bin/mount
+SFDISK=/sbin/sfdisk
+SED=/bin/sed
 
 PROGRAM=${0##*/}
 MOUNTARGS=
 OPTIONS=
 FSTYPE=
 
-USAGE="VDI image mountpoint [-o options,...]
+USAGE="<VDI image> <mountpoint> [-o options,...]
 
 Options:
       partition=<number>              Specify partition to mount
@@ -133,13 +135,13 @@ fi
 dskoff=8704
 
 # find free loop device. XXX race possible
-imgdev=$(losetup -f)
-losetup $imgdev -o $dskoff "$DEVICE"
+imgdev=$($LOSETUP -f)
+$LOSETUP $imgdev -o $dskoff "$DEVICE"
 # http://vserver.13thfloor.at/Stuff/QEMU/hdloop.sh
-sfd=$(/sbin/sfdisk -dump $imgdev 2>/dev/null | sed -n ' 
+sfd=$($SFDISK -dump $imgdev 2>/dev/null | $SED -n '
 	/:/ s/[a-zA-Z]*=\ *\([0-9a-f]*\)\(,\|$\)/\1/g;
 	T;  s/^.*:\ //; p' | tr ' ' '.')
-losetup -d $imgdev
+$LOSETUP -d $imgdev
 
 getoffset() {
 	pstart=$1
@@ -171,7 +173,7 @@ else
 fi
 
 # $MOUNTPOINT might not exist as mount can try to read it from /etc/fstab
-"$MOUNT" $MOUNTARGS ${FSTYPE:+-t "$FSTYPE"} ${MOUNTOPTIONS:+-o "$MOUNTOPTIONS"} "$DEVICE" "$MOUNTPOINT"
+$MOUNT $MOUNTARGS ${FSTYPE:+-t "$FSTYPE"} ${MOUNTOPTIONS:+-o "$MOUNTOPTIONS"} "$DEVICE" "$MOUNTPOINT"
 if [ $? -ne 0 ]; then
     echo >&2 "$PROGRAM: error mounting $DEVICE"
 fi
