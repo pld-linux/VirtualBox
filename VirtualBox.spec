@@ -9,9 +9,9 @@
 # Conditional build:
 %bcond_without	dist_kernel	# without distribution kernel
 %bcond_without	kernel		# don't build kernel module
-%bcond_without	up		# without up packages
-%bcond_without	smp		# without SMP kernel modules
 %bcond_without	userspace	# don't build userspace package
+
+%define		rel		3
 
 %if %{without kernel}
 %undefine	with_dist_kernel
@@ -27,7 +27,7 @@ Summary:	VirtualBox OSE - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox OSE - wirtualizator sprzętu x86
 Name:		%{pname}%{_alt_kernel}
 Version:	1.5.6
-Release:	2
+Release:	%{rel}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://www.virtualbox.org/download/%{version}/%{pname}-%{version}-1_OSE.tar.bz2
@@ -139,6 +139,7 @@ konfigurację maszyny wirtualnej na inny komputer.
 %package udev
 Summary:	udev rules for VirtualBox OSE kernel modules
 Summary(pl.UTF-8):	Reguły udev dla modułów jądra Linuksa dla VirtualBoksa
+Release:	%{rel}
 Group:		Base/Kernel
 Requires:	udev
 
@@ -151,6 +152,7 @@ Reguły udev dla modułów jądra Linuksa dla VirtualBoksa.
 %package -n kernel%{_alt_kernel}-misc-vboxadd
 Summary:	Linux kernel module for VirtualBox OSE
 Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
+Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 Requires:	dev >= 2.9.0-7
@@ -165,6 +167,7 @@ Moduł jądra Linuksa vboxadd dla VirtualBoksa.
 %package -n kernel%{_alt_kernel}-misc-vboxdrv
 Summary:	Linux kernel module for VirtualBox OSE
 Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
+Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 Requires:	dev >= 2.9.0-7
@@ -179,6 +182,7 @@ Moduł jądra Linuksa vboxdrv dla VirtualBoksa.
 %package -n kernel%{_alt_kernel}-misc-vboxvfs
 Summary:	Linux kernel module for VirtualBox OSE
 Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
+Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 Requires:	dev >= 2.9.0-7
@@ -190,51 +194,10 @@ Linux kernel module vboxvfs for VirtualBox OSE.
 %description -n kernel%{_alt_kernel}-misc-vboxvfs -l pl.UTF-8
 Moduł jądra Linuksa vboxvfs dla VirtualBoksa.
 
-%package -n kernel%{_alt_kernel}-smp-misc-vboxadd
-Summary:	Linux SMP kernel module for VirtualBox OSE
-Summary(pl.UTF-8):	Moduł jądra Linuksa SMP dla VirtualBoksa
-Group:		Base/Kernel
-Requires(post,postun):	/sbin/depmod
-Requires:	dev >= 2.9.0-7
-%{?with_dist_kernel:Requires:	kernel%{_alt_kernel}-smp(vermagic) = %{_kernel_ver}}
-
-%description -n kernel%{_alt_kernel}-smp-misc-vboxadd
-Linux SMP kernel module vboxadd for VirtualBox OSE.
-
-%description -n kernel%{_alt_kernel}-smp-misc-vboxadd -l pl.UTF-8
-Moduł jądra Linuksa SMP vboxadd dla VirtualBoksa.
-
-%package -n kernel%{_alt_kernel}-smp-misc-vboxdrv
-Summary:	Linux SMP kernel module for VirtualBox OSE
-Summary(pl.UTF-8):	Moduł jądra Linuksa SMP dla VirtualBoksa
-Group:		Base/Kernel
-Requires(post,postun):	/sbin/depmod
-Requires:	dev >= 2.9.0-7
-%{?with_dist_kernel:Requires:	kernel%{_alt_kernel}-smp(vermagic) = %{_kernel_ver}}
-
-%description -n kernel%{_alt_kernel}-smp-misc-vboxdrv
-Linux SMP kernel module vboxdrv for VirtualBox OSE.
-
-%description -n kernel%{_alt_kernel}-smp-misc-vboxdrv -l pl.UTF-8
-Moduł jądra Linuksa SMP vboxdrv dla VirtualBoksa.
-
-%package -n kernel%{_alt_kernel}-smp-misc-vboxvfs
-Summary:	Linux SMP kernel module for VirtualBox OSE
-Summary(pl.UTF-8):	Moduł jądra Linuksa SMP dla VirtualBoksa
-Group:		Base/Kernel
-Requires(post,postun):	/sbin/depmod
-Requires:	dev >= 2.9.0-7
-%{?with_dist_kernel:Requires:	kernel%{_alt_kernel}-smp(vermagic) = %{_kernel_ver}}
-
-%description -n kernel%{_alt_kernel}-smp-misc-vboxvfs
-Linux SMP kernel module vboxvfs for VirtualBox OSE.
-
-%description -n kernel%{_alt_kernel}-smp-misc-vboxvfs -l pl.UTF-8
-Moduł jądra Linuksa SMP vboxvfs dla VirtualBoksa.
-
 %package -n X11-driver-input-vboxmouse
 Summary:	X.org mouse driver for VirtualBox OSE guest OS
 Summary(pl.UTF-8):	Sterownik myszy dla systemu gościa w VirtualBoksie
+Release:	%{rel}
 Group:		X11/Applications
 Requires:	X11-Xserver >= 1:6.9.0
 
@@ -247,6 +210,7 @@ Sterownik myszy dla systemu gościa w VirtualBoksie.
 %package -n X11-driver-video-vboxvideo
 Summary:	X.org video driver for VirtualBox OSE guest OS
 Summary(pl.UTF-8):	Sterownik grafiki dla systemu gościa w VirtualBoksie
+Release:	%{rel}
 Group:		X11/Applications
 Requires:	X11-Xserver >= 1:6.9.0
 
@@ -299,7 +263,8 @@ sed -i -e '/#.*define.*RTMEMALLOC_EXEC_HEAP/d' vboxadd/r0drv/linux/alloc-r0drv-l
 cd PLD-MODULE-BUILD
 %build_kernel_modules -m vboxadd -C vboxadd
 %build_kernel_modules -m vboxdrv -C vboxdrv
-%build_kernel_modules -m vboxvfs -C vboxvfs
+cp -a vboxadd/Module.symvers vboxvfs
+%build_kernel_modules -m vboxvfs -C vboxvfs -c
 cd ..
 %endif
 
@@ -400,12 +365,6 @@ fi
 %postun	-n kernel%{_alt_kernel}-misc-vboxvfs
 %depmod %{_kernel_ver}
 
-%post	-n kernel%{_alt_kernel}-smp-misc-vboxdrv
-%depmod %{_kernel_ver}smp
-
-%postun	-n kernel%{_alt_kernel}-smp-misc-vboxdrv
-%depmod %{_kernel_ver}smp
-
 %if %{with userspace}
 %files
 %defattr(644,root,root,755)
@@ -481,7 +440,6 @@ fi
 %endif
 
 %if %{with kernel}
-%if %{with up} || %{without dist_kernel}
 %files -n kernel%{_alt_kernel}-misc-vboxadd
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}/misc/vboxadd.ko*
@@ -493,19 +451,4 @@ fi
 %files -n kernel%{_alt_kernel}-misc-vboxvfs
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}/misc/vboxvfs.ko*
-%endif
-
-%if %{with smp} && %{with dist_kernel}
-%files -n kernel%{_alt_kernel}-smp-misc-vboxadd
-%defattr(644,root,root,755)
-/lib/modules/%{_kernel_ver}smp/misc/vboxadd.ko*
-
-%files -n kernel%{_alt_kernel}-smp-misc-vboxdrv
-%defattr(644,root,root,755)
-/lib/modules/%{_kernel_ver}smp/misc/vboxdrv.ko*
-
-%files -n kernel%{_alt_kernel}-smp-misc-vboxvfs
-%defattr(644,root,root,755)
-/lib/modules/%{_kernel_ver}smp/misc/vboxvfs.ko*
-%endif
 %endif
