@@ -346,7 +346,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 /sbin/chkconfig --add virtualbox
-%service virtualbox restart "VirtualBox"
+%service virtualbox restart "VirtualBox OSE"
 
 %preun
 if [ "$1" = "0" ]; then
