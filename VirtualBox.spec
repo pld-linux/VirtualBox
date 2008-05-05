@@ -64,6 +64,7 @@ BuildRequires:	libpng >= 1.2.5
 BuildRequires:	libstdc++-static >= 5:3.2.3
 BuildRequires:	libuuid-devel
 BuildRequires:	libxml2-devel >= 2.6.26
+BuildRequires:	libxslt-devel >= 1.1.17
 BuildRequires:	libxslt-progs >= 1.1.17
 BuildRequires:	pkgconfig
 BuildRequires:	pulseaudio-devel >= 0.9.0
