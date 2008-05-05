@@ -58,6 +58,7 @@ BuildRequires:	iasl
 %endif
 %{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.20}
 %if %{with userspace}
+BuildRequires:	Qt3Support-devel
 BuildRequires:	libIDL-devel
 BuildRequires:	libuuid-devel
 BuildRequires:	libxslt-progs
@@ -65,6 +66,7 @@ BuildRequires:	pkgconfig
 BuildRequires:	pulseaudio-devel
 BuildRequires:	qt-devel >= 6:3.3.6
 BuildRequires:	qt-linguist
+BuildRequires:	qt4-build
 %endif
 BuildRequires:	rpmbuild(macros) >= 1.379
 %if %{with userspace}
