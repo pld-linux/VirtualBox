@@ -430,8 +430,8 @@ fi
 %lang(ko) %{_libdir}/VirtualBox/nls/*_ko.qm
 %lang(nl) %{_libdir}/VirtualBox/nls/*_nl.qm
 %lang(pl) %{_libdir}/VirtualBox/nls/*_pl.qm
+%lang(pt) %{_libdir}/VirtualBox/nls/*_pt.qm
 %lang(pt_BR) %{_libdir}/VirtualBox/nls/*_pt_BR.qm
-%lang(pt_PT) %{_libdir}/VirtualBox/nls/*_pt_PT.qm
 %lang(ro) %{_libdir}/VirtualBox/nls/*_ro.qm
 %lang(ru) %{_libdir}/VirtualBox/nls/*_ru.qm
 %lang(sk) %{_libdir}/VirtualBox/nls/*_sk.qm
