@@ -23,3 +23,42 @@
  
  
  ifdef VBOX_X11_SEAMLESS_GUEST
+--- VirtualBox-1.6.0_OSE/configure.orig	2008-05-12 10:07:04.000000000 +0200
++++ VirtualBox-1.6.0_OSE/configure	2008-05-12 10:09:23.000000000 +0200
+@@ -1302,28 +1302,6 @@
+   fi
+ }
+ 
+-
+-#
+-# Check whether static libstdc++ is installed
+-#
+-check_staticlibstdcxx()
+-{
+-  test_header "static stc++ library"
+-  libstdcxx=`$CXX -print-file-name=libstdc++.a`
+-  cat > .tmp_src.cc << EOF
+-#include <string>
+-
+-extern "C" int main(void)
+-{
+-  std::string s = "test";
+-  return 0;
+-}
+-EOF
+-  if test_compile "$libstdcxx" libstdc++ libstdc++; then
+-    log_success "found"
+-  fi
+-}
+-
+ #
+ # Check for Linux sources
+ #
+@@ -1816,7 +1794,6 @@
+ 
+ # Linux-specific
+ if [ "$OS" = "linux" ]; then
+-  check_staticlibstdcxx
+   if [ $WITH_KMODS -eq 1 ]; then
+     check_linux
+   else
