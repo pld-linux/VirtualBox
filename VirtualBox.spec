@@ -61,7 +61,7 @@ BuildRequires:	iasl
 BuildRequires:	Qt3Support-devel
 BuildRequires:	libIDL-devel
 BuildRequires:	libpng >= 1.2.5
-BuildRequires:	libstdc++-static >= 5:3.2.3
+BuildRequires:	libstdc++-devel >= 5:3.2.3
 BuildRequires:	libuuid-devel
 BuildRequires:	libxml2-devel >= 2.6.26
 BuildRequires:	libxslt-devel >= 1.1.17
