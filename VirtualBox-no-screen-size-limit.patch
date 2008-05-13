@@ -1,0 +1,16 @@
+diff -urN VirtualBox-1.6.0_OSE.orig/src/VBox/Frontends/VirtualBox/src/VBoxFrameBuffer.cpp VirtualBox-1.6.0_OSE/src/VBox/Frontends/VirtualBox/src/VBoxFrameBuffer.cpp
+--- VirtualBox-1.6.0_OSE.orig/src/VBox/Frontends/VirtualBox/src/VBoxFrameBuffer.cpp	2008-05-13 13:28:35.000000000 +0200
++++ VirtualBox-1.6.0_OSE/src/VBox/Frontends/VirtualBox/src/VBoxFrameBuffer.cpp	2008-05-13 13:29:45.000000000 +0200
+@@ -204,12 +204,6 @@
+     if (!aSupported)
+         return E_POINTER;
+     *aSupported = TRUE;
+-    QRect screen = mView->getDesktopGeometry();
+-    if (aWidth > (ULONG) screen.width())
+-        *aSupported = FALSE;
+-    if (aHeight > (ULONG) screen.height())
+-        *aSupported = FALSE;
+-    LogFlowThisFunc(("returning aSupported=%d\n", *aSupported));
+     return S_OK;
+ }
+ 
