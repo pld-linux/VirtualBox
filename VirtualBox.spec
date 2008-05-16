@@ -11,7 +11,7 @@
 %bcond_without	kernel		# don't build kernel module
 %bcond_without	userspace	# don't build userspace package
 
-%define		rel		2.1
+%define		rel		3
 
 %if %{without kernel}
 %undefine	with_dist_kernel
