@@ -11,7 +11,7 @@
 %bcond_without	kernel		# don't build kernel module
 %bcond_without	userspace	# don't build userspace package
 
-%define		rel		2
+%define		rel		2.1
 
 %if %{without kernel}
 %undefine	with_dist_kernel
@@ -38,9 +38,10 @@ Source1:	http://www.virtualbox.org/download/%{version}/UserManual.pdf
 # Source1-md5:	e21694fd087b42173bca3fc9af068f22
 Source2:	http://www.virtualbox.org/download/%{version}/VBoxGuestAdditions_%{version}.iso
 # Source2-md5:	e90b718aa806845194fd411e3dbf78ff
-Source3:	%{pname}.init
-Source4:	%{pname}.desktop
-Source5:	%{pname}.sh
+Source3:	%{pname}-vboxdrv.init
+Source4:	%{pname}-vboxadd.init
+Source5:	%{pname}.desktop
+Source6:	%{pname}.sh
 Patch0:		%{pname}-configure.patch
 Patch1:		%{pname}-qt-paths.patch
 Patch2:		%{pname}-shared-libstdc++.patch
@@ -256,6 +257,7 @@ Sterownik grafiki dla systemu gościa w VirtualBoksie.
 
 cat <<'EOF' > udev.conf
 KERNEL=="vboxdrv", NAME="%k", GROUP="vbox", MODE="0660"
+KERNEL=="vboxadd", NAME="%k", GROUP="vbox", MODE="0660"
 EOF
 
 install %{SOURCE1} .
@@ -296,12 +298,9 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with userspace}
 install -d \
 	$RPM_BUILD_ROOT{%{_bindir},%{_pixmapsdir},%{_desktopdir}} \
-	$RPM_BUILD_ROOT%{_libdir}/VirtualBox \
-	$RPM_BUILD_ROOT/etc/rc.d/init.d
+	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
 
-install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/virtualbox
-
-install %{SOURCE5} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/VirtualBox-wrapper.sh
+install %{SOURCE6} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/VirtualBox-wrapper.sh
 for f in {VBox{BFE,Manage,SDL,SVC,XPCOMIPCD},VirtualBox,vditool}; do
 	install out/linux.%{outdir}/release/bin/$f $RPM_BUILD_ROOT%{_libdir}/VirtualBox/$f
 	ln -s %{_libdir}/VirtualBox/VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_bindir}/$f
@@ -336,13 +335,16 @@ install out/linux.%{outdir}/release/bin/additions/vboxvideo_drv_14.so	\
 %endif
 
 install out/linux.%{outdir}/release/bin/VBox.png $RPM_BUILD_ROOT%{_pixmapsdir}/VBox.png
-install %{SOURCE4} $RPM_BUILD_ROOT%{_desktopdir}/%{pname}.desktop
+install %{SOURCE5} $RPM_BUILD_ROOT%{_desktopdir}/%{pname}.desktop
 
 install -d $RPM_BUILD_ROOT/etc/udev/rules.d
 install udev.conf $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
 %endif
 
 %if %{with kernel}
+$RPM_BUILD_ROOT/etc/rc.d/init.d
+install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxdrv
+install %{SOURCE4} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxadd
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxadd/vboxadd -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxdrv/vboxdrv -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxvfs/vboxvfs -d misc
@@ -395,7 +397,6 @@ fi
 %dir %{_libdir}/VirtualBox/additions
 %dir %{_libdir}/VirtualBox/components
 %dir %{_libdir}/VirtualBox/nls
-%attr(754,root,root) /etc/rc.d/init.d/virtualbox
 %attr(755,root,root) %{_bindir}/mountvboxsf
 %attr(755,root,root) %{_bindir}/vditool
 %attr(755,root,root) %{_bindir}/VBox*
@@ -464,10 +465,12 @@ fi
 %if %{with kernel}
 %files -n kernel%{_alt_kernel}-misc-vboxadd
 %defattr(644,root,root,755)
+%attr(754,root,root) /etc/rc.d/init.d/vboxadd
 /lib/modules/%{_kernel_ver}/misc/vboxadd.ko*
 
 %files -n kernel%{_alt_kernel}-misc-vboxdrv
 %defattr(644,root,root,755)
+%attr(754,root,root) /etc/rc.d/init.d/vboxdrv
 /lib/modules/%{_kernel_ver}/misc/vboxdrv.ko*
 
 %files -n kernel%{_alt_kernel}-misc-vboxvfs
