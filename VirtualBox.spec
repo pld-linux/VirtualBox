@@ -342,7 +342,7 @@ install udev.conf $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
 %endif
 
 %if %{with kernel}
-$RPM_BUILD_ROOT/etc/rc.d/init.d
+install -d $RPM_BUILD_ROOT/etc/rc.d/init.d
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxdrv
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxadd
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxadd/vboxadd -d misc
