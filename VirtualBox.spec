@@ -11,7 +11,7 @@
 %bcond_without	kernel		# don't build kernel module
 %bcond_without	userspace	# don't build userspace package
 
-%define		rel		3
+%define		rel		4
 
 %if %{without kernel}
 %undefine	with_dist_kernel
@@ -356,16 +356,6 @@ rm -rf $RPM_BUILD_ROOT
 %pre
 %groupadd -g 221 -r -f vbox
 
-%post
-/sbin/chkconfig --add virtualbox
-%service virtualbox restart "VirtualBox OSE"
-
-%preun
-if [ "$1" = "0" ]; then
-	%service virtualbox stop
-	/sbin/chkconfig --del virtualbox
-fi
-
 %postun
 if [ "$1" = "0" ]; then
 	%groupremove vbox
@@ -373,15 +363,31 @@ fi
 
 %post	-n kernel%{_alt_kernel}-misc-vboxadd
 %depmod %{_kernel_ver}
+/sbin/chkconfig --add vboxadd
+%service vboxadd restart "VirtualBox OSE guest additions driver"
 
 %postun	-n kernel%{_alt_kernel}-misc-vboxadd
 %depmod %{_kernel_ver}
 
+%preun -n kernel%{_alt_kernel}-misc-vboxadd
+if [ "$1" = "0" ]; then
+	%service vboxadd stop
+	/sbin/chkconfig --del vboxadd
+fi
+
 %post	-n kernel%{_alt_kernel}-misc-vboxdrv
 %depmod %{_kernel_ver}
+/sbin/chkconfig --add vboxdrv
+%service vboxdrv restart "VirtualBox OSE driver"
 
 %postun	-n kernel%{_alt_kernel}-misc-vboxdrv
 %depmod %{_kernel_ver}
+
+%preun -n kernel%{_alt_kernel}-misc-vboxdrv
+if [ "$1" = "0" ]; then
+	%service vboxdrv stop
+	/sbin/chkconfig --del vboxdrv
+fi
 
 %post	-n kernel%{_alt_kernel}-misc-vboxvfs
 %depmod %{_kernel_ver}
