@@ -11,7 +11,7 @@
 %bcond_without	kernel		# don't build kernel module
 %bcond_without	userspace	# don't build userspace package
 
-%define		rel		4
+%define		rel		5
 
 %if %{without kernel}
 %undefine	with_dist_kernel
@@ -58,7 +58,10 @@ BuildRequires:	bin86
 BuildRequires:	gcc >= 5:3.2.3
 BuildRequires:	iasl
 %endif
-%{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.20}
+%if %{with dist_kernel}
+BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.20
+BuildRequires:	kernel%{_alt_kernel}-headers
+%endif
 %if %{with userspace}
 BuildRequires:	Qt3Support-devel
 BuildRequires:	libIDL-devel
