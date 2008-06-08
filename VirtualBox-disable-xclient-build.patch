@@ -1,9 +1,9 @@
---- VirtualBox-1.6.0_OSE/src/VBox/Additions/x11/Makefile.kmk.orig	2008-04-30 16:06:03.000000000 +0200
-+++ VirtualBox-1.6.0_OSE/src/VBox/Additions/x11/Makefile.kmk	2008-05-05 21:33:16.000000000 +0200
+--- VirtualBox-1.6.2/src/VBox/Additions/x11/Makefile.kmk.orig	2008-05-13 11:57:37.000000000 +0200
++++ VirtualBox-1.6.2/src/VBox/Additions/x11/Makefile.kmk	2008-06-08 21:22:56.000000000 +0200
 @@ -24,7 +24,6 @@
  
  # Include sub-makefiles.
- if1of ($(BUILD_TARGET), freebsd l4 linux solaris)
+ if1of ($(KBUILD_TARGET), freebsd l4 linux solaris)
 - include $(PATH_SUB_CURRENT)/xclient/Makefile.kmk
   include $(PATH_SUB_CURRENT)/xgraphics/Makefile.kmk
   include $(PATH_SUB_CURRENT)/xmouse/Makefile.kmk
