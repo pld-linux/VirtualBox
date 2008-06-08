@@ -60,7 +60,6 @@ BuildRequires:	iasl
 %endif
 %if %{with dist_kernel}
 BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.20
-BuildRequires:	kernel%{_alt_kernel}-headers
 %endif
 %if %{with userspace}
 BuildRequires:	Qt3Support-devel
