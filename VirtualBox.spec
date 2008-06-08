@@ -11,7 +11,7 @@
 %bcond_without	kernel		# don't build kernel module
 %bcond_without	userspace	# don't build userspace package
 
-%define		rel		0.1
+%define		rel		1
 
 %if %{without kernel}
 %undefine	with_dist_kernel
@@ -45,7 +45,6 @@ Patch1:		%{pname}-qt-paths.patch
 Patch2:		%{pname}-shared-libstdc++.patch
 Patch3:		%{pname}-disable-xclient-build.patch
 Patch4:		%{pname}-configure-spaces.patch
-Patch5:		%{pname}-no-screen-size-limit.patch
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
 BuildRequires:	SDL-devel >= 1.2.7
@@ -243,7 +242,7 @@ X.org video driver for VirtualBox OSE guest OS.
 Sterownik grafiki dla systemu gościa w VirtualBoksie.
 
 %prep
-%setup -q -n %{pname}-%{version}_OSE
+%setup -q -n %{pname}-%{version}
 %patch0 -p0
 %patch1 -p0
 %patch2 -p1
@@ -253,7 +252,6 @@ Sterownik grafiki dla systemu gościa w VirtualBoksie.
 %endif
 
 %patch4 -p1
-%patch5 -p1
 
 cat <<'EOF' > udev.conf
 KERNEL=="vboxdrv", NAME="%k", GROUP="vbox", MODE="0660"
