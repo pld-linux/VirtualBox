@@ -357,11 +357,13 @@ rm -rf $RPM_BUILD_ROOT
 %post
 cat << 'EOF'
 NOTE: You must also install kernel module for this software to work
-  kernel-misc-vboxdrv-%{version}
-  kernel-dektop-misc-vboxdrv-%{version}
+  kernel-misc-vboxdrv-%{version}-%{rel}@%{_kernel_ver_str}
+  kernel-desktop-misc-vboxdrv-%{version}-%{rel}@%{_kernel_ver_str}
+  kernel-laptop-misc-vboxdrv-%{version}-%{rel}@%{_kernel_ver_str}
+  kernel-vanilla-misc-vboxdrv-%{version}-%{rel}@%{_kernel_ver_str}
   etc.
 
-Depending on which kernel brand you use.
+Depending on which kernel brand You use.
 
 EOF
 
