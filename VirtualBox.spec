@@ -354,6 +354,7 @@ rm -rf $RPM_BUILD_ROOT
 %pre
 %groupadd -g 221 -r -f vbox
 
+%post
 cat << 'EOF'
 NOTE: You must also install kernel module for this software to work
   kernel-misc-vboxdrv-%{version}
