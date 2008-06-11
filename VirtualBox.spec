@@ -354,6 +354,16 @@ rm -rf $RPM_BUILD_ROOT
 %pre
 %groupadd -g 221 -r -f vbox
 
+cat << 'EOF'
+NOTE: You must also install kernel module for this software to work
+  kernel-misc-vboxdrv-%{version}
+  kernel-dektop-misc-vboxdrv-%{version}
+  etc.
+
+Depending on which kernel brand you use.
+
+EOF
+
 %postun
 if [ "$1" = "0" ]; then
 	%groupremove vbox
