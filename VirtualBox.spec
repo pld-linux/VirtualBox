@@ -11,7 +11,7 @@
 %bcond_without	kernel		# don't build kernel module
 %bcond_without	userspace	# don't build userspace package
 
-%define         rel             1
+%define         rel             2
 
 %if %{without kernel}
 %undefine	with_dist_kernel
@@ -255,6 +255,7 @@ sed -i -e '/#.*define.*RTMEMALLOC_EXEC_HEAP/d' vboxadd/r0drv/linux/alloc-r0drv-l
 ./configure \
 	--with-gcc="%{__cc}" \
 	--with-g++="%{__cxx}" \
+	--disable-qt4 \
 	--disable-kmods
 
 . ./env.sh && kmk -j1
