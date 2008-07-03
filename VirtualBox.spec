@@ -11,7 +11,7 @@
 %bcond_without	kernel		# don't build kernel module
 %bcond_without	userspace	# don't build userspace package
 
-%define		rel		1
+%define         rel             2
 
 %if %{without kernel}
 %undefine	with_dist_kernel
@@ -30,16 +30,15 @@ Version:	1.6.2
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/Emulators
-Source0:	http://www.virtualbox.org/download/%{version}/%{pname}-%{version}-OSE.tar.bz2
-# Source0-md5:	0372a3a31326078f7849a0467d547a70
-Source1:	http://www.virtualbox.org/download/%{version}/UserManual.pdf
-# Source1-md5:	32505857b575f0fb6f71ba1738c1e102
-Source2:	http://www.virtualbox.org/download/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source2-md5:	3cac7e911e545038102ff641cba66365
-Source3:	%{pname}-vboxdrv.init
-Source4:	%{pname}-vboxadd.init
-Source5:	%{pname}.desktop
-Source6:	%{pname}.sh
+Source0:        http://www.virtualbox.org/download/%{version}/%{pname}-%{version}-OSE.tar.bz2
+# Source0-md5:  0372a3a31326078f7849a0467d547a70
+Source1:        http://www.virtualbox.org/download/%{version}/UserManual.pdf
+# Source1-md5:  32505857b575f0fb6f71ba1738c1e102
+Source2:        http://www.virtualbox.org/download/%{version}/VBoxGuestAdditions_%{version}.iso
+# Source2-md5:  3cac7e911e545038102ff641cba66365
+Source3:	%{pname}.init
+Source4:	%{pname}.desktop
+Source5:	%{pname}.sh
 Patch0:		%{pname}-configure.patch
 Patch1:		%{pname}-qt-paths.patch
 Patch2:		%{pname}-shared-libstdc++.patch
@@ -47,43 +46,36 @@ Patch3:		%{pname}-disable-xclient-build.patch
 Patch4:		%{pname}-configure-spaces.patch
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
-BuildRequires:	SDL-devel >= 1.2.7
-BuildRequires:	alsa-lib-devel >= 1.0.6
+BuildRequires:	SDL-devel
+BuildRequires:	XFree86-devel
+BuildRequires:	alsa-lib-devel
 BuildRequires:	bash
 BuildRequires:	bcc
 BuildRequires:	bin86
 BuildRequires:	gcc >= 5:3.2.3
 BuildRequires:	iasl
 %endif
-%if %{with dist_kernel}
-BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.20
-%endif
+%{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.7}
 %if %{with userspace}
-BuildRequires:	Qt3Support-devel
 BuildRequires:	libIDL-devel
-BuildRequires:	libpng >= 1.2.5
-BuildRequires:	libstdc++-devel >= 5:3.2.3
 BuildRequires:	libuuid-devel
-BuildRequires:	libxml2-devel >= 2.6.26
-BuildRequires:	libxslt-devel >= 1.1.17
-BuildRequires:	libxslt-progs >= 1.1.17
+BuildRequires:	libxslt-progs
+BuildRequires:	libxslt-devel
 BuildRequires:	pkgconfig
-BuildRequires:	pulseaudio-devel >= 0.9.0
+BuildRequires:	pulseaudio-devel
 BuildRequires:	qt-devel >= 6:3.3.6
 BuildRequires:	qt-linguist
-BuildRequires:	qt4-build >= 4.2.0
 %endif
 BuildRequires:	rpmbuild(macros) >= 1.379
 %if %{with userspace}
 BuildRequires:	which
 BuildRequires:	xalan-c-devel >= 1.10.0
 BuildRequires:	xerces-c-devel >= 2.6.0
-BuildRequires:	xorg-lib-libXcursor-devel
 BuildRequires:	zlib-devel >= 1.2.1
 %ifarch %{x8664}
-BuildRequires:	gcc-multilib
-BuildRequires:	glibc-devel(i686)
-BuildRequires:	libstdc++-multilib-devel
+BuildRequires:	libstdc++32-devel
+# 32bit glibc-devel
+BuildRequires:	/usr/include/gnu/stubs-32.h
 %endif
 %endif
 Requires(post,preun):	/sbin/chkconfig
@@ -161,15 +153,11 @@ Reguły udev dla modułów jądra Linuksa dla VirtualBoksa.
 %package -n kernel%{_alt_kernel}-misc-vboxadd
 Summary:	Linux kernel module for VirtualBox OSE
 Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
-Release:	%{rel}@%{_kernel_ver_str}
+Release:	%{rel}@%{_kernel_vermagic}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 Requires:	dev >= 2.9.0-7
-%if %{with dist_kernel}
-%requires_releq_kernel
-#Requires(postun):	%%releq_kernel
-%endif
-Provides:	kernel(vboxadd) = %{version}-%{rel}
+%{?with_dist_kernel:Requires:	kernel%{_alt_kernel}(vermagic) = %{_kernel_ver}}
 
 %description -n kernel%{_alt_kernel}-misc-vboxadd
 Linux kernel module vboxadd for VirtualBox OSE.
@@ -180,15 +168,11 @@ Moduł jądra Linuksa vboxadd dla VirtualBoksa.
 %package -n kernel%{_alt_kernel}-misc-vboxdrv
 Summary:	Linux kernel module for VirtualBox OSE
 Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
-Release:	%{rel}@%{_kernel_ver_str}
+Release:	%{rel}@%{_kernel_vermagic}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 Requires:	dev >= 2.9.0-7
-%if %{with dist_kernel}
-%requires_releq_kernel
-Requires(postun):	%releq_kernel
-%endif
-Provides:	kernel(vboxdrv) = %{version}-%{rel}
+%{?with_dist_kernel:Requires:	kernel%{_alt_kernel}(vermagic) = %{_kernel_ver}}
 
 %description -n kernel%{_alt_kernel}-misc-vboxdrv
 Linux kernel module vboxdrv for VirtualBox OSE.
@@ -199,15 +183,11 @@ Moduł jądra Linuksa vboxdrv dla VirtualBoksa.
 %package -n kernel%{_alt_kernel}-misc-vboxvfs
 Summary:	Linux kernel module for VirtualBox OSE
 Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
-Release:	%{rel}@%{_kernel_ver_str}
+Release:	%{rel}@%{_kernel_vermagic}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 Requires:	dev >= 2.9.0-7
-%if %{with dist_kernel}
-%requires_releq_kernel
-Requires(postun):	%releq_kernel
-%endif
-Provides:	kernel(vboxvfs) = %{version}-%{rel}
+%{?with_dist_kernel:Requires:	kernel%{_alt_kernel}(vermagic) = %{_kernel_ver}}
 
 %description -n kernel%{_alt_kernel}-misc-vboxvfs
 Linux kernel module vboxvfs for VirtualBox OSE.
@@ -215,30 +195,30 @@ Linux kernel module vboxvfs for VirtualBox OSE.
 %description -n kernel%{_alt_kernel}-misc-vboxvfs -l pl.UTF-8
 Moduł jądra Linuksa vboxvfs dla VirtualBoksa.
 
-%package -n xorg-driver-input-vboxmouse
+%package -n X11-driver-input-vboxmouse
 Summary:	X.org mouse driver for VirtualBox OSE guest OS
 Summary(pl.UTF-8):	Sterownik myszy dla systemu gościa w VirtualBoksie
 Release:	%{rel}
 Group:		X11/Applications
-Requires:	xorg-xserver-server >= 1.0.99.901
+Requires:	X11-Xserver >= 1:6.9.0
 
-%description -n xorg-driver-input-vboxmouse
+%description -n X11-driver-input-vboxmouse
 X.org mouse driver for VirtualBox OSE guest OS.
 
-%description -n xorg-driver-input-vboxmouse  -l pl.UTF-8
+%description -n X11-driver-input-vboxmouse  -l pl.UTF-8
 Sterownik myszy dla systemu gościa w VirtualBoksie.
 
-%package -n xorg-driver-video-vboxvideo
+%package -n X11-driver-video-vboxvideo
 Summary:	X.org video driver for VirtualBox OSE guest OS
 Summary(pl.UTF-8):	Sterownik grafiki dla systemu gościa w VirtualBoksie
 Release:	%{rel}
 Group:		X11/Applications
-Requires:	xorg-xserver-server >= 1.0.99.901
+Requires:	X11-Xserver >= 1:6.9.0
 
-%description -n xorg-driver-video-vboxvideo
+%description -n X11-driver-video-vboxvideo
 X.org video driver for VirtualBox OSE guest OS.
 
-%description -n xorg-driver-video-vboxvideo -l pl.UTF-8
+%description -n X11-driver-video-vboxvideo -l pl.UTF-8
 Sterownik grafiki dla systemu gościa w VirtualBoksie.
 
 %prep
@@ -255,7 +235,6 @@ Sterownik grafiki dla systemu gościa w VirtualBoksie.
 
 cat <<'EOF' > udev.conf
 KERNEL=="vboxdrv", NAME="%k", GROUP="vbox", MODE="0660"
-KERNEL=="vboxadd", NAME="%k", GROUP="vbox", MODE="0660"
 EOF
 
 install %{SOURCE1} .
@@ -276,6 +255,7 @@ sed -i -e '/#.*define.*RTMEMALLOC_EXEC_HEAP/d' vboxadd/r0drv/linux/alloc-r0drv-l
 ./configure \
 	--with-gcc="%{__cc}" \
 	--with-g++="%{__cxx}" \
+	--disable-qt4 \
 	--disable-kmods
 
 . ./env.sh && kmk -j1
@@ -296,9 +276,12 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with userspace}
 install -d \
 	$RPM_BUILD_ROOT{%{_bindir},%{_pixmapsdir},%{_desktopdir}} \
-	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
+	$RPM_BUILD_ROOT%{_libdir}/VirtualBox \
+	$RPM_BUILD_ROOT/etc/rc.d/init.d
 
-install %{SOURCE6} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/VirtualBox-wrapper.sh
+install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/virtualbox
+
+install %{SOURCE5} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/VirtualBox-wrapper.sh
 for f in {VBox{BFE,Manage,SDL,SVC,XPCOMIPCD},VirtualBox,vditool}; do
 	install out/linux.%{outdir}/release/bin/$f $RPM_BUILD_ROOT%{_libdir}/VirtualBox/$f
 	ln -s %{_libdir}/VirtualBox/VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_bindir}/$f
@@ -325,24 +308,21 @@ install out/linux.%{outdir}/release/bin/additions/mountvboxsf		\
 	$RPM_BUILD_ROOT%{_bindir}
 
 %ifnarch %{x8664}
-install -d $RPM_BUILD_ROOT%{_libdir}/xorg/modules/{drivers,input}
-install out/linux.%{outdir}/release/bin/additions/vboxmouse_drv_14.so	\
-	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/input/vboxmouse_drv.so
-install out/linux.%{outdir}/release/bin/additions/vboxvideo_drv_14.so	\
-	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so
+install -d $RPM_BUILD_ROOT%{_x_libraries}/modules/{drivers,input}
+install out/linux.%{outdir}/release/bin/additions/vboxmouse_drv_70.so	\
+	$RPM_BUILD_ROOT%{_x_libraries}/modules/input/vboxmouse_drv.so
+install out/linux.%{outdir}/release/bin/additions/vboxvideo_drv_70.so	\
+	$RPM_BUILD_ROOT%{_x_libraries}/modules/drivers/vboxvideo_drv.so
 %endif
 
 install out/linux.%{outdir}/release/bin/VBox.png $RPM_BUILD_ROOT%{_pixmapsdir}/VBox.png
-install %{SOURCE5} $RPM_BUILD_ROOT%{_desktopdir}/%{pname}.desktop
+install %{SOURCE4} $RPM_BUILD_ROOT%{_desktopdir}/%{pname}.desktop
 
 install -d $RPM_BUILD_ROOT/etc/udev/rules.d
 install udev.conf $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
 %endif
 
 %if %{with kernel}
-install -d $RPM_BUILD_ROOT/etc/rc.d/init.d
-install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxdrv
-install %{SOURCE4} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxadd
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxadd/vboxadd -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxdrv/vboxdrv -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxvfs/vboxvfs -d misc
@@ -354,6 +334,16 @@ rm -rf $RPM_BUILD_ROOT
 %pre
 %groupadd -g 221 -r -f vbox
 
+%post
+/sbin/chkconfig --add virtualbox
+%service virtualbox restart "VirtualBox OSE"
+
+%preun
+if [ "$1" = "0" ]; then
+	%service virtualbox stop
+	/sbin/chkconfig --del virtualbox
+fi
+
 %postun
 if [ "$1" = "0" ]; then
 	%groupremove vbox
@@ -361,31 +351,15 @@ fi
 
 %post	-n kernel%{_alt_kernel}-misc-vboxadd
 %depmod %{_kernel_ver}
-/sbin/chkconfig --add vboxadd
-%service vboxadd restart "VirtualBox OSE guest additions driver"
 
 %postun	-n kernel%{_alt_kernel}-misc-vboxadd
 %depmod %{_kernel_ver}
 
-%preun -n kernel%{_alt_kernel}-misc-vboxadd
-if [ "$1" = "0" ]; then
-	%service vboxadd stop
-	/sbin/chkconfig --del vboxadd
-fi
-
 %post	-n kernel%{_alt_kernel}-misc-vboxdrv
 %depmod %{_kernel_ver}
-/sbin/chkconfig --add vboxdrv
-%service vboxdrv restart "VirtualBox OSE driver"
 
 %postun	-n kernel%{_alt_kernel}-misc-vboxdrv
 %depmod %{_kernel_ver}
-
-%preun -n kernel%{_alt_kernel}-misc-vboxdrv
-if [ "$1" = "0" ]; then
-	%service vboxdrv stop
-	/sbin/chkconfig --del vboxdrv
-fi
 
 %post	-n kernel%{_alt_kernel}-misc-vboxvfs
 %depmod %{_kernel_ver}
@@ -401,6 +375,7 @@ fi
 %dir %{_libdir}/VirtualBox/additions
 %dir %{_libdir}/VirtualBox/components
 %dir %{_libdir}/VirtualBox/nls
+%attr(754,root,root) /etc/rc.d/init.d/virtualbox
 %attr(755,root,root) %{_bindir}/mountvboxsf
 %attr(755,root,root) %{_bindir}/vditool
 %attr(755,root,root) %{_bindir}/VBox*
@@ -437,8 +412,8 @@ fi
 %lang(ko) %{_libdir}/VirtualBox/nls/*_ko.qm
 %lang(nl) %{_libdir}/VirtualBox/nls/*_nl.qm
 %lang(pl) %{_libdir}/VirtualBox/nls/*_pl.qm
-%lang(pt) %{_libdir}/VirtualBox/nls/*_pt.qm
 %lang(pt_BR) %{_libdir}/VirtualBox/nls/*_pt_BR.qm
+%lang(pt) %{_libdir}/VirtualBox/nls/*_pt.qm
 %lang(ro) %{_libdir}/VirtualBox/nls/*_ro.qm
 %lang(ru) %{_libdir}/VirtualBox/nls/*_ru.qm
 %lang(sk) %{_libdir}/VirtualBox/nls/*_sk.qm
@@ -456,25 +431,23 @@ fi
 
 # Drivers are for Guest OS, which is 32-bit.
 %ifnarch %{x8664}
-%files -n xorg-driver-input-vboxmouse
+%files -n X11-driver-input-vboxmouse
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/xorg/modules/input/vboxmouse_drv.so
+%attr(755,root,root) %{_x_libraries}/modules/input/vboxmouse_drv.so
 
-%files -n xorg-driver-video-vboxvideo
+%files -n X11-driver-video-vboxvideo
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/xorg/modules/drivers/vboxvideo_drv.so
+%attr(755,root,root) %{_x_libraries}/modules/drivers/vboxvideo_drv.so
 %endif
 %endif
 
 %if %{with kernel}
 %files -n kernel%{_alt_kernel}-misc-vboxadd
 %defattr(644,root,root,755)
-%attr(754,root,root) /etc/rc.d/init.d/vboxadd
 /lib/modules/%{_kernel_ver}/misc/vboxadd.ko*
 
 %files -n kernel%{_alt_kernel}-misc-vboxdrv
 %defattr(644,root,root,755)
-%attr(754,root,root) /etc/rc.d/init.d/vboxdrv
 /lib/modules/%{_kernel_ver}/misc/vboxdrv.ko*
 
 %files -n kernel%{_alt_kernel}-misc-vboxvfs
