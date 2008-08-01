@@ -53,6 +53,7 @@ BuildRequires:	bash
 BuildRequires:	bcc
 BuildRequires:	bin86
 BuildRequires:	gcc >= 5:3.2.3
+BuildRequires:	gcc < 5:4.3
 BuildRequires:	iasl
 %endif
 %if %{with dist_kernel}
