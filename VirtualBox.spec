@@ -10,8 +10,9 @@
 %bcond_without	dist_kernel	# without distribution kernel
 %bcond_without	kernel		# don't build kernel module
 %bcond_without	userspace	# don't build userspace package
+%bcond_with	verbose
 
-%define		rel		11
+%define		rel		12
 
 %if %{without kernel}
 %undefine	with_dist_kernel
@@ -20,6 +21,9 @@
 %if "%{_alt_kernel}" != "%{nil}"
 %undefine	with_userspace
 %endif
+
+%define		__ucc	gcc-3.4
+%define		__ucxx	g++-3.4
 
 %define		pname	VirtualBox
 
@@ -53,14 +57,15 @@ BuildRequires:	bash
 BuildRequires:	bcc
 BuildRequires:	bin86
 BuildRequires:	gcc >= 5:3.2.3
-BuildRequires:	gcc < 5:4.3
+BuildRequires:	compat-gcc-34
+BuildRequires:	compat-gcc-34-c++
+BuildRequires:	compat-gcc-34-libstdc++-devel
 BuildRequires:	iasl
 %endif
 %if %{with dist_kernel}
 BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.20
 %endif
 %if %{with userspace}
-BuildRequires:	Qt3Support-devel
 BuildRequires:	libIDL-devel
 BuildRequires:	libpng >= 1.2.5
 BuildRequires:	libstdc++-devel >= 5:3.2.3
@@ -72,7 +77,6 @@ BuildRequires:	pkgconfig
 BuildRequires:	pulseaudio-devel >= 0.9.0
 BuildRequires:	qt-devel >= 6:3.3.6
 BuildRequires:	qt-linguist
-BuildRequires:	qt4-build >= 4.2.0
 %endif
 BuildRequires:	rpmbuild(macros) >= 1.379
 %if %{with userspace}
@@ -275,8 +279,9 @@ sed -i -e '/#.*define.*RTMEMALLOC_EXEC_HEAP/d' vboxadd/r0drv/linux/alloc-r0drv-l
 %build
 %if %{with userspace}
 ./configure \
-	--with-gcc="%{__cc}" \
-	--with-g++="%{__cxx}" \
+	--with-gcc="%{__ucc}" \
+	--with-g++="%{__ucxx}" \
+	--disable-qt4 \
 	--disable-kmods
 
 . ./env.sh && kmk -j1
