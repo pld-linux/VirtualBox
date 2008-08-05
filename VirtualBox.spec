@@ -24,7 +24,8 @@
 
 %if "%{pld_release}" != "ti"
 %define		__ucc	gcc-3.4
-%define		__ucxx	g++-3.4
+%else
+%define		__ucc	%{__cc}
 %endif
 
 %define		pname	VirtualBox
@@ -51,6 +52,7 @@ Patch1:		%{pname}-qt-paths.patch
 Patch2:		%{pname}-shared-libstdc++.patch
 Patch3:		%{pname}-disable-xclient-build.patch
 Patch4:		%{pname}-configure-spaces.patch
+Patch5:		%{pname}-gcc.patch
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
 BuildRequires:	SDL-devel >= 1.2.7
@@ -61,8 +63,6 @@ BuildRequires:	bin86
 BuildRequires:	gcc >= 5:3.2.3
 %if "%{pld_release}" != "ti"
 BuildRequires:	compat-gcc-34
-BuildRequires:	compat-gcc-34-c++
-BuildRequires:	compat-gcc-34-libstdc++-devel
 %endif
 BuildRequires:	iasl
 %endif
@@ -261,6 +261,7 @@ Sterownik grafiki dla systemu gościa w VirtualBoksie.
 %endif
 
 %patch4 -p1
+%patch5 -p0
 
 cat <<'EOF' > udev.conf
 KERNEL=="vboxdrv", NAME="%k", GROUP="vbox", MODE="0660"
@@ -283,17 +284,13 @@ sed -i -e '/#.*define.*RTMEMALLOC_EXEC_HEAP/d' vboxadd/r0drv/linux/alloc-r0drv-l
 %build
 %if %{with userspace}
 ./configure \
-%if "%{pld_release}" == "ti"
 	--with-gcc="%{__cc}" \
 	--with-g++="%{__cxx}" \
-%else
-	--with-gcc="%{__ucc}" \
-	--with-g++="%{__ucxx}" \
-%endif
 	--disable-qt4 \
 	--disable-kmods
 
-. ./env.sh && kmk -j1
+. ./env.sh && \
+kmk -j1 VBOX_RECOMPILER_OP_GCC_PLD_COMPAT="%{__ucc}"
 %endif
 
 %if %{with kernel}
