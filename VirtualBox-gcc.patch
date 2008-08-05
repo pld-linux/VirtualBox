@@ -36,14 +36,17 @@
        # gcc-4.0 is allowed for Darwin only
        elif [ $cc_maj -lt 3 \
               -o \( $cc_maj -eq 3 -a $cc_min -lt 2 \) \
---- src/recompiler/Makefile.kmk~	2008-05-13 11:57:24.000000000 +0200
-+++ src/recompiler/Makefile.kmk	2008-08-05 08:48:22.748190740 +0200
-@@ -353,7 +353,7 @@
+--- src/recompiler/Makefile.kmk~	2008-08-05 10:48:06.537032700 +0200
++++ src/recompiler/Makefile.kmk	2008-08-05 10:49:59.933687528 +0200
+@@ -353,9 +353,9 @@
  
  
  # The command sans -o op.S.tmp.
 -COMPILE_OP_CMDS = $(VBOX_RECOMPILER_OP_GCC) \
 +COMPILE_OP_CMDS = $(VBOX_RECOMPILER_OP_GCC_PLD_COMPAT) \
  	-S -s \
- 	$(filter-out -g -O0, \
+-	$(filter-out -g -O0, \
++	$(filter-out -g -O0 -fno-stack-protector, \
  		$($(REM_MOD)_CFLAGS) $($(REM_MOD)_CFLAGS.$(KBUILD_TYPE)) $($(REM_MOD)_CFLAGS.$(KBUILD_TARGET)) $($(REM_MOD)_CFLAGS.$(KBUILD_TARGET_ARCH)) $($(REM_MOD)_CFLAGS.$(KBUILD_TARGET).$(KBUILD_TARGET_ARCH)) \
+ 		$(target-i386/op.c_CFLAGS) $(target-i386/op.c_CFLAGS.$(KBUILD_TARGET)) $(target-i386/op.c_CFLAGS.$(KBUILD_TARGET_ARCH)) $(target-i386/op.c_CFLAGS.$(KBUILD_TARGET).$(KBUILD_TARGET_ARCH)) \
+ 		) \
