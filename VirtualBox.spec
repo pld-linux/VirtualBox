@@ -22,8 +22,10 @@
 %undefine	with_userspace
 %endif
 
+%if "%{pld_release}" != "ti"
 %define		__ucc	gcc-3.4
 %define		__ucxx	g++-3.4
+%endif
 
 %define		pname	VirtualBox
 
@@ -57,9 +59,11 @@ BuildRequires:	bash
 BuildRequires:	bcc
 BuildRequires:	bin86
 BuildRequires:	gcc >= 5:3.2.3
+%if "%{pld_release}" != "ti"
 BuildRequires:	compat-gcc-34
 BuildRequires:	compat-gcc-34-c++
 BuildRequires:	compat-gcc-34-libstdc++-devel
+%endif
 BuildRequires:	iasl
 %endif
 %if %{with dist_kernel}
@@ -279,8 +283,13 @@ sed -i -e '/#.*define.*RTMEMALLOC_EXEC_HEAP/d' vboxadd/r0drv/linux/alloc-r0drv-l
 %build
 %if %{with userspace}
 ./configure \
+%if "%{pld_release}" == "ti"
+	--with-gcc="%{__cc}" \
+	--with-g++="%{__cxx}" \
+%else
 	--with-gcc="%{__ucc}" \
 	--with-g++="%{__ucxx}" \
+%endif
 	--disable-qt4 \
 	--disable-kmods
 
