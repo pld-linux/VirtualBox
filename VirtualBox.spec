@@ -12,7 +12,7 @@
 %bcond_without	userspace	# don't build userspace package
 %bcond_with	verbose
 
-%define		rel		3
+%define		rel		4
 
 %if %{without kernel}
 %undefine	with_dist_kernel
@@ -160,7 +160,7 @@ Summary:	udev rules for VirtualBox OSE kernel modules
 Summary(pl.UTF-8):	Reguły udev dla modułów jądra Linuksa dla VirtualBoksa
 Release:	%{rel}
 Group:		Base/Kernel
-Requires:	udev
+Requires:	udev-core
 
 %description udev
 udev rules for VirtualBox OSE kernel modules.
