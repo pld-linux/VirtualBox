@@ -12,7 +12,7 @@
 %bcond_without	userspace	# don't build userspace package
 %bcond_with	verbose
 
-%define		rel		5
+%define		rel		6
 
 %if %{without kernel}
 %undefine	with_dist_kernel
