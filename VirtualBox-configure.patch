@@ -108,40 +108,15 @@ diff -urN VirtualBox-2.0.0.orig/configure VirtualBox-2.0.0/configure
      fi
    fi
    if [ -n "$foundqt4" ]; then
-@@ -1393,21 +1375,19 @@
+@@ -1375,7 +1375,7 @@
              cnf_append "VBOX_WITH_QT4_SUN" "1"
            fi
            test_header "Qt4 devtools"
 -          for q in $QT4DIR; do
--            if which_wrapper "$q/bin/moc" > /dev/null; then
--              moc_ver=`$q/bin/moc -v 2>&1|sed 's+^.*(Qt \(.*\))+\1+'`
--              if [ $? -ne 0 ]; then
--                log_failure "not found"
--                fail
--              else
--                log_success "found version $moc_ver"
--                cnf_append "VBOX_PATH_QT4" "$q"
--                cnf_append "PATH_SDK_QT4" "$q"
--                cnf_append "PATH_TOOL_QT4" "$q"
--                return
--              fi
-+          if which_wrapper "/usr/bin/moc-qt4" > /dev/null; then
-+            moc_ver=`/usr/bin/moc-qt4 -v 2>&1|sed 's+^.*(Qt \(.*\))+\1+'`
-+            if [ $? -ne 0 ]; then
-+              log_failure "not found"
-+              fail
-+            else
-+              log_success "found version $moc_ver"
-+              cnf_append "VBOX_PATH_QT4" "$q"
-+              cnf_append "PATH_SDK_QT4" "$q"
-+              cnf_append "PATH_TOOL_QT4" "$q"
-+              return
-             fi
--          done
-+          fi
-         fi
-       fi
-     else
++          for q in /usr/lib/qt4 /usr/lib64/qt4; do
+             if which_wrapper "$q/bin/moc" > /dev/null; then
+               moc_ver=`$q/bin/moc -v 2>&1|sed 's+^.*(Qt \(.*\))+\1+'`
+               if [ $? -ne 0 ]; then
 @@ -1765,8 +1745,6 @@
    --with-iasl=PATH         location of the iasl compiler [$IASL]
    --with-linux=DIR         Linux kernel source directory [$LINUX]
