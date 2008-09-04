@@ -285,7 +285,7 @@ sed -i -e '/#.*define.*RTMEMALLOC_EXEC_HEAP/d' vboxadd/r0drv/linux/alloc-r0drv-l
 	--disable-kmods
 
 . ./env.sh && \
-kmk -j1
+kmk -j1 %{?with_verbose:KBUILD_VERBOSE=3}
 %endif
 
 %if %{with kernel}
