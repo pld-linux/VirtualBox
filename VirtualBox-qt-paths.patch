@@ -1,6 +1,7 @@
---- Config.kmk.orig	2007-01-16 11:39:32.000000000 +0100
-+++ Config.kmk	2007-01-18 14:32:24.000000000 +0100
-@@ -838,10 +838,10 @@
+diff -urN VirtualBox-2.0.0.orig/Config.kmk VirtualBox-2.0.0/Config.kmk
+--- VirtualBox-2.0.0.orig/Config.kmk	2008-09-03 20:16:30.000000000 +0200
++++ VirtualBox-2.0.0/Config.kmk	2008-09-04 20:06:51.000000000 +0200
+@@ -1694,10 +1694,10 @@
  else
   VBOX_PATH_QT_HOST ?= $(QTDIR)
  endif
@@ -13,20 +14,20 @@
 +VBOX_LUPDATE  ?= /usr/bin/lupdate$(HOSTSUFF_EXE)
 +VBOX_LRELEASE ?= /usr/bin/lrelease$(HOSTSUFF_EXE)
  
- #
- # The linux kernel headers(/sources).
-@@ -1441,7 +1441,7 @@
+ ifeq ($(KBUILD_TARGET),os2)
+  # search DLLs in the EXE directory first (unless VBOX_DLL_QT is set)
+@@ -2686,7 +2686,7 @@
+ TEMPLATE_VBOXQTGUIEXE = VBox Qt GUI Executable
  TEMPLATE_VBOXQTGUIEXE_DEFS = IN_RING3 QT_NO_DEBUG QT_THREAD_SUPPORT $(ARCH_BITS_DEFS)
  TEMPLATE_VBOXQTGUIEXE_INCS = \
- 	$(VBOX_PATH_SDK)/include \
 -	$(VBOX_PATH_QT)/include
 +	/usr/include/qt
  
- ifeq ($(BUILD_TARGET),win)
-  TEMPLATE_VBOXQTGUIEXE_TOOL = $(VBOX_VCC_TOOL)
-@@ -1843,10 +1843,10 @@
+ ifeq ($(KBUILD_TARGET),win)
+  # drag in library configuration (we need QMAKE_PRL_DEFINES)
+@@ -2750,10 +2750,10 @@
  
-  ifeq ($(BUILD_TARGET_ARCH),amd64)
+  ifeq ($(KBUILD_TARGET_ARCH),amd64)
    TEMPLATE_VBOXQTGUIEXE_LIBPATH = \
 -	$(VBOX_PATH_QT)/lib64 $(VBOX_PATH_QT)/lib
 +	/usr/lib64 /usr/lib
@@ -36,4 +37,4 @@
 +	/usr/lib
   endif
  
-  ifeq ($(BUILD_TARGET),darwin)
+  ifeq ($(KBUILD_TARGET),linux)

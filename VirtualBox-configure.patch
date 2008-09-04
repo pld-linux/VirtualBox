@@ -1,16 +1,19 @@
---- configure.orig	2008-04-30 16:06:04.000000000 +0200
-+++ configure	2008-05-05 09:33:29.000000000 +0200
-@@ -66,9 +66,6 @@
- LIBZ="-lz"
+diff -urN VirtualBox-2.0.0.orig/configure VirtualBox-2.0.0/configure
+--- VirtualBox-2.0.0.orig/configure	2008-09-03 16:59:10.000000000 +0200
++++ VirtualBox-2.0.0/configure	2008-09-04 20:04:52.000000000 +0200
+@@ -69,11 +69,7 @@
  INCPNG=""
  LIBPNG="-lpng"
--QT3DIR="/usr/qt/3 /usr/lib/qt3 /usr/lib/qt-3.3 /usr/share/qt3 /usr/lib64/qt-3.3 /usr/X11R6 /usr/lib/qt"
--QT4DIR="/usr/lib/qt4 /usr/share/qt4 /usr"
+ PYTHONDIR="/usr /usr/local"
+-QT3DIR="/usr/qt/3 /usr/lib/qt3 /usr/lib/qt-3.3 /usr/share/qt3"
+-QT3DIR="$QT3DIR /usr/lib64/qt-3.3 /usr/X11R6 /usr/lib/qt"
+-QT4DIR="/usr/lib/qt4 /usr/share/qt4 /usr/lib64/qt4 /usr"
+ QT4DIR_PKGCONFIG=1
 -QT4UIC3DIR="/usr/bin"
  KBUILDDIR="`cd \`dirname $0\`; pwd`/kBuild"
  DEVDIR="`cd \`dirname $0\`; pwd`/tools"
  if [ -d "/lib/modules/`uname -r`/build" ]; then
-@@ -207,8 +204,8 @@
+@@ -215,8 +211,8 @@
    echo "compiling the following source file:" >> $LOG
    cat .tmp_src.cc >> $LOG
    echo "using the following command line:" >> $LOG
@@ -21,7 +24,7 @@
    if [ $? -ne 0 ]; then
      if [ -z "$4" ]; then
        echo
-@@ -1181,37 +1178,25 @@
+@@ -1236,37 +1232,25 @@
  }
  EOF
    found_qt=0
@@ -70,15 +73,44 @@
      if [ $? -ne 0 ]; then
        log_failure "not found"
        fail
-@@ -1280,40 +1265,34 @@
-     [ -n "$INCQT4" ] && I_INCQT4=`prefix_I "$INCQT4"`
-     if test_compile "$LIBQT4 $LIBPTHREAD $I_INCQT4 $FLDQT4" qt4 qt4 nofatal; then
-       if test_execute; then
--#        cnf_append "SDK_VBOX_LIBQT4_INCS" "$INCQT4"
--#        cnf_append "SDK_VBOX_LIBQT4_LIBS" "`strip_l "$LIBQT4"`"
-         if [ "$OS" = "darwin" ]; then
-           cnf_append "VBOX_WITH_QT4GUI" "1"
-         else
+@@ -1343,21 +1327,19 @@
+ #endif
+ }
+ EOF
+-      for q in $QT4DIR; do
+-        INCQT4="$q/include $q/include/QtCore"
+-        FLGQT4="-DQT_SHARED"
+-        I_INCQT4=`prefix_I "$INCQT4"`
+-        LIBQT4="-L$q/lib -lVBoxQtCore"
+-        if test_compile "$LIBQT4 $LIBPTHREAD $I_INCQT4 $FLGQT4" qt4 qt4 nofatal; then
+-          foundqt4=2
+-          break;
+-        fi
+-        LIBQT4="-L$q/lib -lQtCore"
+-        if test_compile "$LIBQT4 $LIBPTHREAD $I_INCQT4 $FLGQT4" qt4 qt4 nofatal; then
+-          foundqt4=1
+-          break;
+-        fi
+-      done
++      INCQT4="/usr/include/qt4 /usr/include/qt/QtCore"
++      FLGQT4="-DQT_SHARED"
++      I_INCQT4=`prefix_I "$INCQT4"`
++      LIBQT4="-L/usr/lib/qt4 -lVBoxQtCore"
++      if test_compile "$LIBQT4 $LIBPTHREAD $I_INCQT4 $FLGQT4" qt4 qt4 nofatal; then
++        foundqt4=2
++        break;
++      fi
++      LIBQT4="-L/usr/lib/qt4 -lQtCore"
++      if test_compile "$LIBQT4 $LIBPTHREAD $I_INCQT4 $FLGQT4" qt4 qt4 nofatal; then
++        foundqt4=1
++        break;
++      fi
+     fi
+   fi
+   if [ -n "$foundqt4" ]; then
+@@ -1393,21 +1375,19 @@
+             cnf_append "VBOX_WITH_QT4_SUN" "1"
+           fi
            test_header "Qt4 devtools"
 -          for q in $QT4DIR; do
 -            if which_wrapper "$q/bin/moc" > /dev/null; then
@@ -89,22 +121,10 @@
 -              else
 -                log_success "found version $moc_ver"
 -                cnf_append "VBOX_PATH_QT4" "$q"
--                test_header "Qt4 uic3"
--                for r in $q/bin $QT4UIC3DIR; do
--                  if which_wrapper "$r/uic3" > /dev/null; then
--                    uic3_ver=`$r/uic3 -version 2>&1|sed 's+^.*version \(.*\)+\1+'`
--                    if [ $? -ne 0 ]; then
--                      log_failure "not found"
--                      fail
--                    else
--                      log_success "found version $uic3_ver"
--                      cnf_append "VBOX_UIC3" "$r/uic3"
--                      return
--                    fi
--                  fi
--                done
--                log_failure "not found"
--                fail
+-                cnf_append "PATH_SDK_QT4" "$q"
+-                cnf_append "PATH_TOOL_QT4" "$q"
+-                return
+-              fi
 +          if which_wrapper "/usr/bin/moc-qt4" > /dev/null; then
 +            moc_ver=`/usr/bin/moc-qt4 -v 2>&1|sed 's+^.*(Qt \(.*\))+\1+'`
 +            if [ $? -ne 0 ]; then
@@ -113,36 +133,25 @@
 +            else
 +              log_success "found version $moc_ver"
 +              cnf_append "VBOX_PATH_QT4" "$q"
-+              test_header "Qt4 uic3"
-+              if which_wrapper "/usr/bin/uic3" > /dev/null; then
-+                uic3_ver=`/usr/bin/uic3 -version 2>&1|sed 's+^.*version \(.*\)+\1+'`
-+                if [ $? -ne 0 ]; then
-+                  log_failure "not found"
-+                  fail
-+                else
-+                  log_success "found version $uic3_ver"
-+                  cnf_append "VBOX_UIC3" "$r/uic3"
-+                  return
-+                fi
-               fi
-+              log_failure "not found"
-+              fail
++              cnf_append "PATH_SDK_QT4" "$q"
++              cnf_append "PATH_TOOL_QT4" "$q"
++              return
              fi
 -          done
 +          fi
          fi
        fi
      else
-@@ -1604,8 +1583,6 @@
+@@ -1765,8 +1745,6 @@
    --with-iasl=PATH         location of the iasl compiler [$IASL]
    --with-linux=DIR         Linux kernel source directory [$LINUX]
    --with-mkisofs=PATH      location of mkisofs [$MKISOFS]
 -  --with-qt-dir=DIR        directory for Qt3 headers/libraries [$QT3DIR]
--  --with-qt4-dir=DIR       directory for Qt4 headers/libraries [$QT4DIR]
+-  --with-qt4-dir=DIR       directory for Qt4 headers/libraries [pkgconfig]
  
  Build type:
    -d, --build-debug        build with debugging symbols and assertions
-@@ -1645,12 +1622,6 @@
+@@ -1809,13 +1787,6 @@
          exit 1
        fi
        ;;
@@ -151,6 +160,7 @@
 -      ;;
 -    --with-qt4-dir=*)
 -      QT4DIR=`echo $option | cut -d'=' -f2`
+-      QT4DIR_PKGCONFIG=0
 -      ;;
      --with-iasl=*)
        IASL=`echo $option | cut -d'=' -f2`
