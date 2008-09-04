@@ -428,8 +428,10 @@ fi
 %attr(755,root,root) %{_libdir}/VirtualBox/vditool
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxSVC
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxBFE
+%attr(755,root,root) %{_libdir}/VirtualBox/VBoxHeadless
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxManage
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxSDL
+%attr(755,root,root) %{_libdir}/VirtualBox/VBoxTunctl
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxXPCOMIPCD
 %attr(755,root,root) %{_libdir}/VirtualBox/VBox*.so
 %ifarch %{x8664}
