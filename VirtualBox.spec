@@ -252,8 +252,8 @@ Sterownik grafiki dla systemu gościa w VirtualBoksie.
 
 %prep
 %setup -q -n %{pname}-%{version}
-%patch0 -p0
-%patch1 -p0
+%patch0 -p1
+%patch1 -p1
 %patch2 -p1
 
 %ifarch %{x8664}
