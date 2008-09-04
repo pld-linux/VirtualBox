@@ -9,10 +9,10 @@ diff -urN VirtualBox-2.0.0.orig/Config.kmk VirtualBox-2.0.0/Config.kmk
 -VBOX_MOC      ?= $(VBOX_PATH_QT_HOST)/bin/moc$(HOSTSUFF_EXE)
 -VBOX_LUPDATE  ?= $(VBOX_PATH_QT_HOST)/bin/lupdate$(HOSTSUFF_EXE)
 -VBOX_LRELEASE ?= $(VBOX_PATH_QT_HOST)/bin/lrelease$(HOSTSUFF_EXE)
-+VBOX_UIC      ?= /usr/bin/uic$(HOSTSUFF_EXE)
-+VBOX_MOC      ?= /usr/bin/moc$(HOSTSUFF_EXE)
-+VBOX_LUPDATE  ?= /usr/bin/lupdate$(HOSTSUFF_EXE)
-+VBOX_LRELEASE ?= /usr/bin/lrelease$(HOSTSUFF_EXE)
++VBOX_UIC      ?= /usr/bin/uic-qt4$(HOSTSUFF_EXE)
++VBOX_MOC      ?= /usr/bin/moc-qt4$(HOSTSUFF_EXE)
++VBOX_LUPDATE  ?= /usr/bin/lupdate-qt4$(HOSTSUFF_EXE)
++VBOX_LRELEASE ?= /usr/bin/lrelease-qt4$(HOSTSUFF_EXE)
  
  ifeq ($(KBUILD_TARGET),os2)
   # search DLLs in the EXE directory first (unless VBOX_DLL_QT is set)
@@ -38,3 +38,34 @@ diff -urN VirtualBox-2.0.0.orig/Config.kmk VirtualBox-2.0.0/Config.kmk
   endif
  
   ifeq ($(KBUILD_TARGET),linux)
+--- VirtualBox-2.0.0.orig/kBuild/units/qt4.kmk	2008-08-26 20:42:40.000000000 +0200
++++ VirtualBox-2.0.0/kBuild/units/qt4.kmk	2008-09-04 21:54:57.450546565 +0200
+@@ -160,18 +160,18 @@
+ endif
+ ifneq ($(PATH_TOOL_QT4),)
+  PATH_TOOL_QT4_BIN  ?= $(PATH_TOOL_QT4)/bin
+- TOOL_QT4_MOC       ?= $(PATH_TOOL_QT4_BIN)/moc$(HOST_SUFF_EXE)
+- TOOL_QT4_UIC       ?= $(PATH_TOOL_QT4_BIN)/uic$(HOST_SUFF_EXE)
+- TOOL_QT4_RCC       ?= $(PATH_TOOL_QT4_BIN)/rcc$(HOST_SUFF_EXE)
+- TOOL_QT4_LRC       ?= $(PATH_TOOL_QT4_BIN)/lrelease$(HOST_SUFF_EXE)
+- TOOL_QT4_LUPDATE   ?= $(PATH_TOOL_QT4_BIN)/lupdate$(HOST_SUFF_EXE)
++ TOOL_QT4_MOC       ?= $(PATH_TOOL_QT4_BIN)/moc-qt4$(HOST_SUFF_EXE)
++ TOOL_QT4_UIC       ?= $(PATH_TOOL_QT4_BIN)/uic-qt4$(HOST_SUFF_EXE)
++ TOOL_QT4_RCC       ?= $(PATH_TOOL_QT4_BIN)/rcc-qt4$(HOST_SUFF_EXE)
++ TOOL_QT4_LRC       ?= $(PATH_TOOL_QT4_BIN)/lrelease-qt4$(HOST_SUFF_EXE)
++ TOOL_QT4_LUPDATE   ?= $(PATH_TOOL_QT4_BIN)/lupdate-qt4$(HOST_SUFF_EXE)
+ else
+  # Pathless, relies on the environment.
+- TOOL_QT4_MOC       ?= moc$(HOST_SUFF_EXE)
+- TOOL_QT4_UIC       ?= uic$(HOST_SUFF_EXE)
+- TOOL_QT4_RCC       ?= rcc$(HOST_SUFF_EXE)
+- TOOL_QT4_LRC       ?= lrelease$(HOST_SUFF_EXE)
+- TOOL_QT4_LUPDATE   ?= lupdate$(HOST_SUFF_EXE)
++ TOOL_QT4_MOC       ?= moc-qt4$(HOST_SUFF_EXE)
++ TOOL_QT4_UIC       ?= uic-qt4$(HOST_SUFF_EXE)
++ TOOL_QT4_RCC       ?= rcc-qt4$(HOST_SUFF_EXE)
++ TOOL_QT4_LRC       ?= lrelease-qt4$(HOST_SUFF_EXE)
++ TOOL_QT4_LUPDATE   ?= lupdate-qt4$(HOST_SUFF_EXE)
+ endif
+ 
+ # General Properties used by kBuild and/or units/qt.kmk
