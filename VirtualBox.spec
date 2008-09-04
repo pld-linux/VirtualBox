@@ -12,7 +12,7 @@
 %bcond_without	userspace	# don't build userspace package
 %bcond_with	verbose
 
-%define		rel		0.1
+%define		rel		0.2
 
 %if %{without kernel}
 %undefine	with_dist_kernel
@@ -20,12 +20,6 @@
 
 %if "%{_alt_kernel}" != "%{nil}"
 %undefine	with_userspace
-%endif
-
-%if "%{pld_release}" != "ti"
-%define		__ucc	gcc-3.4
-%else
-%define		__ucc	%{__cc}
 %endif
 
 %define		pname	VirtualBox
@@ -52,7 +46,6 @@ Patch1:		%{pname}-qt-paths.patch
 Patch2:		%{pname}-shared-libstdc++.patch
 Patch3:		%{pname}-disable-xclient-build.patch
 Patch4:		%{pname}-configure-spaces.patch
-Patch5:		%{pname}-gcc.patch
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
 BuildRequires:	SDL-devel >= 1.2.7
@@ -79,8 +72,8 @@ BuildRequires:	libxslt-devel >= 1.1.17
 BuildRequires:	libxslt-progs >= 1.1.17
 BuildRequires:	pkgconfig
 BuildRequires:	pulseaudio-devel >= 0.9.0
-BuildRequires:	qt-devel >= 6:3.3.6
-BuildRequires:	qt-linguist
+BuildRequires:	qt4-devel >= 4.2.0
+BuildRequires:	qt4-linguist
 %endif
 BuildRequires:	rpmbuild(macros) >= 1.379
 %if %{with userspace}
@@ -261,7 +254,6 @@ Sterownik grafiki dla systemu gościa w VirtualBoksie.
 %endif
 
 %patch4 -p1
-%patch5 -p0
 
 cat <<'EOF' > udev.conf
 KERNEL=="vboxdrv", NAME="%k", GROUP="vbox", MODE="0660"
@@ -285,12 +277,15 @@ sed -i -e '/#.*define.*RTMEMALLOC_EXEC_HEAP/d' vboxadd/r0drv/linux/alloc-r0drv-l
 %if %{with userspace}
 ./configure \
 	--with-gcc="%{__cc}" \
+%if "%{pld_release}" != "ti"
+	--with-gcc-compat="gcc-3.4" \
+%endif
 	--with-g++="%{__cxx}" \
-	--disable-qt4 \
+	--disable-qt3 \
 	--disable-kmods
 
 . ./env.sh && \
-kmk -j1 VBOX_RECOMPILER_OP_GCC_PLD_COMPAT="%{__ucc}"
+kmk -j1
 %endif
 
 %if %{with kernel}
