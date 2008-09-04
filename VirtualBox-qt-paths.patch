@@ -21,7 +21,7 @@ diff -urN VirtualBox-2.0.0.orig/Config.kmk VirtualBox-2.0.0/Config.kmk
  TEMPLATE_VBOXQTGUIEXE_DEFS = IN_RING3 QT_NO_DEBUG QT_THREAD_SUPPORT $(ARCH_BITS_DEFS)
  TEMPLATE_VBOXQTGUIEXE_INCS = \
 -	$(VBOX_PATH_QT)/include
-+	/usr/include/qt
++	/usr/include/qt4
  
  ifeq ($(KBUILD_TARGET),win)
   # drag in library configuration (we need QMAKE_PRL_DEFINES)

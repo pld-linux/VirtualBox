@@ -95,12 +95,12 @@ diff -urN VirtualBox-2.0.0.orig/configure VirtualBox-2.0.0/configure
 +      INCQT4="/usr/include/qt4 /usr/include/qt/QtCore"
 +      FLGQT4="-DQT_SHARED"
 +      I_INCQT4=`prefix_I "$INCQT4"`
-+      LIBQT4="-L/usr/lib/qt4 -lVBoxQtCore"
++      LIBQT4="-L/usr/lib -L/usr/lib64 -lVBoxQtCore"
 +      if test_compile "$LIBQT4 $LIBPTHREAD $I_INCQT4 $FLGQT4" qt4 qt4 nofatal; then
 +        foundqt4=2
 +        break;
 +      fi
-+      LIBQT4="-L/usr/lib/qt4 -lQtCore"
++      LIBQT4="-L/usr/lib -L/usr/lib64 -lQtCore"
 +      if test_compile "$LIBQT4 $LIBPTHREAD $I_INCQT4 $FLGQT4" qt4 qt4 nofatal; then
 +        foundqt4=1
 +        break;
