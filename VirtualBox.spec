@@ -306,7 +306,7 @@ install -d \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
 
 install %{SOURCE6} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/VirtualBox-wrapper.sh
-for f in {VBox{BFE,Manage,SDL,SVC,XPCOMIPCD},VirtualBox,vditool}; do
+for f in {VBox{BFE,Headless,Manage,SDL,SVC,Tunctl,XPCOMIPCD},VirtualBox,vditool}; do
 	install out/linux.%{outdir}/release/bin/$f $RPM_BUILD_ROOT%{_libdir}/VirtualBox/$f
 	ln -s %{_libdir}/VirtualBox/VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_bindir}/$f
 done
@@ -318,7 +318,7 @@ install out/linux.%{outdir}/release/bin/VBox*.rel \
 
 install out/linux.%{outdir}/release/bin/VBox*.so \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
-install out/linux.%{outdir}/release/bin/{VBox{DD,DD2}{GC.gc,R0.r0},VMM{GC.gc,R0.r0},*.xpt} \
+install out/linux.%{outdir}/release/bin/{VBox{DD,DD2}{GC.gc,R0.r0},VMM{GC.gc,R0.r0}} \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
 
 install -d $RPM_BUILD_ROOT%{_libdir}/VirtualBox/additions
@@ -439,7 +439,6 @@ fi
 %attr(755,root,root) %{_libdir}/VirtualBox/VirtualBox-wrapper.sh
 %{_libdir}/VirtualBox/*.gc
 %{_libdir}/VirtualBox/*.r0
-%{_libdir}/VirtualBox/*.xpt
 %{_libdir}/VirtualBox/additions/*
 %{_libdir}/VirtualBox/components/*
 %lang(ar) %{_libdir}/VirtualBox/nls/*_ar.qm
