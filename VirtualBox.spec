@@ -72,7 +72,7 @@ BuildRequires:	libxslt-devel >= 1.1.17
 BuildRequires:	libxslt-progs >= 1.1.17
 BuildRequires:	pkgconfig
 BuildRequires:	pulseaudio-devel >= 0.9.0
-BuildRequires:	qt4-devel >= 4.2.0
+BuildRequires:	qt4-build >= 4.2.0
 BuildRequires:	qt4-linguist
 %endif
 BuildRequires:	rpmbuild(macros) >= 1.379
