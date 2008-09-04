@@ -12,7 +12,7 @@
 %bcond_without	userspace	# don't build userspace package
 %bcond_with	verbose
 
-%define		rel		1
+%define		rel		0.1
 
 %if %{without kernel}
 %undefine	with_dist_kernel
@@ -33,16 +33,16 @@
 Summary:	VirtualBox OSE - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox OSE - wirtualizator sprzętu x86
 Name:		%{pname}%{_alt_kernel}
-Version:	1.6.6
+Version:	2.0.0
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}-OSE.tar.bz2
-# Source0-md5:	19f8cb080ec2cb11aab8b381d9b89323
+# Source0-md5:	1f53ebed0f55df129f6cf72dba646c3a
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/UserManual.pdf
-# Source1-md5:	5b261cc5a752c4c28c40a93417c0434b
-Source2:	http://www.virtualbox.org/download/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source2-md5:	2fff3ec12f5c3dd86bf41ee7c71e3bab
+# Source1-md5:	cf65a8164a18f7200520c1ec3399a918
+Source2:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
+# Source2-md5:	ae0512b8db853fdea9fc262fc04bd242
 Source3:	%{pname}-vboxdrv.init
 Source4:	%{pname}-vboxadd.init
 Source5:	%{pname}.desktop
