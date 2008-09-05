@@ -316,7 +316,7 @@ install out/linux.%{outdir}/release/bin/VBox*.rel \
         $RPM_BUILD_ROOT%{_libdir}/VirtualBox
 %endif
 
-install out/linux.%{outdir}/release/bin/VBox*.so \
+install out/linux.%{outdir}/release/bin/{VBox*,VirtualBox*}.so \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
 install out/linux.%{outdir}/release/bin/{VBox{DD,DD2}{GC.gc,R0.r0},VMM{GC.gc,R0.r0}} \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
@@ -434,6 +434,7 @@ fi
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxTunctl
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxXPCOMIPCD
 %attr(755,root,root) %{_libdir}/VirtualBox/VBox*.so
+%attr(755,root,root) %{_libdir}/VirtualBox/VirtualBox*.so
 %ifarch %{x8664}
 %attr(755,root,root) %{_libdir}/VirtualBox/VBox*.rel
 %endif
