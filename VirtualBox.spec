@@ -12,7 +12,7 @@
 %bcond_without	userspace	# don't build userspace package
 %bcond_with	verbose
 
-%define		rel		0.2
+%define		rel		1
 
 %if %{without kernel}
 %undefine	with_dist_kernel
@@ -281,8 +281,9 @@ sed -i -e '/#.*define.*RTMEMALLOC_EXEC_HEAP/d' vboxadd/r0drv/linux/alloc-r0drv-l
 	--with-gcc-compat="gcc-3.4" \
 %endif
 	--with-g++="%{__cxx}" \
-	--disable-qt3 \
-	--disable-kmods
+	--disable-hardening \
+	--disable-kmods \
+	--disable-qt3
 
 . ./env.sh && \
 kmk -j1 %{?with_verbose:KBUILD_VERBOSE=3}
@@ -316,7 +317,7 @@ install out/linux.%{outdir}/release/bin/VBox*.rel \
         $RPM_BUILD_ROOT%{_libdir}/VirtualBox
 %endif
 
-install out/linux.%{outdir}/release/bin/{VBox*,VirtualBox*}.so \
+install out/linux.%{outdir}/release/bin/VBox*.so \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
 install out/linux.%{outdir}/release/bin/{VBox{DD,DD2}{GC.gc,R0.r0},VMM{GC.gc,R0.r0}} \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
@@ -434,7 +435,6 @@ fi
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxTunctl
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxXPCOMIPCD
 %attr(755,root,root) %{_libdir}/VirtualBox/VBox*.so
-%attr(755,root,root) %{_libdir}/VirtualBox/VirtualBox*.so
 %ifarch %{x8664}
 %attr(755,root,root) %{_libdir}/VirtualBox/VBox*.rel
 %endif
