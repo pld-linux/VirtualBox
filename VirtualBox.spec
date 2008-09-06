@@ -49,6 +49,7 @@ Patch4:		%{pname}-configure-spaces.patch
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
 BuildRequires:	SDL-devel >= 1.2.7
+BuildRequires:	QtCore-devel
 BuildRequires:	alsa-lib-devel >= 1.0.6
 BuildRequires:	bash
 BuildRequires:	bcc
