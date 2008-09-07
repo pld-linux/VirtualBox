@@ -48,7 +48,7 @@ Patch3:		%{pname}-disable-xclient-build.patch
 Patch4:		%{pname}-configure-spaces.patch
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
-BuildRequires:	QtCore-devel
+BuildRequires:	OpenGL-devel
 BuildRequires:	QtGui-devel
 BuildRequires:	SDL-devel >= 1.2.7
 BuildRequires:	alsa-lib-devel >= 1.0.6
@@ -74,6 +74,7 @@ BuildRequires:	libxslt-devel >= 1.1.17
 BuildRequires:	libxslt-progs >= 1.1.17
 BuildRequires:	pkgconfig
 BuildRequires:	pulseaudio-devel >= 0.9.0
+BuildRequires:	python-devel
 BuildRequires:	qt4-build >= 4.2.0
 BuildRequires:	qt4-linguist
 %endif
@@ -83,6 +84,7 @@ BuildRequires:	which
 BuildRequires:	xalan-c-devel >= 1.10.0
 BuildRequires:	xerces-c-devel >= 2.6.0
 BuildRequires:	xorg-lib-libXcursor-devel
+BuildRequires:	xorg-lib-libXmu-devel
 BuildRequires:	zlib-devel >= 1.2.1
 %ifarch %{x8664}
 BuildRequires:	gcc-multilib
