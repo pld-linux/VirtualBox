@@ -12,7 +12,7 @@
 %bcond_without	userspace	# don't build userspace package
 %bcond_with	verbose
 
-%define		rel		1
+%define		rel		2
 
 %if %{without kernel}
 %undefine	with_dist_kernel
@@ -46,6 +46,7 @@ Patch1:		%{pname}-qt-paths.patch
 Patch2:		%{pname}-shared-libstdc++.patch
 Patch3:		%{pname}-disable-xclient-build.patch
 Patch4:		%{pname}-configure-spaces.patch
+Patch5:		%{pname}-svn_fixes.patch
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
 BuildRequires:	OpenGL-devel
@@ -258,6 +259,7 @@ Sterownik grafiki dla systemu gościa w VirtualBoksie.
 %endif
 
 %patch4 -p1
+%patch5 -p1
 
 cat <<'EOF' > udev.conf
 KERNEL=="vboxdrv", NAME="%k", GROUP="vbox", MODE="0660"
