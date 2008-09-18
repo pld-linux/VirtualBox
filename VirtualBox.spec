@@ -83,6 +83,7 @@ BuildRequires:	qt4-linguist
 %endif
 BuildRequires:	rpmbuild(macros) >= 1.379
 %if %{with userspace}
+BuildRequires:	sed >= 4.0
 BuildRequires:	which
 BuildRequires:	xalan-c-devel >= 1.10.0
 BuildRequires:	xerces-c-devel >= 2.6.0
@@ -293,6 +294,7 @@ kmk -j1 %{?with_verbose:KBUILD_VERBOSE=3}
 
 %if %{with kernel}
 cd PLD-MODULE-BUILD
+sed -i -e 's/-DVBOX_WITH_HARDENING//g' vboxdrv/Makefile
 %build_kernel_modules -m vboxadd -C vboxadd
 %build_kernel_modules -m vboxdrv -C vboxdrv
 cp -a vboxadd/Module.symvers vboxvfs
