@@ -12,7 +12,7 @@
 %bcond_without	userspace	# don't build userspace package
 %bcond_with	verbose
 
-%define		rel		3
+%define		rel		1
 
 %if %{without kernel}
 %undefine	with_dist_kernel
@@ -27,16 +27,19 @@
 Summary:	VirtualBox OSE - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox OSE - wirtualizator sprzętu x86
 Name:		%{pname}%{_alt_kernel}
-Version:	2.0.0
+Version:	2.0.2
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/Emulators
-Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}-OSE.tar.bz2
-# Source0-md5:	1f53ebed0f55df129f6cf72dba646c3a
-Source1:	http://download.virtualbox.org/virtualbox/%{version}/UserManual.pdf
-# Source1-md5:	cf65a8164a18f7200520c1ec3399a918
-Source2:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source2-md5:	ae0512b8db853fdea9fc262fc04bd242
+#Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}-OSE.tar.bz2
+Source0:	%{pname}-%{version}-OSE.tar.bz2
+# Source0-md5:	f7b48ec55ac1ca17c575bf9dda80c301
+#Source1:	http://download.virtualbox.org/virtualbox/%{version}/UserManual.pdf
+Source1:	UserManual.pdf
+# Source1-md5:	3f1227312e8396819971731f2d184127
+#Source2:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
+Source2:	VBoxGuestAdditions_%{version}.iso
+# Source2-md5:	ee915cc99713f448ca362fa81af82b47
 Source3:	%{pname}-vboxdrv.init
 Source4:	%{pname}-vboxadd.init
 Source5:	%{pname}.desktop
@@ -46,7 +49,6 @@ Patch1:		%{pname}-qt-paths.patch
 Patch2:		%{pname}-shared-libstdc++.patch
 Patch3:		%{pname}-disable-xclient-build.patch
 Patch4:		%{pname}-configure-spaces.patch
-Patch5:		%{pname}-svn_fixes.patch
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
 BuildRequires:	OpenGL-devel
@@ -259,7 +261,6 @@ Sterownik grafiki dla systemu gościa w VirtualBoksie.
 %endif
 
 %patch4 -p1
-%patch5 -p1
 
 cat <<'EOF' > udev.conf
 KERNEL=="vboxdrv", NAME="%k", GROUP="vbox", MODE="0660"
