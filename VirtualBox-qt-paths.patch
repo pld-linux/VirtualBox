@@ -25,16 +25,3 @@ diff -urN VirtualBox-2.0.0.orig/Config.kmk VirtualBox-2.0.0/Config.kmk
  
  ifeq ($(KBUILD_TARGET),win)
   # drag in library configuration (we need QMAKE_PRL_DEFINES)
-@@ -2750,10 +2750,10 @@
- 
-  ifeq ($(KBUILD_TARGET_ARCH),amd64)
-   TEMPLATE_VBOXQTGUIEXE_LIBPATH = \
--	$(VBOX_PATH_QT)/lib64 $(VBOX_PATH_QT)/lib
-+	/usr/lib64 /usr/lib
-  else
-   TEMPLATE_VBOXQTGUIEXE_LIBPATH = \
--	$(VBOX_PATH_QT)/lib
-+	/usr/lib
-  endif
- 
-  ifeq ($(KBUILD_TARGET),linux)
