@@ -69,7 +69,7 @@ BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.20
 %endif
 %if %{with userspace}
 BuildRequires:	libIDL-devel
-BuildRequires:	libpng >= 1.2.5
+BuildRequires:	libpng-devel >= 1.2.5
 BuildRequires:	libstdc++-devel >= 5:3.2.3
 BuildRequires:	libuuid-devel
 BuildRequires:	libxml2-devel >= 2.6.26
