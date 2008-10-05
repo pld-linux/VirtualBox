@@ -140,3 +140,14 @@ diff -urN VirtualBox-2.0.0.orig/configure VirtualBox-2.0.0/configure
      --with-iasl=*)
        IASL=`echo $option | cut -d'=' -f2`
        ;;
+--- virtualbox/configure~	2008-09-05 09:37:40.842948230 +0200
++++ virtualbox/configure	2008-10-05 11:57:17.430201993 +0200
+@@ -1571,7 +1571,7 @@
+ EOF
+   found=
+   for p in $PYTHONDIR; do
+-    for d in python2.5 python2.4 python2.3; do
++    for d in python2.6 python2.5 python2.4 python2.3; do
+       for b in lib64 lib/64 lib; do
+         echo "compiling the following source file:" >> $LOG
+         cat .tmp_src.cc >> $LOG
