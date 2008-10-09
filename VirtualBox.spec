@@ -59,7 +59,7 @@ BuildRequires:	bash
 BuildRequires:	bcc
 BuildRequires:	bin86
 BuildRequires:	gcc >= 5:3.2.3
-%if "%{pld_release}" != "ti"
+%if "%{pld_release}" == "th"
 BuildRequires:	compat-gcc-34
 %endif
 BuildRequires:	iasl
