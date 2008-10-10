@@ -12,7 +12,7 @@
 %bcond_without	userspace	# don't build userspace package
 %bcond_with	verbose
 
-%define		rel		3
+%define		rel		4
 
 %if %{without kernel}
 %undefine	with_dist_kernel
@@ -338,9 +338,9 @@ install out/linux.%{outdir}/release/bin/additions/mountvboxsf		\
 
 %ifnarch %{x8664}
 install -d $RPM_BUILD_ROOT%{_libdir}/xorg/modules/{drivers,input}
-install out/linux.%{outdir}/release/bin/additions/vboxmouse_drv_14.so	\
+install out/linux.%{outdir}/release/bin/additions/vboxmouse_drv_15.so	\
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/input/vboxmouse_drv.so
-install out/linux.%{outdir}/release/bin/additions/vboxvideo_drv_14.so	\
+install out/linux.%{outdir}/release/bin/additions/vboxvideo_drv_15.so	\
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so
 %endif
 
