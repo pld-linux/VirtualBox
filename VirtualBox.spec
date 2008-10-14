@@ -87,8 +87,12 @@ BuildRequires:	sed >= 4.0
 BuildRequires:	which
 BuildRequires:	xalan-c-devel >= 1.10.0
 BuildRequires:	xerces-c-devel >= 2.6.0
+%if "%{pld_release}" == "ac"
+BuildRequires:	XFree86-devel
+%else
 BuildRequires:	xorg-lib-libXcursor-devel
 BuildRequires:	xorg-lib-libXmu-devel
+%endif
 BuildRequires:	zlib-devel >= 1.2.1
 %ifarch %{x8664}
 BuildRequires:	gcc-multilib
@@ -280,7 +284,7 @@ rm -rf PLD-MODULE-BUILD && mkdir PLD-MODULE-BUILD && cd PLD-MODULE-BUILD
 %if %{with userspace}
 ./configure \
 	--with-gcc="%{__cc}" \
-%if "%{pld_release}" != "ti"
+%if "%{pld_release}" == "th"
 	--with-gcc-compat="gcc-3.4" \
 %endif
 	--with-g++="%{__cxx}" \
