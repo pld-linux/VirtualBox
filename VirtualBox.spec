@@ -51,7 +51,22 @@ Patch2:		%{pname}-shared-libstdc++.patch
 Patch3:		%{pname}-disable-xclient-build.patch
 Patch4:		%{pname}-configure-spaces.patch
 URL:		http://www.virtualbox.org/
+BuildRequires:	rpmbuild(macros) >= 1.379
 %if %{with userspace}
+%ifarch %{x8664}
+BuildRequires:	gcc-multilib
+BuildRequires:	glibc-devel(i686)
+BuildRequires:	libstdc++-multilib-devel
+%endif
+%if "%{pld_release}" == "th"
+BuildRequires:	compat-gcc-34
+%endif
+%if "%{pld_release}" == "ac"
+BuildRequires:	XFree86-devel
+%else
+BuildRequires:	xorg-lib-libXcursor-devel
+BuildRequires:	xorg-lib-libXmu-devel
+%endif
 BuildRequires:	OpenGL-devel
 BuildRequires:	QtGui-devel
 BuildRequires:	SDL-devel >= 1.2.7
@@ -60,15 +75,7 @@ BuildRequires:	bash
 BuildRequires:	bcc
 BuildRequires:	bin86
 BuildRequires:	gcc >= 5:3.2.3
-%if "%{pld_release}" == "th"
-BuildRequires:	compat-gcc-34
-%endif
 BuildRequires:	iasl
-%endif
-%if %{with dist_kernel}
-BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.20
-%endif
-%if %{with userspace}
 BuildRequires:	libIDL-devel
 BuildRequires:	libpng-devel >= 1.2.5
 BuildRequires:	libstdc++-devel >= 5:3.2.3
@@ -81,25 +88,14 @@ BuildRequires:	pulseaudio-devel >= 0.9.0
 BuildRequires:	python-devel
 BuildRequires:	qt4-build >= 4.2.0
 BuildRequires:	qt4-linguist
-%endif
-BuildRequires:	rpmbuild(macros) >= 1.379
-%if %{with userspace}
 BuildRequires:	sed >= 4.0
 BuildRequires:	which
 BuildRequires:	xalan-c-devel >= 1.10.0
 BuildRequires:	xerces-c-devel >= 2.6.0
-%if "%{pld_release}" == "ac"
-BuildRequires:	XFree86-devel
-%else
-BuildRequires:	xorg-lib-libXcursor-devel
-BuildRequires:	xorg-lib-libXmu-devel
-%endif
 BuildRequires:	zlib-devel >= 1.2.1
-%ifarch %{x8664}
-BuildRequires:	gcc-multilib
-BuildRequires:	glibc-devel(i686)
-BuildRequires:	libstdc++-multilib-devel
 %endif
+%if %{with dist_kernel}
+BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.20
 %endif
 Requires(post,preun):	/sbin/chkconfig
 Requires(postun):	/usr/sbin/groupdel
