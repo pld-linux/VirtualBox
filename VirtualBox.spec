@@ -12,18 +12,19 @@
 %bcond_without	userspace	# don't build userspace package
 %bcond_with	verbose
 
-%define		rel		1
-
 %if %{without kernel}
 %undefine	with_dist_kernel
 %endif
-
 %if "%{_alt_kernel}" != "%{nil}"
 %undefine	with_userspace
 %endif
+%if %{without userspace}
+# nothing to be placed to debuginfo package
+%define		_enable_debug_packages	0
+%endif
 
+%define		rel		1
 %define		pname	VirtualBox
-
 Summary:	VirtualBox OSE - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox OSE - wirtualizator sprzętu x86
 Name:		%{pname}%{_alt_kernel}
