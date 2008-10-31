@@ -279,6 +279,7 @@ rm -rf PLD-MODULE-BUILD && mkdir PLD-MODULE-BUILD && cd PLD-MODULE-BUILD
 	tar -zxf modules.tar.gz && rm -f modules.tar.gz
 ../src/VBox/HostDrivers/Support/linux/export_modules modules.tar.gz && \
 	tar -zxf modules.tar.gz && rm -f modules.tar.gz
+sed -i -e 's/-DVBOX_WITH_HARDENING//g' vboxdrv/Makefile
 
 %build
 %if %{with userspace}
@@ -298,7 +299,6 @@ kmk -j1 %{?with_verbose:KBUILD_VERBOSE=3}
 
 %if %{with kernel}
 cd PLD-MODULE-BUILD
-sed -i -e 's/-DVBOX_WITH_HARDENING//g' vboxdrv/Makefile
 %build_kernel_modules -m vboxadd -C vboxadd
 %build_kernel_modules -m vboxdrv -C vboxdrv
 cp -a vboxadd/Module.symvers vboxvfs
