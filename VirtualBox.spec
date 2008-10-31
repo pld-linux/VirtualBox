@@ -13,8 +13,6 @@
 %bcond_without	smp		# without SMP kernel modules
 %bcond_without	userspace	# don't build userspace package
 
-%define         rel             1
-
 %if %{without kernel}
 %undefine	with_dist_kernel
 %endif
@@ -22,9 +20,13 @@
 %if "%{_alt_kernel}" != "%{nil}"
 %undefine	with_userspace
 %endif
+%if %{without userspace}
+# nothing to be placed to debuginfo package
+%define		_enable_debug_packages	0
+%endif
 
+%define		rel		3
 %define		pname	VirtualBox
-
 Summary:	VirtualBox OSE - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox OSE - wirtualizator sprzętu x86
 Name:		%{pname}%{_alt_kernel}
@@ -32,11 +34,11 @@ Version:	1.6.2
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/Emulators
-Source0:        http://www.virtualbox.org/download/%{version}/%{pname}-%{version}-OSE.tar.bz2
+Source0:	http://www.virtualbox.org/download/%{version}/%{pname}-%{version}-OSE.tar.bz2
 # Source0-md5:  0372a3a31326078f7849a0467d547a70
-Source1:        http://www.virtualbox.org/download/%{version}/UserManual.pdf
+Source1:	http://www.virtualbox.org/download/%{version}/UserManual.pdf
 # Source1-md5:  32505857b575f0fb6f71ba1738c1e102
-Source2:        http://www.virtualbox.org/download/%{version}/VBoxGuestAdditions_%{version}.iso
+Source2:	http://www.virtualbox.org/download/%{version}/VBoxGuestAdditions_%{version}.iso
 # Source2-md5:  3cac7e911e545038102ff641cba66365
 Source3:	%{pname}.init
 Source4:	%{pname}.desktop
@@ -61,14 +63,14 @@ BuildRequires:	iasl
 %if %{with userspace}
 BuildRequires:	libIDL-devel
 BuildRequires:	libuuid-devel
-BuildRequires:	libxslt-progs
 BuildRequires:	libxslt-devel
+BuildRequires:	libxslt-progs
 BuildRequires:	pkgconfig
 BuildRequires:	pulseaudio-devel
 BuildRequires:	qt-devel >= 6:3.3.6
 BuildRequires:	qt-linguist
 %endif
-BuildRequires:	rpmbuild(macros) >= 1.379
+BuildRequires:	rpmbuild(macros) >= 1.452
 %if %{with userspace}
 BuildRequires:	which
 BuildRequires:	xalan-c-devel >= 1.10.0
@@ -142,6 +144,7 @@ konfigurację maszyny wirtualnej na inny komputer.
 %package udev
 Summary:	udev rules for VirtualBox OSE kernel modules
 Summary(pl.UTF-8):	Reguły udev dla modułów jądra Linuksa dla VirtualBoksa
+Release:	%{rel}
 Group:		Base/Kernel
 Requires:	udev
 
@@ -154,6 +157,7 @@ Reguły udev dla modułów jądra Linuksa dla VirtualBoksa.
 %package -n kernel%{_alt_kernel}-misc-vboxadd
 Summary:	Linux kernel module for VirtualBox OSE
 Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
+Release:	%{rel}@%{_kernel_vermagic}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 Requires:	dev >= 2.9.0-7
@@ -168,6 +172,7 @@ Moduł jądra Linuksa vboxadd dla VirtualBoksa.
 %package -n kernel%{_alt_kernel}-misc-vboxdrv
 Summary:	Linux kernel module for VirtualBox OSE
 Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
+Release:	%{rel}@%{_kernel_vermagic}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 Requires:	dev >= 2.9.0-7
@@ -182,6 +187,7 @@ Moduł jądra Linuksa vboxdrv dla VirtualBoksa.
 %package -n kernel%{_alt_kernel}-misc-vboxvfs
 Summary:	Linux kernel module for VirtualBox OSE
 Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
+Release:	%{rel}@%{_kernel_vermagic}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 Requires:	dev >= 2.9.0-7
@@ -196,6 +202,7 @@ Moduł jądra Linuksa vboxvfs dla VirtualBoksa.
 %package -n kernel%{_alt_kernel}-smp-misc-vboxadd
 Summary:	Linux SMP kernel module for VirtualBox OSE
 Summary(pl.UTF-8):	Moduł jądra Linuksa SMP dla VirtualBoksa
+Release:	%{rel}@%{_kernel_vermagic}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 Requires:	dev >= 2.9.0-7
@@ -210,6 +217,7 @@ Moduł jądra Linuksa SMP vboxadd dla VirtualBoksa.
 %package -n kernel%{_alt_kernel}-smp-misc-vboxdrv
 Summary:	Linux SMP kernel module for VirtualBox OSE
 Summary(pl.UTF-8):	Moduł jądra Linuksa SMP dla VirtualBoksa
+Release:	%{rel}@%{_kernel_vermagic}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 Requires:	dev >= 2.9.0-7
@@ -224,6 +232,7 @@ Moduł jądra Linuksa SMP vboxdrv dla VirtualBoksa.
 %package -n kernel%{_alt_kernel}-smp-misc-vboxvfs
 Summary:	Linux SMP kernel module for VirtualBox OSE
 Summary(pl.UTF-8):	Moduł jądra Linuksa SMP dla VirtualBoksa
+Release:	%{rel}@%{_kernel_vermagic}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 Requires:	dev >= 2.9.0-7
@@ -238,6 +247,7 @@ Moduł jądra Linuksa SMP vboxvfs dla VirtualBoksa.
 %package -n X11-driver-input-vboxmouse
 Summary:	X.org mouse driver for VirtualBox OSE guest OS
 Summary(pl.UTF-8):	Sterownik myszy dla systemu gościa w VirtualBoksie
+Release:	%{rel}
 Group:		X11/Applications
 Requires:	X11-Xserver >= 1:6.9.0
 
@@ -250,6 +260,7 @@ Sterownik myszy dla systemu gościa w VirtualBoksie.
 %package -n X11-driver-video-vboxvideo
 Summary:	X.org video driver for VirtualBox OSE guest OS
 Summary(pl.UTF-8):	Sterownik grafiki dla systemu gościa w VirtualBoksie
+Release:	%{rel}
 Group:		X11/Applications
 Requires:	X11-Xserver >= 1:6.9.0
 
@@ -293,6 +304,7 @@ sed -i -e '/#.*define.*RTMEMALLOC_EXEC_HEAP/d' vboxadd/r0drv/linux/alloc-r0drv-l
 ./configure \
 	--with-gcc="%{__cc}" \
 	--with-g++="%{__cxx}" \
+	--disable-qt4 \
 	--disable-kmods
 
 . ./env.sh && kmk -j1
