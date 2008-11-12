@@ -170,7 +170,7 @@ udev rules for VirtualBox OSE kernel modules.
 Reguły udev dla modułów jądra Linuksa dla VirtualBoksa.
 
 %package -n kernel%{_alt_kernel}-misc-vboxadd
-Summary:	Linux kernel module for VirtualBox OSE
+Summary:	VirtualBox OSE Guest Additions for Linux Module
 Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
 Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
@@ -183,13 +183,13 @@ Requires:	dev >= 2.9.0-7
 Provides:	kernel(vboxadd) = %{version}-%{rel}
 
 %description -n kernel%{_alt_kernel}-misc-vboxadd
-Linux kernel module vboxadd for VirtualBox OSE.
+VirtualBox OSE Guest Additions for Linux Module.
 
 %description -n kernel%{_alt_kernel}-misc-vboxadd -l pl.UTF-8
 Moduł jądra Linuksa vboxadd dla VirtualBoksa.
 
 %package -n kernel%{_alt_kernel}-misc-vboxdrv
-Summary:	Linux kernel module for VirtualBox OSE
+Summary:	VirtualBox OSE Support Driver
 Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
 Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
@@ -202,13 +202,13 @@ Requires(postun):	%releq_kernel
 Provides:	kernel(vboxdrv) = %{version}-%{rel}
 
 %description -n kernel%{_alt_kernel}-misc-vboxdrv
-Linux kernel module vboxdrv for VirtualBox OSE.
+VirtualBox OSE Support Driver.
 
 %description -n kernel%{_alt_kernel}-misc-vboxdrv -l pl.UTF-8
 Moduł jądra Linuksa vboxdrv dla VirtualBoksa.
 
 %package -n kernel%{_alt_kernel}-misc-vboxvfs
-Summary:	Linux kernel module for VirtualBox OSE
+Summary:	Host file system access VFS for VirtualBox OSE
 Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
 Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
@@ -221,7 +221,7 @@ Requires(postun):	%releq_kernel
 Provides:	kernel(vboxvfs) = %{version}-%{rel}
 
 %description -n kernel%{_alt_kernel}-misc-vboxvfs
-Linux kernel module vboxvfs for VirtualBox OSE.
+Host file system access VFS for VirtualBox OSE.
 
 %description -n kernel%{_alt_kernel}-misc-vboxvfs -l pl.UTF-8
 Moduł jądra Linuksa vboxvfs dla VirtualBoksa.
