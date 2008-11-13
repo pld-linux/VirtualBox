@@ -61,6 +61,9 @@ BuildRequires:	libstdc++-multilib-devel
 %if "%{pld_release}" == "th"
 BuildRequires:	compat-gcc-34
 %endif
+%if "%{pld_release}" == "ti"
+BuildRequires:	gcc3
+%endif
 %if "%{pld_release}" == "ac"
 BuildRequires:	XFree86-devel
 %else
@@ -284,6 +287,9 @@ sed -i -e 's/-DVBOX_WITH_HARDENING//g' vboxdrv/Makefile
 	--with-gcc="%{__cc}" \
 %if "%{pld_release}" == "th"
 	--with-gcc-compat="gcc-3.4" \
+%endif
+%if "%{pld_release}" == "ti"
+	--with-gcc-compat="gcc3" \
 %endif
 	--with-g++="%{__cxx}" \
 	--disable-hardening \
