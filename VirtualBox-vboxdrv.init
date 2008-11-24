@@ -47,13 +47,12 @@ start() {
 				ok
 			fi
 		fi
-
 		touch /var/lock/subsys/vboxdrv
 	fi
 }
 
 stop() {
-	# NOTE: rmmod will wait if device is in use, so automatic rmmod probably not the best idea
+	# NOTE: rmmod will wait if device is in use, so automatic rmmod probably is not the best idea
 	/sbin/rmmod $VBOX_MODULE
 	rm -f /var/lock/subsys/vboxdrv
 }
