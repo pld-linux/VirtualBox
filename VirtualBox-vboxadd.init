@@ -19,7 +19,7 @@ VBOX_MODULE="vboxadd"
 [ -f /etc/sysconfig/virtualbox ] && . /etc/sysconfig/virtualbox
 
 start() {
-	if [ ! -f /var/lock/subsys/virtualbox ]; then
+	if [ ! -f /var/lock/subsys/vboxadd ]; then
 		modprobe -s $VBOX_MODULE
 		# set proper /dev/vboxdrv for systems with static dev
 		if ! [ -d /dev/.udev/ ]; then
@@ -48,14 +48,14 @@ start() {
 			fi
 		fi
 
-		touch /var/lock/subsys/virtualbox
+		touch /var/lock/subsys/vboxadd
 	fi
 }
 
 stop() {
 	# NOTE: rmmod will wait if device is in use, so automatic rmmod probably not the best idea
 	/sbin/rmmod $VBOX_MODULE
-	rm -f /var/lock/subsys/virtualbox
+	rm -f /var/lock/subsys/vboxadd
 }
 
 RETVAL=0
