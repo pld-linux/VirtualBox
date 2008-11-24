@@ -43,8 +43,9 @@ Source2:	VBoxGuestAdditions_%{version}.iso
 # Source2-md5:	9802f674c8eebdf22d5323aabee995ec
 Source3:	%{pname}-vboxdrv.init
 Source4:	%{pname}-vboxadd.init
-Source5:	%{pname}.desktop
-Source6:	%{pname}.sh
+Source5:	%{pname}-vboxvfs.init
+Source6:	%{pname}.desktop
+Source7:	%{pname}.sh
 Patch0:		%{pname}-configure.patch
 Patch1:		%{pname}-qt-paths.patch
 Patch2:		%{pname}-shared-libstdc++.patch
@@ -181,7 +182,7 @@ Requires(post,postun):	/sbin/depmod
 Requires:	dev >= 2.9.0-7
 %if %{with dist_kernel}
 %requires_releq_kernel
-#Requires(postun):	%%releq_kernel
+Requires(postun):	%releq_kernel
 %endif
 Provides:	kernel(vboxadd) = %{version}-%{rel}
 
@@ -217,6 +218,7 @@ Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 Requires:	dev >= 2.9.0-7
+Requires:	kernel%{_alt_kernel}-misc-vboxadd
 %if %{with dist_kernel}
 %requires_releq_kernel
 Requires(postun):	%releq_kernel
@@ -317,7 +319,7 @@ install -d \
 	$RPM_BUILD_ROOT{%{_bindir},%{_pixmapsdir},%{_desktopdir}} \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
 
-install %{SOURCE6} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/VirtualBox-wrapper.sh
+install %{SOURCE7} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/VirtualBox-wrapper.sh
 for f in {VBox{BFE,Headless,Manage,SDL,SVC,Tunctl,XPCOMIPCD},VirtualBox,vditool}; do
 	install out/linux.%{outdir}/release/bin/$f $RPM_BUILD_ROOT%{_libdir}/VirtualBox/$f
 	ln -s %{_libdir}/VirtualBox/VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_bindir}/$f
@@ -352,7 +354,7 @@ install out/linux.%{outdir}/release/bin/additions/vboxvideo_drv_15.so	\
 %endif
 
 install out/linux.%{outdir}/release/bin/VBox.png $RPM_BUILD_ROOT%{_pixmapsdir}/VBox.png
-install %{SOURCE5} $RPM_BUILD_ROOT%{_desktopdir}/%{pname}.desktop
+install %{SOURCE6} $RPM_BUILD_ROOT%{_desktopdir}/%{pname}.desktop
 
 install -d $RPM_BUILD_ROOT/etc/udev/rules.d
 install udev.conf $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
@@ -362,6 +364,7 @@ install udev.conf $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
 install -d $RPM_BUILD_ROOT/etc/rc.d/init.d
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxdrv
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxadd
+install %{SOURCE5} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxvfs
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxadd/vboxadd -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxdrv/vboxdrv -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxvfs/vboxvfs -d misc
@@ -421,9 +424,17 @@ fi
 
 %post	-n kernel%{_alt_kernel}-misc-vboxvfs
 %depmod %{_kernel_ver}
+/sbin/chkconfig --add vboxvfs
+%service vboxvfs restart "VirtualBox OSE guest additions VFS driver"
 
 %postun	-n kernel%{_alt_kernel}-misc-vboxvfs
 %depmod %{_kernel_ver}
+
+%preun -n kernel%{_alt_kernel}-misc-vboxvfs
+if [ "$1" = "0" ]; then
+	%service vboxvfs stop
+	/sbin/chkconfig --del vboxvfs
+fi
 
 %if %{with userspace}
 %files
