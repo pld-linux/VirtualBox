@@ -275,6 +275,7 @@ KERNEL=="vboxadd", NAME="%k", GROUP="vbox", MODE="0660"
 EOF
 
 install %{SOURCE1} .
+sed 's#@LIBDIR@#%{_libdir}#' < %{SOURCE7} > VirtualBox-wrapper.sh
 
 rm -rf PLD-MODULE-BUILD && mkdir PLD-MODULE-BUILD && cd PLD-MODULE-BUILD
 ../src/VBox/Additions/linux/export_modules modules.tar.gz
@@ -319,7 +320,7 @@ install -d \
 	$RPM_BUILD_ROOT{%{_bindir},%{_pixmapsdir},%{_desktopdir}} \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
 
-install %{SOURCE7} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/VirtualBox-wrapper.sh
+install VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_libdir}/VirtualBox
 for f in {VBox{BFE,Headless,Manage,SDL,SVC,Tunctl,XPCOMIPCD},VirtualBox,vditool}; do
 	install out/linux.%{outdir}/release/bin/$f $RPM_BUILD_ROOT%{_libdir}/VirtualBox/$f
 	ln -s %{_libdir}/VirtualBox/VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_bindir}/$f
