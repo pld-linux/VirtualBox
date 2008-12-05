@@ -1,7 +1,6 @@
 #!/bin/sh
 BINFILE=$(basename "$0")
-VBOXDIR=/usr/lib/VirtualBox
-[ ! -d "$VBOXDIR" ] && VBOXDIR=/usr/lib64/VirtualBox
+VBOXDIR=@LIBDIR@/VirtualBox
 
 show_message() {
 	if [ ! -z "$DISPLAY" ] && [ -x /usr/bin/gxmessage ]; then
@@ -12,12 +11,12 @@ show_message() {
 }
 
 if [ ! -d "$VBOXDIR" ]; then
-	show_message "Can't find VritualBox libraries! Can't continue!.\nCorrect this situation or contact with your system administrator."
+	show_message "Can't find VirtualBox libraries! Can't continue!.\nCorrect this situation or contact with your system administrator."
 	exit 1
 fi
 
 if [ ! -c /dev/vboxdrv ]; then
-	show_message "Special character device /dev/vboxdrv doesn't exists!\nCheck your installation and if vboxdrv kernel module is loaded."
+	show_message "Special character device /dev/vboxdrv doesn't exists!\nCheck your installation and whether vboxdrv kernel module is loaded."
 	exit 1
 fi
 
