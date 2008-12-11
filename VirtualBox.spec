@@ -74,12 +74,12 @@ BuildRequires:	xorg-lib-libXmu-devel
 BuildRequires:	OpenGL-devel
 BuildRequires:	QtGui-devel
 BuildRequires:	SDL-devel >= 1.2.7
+BuildRequires:	acpica
 BuildRequires:	alsa-lib-devel >= 1.0.6
 BuildRequires:	bash
 BuildRequires:	bcc
 BuildRequires:	bin86
 BuildRequires:	gcc >= 5:3.2.3
-BuildRequires:	acpica
 BuildRequires:	libIDL-devel
 BuildRequires:	libpng-devel >= 1.2.5
 BuildRequires:	libstdc++-devel >= 5:3.2.3
