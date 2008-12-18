@@ -42,22 +42,22 @@ diff -urN VirtualBox-2.0.0.orig/configure VirtualBox-2.0.0/configure
 diff -urN VirtualBox-2.0.0.orig/src/VBox/Additions/x11/xclient/Makefile.kmk VirtualBox-2.0.0/src/VBox/Additions/x11/xclient/Makefile.kmk
 --- VirtualBox-2.0.0.orig/src/VBox/Additions/x11/xclient/Makefile.kmk	2008-09-01 17:26:05.000000000 +0200
 +++ VirtualBox-2.0.0/src/VBox/Additions/x11/xclient/Makefile.kmk	2008-09-04 20:07:39.000000000 +0200
-@@ -74,14 +74,14 @@
+@@ -69,14 +69,14 @@
  #
  # Actually, this is darn annoying and will *NOT* be tolerated for any new code!
  #
--VBoxClient_LIBPATH  += $(PATH_TARGET)/VBoxClient
--VBoxClient_ORDERDEPS = $(PATH_TARGET)/VBoxClient/libstdc++.a
--VBoxClient_CLEAN     = $(PATH_TARGET)/VBoxClient/libstdc++.a
--$(PATH_TARGET)/VBoxClient/libstdc++.a:
+-VBoxClient_LIBPATH  += $(PATH_VBoxClient)
+-VBoxClient_ORDERDEPS = $(PATH_VBoxClient)/libstdc++.a
+-VBoxClient_CLEAN     = $(PATH_VBoxClient)/libstdc++.a
+-$$(PATH_VBoxClient)/libstdc++.a:
 -	$(call MSG_L1,Forcing static libstdc++)
 -	$(QUIET)$(MKDIR) -p $(@D)
 -	$(QUIET)$(LN_EXT) -sf `$(TOOL_$(VBOX_GCC_TOOL)_CXX) $(TEMPLATE_VBOXGUESTR3CPPEXE_CXXFLAGS.$(KBUILD_TARGET_ARCH)) -print-file-name=libstdc++.a` $@ \
 -	     || $(CP_EXT) -f  `$(TOOL_$(VBOX_GCC_TOOL)_CXX) $(TEMPLATE_VBOXGUESTR3CPPEXE_CXXFLAGS.$(KBUILD_TARGET_ARCH)) -print-file-name=libstdc++.a` $@
-+#VBoxClient_LIBPATH  += $(PATH_TARGET)/VBoxClient
-+#VBoxClient_ORDERDEPS = $(PATH_TARGET)/VBoxClient/libstdc++.a
-+#VBoxClient_CLEAN     = $(PATH_TARGET)/VBoxClient/libstdc++.a
-+#$(PATH_TARGET)/VBoxClient/libstdc++.a:
++#VBoxClient_LIBPATH  += $(PATH_VBoxClient)
++#VBoxClient_ORDERDEPS = $(PATH_VBoxClient)/libstdc++.a
++#VBoxClient_CLEAN     = $(PATH_VBoxClient)/libstdc++.a
++#$$(PATH_VBoxClient)/libstdc++.a:
 +#	$(call MSG_L1,Forcing static libstdc++)
 +#	$(QUIET)$(MKDIR) -p $(@D)
 +#	$(QUIET)$(LN_EXT) -sf `$(TOOL_$(VBOX_GCC_TOOL)_CXX) $(TEMPLATE_VBOXGUESTR3CPPEXE_CXXFLAGS.$(KBUILD_TARGET_ARCH)) -print-file-name=libstdc++.a` $@ \
