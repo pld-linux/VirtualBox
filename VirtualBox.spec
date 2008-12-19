@@ -52,6 +52,7 @@ Patch2:		%{pname}-shared-libstdc++.patch
 Patch3:		%{pname}-disable-xclient-build.patch
 Patch4:		%{pname}-configure-spaces.patch
 Patch5:		%{pname}-build_fix.patch
+Patch6:		%{pname}-vboxnetflt_export.patch
 URL:		http://www.virtualbox.org/
 BuildRequires:	rpmbuild(macros) >= 1.379
 %if %{with userspace}
@@ -212,6 +213,26 @@ VirtualBox OSE Support Driver.
 %description -n kernel%{_alt_kernel}-misc-vboxdrv -l pl.UTF-8
 Moduł jądra Linuksa vboxdrv dla VirtualBoksa.
 
+%package -n kernel%{_alt_kernel}-misc-vboxnetflt
+Summary:	VirtualBox OSE Guest Additions for Linux Module
+Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
+Release:	%{rel}@%{_kernel_ver_str}
+Group:		Base/Kernel
+Requires(post,postun):	/sbin/depmod
+Requires:	dev >= 2.9.0-7
+Requires:	kernel%{_alt_kernel}-misc-vboxdrv
+%if %{with dist_kernel}
+%requires_releq_kernel
+Requires(postun):	%releq_kernel
+%endif
+Provides:	kernel(vboxnetflt) = %{version}-%{rel}
+
+%description -n kernel%{_alt_kernel}-misc-vboxnetflt
+VirtualBox OSE Guest Additions for Linux Module.
+
+%description -n kernel%{_alt_kernel}-misc-vboxnetflt -l pl.UTF-8
+Moduł jądra Linuksa vboxnetflt dla VirtualBoksa.
+
 %package -n kernel%{_alt_kernel}-misc-vboxvfs
 Summary:	Host file system access VFS for VirtualBox OSE
 Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
@@ -270,6 +291,7 @@ Sterownik grafiki dla systemu gościa w VirtualBoksie.
 
 %patch4 -p1
 %patch5 -p0
+%patch6 -p1
 
 cat <<'EOF' > udev.conf
 KERNEL=="vboxdrv", NAME="%k", GROUP="vbox", MODE="0660"
@@ -283,6 +305,10 @@ rm -rf PLD-MODULE-BUILD && mkdir PLD-MODULE-BUILD && cd PLD-MODULE-BUILD
 ../src/VBox/Additions/linux/export_modules modules.tar.gz
 	tar -zxf modules.tar.gz && rm -f modules.tar.gz
 ../src/VBox/HostDrivers/Support/linux/export_modules modules.tar.gz && \
+	tar -zxf modules.tar.gz && rm -f modules.tar.gz
+sed -i -e 's/-DVBOX_WITH_HARDENING//g' vboxdrv/Makefile
+chmod 755 ../src/VBox/HostDrivers/VBoxNetFlt/linux/export_modules
+../src/VBox/HostDrivers/VBoxNetFlt/linux/export_modules modules.tar.gz && \
 	tar -zxf modules.tar.gz && rm -f modules.tar.gz
 sed -i -e 's/-DVBOX_WITH_HARDENING//g' vboxdrv/Makefile
 
@@ -309,6 +335,7 @@ kmk -j1 %{?with_verbose:KBUILD_VERBOSE=3}
 cd PLD-MODULE-BUILD
 %build_kernel_modules -m vboxadd -C vboxadd
 %build_kernel_modules -m vboxdrv -C vboxdrv
+%build_kernel_modules -m vboxnetflt -C vboxnetflt
 cp -a vboxadd/Module.symvers vboxvfs
 %build_kernel_modules -m vboxvfs -C vboxvfs -c
 cd ..
@@ -323,7 +350,7 @@ install -d \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
 
 install VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_libdir}/VirtualBox
-for f in {VBox{BFE,Headless,Manage,SDL,SVC,Tunctl,XPCOMIPCD},VirtualBox,vditool}; do
+for f in {VBox{BFE,Headless,Manage,SDL,SVC,Tunctl,XPCOMIPCD},VirtualBox}; do
 	install out/linux.%{outdir}/release/bin/$f $RPM_BUILD_ROOT%{_libdir}/VirtualBox/$f
 	ln -s %{_libdir}/VirtualBox/VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_bindir}/$f
 done
@@ -370,6 +397,7 @@ install %{SOURCE4} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxadd
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxvfs
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxadd/vboxadd -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxdrv/vboxdrv -d misc
+%install_kernel_modules -m PLD-MODULE-BUILD/vboxnetflt/vboxnetflt -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxvfs/vboxvfs -d misc
 %endif
 
@@ -425,6 +453,12 @@ if [ "$1" = "0" ]; then
 	/sbin/chkconfig --del vboxdrv
 fi
 
+%post	-n kernel%{_alt_kernel}-misc-vboxnetflt
+%depmod %{_kernel_ver}
+
+%postun	-n kernel%{_alt_kernel}-misc-vboxnetflt
+%depmod %{_kernel_ver}
+
 %post	-n kernel%{_alt_kernel}-misc-vboxvfs
 %depmod %{_kernel_ver}
 /sbin/chkconfig --add vboxvfs
@@ -448,10 +482,10 @@ fi
 %dir %{_libdir}/VirtualBox/components
 %dir %{_libdir}/VirtualBox/nls
 %attr(755,root,root) %{_bindir}/mountvboxsf
-%attr(755,root,root) %{_bindir}/vditool
+#%attr(755,root,root) %{_bindir}/vditool
 %attr(755,root,root) %{_bindir}/VBox*
 %attr(755,root,root) %{_bindir}/VirtualBox
-%attr(755,root,root) %{_libdir}/VirtualBox/vditool
+#%attr(755,root,root) %{_libdir}/VirtualBox/vditool
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxSVC
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxBFE
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxHeadless
@@ -523,6 +557,10 @@ fi
 %defattr(644,root,root,755)
 %attr(754,root,root) /etc/rc.d/init.d/vboxdrv
 /lib/modules/%{_kernel_ver}/misc/vboxdrv.ko*
+
+%files -n kernel%{_alt_kernel}-misc-vboxnetflt
+%defattr(644,root,root,755)
+/lib/modules/%{_kernel_ver}/misc/vboxnetflt.ko*
 
 %files -n kernel%{_alt_kernel}-misc-vboxvfs
 %defattr(644,root,root,755)
