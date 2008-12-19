@@ -51,6 +51,7 @@ Patch1:		%{pname}-qt-paths.patch
 Patch2:		%{pname}-shared-libstdc++.patch
 Patch3:		%{pname}-disable-xclient-build.patch
 Patch4:		%{pname}-configure-spaces.patch
+Patch5:		%{pname}-build_fix.patch
 URL:		http://www.virtualbox.org/
 BuildRequires:	rpmbuild(macros) >= 1.379
 %if %{with userspace}
@@ -268,6 +269,7 @@ Sterownik grafiki dla systemu gościa w VirtualBoksie.
 %endif
 
 %patch4 -p1
+%patch5 -p0
 
 cat <<'EOF' > udev.conf
 KERNEL=="vboxdrv", NAME="%k", GROUP="vbox", MODE="0660"
