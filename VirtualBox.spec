@@ -177,7 +177,7 @@ Reguły udev dla modułów jądra Linuksa dla VirtualBoksa.
 
 %package -n kernel%{_alt_kernel}-misc-vboxadd
 Summary:	VirtualBox OSE Guest Additions for Linux Module
-Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
+Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa OSE
 Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
@@ -192,11 +192,12 @@ Provides:	kernel(vboxadd) = %{version}-%{rel}
 VirtualBox OSE Guest Additions for Linux Module.
 
 %description -n kernel%{_alt_kernel}-misc-vboxadd -l pl.UTF-8
-Moduł jądra Linuksa vboxadd dla VirtualBoksa.
+Moduł jądra Linuksa vboxadd dla VirtualBoksa OSE - dodatki dla
+systemu gościa.
 
 %package -n kernel%{_alt_kernel}-misc-vboxdrv
 Summary:	VirtualBox OSE Support Driver
-Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
+Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa OSE
 Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
@@ -211,11 +212,12 @@ Provides:	kernel(vboxdrv) = %{version}-%{rel}
 VirtualBox OSE Support Driver.
 
 %description -n kernel%{_alt_kernel}-misc-vboxdrv -l pl.UTF-8
-Moduł jądra Linuksa vboxdrv dla VirtualBoksa.
+Moduł jądra Linuksa dla VirtualBoksa OSE - sterownik wsparcia dla
+systemu głównego.
 
 %package -n kernel%{_alt_kernel}-misc-vboxnetflt
 Summary:	VirtualBox OSE Guest Additions for Linux Module
-Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
+Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa OSE
 Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
@@ -228,14 +230,15 @@ Requires(postun):	%releq_kernel
 Provides:	kernel(vboxnetflt) = %{version}-%{rel}
 
 %description -n kernel%{_alt_kernel}-misc-vboxnetflt
-VirtualBox OSE Guest Additions for Linux Module.
+VirtualBox OSE Network Filter Driver.
 
 %description -n kernel%{_alt_kernel}-misc-vboxnetflt -l pl.UTF-8
-Moduł jądra Linuksa vboxnetflt dla VirtualBoksa.
+Moduł jądra Linuksa dla VirtualBoksa OSE - sterownik filtrowania
+sieci dla systemu głównego.
 
 %package -n kernel%{_alt_kernel}-misc-vboxvfs
 Summary:	Host file system access VFS for VirtualBox OSE
-Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
+Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa OSE
 Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
@@ -251,11 +254,12 @@ Provides:	kernel(vboxvfs) = %{version}-%{rel}
 Host file system access VFS for VirtualBox OSE.
 
 %description -n kernel%{_alt_kernel}-misc-vboxvfs -l pl.UTF-8
-Moduł jądra Linuksa vboxvfs dla VirtualBoksa.
+Moduł jądra Linuksa dla VirtualBoksa OSE - dostęp do plików
+systemu głównego z poziomu systemu gościa.
 
 %package -n xorg-driver-input-vboxmouse
 Summary:	X.org mouse driver for VirtualBox OSE guest OS
-Summary(pl.UTF-8):	Sterownik myszy dla systemu gościa w VirtualBoksie
+Summary(pl.UTF-8):	Sterownik myszy dla systemu gościa w VirtualBoksie OSE
 Release:	%{rel}
 Group:		X11/Applications
 Requires:	xorg-xserver-server >= 1.0.99.901
@@ -268,7 +272,7 @@ Sterownik myszy dla systemu gościa w VirtualBoksie.
 
 %package -n xorg-driver-video-vboxvideo
 Summary:	X.org video driver for VirtualBox OSE guest OS
-Summary(pl.UTF-8):	Sterownik grafiki dla systemu gościa w VirtualBoksie
+Summary(pl.UTF-8):	Sterownik grafiki dla systemu gościa w VirtualBoksie OSE
 Release:	%{rel}
 Group:		X11/Applications
 Requires:	xorg-xserver-server >= 1.0.99.901
@@ -277,7 +281,7 @@ Requires:	xorg-xserver-server >= 1.0.99.901
 X.org video driver for VirtualBox OSE guest OS.
 
 %description -n xorg-driver-video-vboxvideo -l pl.UTF-8
-Sterownik grafiki dla systemu gościa w VirtualBoksie.
+Sterownik grafiki dla systemu gościa w VirtualBoksie OSE.
 
 %prep
 %setup -q -n %{pname}-%{version}
