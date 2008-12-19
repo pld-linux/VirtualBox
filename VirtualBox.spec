@@ -23,7 +23,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		0.2
+%define		rel		0.3
 %define		pname	VirtualBox
 Summary:	VirtualBox OSE - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox OSE - wirtualizator sprzętu x86
@@ -43,9 +43,10 @@ Source2:	VBoxGuestAdditions_%{version}.iso
 # Source2-md5:	f6514091a6cca90cdc22591a789ed9b0
 Source3:	%{pname}-vboxdrv.init
 Source4:	%{pname}-vboxadd.init
-Source5:	%{pname}-vboxvfs.init
-Source6:	%{pname}.desktop
-Source7:	%{pname}.sh
+Source5:	%{pname}-vboxnetflt.init
+Source6:	%{pname}-vboxvfs.init
+Source7:	%{pname}.desktop
+Source8:	%{pname}.sh
 Patch0:		%{pname}-configure.patch
 Patch1:		%{pname}-qt-paths.patch
 Patch2:		%{pname}-shared-libstdc++.patch
@@ -303,7 +304,7 @@ KERNEL=="vboxadd", NAME="%k", GROUP="vbox", MODE="0660"
 EOF
 
 install %{SOURCE1} .
-sed 's#@LIBDIR@#%{_libdir}#' < %{SOURCE7} > VirtualBox-wrapper.sh
+sed 's#@LIBDIR@#%{_libdir}#' < %{SOURCE8} > VirtualBox-wrapper.sh
 
 rm -rf PLD-MODULE-BUILD && mkdir PLD-MODULE-BUILD && cd PLD-MODULE-BUILD
 ../src/VBox/Additions/linux/export_modules modules.tar.gz
@@ -388,7 +389,7 @@ install out/linux.%{outdir}/release/bin/additions/vboxvideo_drv_15.so	\
 %endif
 
 install out/linux.%{outdir}/release/bin/VBox.png $RPM_BUILD_ROOT%{_pixmapsdir}/VBox.png
-install %{SOURCE6} $RPM_BUILD_ROOT%{_desktopdir}/%{pname}.desktop
+install %{SOURCE7} $RPM_BUILD_ROOT%{_desktopdir}/%{pname}.desktop
 
 install -d $RPM_BUILD_ROOT/etc/udev/rules.d
 install udev.conf $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
@@ -398,7 +399,8 @@ install udev.conf $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
 install -d $RPM_BUILD_ROOT/etc/rc.d/init.d
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxdrv
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxadd
-install %{SOURCE5} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxvfs
+install %{SOURCE5} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxnetflt
+install %{SOURCE6} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxvfs
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxadd/vboxadd -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxdrv/vboxdrv -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxnetflt/vboxnetflt -d misc
@@ -459,9 +461,17 @@ fi
 
 %post	-n kernel%{_alt_kernel}-misc-vboxnetflt
 %depmod %{_kernel_ver}
+/sbin/chkconfig --add vboxnetflt
+%service vboxdrv restart "VirtualBox OSE Network Filter driver"
 
 %postun	-n kernel%{_alt_kernel}-misc-vboxnetflt
 %depmod %{_kernel_ver}
+
+%preun -n kernel%{_alt_kernel}-misc-vboxnetflt
+if [ "$1" = "0" ]; then
+	%service vboxnetflt stop
+	/sbin/chkconfig --del vboxnetflt
+fi
 
 %post	-n kernel%{_alt_kernel}-misc-vboxvfs
 %depmod %{_kernel_ver}
@@ -562,9 +572,11 @@ fi
 
 %files -n kernel%{_alt_kernel}-misc-vboxnetflt
 %defattr(644,root,root,755)
+%attr(754,root,root) /etc/rc.d/init.d/vboxnetflt
 /lib/modules/%{_kernel_ver}/misc/vboxnetflt.ko*
 
 %files -n kernel%{_alt_kernel}-misc-vboxvfs
 %defattr(644,root,root,755)
+%attr(754,root,root) /etc/rc.d/init.d/vboxvfs
 /lib/modules/%{_kernel_ver}/misc/vboxvfs.ko*
 %endif
