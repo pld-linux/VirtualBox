@@ -482,10 +482,8 @@ fi
 %dir %{_libdir}/VirtualBox/components
 %dir %{_libdir}/VirtualBox/nls
 %attr(755,root,root) %{_bindir}/mountvboxsf
-#%attr(755,root,root) %{_bindir}/vditool
 %attr(755,root,root) %{_bindir}/VBox*
 %attr(755,root,root) %{_bindir}/VirtualBox
-#%attr(755,root,root) %{_libdir}/VirtualBox/vditool
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxSVC
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxBFE
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxHeadless
