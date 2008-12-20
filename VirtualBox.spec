@@ -23,7 +23,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		0.3
+%define		rel		1
 %define		pname	VirtualBox
 Summary:	VirtualBox OSE - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox OSE - wirtualizator sprzętu x86
@@ -360,11 +360,6 @@ for f in {VBox{BFE,Headless,Manage,SDL,SVC,Tunctl,XPCOMIPCD},VirtualBox}; do
 	ln -s %{_libdir}/VirtualBox/VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_bindir}/$f
 done
 
-%ifarch %{x8664}
-install out/linux.%{outdir}/release/bin/VBox*.rel \
-        $RPM_BUILD_ROOT%{_libdir}/VirtualBox
-%endif
-
 install out/linux.%{outdir}/release/bin/VBox*.so \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
 install out/linux.%{outdir}/release/bin/{VBox{DD,DD2}{GC.gc,R0.r0},VMM{GC.gc,R0.r0}} \
@@ -380,13 +375,11 @@ cp -a out/linux.%{outdir}/release/bin/nls/* $RPM_BUILD_ROOT%{_libdir}/VirtualBox
 install out/linux.%{outdir}/release/bin/additions/mountvboxsf		\
 	$RPM_BUILD_ROOT%{_bindir}
 
-%ifnarch %{x8664}
 install -d $RPM_BUILD_ROOT%{_libdir}/xorg/modules/{drivers,input}
 install out/linux.%{outdir}/release/bin/additions/vboxmouse_drv_15.so	\
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/input/vboxmouse_drv.so
 install out/linux.%{outdir}/release/bin/additions/vboxvideo_drv_15.so	\
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so
-%endif
 
 install out/linux.%{outdir}/release/bin/VBox.png $RPM_BUILD_ROOT%{_pixmapsdir}/VBox.png
 install %{SOURCE7} $RPM_BUILD_ROOT%{_desktopdir}/%{pname}.desktop
@@ -506,9 +499,6 @@ fi
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxTunctl
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxXPCOMIPCD
 %attr(755,root,root) %{_libdir}/VirtualBox/VBox*.so
-%ifarch %{x8664}
-%attr(755,root,root) %{_libdir}/VirtualBox/VBox*.rel
-%endif
 %attr(755,root,root) %{_libdir}/VirtualBox/VirtualBox
 %attr(755,root,root) %{_libdir}/VirtualBox/VirtualBox-wrapper.sh
 %{_libdir}/VirtualBox/*.gc
@@ -547,8 +537,6 @@ fi
 %defattr(644,root,root,755)
 %config(noreplace) %verify(not md5 mtime size) /etc/udev/rules.d/virtualbox.rules
 
-# Drivers are for Guest OS, which is 32-bit.
-%ifnarch %{x8664}
 %files -n xorg-driver-input-vboxmouse
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/xorg/modules/input/vboxmouse_drv.so
@@ -556,7 +544,6 @@ fi
 %files -n xorg-driver-video-vboxvideo
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/xorg/modules/drivers/vboxvideo_drv.so
-%endif
 %endif
 
 %if %{with kernel}
