@@ -510,6 +510,7 @@ fi
 %lang(ca) %{_libdir}/VirtualBox/nls/*_ca.qm
 %lang(cs) %{_libdir}/VirtualBox/nls/*_cs.qm
 %lang(de) %{_libdir}/VirtualBox/nls/*_de.qm
+%lang(el) %{_libdir}/VirtualBox/nls/*_el.qm
 %lang(es) %{_libdir}/VirtualBox/nls/*_es.qm
 %lang(eu) %{_libdir}/VirtualBox/nls/*_eu.qm
 %lang(fi) %{_libdir}/VirtualBox/nls/*_fi.qm
