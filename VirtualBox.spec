@@ -76,6 +76,7 @@ BuildRequires:	xorg-lib-libXmu-devel
 %endif
 BuildRequires:	OpenGL-devel
 BuildRequires:	QtGui-devel
+BuildRequires:	QtNetwork-devel
 BuildRequires:	SDL-devel >= 1.2.7
 BuildRequires:	acpica
 BuildRequires:	alsa-lib-devel >= 1.0.6
