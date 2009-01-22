@@ -1,9 +1,8 @@
-diff -urN VirtualBox-2.0.0.orig/configure VirtualBox-2.0.0/configure
---- VirtualBox-2.0.0.orig/configure	2008-09-03 16:59:10.000000000 +0200
-+++ VirtualBox-2.0.0/configure	2008-09-04 20:04:52.000000000 +0200
-@@ -69,11 +69,7 @@
- INCPNG=""
+--- VirtualBox-2.1.2_OSE/configure.orig	2009-01-21 16:07:11.000000000 +0100
++++ VirtualBox-2.1.2_OSE/configure	2009-01-22 15:25:14.000000000 +0100
+@@ -94,11 +94,7 @@
  LIBPNG="-lpng"
+ PKGCONFIG="`which_wrapper pkg-config`"
  PYTHONDIR="/usr /usr/local"
 -QT3DIR="/usr/qt/3 /usr/lib/qt3 /usr/lib/qt-3.3 /usr/share/qt3"
 -QT3DIR="$QT3DIR /usr/lib64/qt-3.3 /usr/X11R6 /usr/lib/qt"
@@ -13,7 +12,7 @@ diff -urN VirtualBox-2.0.0.orig/configure VirtualBox-2.0.0/configure
  KBUILDDIR="`cd \`dirname $0\`; pwd`/kBuild"
  DEVDIR="`cd \`dirname $0\`; pwd`/tools"
  if [ -d "/lib/modules/`uname -r`/build" ]; then
-@@ -215,8 +211,8 @@
+@@ -219,8 +215,8 @@
    echo "compiling the following source file:" >> $LOG
    cat .tmp_src.cc >> $LOG
    echo "using the following command line:" >> $LOG
@@ -24,7 +23,7 @@ diff -urN VirtualBox-2.0.0.orig/configure VirtualBox-2.0.0/configure
    if [ $? -ne 0 ]; then
      if [ -z "$4" ]; then
        echo
-@@ -1236,37 +1232,25 @@
+@@ -1208,37 +1204,25 @@
  }
  EOF
    found_qt=0
@@ -73,7 +72,7 @@ diff -urN VirtualBox-2.0.0.orig/configure VirtualBox-2.0.0/configure
      if [ $? -ne 0 ]; then
        log_failure "not found"
        fail
-@@ -1343,21 +1327,19 @@
+@@ -1321,21 +1305,19 @@
  #endif
  }
  EOF
@@ -108,7 +107,7 @@ diff -urN VirtualBox-2.0.0.orig/configure VirtualBox-2.0.0/configure
      fi
    fi
    if [ -n "$foundqt4" ]; then
-@@ -1375,7 +1375,7 @@
+@@ -1372,7 +1354,7 @@
              cnf_append "VBOX_WITH_QT4_SUN" "1"
            fi
            test_header "Qt4 devtools"
@@ -117,16 +116,16 @@ diff -urN VirtualBox-2.0.0.orig/configure VirtualBox-2.0.0/configure
              if which_wrapper "$q/bin/moc" > /dev/null; then
                moc_ver=`$q/bin/moc -v 2>&1|sed 's+^.*(Qt \(.*\))+\1+'`
                if [ $? -ne 0 ]; then
-@@ -1765,8 +1745,6 @@
+@@ -1796,8 +1778,6 @@
    --with-iasl=PATH         location of the iasl compiler [$IASL]
    --with-linux=DIR         Linux kernel source directory [$LINUX]
    --with-mkisofs=PATH      location of mkisofs [$MKISOFS]
 -  --with-qt-dir=DIR        directory for Qt3 headers/libraries [$QT3DIR]
 -  --with-qt4-dir=DIR       directory for Qt4 headers/libraries [pkgconfig]
+   --with-gsoap-dir=PATH    directory for SOAP compiler (soapcpp2 and wsdl2h)
  
  Build type:
-   -d, --build-debug        build with debugging symbols and assertions
-@@ -1809,13 +1787,6 @@
+@@ -1838,13 +1818,6 @@
          exit 1
        fi
        ;;
@@ -137,6 +136,6 @@ diff -urN VirtualBox-2.0.0.orig/configure VirtualBox-2.0.0/configure
 -      QT4DIR=`echo $option | cut -d'=' -f2`
 -      QT4DIR_PKGCONFIG=0
 -      ;;
-     --with-iasl=*)
-       IASL=`echo $option | cut -d'=' -f2`
+     --with-gsoap-dir=*)
+       GSOAP=`echo $option | cut -d'=' -f2`
        ;;

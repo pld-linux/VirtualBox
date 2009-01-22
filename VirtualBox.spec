@@ -23,24 +23,24 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		4
+%define		rel		1
 %define		pname	VirtualBox
 Summary:	VirtualBox OSE - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox OSE - wirtualizator sprzętu x86
 Name:		%{pname}%{_alt_kernel}
-Version:	2.1.0
+Version:	2.1.2
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/Emulators
 #Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}-OSE.tar.bz2
 Source0:	%{pname}-%{version}-OSE.tar.bz2
-# Source0-md5:	bcd403d97e2caf8a634584df34766a4d
+# Source0-md5:	ce1360945d65a79dbea1bec997c25c00
 #Source1:	http://download.virtualbox.org/virtualbox/%{version}/UserManual.pdf
 Source1:	UserManual.pdf
-# Source1-md5:	61f8fa9321b65f8b2e50cfc076d671cb
+# Source1-md5:	6637b80b4e175035dba5a1efd89a0498
 #Source2:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
 Source2:	VBoxGuestAdditions_%{version}.iso
-# Source2-md5:	f6514091a6cca90cdc22591a789ed9b0
+# Source2-md5:	4c02fdb1b4e7f2d5ce7bb0ab8eca33d9
 Source3:	%{pname}-vboxdrv.init
 Source4:	%{pname}-vboxadd.init
 Source5:	%{pname}-vboxnetflt.init
@@ -52,7 +52,7 @@ Patch1:		%{pname}-qt-paths.patch
 Patch2:		%{pname}-shared-libstdc++.patch
 Patch3:		%{pname}-disable-xclient-build.patch
 Patch4:		%{pname}-configure-spaces.patch
-Patch5:		%{pname}-build_fix.patch
+Patch5:		%{pname}-export_modules.patch
 Patch6:		%{pname}-vboxnetflt_export.patch
 URL:		http://www.virtualbox.org/
 BuildRequires:	rpmbuild(macros) >= 1.379
@@ -286,7 +286,7 @@ X.org video driver for VirtualBox OSE guest OS.
 Sterownik grafiki dla systemu gościa w VirtualBoksie OSE.
 
 %prep
-%setup -q -n %{pname}-%{version}
+%setup -q -n %{pname}-%{version}_OSE
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
@@ -296,7 +296,8 @@ Sterownik grafiki dla systemu gościa w VirtualBoksie OSE.
 %endif
 
 %patch4 -p1
-%patch5 -p0
+%patch5 -p1
+chmod +x src/VBox/HostDrivers/Support/linux/export_modules
 %patch6 -p1
 
 cat <<'EOF' > udev.conf
@@ -316,18 +317,12 @@ sed -i -e 's/-DVBOX_WITH_HARDENING//g' vboxdrv/Makefile
 chmod 755 ../src/VBox/HostDrivers/VBoxNetFlt/linux/export_modules
 ../src/VBox/HostDrivers/VBoxNetFlt/linux/export_modules modules.tar.gz && \
 	tar -zxf modules.tar.gz && rm -f modules.tar.gz
-sed -i -e 's/-DVBOX_WITH_HARDENING//g' vboxdrv/Makefile
+#sed -i -e 's/-DVBOX_WITH_HARDENING//g' vboxdrv/Makefile
 
 %build
 %if %{with userspace}
 ./configure \
 	--with-gcc="%{__cc}" \
-%if "%{pld_release}" == "th"
-	--with-gcc-compat="gcc-3.4" \
-%endif
-%if "%{pld_release}" == "ti"
-	--with-gcc-compat="gcc3" \
-%endif
 	--with-g++="%{__cxx}" \
 	--disable-hardening \
 	--disable-kmods \
