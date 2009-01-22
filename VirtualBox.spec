@@ -52,7 +52,6 @@ Patch1:		%{pname}-qt-paths.patch
 Patch2:		%{pname}-shared-libstdc++.patch
 Patch3:		%{pname}-disable-xclient-build.patch
 Patch4:		%{pname}-configure-spaces.patch
-Patch5:		%{pname}-export_modules.patch
 Patch6:		%{pname}-vboxnetflt_export.patch
 URL:		http://www.virtualbox.org/
 BuildRequires:	rpmbuild(macros) >= 1.379
@@ -296,8 +295,6 @@ Sterownik grafiki dla systemu gościa w VirtualBoksie OSE.
 %endif
 
 %patch4 -p1
-%patch5 -p1
-chmod +x src/VBox/HostDrivers/Support/linux/export_modules
 %patch6 -p1
 
 cat <<'EOF' > udev.conf
@@ -311,13 +308,8 @@ sed 's#@LIBDIR@#%{_libdir}#' < %{SOURCE8} > VirtualBox-wrapper.sh
 rm -rf PLD-MODULE-BUILD && mkdir PLD-MODULE-BUILD && cd PLD-MODULE-BUILD
 ../src/VBox/Additions/linux/export_modules modules.tar.gz
 	tar -zxf modules.tar.gz && rm -f modules.tar.gz
-../src/VBox/HostDrivers/Support/linux/export_modules modules.tar.gz && \
+../src/VBox/HostDrivers/linux/export_modules modules.tar.gz --without-hardening && \
 	tar -zxf modules.tar.gz && rm -f modules.tar.gz
-sed -i -e 's/-DVBOX_WITH_HARDENING//g' vboxdrv/Makefile
-chmod 755 ../src/VBox/HostDrivers/VBoxNetFlt/linux/export_modules
-../src/VBox/HostDrivers/VBoxNetFlt/linux/export_modules modules.tar.gz && \
-	tar -zxf modules.tar.gz && rm -f modules.tar.gz
-#sed -i -e 's/-DVBOX_WITH_HARDENING//g' vboxdrv/Makefile
 
 %build
 %if %{with userspace}
