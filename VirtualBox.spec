@@ -28,19 +28,16 @@
 Summary:	VirtualBox OSE - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox OSE - wirtualizator sprzętu x86
 Name:		%{pname}%{_alt_kernel}
-Version:	2.1.2
+Version:	2.1.4
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/Emulators
-#Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}-OSE.tar.bz2
-Source0:	%{pname}-%{version}-OSE.tar.bz2
-# Source0-md5:	ce1360945d65a79dbea1bec997c25c00
-#Source1:	http://download.virtualbox.org/virtualbox/%{version}/UserManual.pdf
-Source1:	UserManual.pdf
-# Source1-md5:	6637b80b4e175035dba5a1efd89a0498
-#Source2:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-Source2:	VBoxGuestAdditions_%{version}.iso
-# Source2-md5:	4c02fdb1b4e7f2d5ce7bb0ab8eca33d9
+Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}-OSE.tar.bz2
+# Source0-md5:	272978b266007dda1942ea56b69daf31
+Source1:	http://download.virtualbox.org/virtualbox/%{version}/UserManual.pdf
+# Source1-md5:	6d6709fa2a9cb3dfad8c7ad7cd43be32
+Source2:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
+# Source2-md5:	071ba625b567979a86f75e1c640c4542
 Source3:	%{pname}-vboxdrv.init
 Source4:	%{pname}-vboxadd.init
 Source5:	%{pname}-vboxnetflt.init
@@ -60,12 +57,6 @@ BuildRequires:	rpmbuild(macros) >= 1.379
 BuildRequires:	gcc-multilib
 BuildRequires:	glibc-devel(i686)
 BuildRequires:	libstdc++-multilib-devel
-%endif
-%if "%{pld_release}" == "th"
-BuildRequires:	compat-gcc-34
-%endif
-%if "%{pld_release}" == "ti"
-BuildRequires:	gcc3
 %endif
 %if "%{pld_release}" == "ac"
 BuildRequires:	XFree86-devel
@@ -499,6 +490,7 @@ fi
 %lang(de) %{_libdir}/VirtualBox/nls/*_de.qm
 %lang(el) %{_libdir}/VirtualBox/nls/*_el.qm
 %lang(es) %{_libdir}/VirtualBox/nls/*_es.qm
+%lang(el) %{_libdir}/VirtualBox/nls/*_el.qm
 %lang(eu) %{_libdir}/VirtualBox/nls/*_eu.qm
 %lang(fi) %{_libdir}/VirtualBox/nls/*_fi.qm
 %lang(fr) %{_libdir}/VirtualBox/nls/*_fr.qm
