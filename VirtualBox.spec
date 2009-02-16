@@ -23,7 +23,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		5
+%define		rel		1
 %define		pname	VirtualBox
 Summary:	VirtualBox OSE - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox OSE - wirtualizator sprzętu x86
@@ -490,7 +490,6 @@ fi
 %lang(de) %{_libdir}/VirtualBox/nls/*_de.qm
 %lang(el) %{_libdir}/VirtualBox/nls/*_el.qm
 %lang(es) %{_libdir}/VirtualBox/nls/*_es.qm
-%lang(el) %{_libdir}/VirtualBox/nls/*_el.qm
 %lang(eu) %{_libdir}/VirtualBox/nls/*_eu.qm
 %lang(fi) %{_libdir}/VirtualBox/nls/*_fi.qm
 %lang(fr) %{_libdir}/VirtualBox/nls/*_fr.qm
