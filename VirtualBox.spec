@@ -23,7 +23,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		4
+%define		rel		5
 %define		pname	VirtualBox
 Summary:	VirtualBox OSE - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox OSE - wirtualizator sprzętu x86
@@ -301,6 +301,9 @@ rm -rf PLD-MODULE-BUILD && mkdir PLD-MODULE-BUILD && cd PLD-MODULE-BUILD
 	tar -zxf modules.tar.gz && rm -f modules.tar.gz
 ../src/VBox/HostDrivers/linux/export_modules modules.tar.gz --without-hardening && \
 	tar -zxf modules.tar.gz && rm -f modules.tar.gz
+#./src/VBox/HostDrivers/Support/linux/Makefile:70:
+#./PLD-MODULE-BUILD/vboxdrv/Makefile:70:
+
 
 %build
 %if %{with userspace}
