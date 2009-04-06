@@ -44,6 +44,7 @@ Source5:	%{pname}-vboxnetflt.init
 Source6:	%{pname}-vboxvfs.init
 Source7:	%{pname}.desktop
 Source8:	%{pname}.sh
+Source9:	mount.vdi
 Patch0:		%{pname}-configure.patch
 Patch1:		%{pname}-qt-paths.patch
 Patch2:		%{pname}-shared-libstdc++.patch
@@ -184,8 +185,8 @@ Provides:	kernel(vboxadd) = %{version}-%{rel}
 VirtualBox OSE Guest Additions for Linux Module.
 
 %description -n kernel%{_alt_kernel}-misc-vboxadd -l pl.UTF-8
-Moduł jądra Linuksa vboxadd dla VirtualBoksa OSE - dodatki dla
-systemu gościa.
+Moduł jądra Linuksa vboxadd dla VirtualBoksa OSE - dodatki dla systemu
+gościa.
 
 %package -n kernel%{_alt_kernel}-misc-vboxdrv
 Summary:	VirtualBox OSE Support Driver
@@ -225,8 +226,8 @@ Provides:	kernel(vboxnetflt) = %{version}-%{rel}
 VirtualBox OSE Network Filter Driver.
 
 %description -n kernel%{_alt_kernel}-misc-vboxnetflt -l pl.UTF-8
-Moduł jądra Linuksa dla VirtualBoksa OSE - sterownik filtrowania
-sieci dla systemu głównego.
+Moduł jądra Linuksa dla VirtualBoksa OSE - sterownik filtrowania sieci
+dla systemu głównego.
 
 %package -n kernel%{_alt_kernel}-misc-vboxvfs
 Summary:	Host file system access VFS for VirtualBox OSE
@@ -246,8 +247,8 @@ Provides:	kernel(vboxvfs) = %{version}-%{rel}
 Host file system access VFS for VirtualBox OSE.
 
 %description -n kernel%{_alt_kernel}-misc-vboxvfs -l pl.UTF-8
-Moduł jądra Linuksa dla VirtualBoksa OSE - dostęp do plików
-systemu głównego z poziomu systemu gościa.
+Moduł jądra Linuksa dla VirtualBoksa OSE - dostęp do plików systemu
+głównego z poziomu systemu gościa.
 
 %package -n xorg-driver-input-vboxmouse
 Summary:	X.org mouse driver for VirtualBox OSE guest OS
@@ -336,6 +337,7 @@ install -d \
 	$RPM_BUILD_ROOT{%{_bindir},%{_pixmapsdir},%{_desktopdir}} \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
 
+install %{SOURCE9} $RPM_BUILD_ROOT/sbin/mount.vdi
 install VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_libdir}/VirtualBox
 for f in {VBox{BFE,Headless,Manage,SDL,SVC,Tunctl,XPCOMIPCD},VirtualBox}; do
 	install out/linux.%{outdir}/release/bin/$f $RPM_BUILD_ROOT%{_libdir}/VirtualBox/$f
@@ -473,6 +475,7 @@ fi
 %attr(755,root,root) %{_bindir}/mountvboxsf
 %attr(755,root,root) %{_bindir}/VBox*
 %attr(755,root,root) %{_bindir}/VirtualBox
+%attr(755,root,root) /sbin/mount.vdi
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxSVC
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxBFE
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxHeadless
