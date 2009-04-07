@@ -335,7 +335,8 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with userspace}
 install -d \
 	$RPM_BUILD_ROOT{%{_bindir},%{_pixmapsdir},%{_desktopdir}} \
-	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
+	$RPM_BUILD_ROOT%{_libdir}/VirtualBox \
+	$RPM_BUILD_ROOT/sbin
 
 install %{SOURCE9} $RPM_BUILD_ROOT/sbin/mount.vdi
 install VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_libdir}/VirtualBox
