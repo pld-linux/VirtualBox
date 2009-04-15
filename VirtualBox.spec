@@ -23,21 +23,21 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		8
+%define		rel		1
 %define		pname	VirtualBox
 Summary:	VirtualBox OSE - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox OSE - wirtualizator sprzętu x86
 Name:		%{pname}%{_alt_kernel}
-Version:	2.1.4
+Version:	2.2.0
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}-OSE.tar.bz2
-# Source0-md5:	272978b266007dda1942ea56b69daf31
+# Source0-md5:	37bd7d58cf7b6c46998cfd82c1b70573
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/UserManual.pdf
-# Source1-md5:	6d6709fa2a9cb3dfad8c7ad7cd43be32
+# Source1-md5:	e8333e067d76901e39879ef301f545af
 Source2:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source2-md5:	071ba625b567979a86f75e1c640c4542
+# Source2-md5:	3ea8b6af3c6dfa331723c101ce3adc38
 Source3:	%{pname}-vboxdrv.init
 Source4:	%{pname}-vboxadd.init
 Source5:	%{pname}-vboxnetflt.init
@@ -46,8 +46,6 @@ Source7:	%{pname}.desktop
 Source8:	%{pname}.sh
 Source9:	mount.vdi
 Patch0:		%{pname}-configure.patch
-Patch1:		%{pname}-qt-paths.patch
-Patch2:		%{pname}-shared-libstdc++.patch
 Patch3:		%{pname}-disable-xclient-build.patch
 Patch4:		%{pname}-configure-spaces.patch
 Patch6:		%{pname}-vboxnetflt_export.patch
@@ -279,8 +277,6 @@ Sterownik grafiki dla systemu gościa w VirtualBoksie OSE.
 %prep
 %setup -q -n %{pname}-%{version}_OSE
 %patch0 -p1
-%patch1 -p1
-%patch2 -p1
 
 %ifarch %{x8664}
 %patch3 -p1
@@ -312,8 +308,7 @@ rm -rf PLD-MODULE-BUILD && mkdir PLD-MODULE-BUILD && cd PLD-MODULE-BUILD
 	--with-gcc="%{__cc}" \
 	--with-g++="%{__cxx}" \
 	--disable-hardening \
-	--disable-kmods \
-	--disable-qt3
+	--disable-kmods
 
 . ./env.sh && \
 kmk -j1 %{?with_verbose:KBUILD_VERBOSE=3}
