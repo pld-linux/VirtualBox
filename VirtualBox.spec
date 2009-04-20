@@ -46,9 +46,8 @@ Source7:	%{pname}.desktop
 Source8:	%{pname}.sh
 Source9:	mount.vdi
 Patch0:		%{pname}-configure.patch
-Patch3:		%{pname}-disable-xclient-build.patch
-Patch4:		%{pname}-configure-spaces.patch
-Patch6:		%{pname}-vboxnetflt_export.patch
+Patch1:		%{pname}-configure-spaces.patch
+Patch2:		%{pname}-vboxnetflt_export.patch
 URL:		http://www.virtualbox.org/
 BuildRequires:	rpmbuild(macros) >= 1.379
 %if %{with userspace}
@@ -277,13 +276,8 @@ Sterownik grafiki dla systemu gościa w VirtualBoksie OSE.
 %prep
 %setup -q -n %{pname}-%{version}_OSE
 %patch0 -p1
-
-%ifarch %{x8664}
-%patch3 -p1
-%endif
-
-%patch4 -p1
-%patch6 -p1
+%patch1 -p1
+%patch2 -p1
 
 cat <<'EOF' > udev.conf
 KERNEL=="vboxdrv", NAME="%k", GROUP="vbox", MODE="0660"
@@ -311,7 +305,7 @@ rm -rf PLD-MODULE-BUILD && mkdir PLD-MODULE-BUILD && cd PLD-MODULE-BUILD
 	--disable-kmods
 
 . ./env.sh && \
-kmk -j1 %{?with_verbose:KBUILD_VERBOSE=3}
+kmk -j1 %{?with_verbose:KBUILD_VERBOSE=3} USER=$(id -un)
 %endif
 
 %if %{with kernel}
@@ -356,9 +350,9 @@ install out/linux.%{outdir}/release/bin/additions/mountvboxsf		\
 	$RPM_BUILD_ROOT%{_bindir}
 
 install -d $RPM_BUILD_ROOT%{_libdir}/xorg/modules/{drivers,input}
-install out/linux.%{outdir}/release/bin/additions/vboxmouse_drv_15.so	\
+install out/linux.%{outdir}/release/bin/additions/vboxmouse_drv_16.so	\
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/input/vboxmouse_drv.so
-install out/linux.%{outdir}/release/bin/additions/vboxvideo_drv_15.so	\
+install out/linux.%{outdir}/release/bin/additions/vboxvideo_drv_16.so	\
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so
 
 install out/linux.%{outdir}/release/bin/VBox.png $RPM_BUILD_ROOT%{_pixmapsdir}/VBox.png
