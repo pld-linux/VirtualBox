@@ -252,6 +252,8 @@ Summary:	X.org mouse driver for VirtualBox OSE guest OS
 Summary(pl.UTF-8):	Sterownik myszy dla systemu gościa w VirtualBoksie OSE
 Release:	%{rel}
 Group:		X11/Applications
+Requires:	xorg-xserver-server(xinput-abi) >= 4.0
+Requires:	xorg-xserver-server(xinput-abi) < 5.0
 Requires:	xorg-xserver-server >= 1.0.99.901
 
 %description -n xorg-driver-input-vboxmouse
@@ -265,6 +267,8 @@ Summary:	X.org video driver for VirtualBox OSE guest OS
 Summary(pl.UTF-8):	Sterownik grafiki dla systemu gościa w VirtualBoksie OSE
 Release:	%{rel}
 Group:		X11/Applications
+Requires:	xorg-xserver-server(videodrv-abi) < 6.0
+Requires:	xorg-xserver-server(videodrv-abi) >= 2.0
 Requires:	xorg-xserver-server >= 1.0.99.901
 
 %description -n xorg-driver-video-vboxvideo
