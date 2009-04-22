@@ -354,10 +354,18 @@ install out/linux.%{outdir}/release/bin/additions/mountvboxsf		\
 	$RPM_BUILD_ROOT%{_bindir}
 
 install -d $RPM_BUILD_ROOT%{_libdir}/xorg/modules/{drivers,input}
+
+%if "%{pld_release}" == "ti"
+install out/linux.%{outdir}/release/bin/additions/vboxmouse_drv_15.so	\
+	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/input/vboxmouse_drv.so
+install out/linux.%{outdir}/release/bin/additions/vboxvideo_drv_15.so	\
+	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so
+%else
 install out/linux.%{outdir}/release/bin/additions/vboxmouse_drv_16.so	\
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/input/vboxmouse_drv.so
 install out/linux.%{outdir}/release/bin/additions/vboxvideo_drv_16.so	\
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so
+%endif
 
 install out/linux.%{outdir}/release/bin/VBox.png $RPM_BUILD_ROOT%{_pixmapsdir}/VBox.png
 install %{SOURCE7} $RPM_BUILD_ROOT%{_desktopdir}/%{pname}.desktop
