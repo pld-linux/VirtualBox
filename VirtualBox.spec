@@ -23,7 +23,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		2
+%define		rel		3
 %define		pname	VirtualBox
 Summary:	VirtualBox OSE - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox OSE - wirtualizator sprzętu x86
@@ -252,8 +252,13 @@ Summary:	X.org mouse driver for VirtualBox OSE guest OS
 Summary(pl.UTF-8):	Sterownik myszy dla systemu gościa w VirtualBoksie OSE
 Release:	%{rel}
 Group:		X11/Applications
+%if "%{pld_release}" == "ti"
+Requires:	xorg-xserver-server(xinput-abi) >= 2.1
+Requires:	xorg-xserver-server(xinput-abi) < 5.0
+%else
 Requires:	xorg-xserver-server(xinput-abi) >= 4.0
 Requires:	xorg-xserver-server(xinput-abi) < 5.0
+%endif
 Requires:	xorg-xserver-server >= 1.0.99.901
 
 %description -n xorg-driver-input-vboxmouse
