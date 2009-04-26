@@ -446,7 +446,7 @@ fi
 %post	-n kernel%{_alt_kernel}-misc-vboxnetflt
 %depmod %{_kernel_ver}
 /sbin/chkconfig --add vboxnetflt
-%service vboxdrv restart "VirtualBox OSE Network Filter driver"
+%service vboxnetflt restart "VirtualBox OSE Network Filter driver"
 
 %postun	-n kernel%{_alt_kernel}-misc-vboxnetflt
 %depmod %{_kernel_ver}
