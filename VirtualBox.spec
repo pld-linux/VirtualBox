@@ -498,6 +498,7 @@ fi
 %{_libdir}/VirtualBox/additions/*
 %{_libdir}/VirtualBox/components/*
 %lang(ar) %{_libdir}/VirtualBox/nls/*_ar.qm
+%lang(bg) %{_libdir}/VirtualBox/nls/*_bg.qm
 %lang(ca) %{_libdir}/VirtualBox/nls/*_ca.qm
 %lang(cs) %{_libdir}/VirtualBox/nls/*_cs.qm
 %lang(de) %{_libdir}/VirtualBox/nls/*_de.qm
@@ -510,6 +511,7 @@ fi
 %lang(id) %{_libdir}/VirtualBox/nls/*_id.qm
 %lang(it) %{_libdir}/VirtualBox/nls/*_it.qm
 %lang(ja) %{_libdir}/VirtualBox/nls/*_ja.qm
+%lang(km_KH) %{_libdir}/VirtualBox/nls/*_km_KH.qm
 %lang(ko) %{_libdir}/VirtualBox/nls/*_ko.qm
 %lang(nl) %{_libdir}/VirtualBox/nls/*_nl.qm
 %lang(pl) %{_libdir}/VirtualBox/nls/*_pl.qm
