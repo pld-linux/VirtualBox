@@ -403,9 +403,11 @@ You must also install kernel module for this software to work:
     kernel-misc-vboxdrv-%{version}-%{rel}@%{_kernel_ver_str}
 
 Additionally you might want to install:
+    kernel-misc-vboxnetflt-%{version}-%{rel}@%{_kernel_ver_str}
+
+On guest Linux system you might want to install:
     kernel-misc-vboxadd-%{version}-%{rel}@%{_kernel_ver_str}
     kernel-misc-vboxvfs-%{version}-%{rel}@%{_kernel_ver_str}
-    kernel-misc-vboxnetflt-%{version}-%{rel}@%{_kernel_ver_str}
 
 NOTE: for different kernel brands append after word kernel the brand, like:
     kernel-desktop-misc-vboxdrv-%{version}-%{rel}@%{_kernel_ver_str}
