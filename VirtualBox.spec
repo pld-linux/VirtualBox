@@ -23,7 +23,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		1
+%define		rel		2
 %define		pname	VirtualBox
 Summary:	VirtualBox OSE - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox OSE - wirtualizator sprzętu x86
@@ -89,6 +89,7 @@ BuildRequires:	which
 BuildRequires:	xalan-c-devel >= 1.10.0
 BuildRequires:	xerces-c-devel >= 2.6.0
 BuildRequires:	zlib-devel >= 1.2.1
+BuildRequires:	libcap-static
 %endif
 %if %{with dist_kernel}
 BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.20
@@ -347,6 +348,8 @@ install out/linux.%{outdir}/release/bin/VBox*.so \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
 install out/linux.%{outdir}/release/bin/{VBox{DD,DD2}{GC.gc,R0.r0},VMM{GC.gc,R0.r0}} \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
+install out/linux.%{outdir}/release/bin/VBoxSysInfo.sh \
+	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
 
 install -d $RPM_BUILD_ROOT%{_libdir}/VirtualBox/additions
 install -d $RPM_BUILD_ROOT%{_libdir}/VirtualBox/nls
@@ -502,6 +505,7 @@ fi
 %attr(755,root,root) %{_libdir}/VirtualBox/VBox*.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VirtualBox
 %attr(755,root,root) %{_libdir}/VirtualBox/VirtualBox-wrapper.sh
+%attr(755,root,root) %{_libdir}/VirtualBox/VBoxSysInfo.sh
 %{_libdir}/VirtualBox/*.gc
 %{_libdir}/VirtualBox/*.r0
 %{_libdir}/VirtualBox/additions/*
