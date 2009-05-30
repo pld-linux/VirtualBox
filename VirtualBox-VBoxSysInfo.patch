@@ -1,0 +1,17 @@
+diff -NurpP --minimal VirtualBox-2.2.2_OSE.orig/src/VBox/Installer/linux/VBoxSysInfo.sh VirtualBox-2.2.2_OSE.new/src/VBox/Installer/linux/VBoxSysInfo.sh
+--- VirtualBox-2.2.2_OSE.orig/src/VBox/Installer/linux/VBoxSysInfo.sh	2009-04-27 19:57:14.000000000 +0200
++++ VirtualBox-2.2.2_OSE.new/src/VBox/Installer/linux/VBoxSysInfo.sh	2009-05-29 18:56:04.000000000 +0200
+@@ -38,7 +38,12 @@ print_linux_info () {
+ # others as unknown.  It can be extended later if other distributions are
+ # found to be "of interest".
+ get_linux_info () {
+-    if [ -r /etc/lsb-release ] && grep Ubuntu /etc/lsb-release >/dev/null 2>&1
++    if [ -r /etc/pld-release ] && grep PLD /etc/pld-release >/dev/null 2>&1
++    then
++	# PLD-based
++	release=`cat /etc/pld-release | sed -e 's/.PLD.*//'`
++	print_linux_info "PLD" $release
++    elif [ -r /etc/lsb-release ] && grep Ubuntu /etc/lsb-release >/dev/null 2>&1
+     then
+         # Ubuntu-based system
+         . /etc/lsb-release

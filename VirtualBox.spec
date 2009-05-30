@@ -23,21 +23,21 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		2
+%define		rel		1
 %define		pname	VirtualBox
 Summary:	VirtualBox OSE - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox OSE - wirtualizator sprzętu x86
 Name:		%{pname}%{_alt_kernel}
-Version:	2.2.2
+Version:	2.2.4
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}-OSE.tar.bz2
-# Source0-md5:	82a76247b63e1813695175e7ddf01975
+# Source0-md5:	b90176e3878ccfef2991322b2248dcb0
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/UserManual.pdf
 # Source1-md5:	37573de808ddf2f4e7fe5f46966fbbe6
 Source2:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source2-md5:	9c09a9e88abe9edd8fec6fd3cf453535
+# Source2-md5:	00e64c25f87155540a3d106c5257530f
 Source3:	%{pname}-vboxdrv.init
 Source4:	%{pname}-vboxadd.init
 Source5:	%{pname}-vboxnetflt.init
@@ -48,6 +48,7 @@ Source9:	mount.vdi
 Patch0:		%{pname}-configure.patch
 Patch1:		%{pname}-configure-spaces.patch
 Patch2:		%{pname}-vboxnetflt_export.patch
+Patch3:		%{pname}-VBoxSysInfo.patch
 URL:		http://www.virtualbox.org/
 BuildRequires:	rpmbuild(macros) >= 1.379
 %if %{with userspace}
@@ -288,6 +289,7 @@ Sterownik grafiki dla systemu gościa w VirtualBoksie OSE.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 cat <<'EOF' > udev.conf
 KERNEL=="vboxdrv", NAME="%k", GROUP="vbox", MODE="0660"
