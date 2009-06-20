@@ -1,0 +1,35 @@
+diff -ur VirtualBox-2.2.4_OSE.orig/src/VBox/Additions/linux/export_modules VirtualBox-2.2.4_OSE/src/VBox/Additions/linux/export_modules
+--- VirtualBox-2.2.4_OSE.orig/src/VBox/Additions/linux/export_modules	2009-06-20 23:10:03.959703221 +0200
++++ VirtualBox-2.2.4_OSE/src/VBox/Additions/linux/export_modules	2009-06-20 23:39:32.927402856 +0200
+@@ -31,6 +31,7 @@
+ PATH_ROOT="`cd \`dirname $0\`/../../../..; pwd`"
+ PATH_VBOXADD="$PATH_ROOT/src/VBox/Additions/linux/module"
+ PATH_VBOXVFS="$PATH_ROOT/src/VBox/Additions/linux/sharedfolders"
++PATH_VBOXVIDEO_DRM="$PATH_ROOT/src/VBox/Additions/linux/drm"
+ 
+ VBOX_VERSION_MAJOR=`sed -e "s/^ *VBOX_VERSION_MAJOR *= \+\([0-9]\+\)/\1/;t;d" $PATH_ROOT/Config.kmk`
+ VBOX_VERSION_MINOR=`sed -e "s/^ *VBOX_VERSION_MINOR *= \+\([0-9]\+\)/\1/;t;d" $PATH_ROOT/Config.kmk`
+@@ -38,6 +39,7 @@
+ 
+ . $PATH_VBOXADD/files_vboxadd
+ . $PATH_VBOXVFS/files_vboxvfs
++. $PATH_VBOXVIDEO_DRM/files_vboxvideo_drm
+ 
+ # Temporary path for creating the modules, will be removed later
+ mkdir $PATH_TMP || exit 1
+@@ -71,6 +73,15 @@
+     install -D -m 0755 `echo $f|cut -d'=' -f1` "$PATH_TMP/vboxvfs/`echo $f|cut -d'>' -f2`"
+ done
+ 
++# vboxvideo_drm (VirtualBox guest kernel module for DRI)
++mkdir $PATH_TMP/vboxvideo_drm || exit 1
++for f in $FILES_VBOXVIDEO_DRM_NOBIN; do
++    install -D -m 0644 `echo $f|cut -d'=' -f1` "$PATH_TMP/vboxvideo_drm/`echo $f|cut -d'>' -f2`"
++done
++for f in $FILES_VBOXVIDEO_DRM_BIN; do
++    install -D -m 0755 `echo $f|cut -d'=' -f1` "$PATH_TMP/vboxvideo_drm/`echo $f|cut -d'>' -f2`"
++done
++
+ # Only temporary, omit from archive
+ rm $PATH_TMP/version-generated.h
+ 
