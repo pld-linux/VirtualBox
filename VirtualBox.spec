@@ -254,13 +254,8 @@ Summary:	X.org mouse driver for VirtualBox OSE guest OS
 Summary(pl.UTF-8):	Sterownik myszy dla systemu gościa w VirtualBoksie OSE
 Release:	%{rel}
 Group:		X11/Applications
-%if "%{pld_release}" == "ti"
-Requires:	xorg-xserver-server(xinput-abi) >= 2.1
-Requires:	xorg-xserver-server(xinput-abi) < 5.0
-%else
 Requires:	xorg-xserver-server(xinput-abi) >= 4.0
 Requires:	xorg-xserver-server(xinput-abi) < 5.0
-%endif
 Requires:	xorg-xserver-server >= 1.0.99.901
 
 %description -n xorg-driver-input-vboxmouse
@@ -365,17 +360,10 @@ install out/linux.%{outdir}/release/bin/additions/mountvboxsf		\
 
 install -d $RPM_BUILD_ROOT%{_libdir}/xorg/modules/{drivers,input}
 
-%if "%{pld_release}" == "ti"
-install out/linux.%{outdir}/release/bin/additions/vboxmouse_drv_15.so	\
-	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/input/vboxmouse_drv.so
-install out/linux.%{outdir}/release/bin/additions/vboxvideo_drv_15.so	\
-	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so
-%else
 install out/linux.%{outdir}/release/bin/additions/vboxmouse_drv_16.so	\
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/input/vboxmouse_drv.so
 install out/linux.%{outdir}/release/bin/additions/vboxvideo_drv_16.so	\
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so
-%endif
 
 install out/linux.%{outdir}/release/bin/VBox.png $RPM_BUILD_ROOT%{_pixmapsdir}/VBox.png
 install %{SOURCE7} $RPM_BUILD_ROOT%{_desktopdir}/%{pname}.desktop
