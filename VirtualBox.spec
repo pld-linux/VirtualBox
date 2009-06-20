@@ -47,7 +47,7 @@ Source8:	%{pname}.sh
 Source9:	mount.vdi
 Patch0:		%{pname}-configure.patch
 Patch1:		%{pname}-configure-spaces.patch
-Patch2:		%{pname}-vboxnetflt_export.patch
+Patch2:		%{pname}-export_modules.patch
 Patch3:		%{pname}-VBoxSysInfo.patch
 URL:		http://www.virtualbox.org/
 BuildRequires:	rpmbuild(macros) >= 1.379
@@ -249,6 +249,25 @@ Host file system access VFS for VirtualBox OSE.
 Moduł jądra Linuksa dla VirtualBoksa OSE - dostęp do plików systemu
 głównego z poziomu systemu gościa.
 
+%package -n kernel%{_alt_kernel}-misc-vboxvideo
+Summary:	DRM support for VirtualBox OSE
+Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa OSE
+Release:	%{rel}@%{_kernel_ver_str}
+Group:		Base/Kernel
+Requires(post,postun):	/sbin/depmod
+Requires:	dev >= 2.9.0-7
+%if %{with dist_kernel}
+%requires_releq_kernel
+Requires(postun):	%releq_kernel
+%endif
+Provides:	kernel(vboxvideo) = %{version}-%{rel}
+
+%description -n kernel%{_alt_kernel}-misc-vboxvideo
+DRM support for VirtualBox OSE.
+
+%description -n kernel%{_alt_kernel}-misc-vboxvideo -l pl.UTF-8
+Moduł jądra Linuksa dla VirtualBoksa OSE - sterownik obsługi DRM.
+
 %package -n xorg-driver-input-vboxmouse
 Summary:	X.org mouse driver for VirtualBox OSE guest OS
 Summary(pl.UTF-8):	Sterownik myszy dla systemu gościa w VirtualBoksie OSE
@@ -322,6 +341,7 @@ cd PLD-MODULE-BUILD
 %build_kernel_modules -m vboxnetflt -C vboxnetflt
 cp -a vboxadd/Module.symvers vboxvfs
 %build_kernel_modules -m vboxvfs -C vboxvfs -c
+%build_kernel_modules -m vboxvideo -C vboxvideo_drm
 cd ..
 %endif
 
@@ -382,6 +402,7 @@ install %{SOURCE6} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxvfs
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxdrv/vboxdrv -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxnetflt/vboxnetflt -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxvfs/vboxvfs -d misc
+%install_kernel_modules -m PLD-MODULE-BUILD/vboxvideo_drm/vboxvideo -d misc
 %endif
 
 %clean
@@ -401,6 +422,7 @@ Additionally you might want to install:
 On guest Linux system you might want to install:
     kernel-misc-vboxadd-%{version}-%{rel}@%{_kernel_ver_str}
     kernel-misc-vboxvfs-%{version}-%{rel}@%{_kernel_ver_str}
+    kernel-misc-vboxvideo-%{version}-%{rel}@%{_kernel_ver_str}
 
 NOTE: for different kernel brands append after word kernel the brand, like:
     kernel-desktop-misc-vboxdrv-%{version}-%{rel}@%{_kernel_ver_str}
@@ -472,6 +494,12 @@ if [ "$1" = "0" ]; then
 	%service vboxvfs stop
 	/sbin/chkconfig --del vboxvfs
 fi
+
+%post	-n kernel%{_alt_kernel}-misc-vboxvideo
+%depmod %{_kernel_ver}
+
+%postun	-n kernel%{_alt_kernel}-misc-vboxvideo
+%depmod %{_kernel_ver}
 
 %if %{with userspace}
 %files
@@ -564,4 +592,9 @@ fi
 %defattr(644,root,root,755)
 %attr(754,root,root) /etc/rc.d/init.d/vboxvfs
 /lib/modules/%{_kernel_ver}/misc/vboxvfs.ko*
+%endif
+
+%files -n kernel%{_alt_kernel}-misc-vboxvideo
+%defattr(644,root,root,755)
+/lib/modules/%{_kernel_ver}/misc/vboxvideo.ko*
 %endif
