@@ -592,7 +592,6 @@ fi
 %defattr(644,root,root,755)
 %attr(754,root,root) /etc/rc.d/init.d/vboxvfs
 /lib/modules/%{_kernel_ver}/misc/vboxvfs.ko*
-%endif
 
 %files -n kernel%{_alt_kernel}-misc-vboxvideo
 %defattr(644,root,root,755)
