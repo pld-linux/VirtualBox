@@ -63,6 +63,7 @@ BuildRequires:	XFree86-devel
 BuildRequires:	xorg-lib-libXcursor-devel
 BuildRequires:	xorg-lib-libXmu-devel
 %endif
+BuildRequires:	OpenGL-GLU-devel
 BuildRequires:	OpenGL-devel
 BuildRequires:	QtGui-devel
 BuildRequires:	QtNetwork-devel
