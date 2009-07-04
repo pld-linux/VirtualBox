@@ -73,6 +73,7 @@ BuildRequires:	alsa-lib-devel >= 1.0.6
 BuildRequires:	bash
 BuildRequires:	bcc
 BuildRequires:	bin86
+BuildRequires:	curl-devel
 BuildRequires:	gcc >= 5:3.2.3
 BuildRequires:	libIDL-devel
 BuildRequires:	libpng-devel >= 1.2.5
