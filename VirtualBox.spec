@@ -56,6 +56,7 @@ BuildRequires:	rpmbuild(macros) >= 1.379
 BuildRequires:	gcc-multilib
 BuildRequires:	glibc-devel(i686)
 BuildRequires:	libstdc++-multilib-devel
+BuildRequires:	libstdc++-multilib-static
 %endif
 %if "%{pld_release}" == "ac"
 BuildRequires:	XFree86-devel
@@ -78,6 +79,7 @@ BuildRequires:	gcc >= 5:3.2.3
 BuildRequires:	libIDL-devel
 BuildRequires:	libpng-devel >= 1.2.5
 BuildRequires:	libstdc++-devel >= 5:3.2.3
+BuildRequires:	libstdc++-static >= 5:3.2.3
 BuildRequires:	libuuid-devel
 BuildRequires:	libxml2-devel >= 2.6.26
 BuildRequires:	libxslt-devel >= 1.1.17
