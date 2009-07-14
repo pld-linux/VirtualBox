@@ -23,7 +23,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		1
+%define		rel		2
 %define		pname	VirtualBox
 Summary:	VirtualBox OSE - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox OSE - wirtualizator sprzętu x86
@@ -361,11 +361,13 @@ install -d \
 
 install %{SOURCE9} $RPM_BUILD_ROOT/sbin/mount.vdi
 install VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_libdir}/VirtualBox
-for f in {VBox{BFE,Headless,Manage,SDL,SVC,TestOGL,Tunctl,XPCOMIPCD},VirtualBox}; do
+for f in {VBox{BFE,Headless,Manage,SDL,SVC,Tunctl,XPCOMIPCD},VirtualBox}; do
 	install out/linux.%{outdir}/release/bin/$f $RPM_BUILD_ROOT%{_libdir}/VirtualBox/$f
 	ln -s %{_libdir}/VirtualBox/VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_bindir}/$f
 done
 
+install out/linux.%{outdir}/release/bin/VBox{TestOGL,NetAdpCtl,NetDHCP} \
+	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
 install out/linux.%{outdir}/release/bin/VBox*.so \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
 install out/linux.%{outdir}/release/bin/{VBox{DD,DD2}{GC.gc,R0.r0},VMM{GC.gc,R0.r0}} \
@@ -529,6 +531,7 @@ fi
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxHeadless
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxManage
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxSDL
+%attr(755,root,root) %{_libdir}/VirtualBox/VBoxTestOGL
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxTunctl
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxXPCOMIPCD
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxDD.so
@@ -536,12 +539,16 @@ fi
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxDDU.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxGuestPropSvc.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxKeyboard.so
+%attr(755,root,root) %{_libdir}/VirtualBox/VBoxNetAdpCtl
+%attr(755,root,root) %{_libdir}/VirtualBox/VBoxNetDHCP
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxOGLhostcrutil.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxOGLhosterrorspu.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxOGLrenderspu.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxPython.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxPython2_6.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxREM.so
+%attr(755,root,root) %{_libdir}/VirtualBox/VBoxREM32.so
+%attr(755,root,root) %{_libdir}/VirtualBox/VBoxREM64.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxRT.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxSettings.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxSharedClipboard.so
