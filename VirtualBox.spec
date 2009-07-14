@@ -361,7 +361,7 @@ install -d \
 
 install %{SOURCE9} $RPM_BUILD_ROOT/sbin/mount.vdi
 install VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_libdir}/VirtualBox
-for f in {VBox{BFE,Headless,Manage,SDL,SVC,Tunctl,XPCOMIPCD},VirtualBox}; do
+for f in {VBox{BFE,Headless,Manage,SDL,SVC,TestOGL,Tunctl,XPCOMIPCD},VirtualBox}; do
 	install out/linux.%{outdir}/release/bin/$f $RPM_BUILD_ROOT%{_libdir}/VirtualBox/$f
 	ln -s %{_libdir}/VirtualBox/VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_bindir}/$f
 done
