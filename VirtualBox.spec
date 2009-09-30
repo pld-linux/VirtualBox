@@ -23,7 +23,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		2
+%define		rel		2.1
 %define		pname	VirtualBox
 Summary:	VirtualBox OSE - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox OSE - wirtualizator sprzętu x86
@@ -94,6 +94,7 @@ BuildRequires:	sed >= 4.0
 BuildRequires:	which
 BuildRequires:	xalan-c-devel >= 1.10.0
 BuildRequires:	xerces-c-devel >= 2.6.0
+BuildRequires:	libxml2-devel >= 2.6.26
 BuildRequires:	zlib-devel >= 1.2.1
 BuildRequires:	libcap-static
 %endif
