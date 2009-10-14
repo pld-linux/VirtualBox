@@ -23,21 +23,21 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		2.1
+%define		rel		1
 %define		pname	VirtualBox
 Summary:	VirtualBox OSE - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox OSE - wirtualizator sprzętu x86
 Name:		%{pname}%{_alt_kernel}
-Version:	3.0.6
+Version:	3.0.8
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}-OSE.tar.bz2
-# Source0-md5:	8249090b4e08ca2eff3efa9f836f370b
+# Source0-md5:	e712f2979e501be59314464d021b6d8b
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/UserManual.pdf
-# Source1-md5:	7b9dcaa2339f122db12228c6501c2176
+# Source1-md5:	e682baf64906a0d01bb592b81a3c54ac
 Source2:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source2-md5:	8d033b4f66db1a3e5b914da1717e9c21
+# Source2-md5:	d096bd6e746457234618c02525a72a70
 Source3:	%{pname}-vboxdrv.init
 Source4:	%{pname}-vboxadd.init
 Source5:	%{pname}-vboxnetflt.init
