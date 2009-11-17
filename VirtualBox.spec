@@ -528,6 +528,7 @@ fi
 %dir %{_libdir}/VirtualBox/additions
 %dir %{_libdir}/VirtualBox/components
 %dir %{_libdir}/VirtualBox/nls
+%attr(755,root,root) %{_sbindir}/mount.vboxsf
 %attr(755,root,root) %{_bindir}/VBoxBFE
 %attr(755,root,root) %{_bindir}/VBoxHeadless
 %attr(755,root,root) %{_bindir}/VBoxManage
@@ -649,7 +650,6 @@ fi
 %files -n kernel%{_alt_kernel}-misc-vboxvfs
 %defattr(644,root,root,755)
 %attr(754,root,root) /etc/rc.d/init.d/vboxvfs
-%attr(755,root,root) %{_sbindir}/mount.vboxsf
 /etc/modprobe.d/vboxvfs.conf
 /lib/modules/%{_kernel_ver}/misc/vboxvfs.ko*
 
