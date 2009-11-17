@@ -353,6 +353,7 @@ cp -a vboxadd/Module.symvers vboxvfs
 %build_kernel_modules -m vboxvfs -C vboxvfs -c
 %build_kernel_modules -m vboxvideo -C vboxvideo_drm
 cd ..
+%{__cc} %{rpmcflags} %{rpmldflags} -Wall -Werror src/VBox/Additions/linux/sharedfolders/mount.vboxsf.c -o mount.vboxsf
 %endif
 
 %install
@@ -360,11 +361,10 @@ rm -rf $RPM_BUILD_ROOT
 
 %if %{with userspace}
 install -d \
-	$RPM_BUILD_ROOT{%{_bindir},%{_pixmapsdir},%{_desktopdir}} \
+	$RPM_BUILD_ROOT{%{_bindir},%{_sbindir},%{_pixmapsdir},%{_desktopdir}} \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox \
-	$RPM_BUILD_ROOT/sbin
 
-install -p %{SOURCE9} $RPM_BUILD_ROOT/sbin/mount.vdi
+install -p %{SOURCE9} $RPM_BUILD_ROOT%{_sbindir}/mount.vdi
 install -p VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_libdir}/VirtualBox
 for f in {VBox{BFE,Headless,Manage,SDL,SVC,Tunctl,XPCOMIPCD},VirtualBox}; do
 	install -p out/linux.%{outdir}/release/bin/$f $RPM_BUILD_ROOT%{_libdir}/VirtualBox/$f
@@ -387,10 +387,6 @@ cp -a %{SOURCE2} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/additions/VBoxGuestAdditio
 cp -a out/linux.%{outdir}/release/bin/components $RPM_BUILD_ROOT%{_libdir}/VirtualBox
 cp -a out/linux.%{outdir}/release/bin/nls/* $RPM_BUILD_ROOT%{_libdir}/VirtualBox/nls
 
-install -d $RPM_BUILD_ROOT%{_sbindir}
-install -p out/linux.%{outdir}/release/bin/additions/mountvboxsf		\
-	$RPM_BUILD_ROOT%{_sbindir}/mount.vboxsf
-
 install -d $RPM_BUILD_ROOT%{_libdir}/xorg/modules/{drivers,input}
 
 install -p out/linux.%{outdir}/release/bin/additions/vboxmouse_drv_16.so	\
@@ -406,7 +402,7 @@ cp -a udev.conf $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
 %endif
 
 %if %{with kernel}
-install -d $RPM_BUILD_ROOT/etc/rc.d/init.d
+install -d $RPM_BUILD_ROOT{/etc/{rc.d/init.d,modprobe.d},%{_sbindir}}
 install -p %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxdrv
 install -p %{SOURCE4} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxadd
 install -p %{SOURCE5} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxnetflt
@@ -417,7 +413,8 @@ install -p %{SOURCE6} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxvfs
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxvfs/vboxvfs -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxvideo_drm/vboxvideo -d misc
 
-install -d $RPM_BUILD_ROOT/etc/modprobe.d
+install -p mount.vboxsf $RPM_BUILD_ROOT%{_sbindir}/mount.vboxsf
+
 cat <<'EOF' > $RPM_BUILD_ROOT/etc/modprobe.d/vboxvfs.conf
 # Somewhy filesystem is not called as same as kernel module.
 alias vboxsf vboxvfs
@@ -528,7 +525,6 @@ fi
 %dir %{_libdir}/VirtualBox/additions
 %dir %{_libdir}/VirtualBox/components
 %dir %{_libdir}/VirtualBox/nls
-%attr(755,root,root) %{_sbindir}/mount.vboxsf
 %attr(755,root,root) %{_bindir}/VBoxBFE
 %attr(755,root,root) %{_bindir}/VBoxHeadless
 %attr(755,root,root) %{_bindir}/VBoxManage
@@ -650,6 +646,7 @@ fi
 %files -n kernel%{_alt_kernel}-misc-vboxvfs
 %defattr(644,root,root,755)
 %attr(754,root,root) /etc/rc.d/init.d/vboxvfs
+%attr(755,root,root) %{_sbindir}/mount.vboxsf
 /etc/modprobe.d/vboxvfs.conf
 /lib/modules/%{_kernel_ver}/misc/vboxvfs.ko*
 
