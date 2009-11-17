@@ -10,6 +10,7 @@
 %bcond_without	dist_kernel	# without distribution kernel
 %bcond_without	kernel		# don't build kernel module
 %bcond_without	userspace	# don't build userspace package
+%bcond_with	force_userspace # force userspace build (useful if alt_kernel is set)
 %bcond_with	verbose
 
 %if %{without kernel}
@@ -17,6 +18,9 @@
 %endif
 %if "%{_alt_kernel}" != "%{nil}"
 %undefine	with_userspace
+%endif
+%if %{with force_userspace}
+%define		with_userspace 1
 %endif
 %if %{without userspace}
 # nothing to be placed to debuginfo package
