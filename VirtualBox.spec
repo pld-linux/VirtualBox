@@ -23,7 +23,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		2
+%define		rel		3
 %define		pname	VirtualBox
 Summary:	VirtualBox OSE - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox OSE - wirtualizator sprzętu x86
@@ -360,57 +360,61 @@ install -d \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox \
 	$RPM_BUILD_ROOT/sbin
 
-install %{SOURCE9} $RPM_BUILD_ROOT/sbin/mount.vdi
-install VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_libdir}/VirtualBox
+install -p %{SOURCE9} $RPM_BUILD_ROOT/sbin/mount.vdi
+install -p VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_libdir}/VirtualBox
 for f in {VBox{BFE,Headless,Manage,SDL,SVC,Tunctl,XPCOMIPCD},VirtualBox}; do
-	install out/linux.%{outdir}/release/bin/$f $RPM_BUILD_ROOT%{_libdir}/VirtualBox/$f
+	install -p out/linux.%{outdir}/release/bin/$f $RPM_BUILD_ROOT%{_libdir}/VirtualBox/$f
 	ln -s %{_libdir}/VirtualBox/VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_bindir}/$f
 done
 
-install out/linux.%{outdir}/release/bin/VBox{TestOGL,NetAdpCtl,NetDHCP} \
+install -p out/linux.%{outdir}/release/bin/VBox{TestOGL,NetAdpCtl,NetDHCP} \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
-install out/linux.%{outdir}/release/bin/VBox*.so \
+install -p out/linux.%{outdir}/release/bin/VBox*.so \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
-install out/linux.%{outdir}/release/bin/{VBox{DD,DD2}{GC.gc,R0.r0},VMM{GC.gc,R0.r0}} \
+install -p out/linux.%{outdir}/release/bin/{VBox{DD,DD2}{GC.gc,R0.r0},VMM{GC.gc,R0.r0}} \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
-install out/linux.%{outdir}/release/bin/VBoxSysInfo.sh \
+install -p out/linux.%{outdir}/release/bin/VBoxSysInfo.sh \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
 
 install -d $RPM_BUILD_ROOT%{_libdir}/VirtualBox/additions
 install -d $RPM_BUILD_ROOT%{_libdir}/VirtualBox/nls
 
-install %{SOURCE2} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/additions/VBoxGuestAdditions.iso
+cp -a %{SOURCE2} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/additions/VBoxGuestAdditions.iso
 cp -a out/linux.%{outdir}/release/bin/components $RPM_BUILD_ROOT%{_libdir}/VirtualBox
 cp -a out/linux.%{outdir}/release/bin/nls/* $RPM_BUILD_ROOT%{_libdir}/VirtualBox/nls
 
-install out/linux.%{outdir}/release/bin/additions/mountvboxsf		\
+install -p out/linux.%{outdir}/release/bin/additions/mountvboxsf		\
 	$RPM_BUILD_ROOT%{_bindir}
 
 install -d $RPM_BUILD_ROOT%{_libdir}/xorg/modules/{drivers,input}
 
-install out/linux.%{outdir}/release/bin/additions/vboxmouse_drv_16.so	\
+install -p out/linux.%{outdir}/release/bin/additions/vboxmouse_drv_16.so	\
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/input/vboxmouse_drv.so
-install out/linux.%{outdir}/release/bin/additions/vboxvideo_drv_16.so	\
+install -p out/linux.%{outdir}/release/bin/additions/vboxvideo_drv_16.so	\
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so
 
-install out/linux.%{outdir}/release/bin/VBox.png $RPM_BUILD_ROOT%{_pixmapsdir}/VBox.png
-install %{SOURCE7} $RPM_BUILD_ROOT%{_desktopdir}/%{pname}.desktop
+install -p out/linux.%{outdir}/release/bin/VBox.png $RPM_BUILD_ROOT%{_pixmapsdir}/VBox.png
+cp -a %{SOURCE7} $RPM_BUILD_ROOT%{_desktopdir}/%{pname}.desktop
 
 install -d $RPM_BUILD_ROOT/etc/udev/rules.d
-install udev.conf $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
+cp -a udev.conf $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
 %endif
 
 %if %{with kernel}
 install -d $RPM_BUILD_ROOT/etc/rc.d/init.d
-install %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxdrv
-install %{SOURCE4} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxadd
-install %{SOURCE5} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxnetflt
-install %{SOURCE6} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxvfs
+install -p %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxdrv
+install -p %{SOURCE4} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxadd
+install -p %{SOURCE5} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxnetflt
+install -p %{SOURCE6} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxvfs
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxadd/vboxadd -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxdrv/vboxdrv -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxnetflt/vboxnetflt -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxvfs/vboxvfs -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxvideo_drm/vboxvideo -d misc
+cat <<'EOF' > $RPM_BUILD_ROOT/etc/modprobe.d/vboxvfs.conf
+# Somewhy filesystem is not called as same as kernel module.
+alias vboxsf vboxvfs
+EOF
 %endif
 
 %clean
@@ -639,6 +643,7 @@ fi
 %files -n kernel%{_alt_kernel}-misc-vboxvfs
 %defattr(644,root,root,755)
 %attr(754,root,root) /etc/rc.d/init.d/vboxvfs
+/etc/modprobe.d/vboxvfs.conf
 /lib/modules/%{_kernel_ver}/misc/vboxvfs.ko*
 
 %files -n kernel%{_alt_kernel}-misc-vboxvideo
