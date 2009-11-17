@@ -1,0 +1,1 @@
+- added -j1 do kmk, otherwise build will fail on SMP
