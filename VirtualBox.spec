@@ -23,7 +23,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		3
+%define		rel		4
 %define		pname	VirtualBox
 Summary:	VirtualBox OSE - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox OSE - wirtualizator sprzętu x86
@@ -77,6 +77,7 @@ BuildRequires:	bin86
 BuildRequires:	curl-devel
 BuildRequires:	gcc >= 5:3.2.3
 BuildRequires:	libIDL-devel
+BuildRequires:	libcap-static
 BuildRequires:	libpng-devel >= 1.2.5
 BuildRequires:	libstdc++-devel >= 5:3.2.3
 BuildRequires:	libstdc++-static >= 5:3.2.3
@@ -94,9 +95,7 @@ BuildRequires:	sed >= 4.0
 BuildRequires:	which
 BuildRequires:	xalan-c-devel >= 1.10.0
 BuildRequires:	xerces-c-devel >= 2.6.0
-BuildRequires:	libxml2-devel >= 2.6.26
 BuildRequires:	zlib-devel >= 1.2.1
-BuildRequires:	libcap-static
 %endif
 %if %{with dist_kernel}
 BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.20
@@ -115,6 +114,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %else
 %define		outdir	x86
 %endif
+%define		_sbindir	/sbin
 
 %description
 InnoTek VirtualBox OSE is a general-purpose full virtualizer for x86
@@ -279,9 +279,9 @@ Summary:	X.org mouse driver for VirtualBox OSE guest OS
 Summary(pl.UTF-8):	Sterownik myszy dla systemu gościa w VirtualBoksie OSE
 Release:	%{rel}
 Group:		X11/Applications
-Requires:	xorg-xserver-server(xinput-abi) >= 4.0
-Requires:	xorg-xserver-server(xinput-abi) < 5.0
 Requires:	xorg-xserver-server >= 1.0.99.901
+Requires:	xorg-xserver-server(xinput-abi) < 5.0
+Requires:	xorg-xserver-server(xinput-abi) >= 4.0
 
 %description -n xorg-driver-input-vboxmouse
 X.org mouse driver for VirtualBox OSE guest OS.
@@ -294,9 +294,9 @@ Summary:	X.org video driver for VirtualBox OSE guest OS
 Summary(pl.UTF-8):	Sterownik grafiki dla systemu gościa w VirtualBoksie OSE
 Release:	%{rel}
 Group:		X11/Applications
+Requires:	xorg-xserver-server >= 1.0.99.901
 Requires:	xorg-xserver-server(videodrv-abi) < 6.0
 Requires:	xorg-xserver-server(videodrv-abi) >= 2.0
-Requires:	xorg-xserver-server >= 1.0.99.901
 
 %description -n xorg-driver-video-vboxvideo
 X.org video driver for VirtualBox OSE guest OS.
@@ -383,8 +383,9 @@ cp -a %{SOURCE2} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/additions/VBoxGuestAdditio
 cp -a out/linux.%{outdir}/release/bin/components $RPM_BUILD_ROOT%{_libdir}/VirtualBox
 cp -a out/linux.%{outdir}/release/bin/nls/* $RPM_BUILD_ROOT%{_libdir}/VirtualBox/nls
 
+install -d $RPM_BUILD_ROOT%{_sbindir}
 install -p out/linux.%{outdir}/release/bin/additions/mountvboxsf		\
-	$RPM_BUILD_ROOT%{_bindir}
+	$RPM_BUILD_ROOT%{_sbindir}/mount.vboxsf
 
 install -d $RPM_BUILD_ROOT%{_libdir}/xorg/modules/{drivers,input}
 
@@ -411,6 +412,8 @@ install -p %{SOURCE6} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxvfs
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxnetflt/vboxnetflt -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxvfs/vboxvfs -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxvideo_drm/vboxvideo -d misc
+
+install -d $RPM_BUILD_ROOT/etc/modprobe.d
 cat <<'EOF' > $RPM_BUILD_ROOT/etc/modprobe.d/vboxvfs.conf
 # Somewhy filesystem is not called as same as kernel module.
 alias vboxsf vboxvfs
@@ -431,7 +434,7 @@ You must also install kernel module for this software to work:
 Additionally you might want to install:
     kernel-misc-vboxnetflt-%{version}-%{rel}@%{_kernel_ver_str}
 
-On guest Linux system you might want to install:
+On Guest Linux system you might want to install:
     kernel-misc-vboxadd-%{version}-%{rel}@%{_kernel_ver_str}
     kernel-misc-vboxvfs-%{version}-%{rel}@%{_kernel_ver_str}
     kernel-misc-vboxvideo-%{version}-%{rel}@%{_kernel_ver_str}
@@ -454,7 +457,7 @@ fi
 %post	-n kernel%{_alt_kernel}-misc-vboxadd
 %depmod %{_kernel_ver}
 /sbin/chkconfig --add vboxadd
-%service vboxadd restart "VirtualBox OSE guest additions driver"
+%service vboxadd restart "VirtualBox OSE Guest additions driver"
 
 %postun	-n kernel%{_alt_kernel}-misc-vboxadd
 %depmod %{_kernel_ver}
@@ -468,7 +471,7 @@ fi
 %post	-n kernel%{_alt_kernel}-misc-vboxdrv
 %depmod %{_kernel_ver}
 /sbin/chkconfig --add vboxdrv
-%service vboxdrv restart "VirtualBox OSE driver"
+%service vboxdrv restart "VirtualBox USE Support Driver"
 
 %postun	-n kernel%{_alt_kernel}-misc-vboxdrv
 %depmod %{_kernel_ver}
@@ -496,7 +499,7 @@ fi
 %post	-n kernel%{_alt_kernel}-misc-vboxvfs
 %depmod %{_kernel_ver}
 /sbin/chkconfig --add vboxvfs
-%service vboxvfs restart "VirtualBox OSE guest additions VFS driver"
+%service vboxvfs restart "VirtualBox OSE Host file system access VFS"
 
 %postun	-n kernel%{_alt_kernel}-misc-vboxvfs
 %depmod %{_kernel_ver}
@@ -521,7 +524,6 @@ fi
 %dir %{_libdir}/VirtualBox/additions
 %dir %{_libdir}/VirtualBox/components
 %dir %{_libdir}/VirtualBox/nls
-%attr(755,root,root) %{_bindir}/mountvboxsf
 %attr(755,root,root) %{_bindir}/VBoxBFE
 %attr(755,root,root) %{_bindir}/VBoxHeadless
 %attr(755,root,root) %{_bindir}/VBoxManage
@@ -643,6 +645,7 @@ fi
 %files -n kernel%{_alt_kernel}-misc-vboxvfs
 %defattr(644,root,root,755)
 %attr(754,root,root) /etc/rc.d/init.d/vboxvfs
+%attr(755,root,root) %{_sbindir}/mount.vboxsf
 /etc/modprobe.d/vboxvfs.conf
 /lib/modules/%{_kernel_ver}/misc/vboxvfs.ko*
 
