@@ -27,7 +27,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		2
+%define		rel		3
 %define		pname	VirtualBox
 Summary:	VirtualBox OSE - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox OSE - wirtualizator sprzętu x86
@@ -284,7 +284,7 @@ Summary(pl.UTF-8):	Sterownik myszy dla systemu gościa w VirtualBoksie OSE
 Release:	%{rel}
 Group:		X11/Applications
 Requires:	xorg-xserver-server >= 1.0.99.901
-Requires:	xorg-xserver-server(xinput-abi) < 5.0
+Requires:	xorg-xserver-server(xinput-abi) <= 7.0
 Requires:	xorg-xserver-server(xinput-abi) >= 4.0
 
 %description -n xorg-driver-input-vboxmouse
@@ -299,7 +299,7 @@ Summary(pl.UTF-8):	Sterownik grafiki dla systemu gościa w VirtualBoksie OSE
 Release:	%{rel}
 Group:		X11/Applications
 Requires:	xorg-xserver-server >= 1.0.99.901
-Requires:	xorg-xserver-server(videodrv-abi) < 6.0
+Requires:	xorg-xserver-server(videodrv-abi) <= 6.0
 Requires:	xorg-xserver-server(videodrv-abi) >= 2.0
 
 %description -n xorg-driver-video-vboxvideo
@@ -389,9 +389,9 @@ cp -a out/linux.%{outdir}/release/bin/nls/* $RPM_BUILD_ROOT%{_libdir}/VirtualBox
 
 install -d $RPM_BUILD_ROOT%{_libdir}/xorg/modules/{drivers,input}
 
-install -p out/linux.%{outdir}/release/bin/additions/vboxmouse_drv_16.so	\
+install -p out/linux.%{outdir}/release/bin/additions/vboxmouse_drv_17.so	\
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/input/vboxmouse_drv.so
-install -p out/linux.%{outdir}/release/bin/additions/vboxvideo_drv_16.so	\
+install -p out/linux.%{outdir}/release/bin/additions/vboxvideo_drv_17.so	\
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so
 
 install -p out/linux.%{outdir}/release/bin/VBox.png $RPM_BUILD_ROOT%{_pixmapsdir}/VBox.png
