@@ -27,23 +27,23 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		3
+%define		rel		0.1
 %define		pname	VirtualBox
 Summary:	VirtualBox OSE - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox OSE - wirtualizator sprzętu x86
 Name:		%{pname}%{_alt_kernel}
-Version:	3.0.12
+Version:	3.1.0
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}-OSE.tar.bz2
-# Source0-md5:	4cdf4a829db73fb502b8269676c8db30
+# Source0-md5:	442dff6ff4a8fe92d223d303b475a146
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/UserManual.pdf
-# Source1-md5:	ac742f57893b46bb9324ae008b716059
+# Source1-md5:	51a6eebe5fedc6ac386fe39c1fba5b98
 Source2:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source2-md5:	bc756ed1b3f7874b098675970572206f
+# Source2-md5:	75c4a7f99fa793492146555a6a54c9d3
 Source3:	%{pname}-vboxdrv.init
-Source4:	%{pname}-vboxadd.init
+Source4:	%{pname}-vboxguest.init
 Source5:	%{pname}-vboxnetflt.init
 Source6:	%{pname}-vboxvfs.init
 Source7:	%{pname}.desktop
@@ -177,7 +177,7 @@ udev rules for VirtualBox OSE kernel modules.
 %description udev -l pl.UTF-8
 Reguły udev dla modułów jądra Linuksa dla VirtualBoksa.
 
-%package -n kernel%{_alt_kernel}-misc-vboxadd
+%package -n kernel%{_alt_kernel}-misc-vboxguest
 Summary:	VirtualBox OSE Guest Additions for Linux Module
 Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa OSE
 Release:	%{rel}@%{_kernel_ver_str}
@@ -188,13 +188,14 @@ Requires:	dev >= 2.9.0-7
 %requires_releq_kernel
 Requires(postun):	%releq_kernel
 %endif
-Provides:	kernel(vboxadd) = %{version}-%{rel}
+Provides:	kernel(vboxguest) = %{version}-%{rel}
+Obsoletes:	kernel%{_alt_kernel}-misc-vboxadd
 
-%description -n kernel%{_alt_kernel}-misc-vboxadd
+%description -n kernel%{_alt_kernel}-misc-vboxguest
 VirtualBox OSE Guest Additions for Linux Module.
 
-%description -n kernel%{_alt_kernel}-misc-vboxadd -l pl.UTF-8
-Moduł jądra Linuksa vboxadd dla VirtualBoksa OSE - dodatki dla systemu
+%description -n kernel%{_alt_kernel}-misc-vboxguest -l pl.UTF-8
+Moduł jądra Linuksa vboxguest dla VirtualBoksa OSE - dodatki dla systemu
 gościa.
 
 %package -n kernel%{_alt_kernel}-misc-vboxdrv
@@ -245,7 +246,7 @@ Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 Requires:	dev >= 2.9.0-7
-Requires:	kernel%{_alt_kernel}-misc-vboxadd
+Requires:	kernel%{_alt_kernel}-misc-vboxguest
 %if %{with dist_kernel}
 %requires_releq_kernel
 Requires(postun):	%releq_kernel
@@ -317,7 +318,7 @@ Sterownik grafiki dla systemu gościa w VirtualBoksie OSE.
 
 cat <<'EOF' > udev.conf
 KERNEL=="vboxdrv", NAME="%k", GROUP="vbox", MODE="0660"
-KERNEL=="vboxadd", NAME="%k", GROUP="vbox", MODE="0660"
+KERNEL=="vboxguest", NAME="%k", GROUP="vbox", MODE="0660"
 EOF
 
 install %{SOURCE1} .
@@ -346,10 +347,10 @@ kmk -j1 %{?with_verbose:KBUILD_VERBOSE=3} USER=$(id -un)
 
 %if %{with kernel}
 cd PLD-MODULE-BUILD
-%build_kernel_modules -m vboxadd -C vboxadd
+%build_kernel_modules -m vboxguest -C vboxguest
 %build_kernel_modules -m vboxdrv -C vboxdrv
 %build_kernel_modules -m vboxnetflt -C vboxnetflt
-cp -a vboxadd/Module.symvers vboxvfs
+cp -a vboxguest/Module.symvers vboxvfs
 %build_kernel_modules -m vboxvfs -C vboxvfs -c
 %build_kernel_modules -m vboxvideo -C vboxvideo_drm
 cd ..
@@ -404,11 +405,11 @@ cp -a udev.conf $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
 %if %{with kernel}
 install -d $RPM_BUILD_ROOT{/etc/{rc.d/init.d,modprobe.d},%{_sbindir}}
 install -p %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxdrv
-install -p %{SOURCE4} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxadd
+install -p %{SOURCE4} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxguest
 install -p %{SOURCE5} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxnetflt
 install -p %{SOURCE6} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxvfs
-%install_kernel_modules -m PLD-MODULE-BUILD/vboxadd/vboxadd -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxdrv/vboxdrv -d misc
+%install_kernel_modules -m PLD-MODULE-BUILD/vboxguest/vboxguest -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxnetflt/vboxnetflt -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxvfs/vboxvfs -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxvideo_drm/vboxvideo -d misc
@@ -436,7 +437,7 @@ Additionally you might want to install:
     kernel-misc-vboxnetflt-%{version}-%{rel}@%{_kernel_ver_str}
 
 On Guest Linux system you might want to install:
-    kernel-misc-vboxadd-%{version}-%{rel}@%{_kernel_ver_str}
+    kernel-misc-vboxguest-%{version}-%{rel}@%{_kernel_ver_str}
     kernel-misc-vboxvfs-%{version}-%{rel}@%{_kernel_ver_str}
     kernel-misc-vboxvideo-%{version}-%{rel}@%{_kernel_ver_str}
 
@@ -455,18 +456,18 @@ if [ "$1" = "0" ]; then
 	%groupremove vbox
 fi
 
-%post	-n kernel%{_alt_kernel}-misc-vboxadd
+%post	-n kernel%{_alt_kernel}-misc-vboxguest
 %depmod %{_kernel_ver}
-/sbin/chkconfig --add vboxadd
-%service vboxadd restart "VirtualBox OSE Guest additions driver"
+/sbin/chkconfig --add vboxguest
+%service vboxguest restart "VirtualBox OSE Guest additions driver"
 
-%postun	-n kernel%{_alt_kernel}-misc-vboxadd
+%postun	-n kernel%{_alt_kernel}-misc-vboxguest
 %depmod %{_kernel_ver}
 
-%preun -n kernel%{_alt_kernel}-misc-vboxadd
+%preun -n kernel%{_alt_kernel}-misc-vboxguest
 if [ "$1" = "0" ]; then
-	%service vboxadd stop
-	/sbin/chkconfig --del vboxadd
+	%service vboxguest stop
+	/sbin/chkconfig --del vboxguest
 fi
 
 %post	-n kernel%{_alt_kernel}-misc-vboxdrv
@@ -560,7 +561,6 @@ fi
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxREM64.so
 %endif
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxRT.so
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxSettings.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxSharedClipboard.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxSharedCrOpenGL.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxSharedFolders.so
@@ -586,6 +586,7 @@ fi
 %lang(bg) %{_libdir}/VirtualBox/nls/*_bg.qm
 %lang(ca) %{_libdir}/VirtualBox/nls/*_ca.qm
 %lang(cs) %{_libdir}/VirtualBox/nls/*_cs.qm
+%lang(da) %{_libdir}/VirtualBox/nls/*_da.qm
 %lang(de) %{_libdir}/VirtualBox/nls/*_de.qm
 %lang(el) %{_libdir}/VirtualBox/nls/*_el.qm
 %lang(es) %{_libdir}/VirtualBox/nls/*_es.qm
@@ -628,10 +629,10 @@ fi
 %endif
 
 %if %{with kernel}
-%files -n kernel%{_alt_kernel}-misc-vboxadd
+%files -n kernel%{_alt_kernel}-misc-vboxguest
 %defattr(644,root,root,755)
-%attr(754,root,root) /etc/rc.d/init.d/vboxadd
-/lib/modules/%{_kernel_ver}/misc/vboxadd.ko*
+%attr(754,root,root) /etc/rc.d/init.d/vboxguest
+/lib/modules/%{_kernel_ver}/misc/vboxguest.ko*
 
 %files -n kernel%{_alt_kernel}-misc-vboxdrv
 %defattr(644,root,root,755)
