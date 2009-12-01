@@ -4,21 +4,21 @@
    echo "compiling the following source file:" >> $LOG
    cat $ODIR.tmp_src.cc >> $LOG
    echo "using the following command line:" >> $LOG
--  echo "$CXX -O -Wall -o $ODIR.tmp_out $ODIR.tmp_src.cc \"$1\"" >> $LOG
--  $CXX -g -O -Wall -o $ODIR.tmp_out $ODIR.tmp_src.cc $1 >> $LOG 2>&1
-+  echo "$CXX -O -Wall -o $ODIR.tmp_out $ODIR.tmp_src.cc -L/usr/X11R6/lib \"$1\"" >> $LOG
-+  $CXX -g -O -Wall -o $ODIR.tmp_out $ODIR.tmp_src.cc -L/usr/X11R6/lib $1 >> $LOG 2>&1
+-  echo "$CXX $CXX_FLAGS -g -O -Wall -o $ODIR.tmp_out $ODIR.tmp_src.cc \"$1\"" >> $LOG
+-  $CXX $CXX_FLAGS -g -O -Wall -o $ODIR.tmp_out $ODIR.tmp_src.cc $1 >> $LOG 2>&1
++  echo "$CXX $CXX_FLAGS -g -O -Wall -o $ODIR.tmp_out $ODIR.tmp_src.cc -L/usr/X11R6/lib \"$1\"" >> $LOG
++  $CXX $CXX_FLAGS -g -O -Wall -o $ODIR.tmp_out $ODIR.tmp_src.cc -L/usr/X11R6/lib $1 >> $LOG 2>&1
    if [ $? -ne 0 ]; then
      if [ -z "$4" ]; then
        echo
-@@ -1836,7 +1834,6 @@
-   --with-iasl=PATH         location of the iasl compiler [$IASL]
-   --with-linux=DIR         Linux kernel source directory [$LINUX]
+@@ -1996,7 +1996,6 @@
    --with-mkisofs=PATH      location of mkisofs [$MKISOFS]
--  --with-qt-dir=DIR        directory for Qt4 headers/libraries [pkgconfig]
-   --with-gsoap-dir=PATH    directory for gSOAP compiler/headers/libraries
-                            (soapcpp2 and wsdl2h, soapstd2.h, libgsoap++.a/so)
-   --with-gsoap-import=PATH directory for gSOAP import files (stlvector.h)
+ EOF
+ [ "$OS"    = "linux" ] && echo "  --with-linux=DIR         Linux kernel source directory [$LINUX]"
+-[ $WITH_QT4    -eq 1 ] && echo "  --with-qt-dir=DIR        directory for Qt4 headers/libraries [pkgconfig]"
+ [ $WITH_GSOAP  -eq 1 ] && echo "  --with-gsoap-dir=PATH    directory for gSOAP compiler/headers/libraries"
+ [ $WITH_GSOAP  -eq 1 ] && echo "                           (soapcpp2 and wsdl2h, soapstd2.h, libgsoap++.a/so)"
+ [ $WITH_GSOAP  -eq 1 ] && echo "  --with-gsoap-import=PATH directory for gSOAP import files (stlvector.h)"
 @@ -1881,10 +1878,6 @@
          exit 1
        fi
@@ -27,6 +27,6 @@
 -      QT4DIR=`echo $option | cut -d'=' -f2`
 -      QT4DIR_PKGCONFIG=0
 -      ;;
-     --with-gsoap-dir=*)
-       GSOAP=`echo $option | cut -d'=' -f2`
-       ;;
+     --with-openssl-dir=*)
+       OPENSSLDIR=`echo $option | cut -d'=' -f2`
+       INCCRYPTO="-I${OPENSSLDIR}/include"
