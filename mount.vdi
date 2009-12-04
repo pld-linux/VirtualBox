@@ -27,7 +27,7 @@ export PATH=/bin:/sbin:/usr/bin:/usr/sbin
 # Commands
 LOSETUP=/sbin/losetup
 MOUNT=/bin/mount
-SFDISK=/sbin/sfdisk
+PARTED=/usr/sbin/parted
 SED=/bin/sed
 
 PROGRAM=${0##*/}
@@ -140,33 +140,15 @@ fi
 dskoff=8704
 
 # find free loop device. XXX race possible
-imgdev=$($LOSETUP -f)
+imgdev=$($LOSETUP -f) || exit 1
 $LOSETUP $imgdev -o $dskoff "$DEVICE"
-# http://vserver.13thfloor.at/Stuff/QEMU/hdloop.sh
-sfd=$($SFDISK -dump $imgdev 2>/dev/null | $SED -n '
-	/:/ s/[a-zA-Z]*=\ *\([0-9a-f]*\)\(,\|$\)/\1/g;
-	T;  s/^.*:\ //; p' | tr ' ' '.')
-$LOSETUP -d $imgdev
+dump=$($PARTED -s -m $imgdev unit B print)
+$LOSETUP -d $imgdev || exit 1
 
-getoffset() {
-	pstart=$1
-	psize=$2
+partoff=$(echo "$dump" | $SED -ne "s/^$PARTITION:"'\([0-9]*\)B:.*/\1/p')
+OFFSET=$((dskoff + partoff))
 
-	blksize=512
-	offset=$((pstart*blksize))
-	size=$((psize*blksize))
-	echo $((offset+dskoff))
-}
-
-p=1
-for a in $sfd; do
-	if [ "$p" = "$PARTITION" ]; then
-		OFFSET=$(getoffset $(echo "$a" | tr '.' ' '))
-	fi
-	x=$((p++))
-done
-
-if [ -z "$OFFSET" ]; then
+if [ -z "$partoff" -o -z "$OFFSET" ]; then
 	echo >&2 "$PROGRAM: couldn't figure out offset, perhaps out of range?"
 	exit 1
 fi
