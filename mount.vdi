@@ -95,10 +95,15 @@ fi
 
 # check magic
 magic=$(head -n 1 "$DEVICE")
-if [ "$magic" != "<<< innotek VirtualBox Disk Image >>>" ]; then
+case "$magic" in
+"<<< innotek VirtualBox Disk Image >>>")
+	;;
+"<<< Sun VirtualBox Disk Image >>>")
+	;;
+*)
 	echo >&2 "$PROGRAM: $DEVICE: bad magic, not VDI image"
 	exit 1
-fi
+esac
 
 MOUNTOPTIONS=
 PARTITION=
