@@ -3,7 +3,7 @@
 # - Find how to compile with PLD CFLAGS/CXXFLAGS/LDFLAGS.
 # - Package SDK.
 # - Package utils (and write initscripts ?) for Guest OS.
-# - Check License of VBoxGuestAdditions_*.iso, it's propably not GPL v2.
+# - Check License of VBoxGuestAdditions_*.iso, it's probably not GPL v2.
 #   If so check if it is distributable.
 #
 # Conditional build:
@@ -27,7 +27,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		0.1
+%define		rel		1
 %define		pname	VirtualBox
 Summary:	VirtualBox OSE - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox OSE - wirtualizator sprzętu x86
@@ -176,6 +176,16 @@ udev rules for VirtualBox OSE kernel modules.
 
 %description udev -l pl.UTF-8
 Reguły udev dla modułów jądra Linuksa dla VirtualBoksa.
+
+%package additions
+Summary:	VirtualBox Guest Additions
+Group:		Base
+Requires:	%{name} = %{version}-%{release}
+
+%description udev
+VirtualBox Guest Additions.
+
+This package contains ISO9660 image with drivers for Guest OS.
 
 %package -n kernel%{_alt_kernel}-misc-vboxguest
 Summary:	VirtualBox OSE Guest Additions for Linux Module
@@ -417,7 +427,7 @@ install -p %{SOURCE6} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxvfs
 install -p mount.vboxsf $RPM_BUILD_ROOT%{_sbindir}/mount.vboxsf
 
 cat <<'EOF' > $RPM_BUILD_ROOT/etc/modprobe.d/vboxvfs.conf
-# Somewhy filesystem is not called as same as kernel module.
+# Filesystem name has got it's name from Shared Folders, while module is from VFS
 alias vboxsf vboxvfs
 EOF
 %endif
@@ -473,7 +483,7 @@ fi
 %post	-n kernel%{_alt_kernel}-misc-vboxdrv
 %depmod %{_kernel_ver}
 /sbin/chkconfig --add vboxdrv
-%service vboxdrv restart "VirtualBox USE Support Driver"
+%service vboxdrv restart "VirtualBox OSE Support Driver"
 
 %postun	-n kernel%{_alt_kernel}-misc-vboxdrv
 %depmod %{_kernel_ver}
@@ -576,7 +586,6 @@ fi
 %{_libdir}/VirtualBox/VBoxDD2R0.r0
 %{_libdir}/VirtualBox/VBoxDDR0.r0
 %{_libdir}/VirtualBox/VMMR0.r0
-%{_libdir}/VirtualBox/additions/VBoxGuestAdditions.iso
 %{_libdir}/VirtualBox/components/VBoxC.so
 %{_libdir}/VirtualBox/components/VBoxSVCM.so
 %{_libdir}/VirtualBox/components/VBoxXPCOMBase.xpt
@@ -614,6 +623,9 @@ fi
 %lang(zh_TW) %{_libdir}/VirtualBox/nls/*_zh_TW.qm
 %{_pixmapsdir}/VBox.png
 %{_desktopdir}/%{pname}.desktop
+
+%files additions
+%{_libdir}/VirtualBox/additions/VBoxGuestAdditions.iso
 
 %files udev
 %defattr(644,root,root,755)
