@@ -182,7 +182,7 @@ Summary:	VirtualBox Guest Additions
 Group:		Base
 Requires:	%{name} = %{version}-%{release}
 
-%description udev
+%description additions
 VirtualBox Guest Additions.
 
 This package contains ISO9660 image with drivers for Guest OS.
