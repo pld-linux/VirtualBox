@@ -72,6 +72,7 @@ BuildRequires:	OpenGL-GLU-devel
 BuildRequires:	OpenGL-devel
 BuildRequires:	QtGui-devel
 BuildRequires:	QtNetwork-devel
+BuildRequires:	QtOpenGL-devel
 BuildRequires:	SDL-devel >= 1.2.7
 BuildRequires:	acpica
 BuildRequires:	alsa-lib-devel >= 1.0.6
