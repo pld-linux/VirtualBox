@@ -46,7 +46,6 @@ Source3:	%{pname}-vboxdrv.init
 Source4:	%{pname}-vboxguest.init
 Source5:	%{pname}-vboxnetflt.init
 Source6:	%{pname}-vboxvfs.init
-Source7:	%{pname}.desktop
 Source8:	%{pname}.sh
 Source9:	mount.vdi
 Patch0:		%{pname}-configure.patch
@@ -327,12 +326,15 @@ Sterownik grafiki dla systemu gościa w VirtualBoksie OSE.
 %patch2 -p1
 %patch3 -p1
 
+%{__sed} -i -e 's,$VBOX_DOC_PATH,%{_docdir}/%{name}-%{version},' src/VBox/Installer/linux/virtualbox.desktop
+%{__sed} -i -e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/linux/virtualbox.desktop
+
 cat <<'EOF' > udev.conf
 KERNEL=="vboxdrv", NAME="%k", GROUP="vbox", MODE="0660"
 KERNEL=="vboxguest", NAME="%k", GROUP="vbox", MODE="0660"
 EOF
 
-install %{SOURCE1} .
+cp -a %{SOURCE1} .
 sed 's#@LIBDIR@#%{_libdir}#' < %{SOURCE8} > VirtualBox-wrapper.sh
 
 rm -rf PLD-MODULE-BUILD && mkdir PLD-MODULE-BUILD && cd PLD-MODULE-BUILD
@@ -340,9 +342,6 @@ rm -rf PLD-MODULE-BUILD && mkdir PLD-MODULE-BUILD && cd PLD-MODULE-BUILD
 	tar -zxf modules.tar.gz && rm -f modules.tar.gz
 ../src/VBox/HostDrivers/linux/export_modules modules.tar.gz --without-hardening && \
 	tar -zxf modules.tar.gz && rm -f modules.tar.gz
-#./src/VBox/HostDrivers/Support/linux/Makefile:70:
-#./PLD-MODULE-BUILD/vboxdrv/Makefile:70:
-
 
 %build
 %if %{with userspace}
@@ -407,7 +406,7 @@ install -p out/linux.%{outdir}/release/bin/additions/vboxvideo_drv_17.so	\
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so
 
 install -p out/linux.%{outdir}/release/bin/VBox.png $RPM_BUILD_ROOT%{_pixmapsdir}/VBox.png
-cp -a %{SOURCE7} $RPM_BUILD_ROOT%{_desktopdir}/%{pname}.desktop
+cp -a out/linux.%{outdir}/release/bin/virtualbox.desktop $RPM_BUILD_ROOT%{_desktopdir}/%{pname}.desktop
 
 install -d $RPM_BUILD_ROOT/etc/udev/rules.d
 cp -a udev.conf $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
