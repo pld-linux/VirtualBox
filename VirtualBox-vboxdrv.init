@@ -18,37 +18,42 @@ VBOX_MODULE="vboxdrv"
 # Get service config - may override defaults
 [ -f /etc/sysconfig/virtualbox ] && . /etc/sysconfig/virtualbox
 
-start() {
-	if [ ! -f /var/lock/subsys/vboxdrv ]; then
-		modprobe -s $VBOX_MODULE
-		# set proper /dev/vboxdrv for systems with static dev
-		if ! [ -d /dev/.udev/ ]; then
-			show "Setting $VBOX_DEVICE entry"
-			busy
-			rm -f $VBOX_DEVICE
-			VBOX_MAJOR=$(awk '$2 == "vboxdrv" {print $1}' /proc/devices)
-			if [ -n "$VBOX_MAJOR" ]; then
-				VBOX_MINOR=0
-			else
-				VBOX_MINOR=$(awk '$2 == "vboxdrv" {print $1}' /proc/misc)
-				if [ -n "$VBOX_MINOR" ]; then
-					VBOX_MAJOR=$(awk '$2 == "misc" {print $1}' /proc/devices)
-				fi
-			fi
-			if [ -z "$VBOX_MAJOR" ]; then
-				/sbin/rmmod $VBOX_MODULE
-				fail
-			elif ! mknod -m 0660 $VBOX_DEVICE c $VBOX_MAJOR $VBOX_MINOR; then
-				rmmod $VBOX_MODNAME
-				fail
-			elif ! chown root:vbox $VBOX_DEVICE; then
-				fail
-			else
-				ok
+setup() {
+	modprobe -s $VBOX_MODULE
+	# set proper /dev/vboxdrv for systems with static dev
+	if [ ! -d /dev/.udev/ ]; then
+		show "Setting $VBOX_DEVICE entry"; busy
+		rm -f $VBOX_DEVICE
+		VBOX_MAJOR=$(awk '$2 == "vboxdrv" {print $1}' /proc/devices)
+		if [ -n "$VBOX_MAJOR" ]; then
+			VBOX_MINOR=0
+		else
+			VBOX_MINOR=$(awk '$2 == "vboxdrv" {print $1}' /proc/misc)
+			if [ -n "$VBOX_MINOR" ]; then
+				VBOX_MAJOR=$(awk '$2 == "misc" {print $1}' /proc/devices)
 			fi
 		fi
-		touch /var/lock/subsys/vboxdrv
+		if [ -z "$VBOX_MAJOR" ]; then
+			/sbin/rmmod $VBOX_MODULE
+			fail
+		elif ! mknod -m 0660 $VBOX_DEVICE c $VBOX_MAJOR $VBOX_MINOR; then
+			rmmod $VBOX_MODNAME
+			fail
+		elif ! chown root:vbox $VBOX_DEVICE; then
+			fail
+		else
+			ok
+		fi
 	fi
+}
+
+start() {
+	if [ -f /var/lock/subsys/vboxdrv ]; then
+		return
+	fi
+
+	setup
+	touch /var/lock/subsys/vboxdrv
 }
 
 stop() {
@@ -70,6 +75,9 @@ case "$1" in
 	stop
 	start
 	;;
+  setup)
+	setup
+	;;
   status)
 	if ! is_module $VBOX_MODULE; then
 		echo "$VBOX_MODULE module is loaded"
@@ -85,7 +93,7 @@ case "$1" in
 	fi
 	;;
   *)
-	msg_usage "$0 {start|stop|restart|status}"
+	msg_usage "$0 {start|stop|restart|setup|status}"
 	exit 3
 esac
 
