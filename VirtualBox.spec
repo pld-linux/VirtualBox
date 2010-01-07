@@ -200,6 +200,7 @@ Requires(postun):	%releq_kernel
 %endif
 Provides:	kernel(vboxguest) = %{version}-%{rel}
 Obsoletes:	kernel%{_alt_kernel}-misc-vboxadd
+Conflicts:	kernel%{_alt_kernel}-misc-vboxdrv
 
 %description -n kernel%{_alt_kernel}-misc-vboxguest
 VirtualBox OSE Guest Additions for Linux Module.
