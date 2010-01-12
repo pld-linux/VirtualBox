@@ -5,6 +5,7 @@
 # - Package utils (and write initscripts ?) for Guest OS.
 # - Check License of VBoxGuestAdditions_*.iso, it's probably not GPL v2.
 #   If so check if it is distributable.
+# - Add chkconfig script for vboxnetadp.
 #
 # Conditional build:
 %bcond_without	dist_kernel	# without distribution kernel
@@ -229,8 +230,29 @@ VirtualBox OSE Support Driver.
 Moduł jądra Linuksa dla VirtualBoksa OSE - sterownik wsparcia dla
 systemu głównego.
 
+%package -n kernel%{_alt_kernel}-misc-vboxnetadp
+Summary:	VirtualBox OSE Network Adapter Driver.
+Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa OSE
+Release:	%{rel}@%{_kernel_ver_str}
+Group:		Base/Kernel
+Requires(post,postun):	/sbin/depmod
+Requires:	dev >= 2.9.0-7
+Requires:	kernel%{_alt_kernel}-misc-vboxdrv
+%if %{with dist_kernel}
+%requires_releq_kernel
+Requires(postun):	%releq_kernel
+%endif
+Provides:	kernel(vboxnetflt) = %{version}-%{rel}
+
+%description -n kernel%{_alt_kernel}-misc-vboxnetadp
+VirtualBox OSE Network Adapter Driver.
+
+%description -n kernel%{_alt_kernel}-misc-vboxnetadp -l pl.UTF-8
+Moduł jądra Linuksa dla VirtualBoksa OSE - sterownik witrualnej
+karty sieciowej.
+
 %package -n kernel%{_alt_kernel}-misc-vboxnetflt
-Summary:	VirtualBox OSE Guest Additions for Linux Module
+Summary:	VirtualBox OSE Network Filter Driver.
 Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa OSE
 Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
@@ -360,6 +382,7 @@ kmk -j1 %{?with_verbose:KBUILD_VERBOSE=3} USER=$(id -un)
 cd PLD-MODULE-BUILD
 %build_kernel_modules -m vboxguest -C vboxguest
 %build_kernel_modules -m vboxdrv -C vboxdrv
+%build_kernel_modules -m vboxnetadp -C vboxnetadp
 %build_kernel_modules -m vboxnetflt -C vboxnetflt
 cp -a vboxguest/Module.symvers vboxvfs
 %build_kernel_modules -m vboxvfs -C vboxvfs -c
@@ -421,6 +444,7 @@ install -p %{SOURCE5} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxnetflt
 install -p %{SOURCE6} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxvfs
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxdrv/vboxdrv -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxguest/vboxguest -d misc
+%install_kernel_modules -m PLD-MODULE-BUILD/vboxnetadp/vboxnetadp -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxnetflt/vboxnetflt -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxvfs/vboxvfs -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxvideo_drm/vboxvideo -d misc
@@ -445,6 +469,7 @@ You must also install kernel module for this software to work:
     kernel-misc-vboxdrv-%{version}-%{rel}@%{_kernel_ver_str}
 
 Additionally you might want to install:
+    kernel-misc-vboxnetadp-%{version}-%{rel}@%{_kernel_ver_str}
     kernel-misc-vboxnetflt-%{version}-%{rel}@%{_kernel_ver_str}
 
 On Guest Linux system you might want to install:
@@ -494,6 +519,12 @@ if [ "$1" = "0" ]; then
 	%service vboxdrv stop
 	/sbin/chkconfig --del vboxdrv
 fi
+
+%post	-n kernel%{_alt_kernel}-misc-vboxnetadp
+%depmod %{_kernel_ver}
+
+%postun	-n kernel%{_alt_kernel}-misc-vboxnetadp
+%depmod %{_kernel_ver}
 
 %post	-n kernel%{_alt_kernel}-misc-vboxnetflt
 %depmod %{_kernel_ver}
@@ -651,6 +682,10 @@ fi
 %defattr(644,root,root,755)
 %attr(754,root,root) /etc/rc.d/init.d/vboxdrv
 /lib/modules/%{_kernel_ver}/misc/vboxdrv.ko*
+
+%files -n kernel%{_alt_kernel}-misc-vboxnetadp
+%defattr(644,root,root,755)
+/lib/modules/%{_kernel_ver}/misc/vboxnetadp.ko*
 
 %files -n kernel%{_alt_kernel}-misc-vboxnetflt
 %defattr(644,root,root,755)
