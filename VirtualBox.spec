@@ -109,6 +109,7 @@ Requires(post,preun):	/sbin/chkconfig
 Requires(postun):	/usr/sbin/groupdel
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
+Requires:	QtCore >= 4.6.1
 Suggests:	gxmessage
 Provides:	group(vbox)
 ExclusiveArch:	%{ix86} %{x8664}
