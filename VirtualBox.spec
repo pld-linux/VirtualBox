@@ -54,7 +54,7 @@ Patch1:		%{pname}-configure-spaces.patch
 Patch2:		%{pname}-export_modules.patch
 Patch3:		%{pname}-VBoxSysInfo.patch
 URL:		http://www.virtualbox.org/
-BuildRequires:	rpmbuild(macros) >= 1.379
+BuildRequires:	rpmbuild(macros) >= 1.530
 %if %{with userspace}
 %ifarch %{x8664}
 BuildRequires:	gcc-multilib
@@ -303,6 +303,7 @@ Requires(post,postun):	/sbin/depmod
 Requires:	dev >= 2.9.0-7
 %if %{with dist_kernel}
 %requires_releq_kernel
+%requires_releq_kernel -n drm
 Requires(postun):	%releq_kernel
 %endif
 Provides:	kernel(vboxvideo) = %{version}-%{rel}
