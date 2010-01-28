@@ -54,7 +54,7 @@ Patch1:		%{pname}-configure-spaces.patch
 Patch2:		%{pname}-export_modules.patch
 Patch3:		%{pname}-VBoxSysInfo.patch
 URL:		http://www.virtualbox.org/
-BuildRequires:	rpmbuild(macros) >= 1.530
+BuildRequires:	rpmbuild(macros) >= 1.531
 %if %{with userspace}
 %ifarch %{x8664}
 BuildRequires:	gcc-multilib
@@ -116,10 +116,11 @@ ExclusiveArch:	%{ix86} %{x8664}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %ifarch %{x8664}
-%define		outdir	amd64
+%define		vbox_platform	linux.amd64
 %else
-%define		outdir	x86
+%define		vbox_platform	linux.x86
 %endif
+%define		outdir		out/%{box_platform}/release/bin
 %define		_sbindir	/sbin
 
 %description
@@ -405,35 +406,35 @@ install -d \
 install -p %{SOURCE9} $RPM_BUILD_ROOT%{_sbindir}/mount.vdi
 install -p VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_libdir}/VirtualBox
 for f in {VBox{BFE,Headless,Manage,SDL,SVC,Tunctl,XPCOMIPCD},VirtualBox}; do
-	install -p out/linux.%{outdir}/release/bin/$f $RPM_BUILD_ROOT%{_libdir}/VirtualBox/$f
+	install -p %{outdir}/$f $RPM_BUILD_ROOT%{_libdir}/VirtualBox/$f
 	ln -s %{_libdir}/VirtualBox/VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_bindir}/$f
 done
 
-install -p out/linux.%{outdir}/release/bin/VBox{TestOGL,NetAdpCtl,NetDHCP} \
+install -p %{outdir}/VBox{TestOGL,NetAdpCtl,NetDHCP} \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
-install -p out/linux.%{outdir}/release/bin/VBox*.so \
+install -p %{outdir}/VBox*.so \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
-install -p out/linux.%{outdir}/release/bin/{VBox{DD,DD2}{GC.gc,R0.r0},VMM{GC.gc,R0.r0}} \
+install -p %{outdir}/{VBox{DD,DD2}{GC.gc,R0.r0},VMM{GC.gc,R0.r0}} \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
-install -p out/linux.%{outdir}/release/bin/VBoxSysInfo.sh \
+install -p %{outdir}/VBoxSysInfo.sh \
 	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
 
 install -d $RPM_BUILD_ROOT%{_libdir}/VirtualBox/additions
 install -d $RPM_BUILD_ROOT%{_libdir}/VirtualBox/nls
 
 cp -a %{SOURCE2} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/additions/VBoxGuestAdditions.iso
-cp -a out/linux.%{outdir}/release/bin/components $RPM_BUILD_ROOT%{_libdir}/VirtualBox
-cp -a out/linux.%{outdir}/release/bin/nls/* $RPM_BUILD_ROOT%{_libdir}/VirtualBox/nls
+cp -a %{outdir}/components $RPM_BUILD_ROOT%{_libdir}/VirtualBox
+cp -a %{outdir}/nls/* $RPM_BUILD_ROOT%{_libdir}/VirtualBox/nls
 
 install -d $RPM_BUILD_ROOT%{_libdir}/xorg/modules/{drivers,input}
 
-install -p out/linux.%{outdir}/release/bin/additions/vboxmouse_drv_17.so	\
+install -p %{outdir}/additions/vboxmouse_drv_17.so	\
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/input/vboxmouse_drv.so
-install -p out/linux.%{outdir}/release/bin/additions/vboxvideo_drv_17.so	\
+install -p %{outdir}/additions/vboxvideo_drv_17.so	\
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so
 
-install -p out/linux.%{outdir}/release/bin/VBox.png $RPM_BUILD_ROOT%{_pixmapsdir}/VBox.png
-cp -a out/linux.%{outdir}/release/bin/virtualbox.desktop $RPM_BUILD_ROOT%{_desktopdir}/%{pname}.desktop
+cp -a %{outdir}/VBox.png $RPM_BUILD_ROOT%{_pixmapsdir}/VBox.png
+cp -a %{outdir}/virtualbox.desktop $RPM_BUILD_ROOT%{_desktopdir}/%{pname}.desktop
 
 install -d $RPM_BUILD_ROOT/etc/udev/rules.d
 cp -a udev.conf $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
