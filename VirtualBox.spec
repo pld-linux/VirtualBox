@@ -120,7 +120,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %else
 %define		vbox_platform	linux.x86
 %endif
-%define		outdir		out/%{box_platform}/release/bin
+%define		outdir		out/%{vbox_platform}/release/bin
 %define		_sbindir	/sbin
 
 %description
@@ -426,12 +426,22 @@ cp -a %{SOURCE2} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/additions/VBoxGuestAdditio
 cp -a %{outdir}/components $RPM_BUILD_ROOT%{_libdir}/VirtualBox
 cp -a %{outdir}/nls/* $RPM_BUILD_ROOT%{_libdir}/VirtualBox/nls
 
-install -d $RPM_BUILD_ROOT%{_libdir}/xorg/modules/{drivers,input}
+install -d $RPM_BUILD_ROOT%{_libdir}/xorg/modules/{drivers,dri,input}
 
 install -p %{outdir}/additions/vboxmouse_drv_17.so	\
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/input/vboxmouse_drv.so
 install -p %{outdir}/additions/vboxvideo_drv_17.so	\
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so
+install -p %{outdir}/additions/VBoxOGL.so \
+	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/dri/vboxvideo_dri.so
+# XXX: where else to install them that vboxvideo_dri.so finds them? patch with rpath?
+install -p \
+	%{outdir}/additions/VBoxOGLcrutil.so \
+	%{outdir}/additions/VBoxOGLpackspu.so \
+	%{outdir}/additions/VBoxOGLerrorspu.so \
+	%{outdir}/additions/VBoxOGLfeedbackspu.so \
+	%{outdir}/additions/VBoxOGLpassthroughspu.so \
+	$RPM_BUILD_ROOT%{_libdir}
 
 cp -a %{outdir}/VBox.png $RPM_BUILD_ROOT%{_pixmapsdir}/VBox.png
 cp -a %{outdir}/virtualbox.desktop $RPM_BUILD_ROOT%{_desktopdir}/%{pname}.desktop
@@ -675,6 +685,13 @@ fi
 %files -n xorg-driver-video-vboxvideo
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/xorg/modules/drivers/vboxvideo_drv.so
+%attr(755,root,root) %{_libdir}/xorg/modules/dri/vboxvideo_dri.so
+# vboxvideo_dri.so deps
+%attr(755,root,root) %{_libdir}/VBoxOGLcrutil.so
+%attr(755,root,root) %{_libdir}/VBoxOGLerrorspu.so
+%attr(755,root,root) %{_libdir}/VBoxOGLfeedbackspu.so
+%attr(755,root,root) %{_libdir}/VBoxOGLpackspu.so
+%attr(755,root,root) %{_libdir}/VBoxOGLpassthroughspu.so
 %endif
 
 %if %{with kernel}
