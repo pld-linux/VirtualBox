@@ -400,54 +400,67 @@ rm -rf $RPM_BUILD_ROOT
 
 %if %{with userspace}
 install -d \
-	$RPM_BUILD_ROOT{%{_bindir},%{_sbindir},%{_pixmapsdir},%{_desktopdir}} \
-	$RPM_BUILD_ROOT%{_libdir}/VirtualBox \
+	$RPM_BUILD_ROOT{%{_bindir},%{_sbindir},%{_libdir},%{_pixmapsdir},%{_desktopdir}} \
+	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/{drivers,dri,input}
 
-install -p %{SOURCE9} $RPM_BUILD_ROOT%{_sbindir}/mount.vdi
-install -p VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_libdir}/VirtualBox
-for f in {VBox{BFE,Headless,Manage,SDL,SVC,Tunctl,XPCOMIPCD},VirtualBox}; do
-	install -p %{outdir}/$f $RPM_BUILD_ROOT%{_libdir}/VirtualBox/$f
-	ln -s %{_libdir}/VirtualBox/VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_bindir}/$f
-done
+# test if we can hardlink -- %{_builddir} and $RPM_BUILD_ROOT on same partition
+if cp -al VBox.png $RPM_BUILD_ROOT/Vbox.png 2>/dev/null; then
+	l=l
+	rm -f $RPM_BUILD_ROOT/VBox.png
+fi
 
-install -p %{outdir}/VBox{TestOGL,NetAdpCtl,NetDHCP} \
-	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
-install -p %{outdir}/VBox*.so \
-	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
-install -p %{outdir}/{VBox{DD,DD2}{GC.gc,R0.r0},VMM{GC.gc,R0.r0}} \
-	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
-install -p %{outdir}/VBoxSysInfo.sh \
-	$RPM_BUILD_ROOT%{_libdir}/VirtualBox
-
-install -d $RPM_BUILD_ROOT%{_libdir}/VirtualBox/additions
-install -d $RPM_BUILD_ROOT%{_libdir}/VirtualBox/nls
+cp -a$l %{outdir} $RPM_BUILD_ROOT%{_libdir}/%{pname}
 
 cp -a %{SOURCE2} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/additions/VBoxGuestAdditions.iso
-cp -a %{outdir}/components $RPM_BUILD_ROOT%{_libdir}/VirtualBox
-cp -a %{outdir}/nls/* $RPM_BUILD_ROOT%{_libdir}/VirtualBox/nls
+install -p %{SOURCE9} $RPM_BUILD_ROOT%{_sbindir}/mount.vdi
+install -p VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_libdir}/%{pname}
+for f in {VBox{BFE,Headless,Manage,SDL,SVC,Tunctl,XPCOMIPCD},VirtualBox}; do
+	ln -s %{_libdir}/%{pname}/VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_bindir}/$f
+done
 
-install -d $RPM_BUILD_ROOT%{_libdir}/xorg/modules/{drivers,dri,input}
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname},%{_pixmapsdir}}/VBox.png
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname},%{_desktopdir}}/virtualbox.desktop 
 
-install -p %{outdir}/additions/vboxmouse_drv_17.so	\
-	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/input/vboxmouse_drv.so
-install -p %{outdir}/additions/vboxvideo_drv_17.so	\
-	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so
-install -p %{outdir}/additions/VBoxOGL.so \
-	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/dri/vboxvideo_dri.so
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/vboxmouse_drv_17.so,%{_libdir}/xorg/modules/input/vboxmouse_drv.so}
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/vboxvideo_drv_17.so,%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so}
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/VBoxOGL.so,%{_libdir}/xorg/modules/dri/vboxvideo_dri.so}
+# xorg other driver versions
+rm -f $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/vboxmouse_drv*.{o,so}
+rm -f $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/vboxvideo_drv*.{o,so}
+
 # XXX: where else to install them that vboxvideo_dri.so finds them? patch with rpath?
-install -p \
-	%{outdir}/additions/VBoxOGLcrutil.so \
-	%{outdir}/additions/VBoxOGLpackspu.so \
-	%{outdir}/additions/VBoxOGLerrorspu.so \
-	%{outdir}/additions/VBoxOGLfeedbackspu.so \
-	%{outdir}/additions/VBoxOGLpassthroughspu.so \
-	$RPM_BUILD_ROOT%{_libdir}
-
-cp -a %{outdir}/VBox.png $RPM_BUILD_ROOT%{_pixmapsdir}/VBox.png
-cp -a %{outdir}/virtualbox.desktop $RPM_BUILD_ROOT%{_desktopdir}/%{pname}.desktop
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLcrutil.so
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLpackspu.so
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLerrorspu.so
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLfeedbackspu.so
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLpassthroughspu.so
 
 install -d $RPM_BUILD_ROOT/etc/udev/rules.d
 cp -a udev.conf $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
+
+# cleanup unpackaged
+rm -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/{src,sdk,testcase}
+rm -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/src
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/vboxkeyboard.tar.gz
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/tst*
+
+# unknown - checkme
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/EfiThunk
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/SUPInstall
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/SUPLoggerCtl
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/SUPUninstall
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/VBox.sh
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/VBoxEFI32.fd
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/VBoxEFI64.fd
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/VBoxClient
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/VBoxControl
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/VBoxOGLarrayspu.so
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/VBoxService
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/vboxshell.py
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/xpidl
+
+# packaged by kernel part
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/mount.vboxsf
 %endif
 
 %if %{with kernel}
@@ -632,11 +645,11 @@ fi
 %{_libdir}/VirtualBox/VBoxDD2R0.r0
 %{_libdir}/VirtualBox/VBoxDDR0.r0
 %{_libdir}/VirtualBox/VMMR0.r0
-%{_libdir}/VirtualBox/components/VBoxC.so
-%{_libdir}/VirtualBox/components/VBoxSVCM.so
 %{_libdir}/VirtualBox/components/VBoxXPCOMBase.xpt
-%{_libdir}/VirtualBox/components/VBoxXPCOMIPCC.so
 %{_libdir}/VirtualBox/components/VirtualBox_XPCOM.xpt
+%attr(755,root,root) %{_libdir}/VirtualBox/components/VBoxC.so
+%attr(755,root,root) %{_libdir}/VirtualBox/components/VBoxSVCM.so
+%attr(755,root,root) %{_libdir}/VirtualBox/components/VBoxXPCOMIPCC.so
 %lang(ar) %{_libdir}/VirtualBox/nls/*_ar.qm
 %lang(bg) %{_libdir}/VirtualBox/nls/*_bg.qm
 %lang(ca) %{_libdir}/VirtualBox/nls/*_ca.qm
@@ -668,7 +681,7 @@ fi
 %lang(zh_CN) %{_libdir}/VirtualBox/nls/*_zh_CN.qm
 %lang(zh_TW) %{_libdir}/VirtualBox/nls/*_zh_TW.qm
 %{_pixmapsdir}/VBox.png
-%{_desktopdir}/%{pname}.desktop
+%{_desktopdir}/*.desktop
 
 %files additions
 %defattr(644,root,root,755)
