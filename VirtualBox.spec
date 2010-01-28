@@ -208,8 +208,8 @@ Conflicts:	kernel%{_alt_kernel}-misc-vboxdrv
 VirtualBox OSE Guest Additions for Linux Module.
 
 %description -n kernel%{_alt_kernel}-misc-vboxguest -l pl.UTF-8
-Moduł jądra Linuksa vboxguest dla VirtualBoksa OSE - dodatki dla systemu
-gościa.
+Moduł jądra Linuksa vboxguest dla VirtualBoksa OSE - dodatki dla
+systemu gościa.
 
 %package -n kernel%{_alt_kernel}-misc-vboxdrv
 Summary:	VirtualBox OSE Support Driver
@@ -232,7 +232,7 @@ Moduł jądra Linuksa dla VirtualBoksa OSE - sterownik wsparcia dla
 systemu głównego.
 
 %package -n kernel%{_alt_kernel}-misc-vboxnetadp
-Summary:	VirtualBox OSE Network Adapter Driver.
+Summary:	VirtualBox OSE Network Adapter Driver
 Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa OSE
 Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
@@ -249,11 +249,11 @@ Provides:	kernel(vboxnetflt) = %{version}-%{rel}
 VirtualBox OSE Network Adapter Driver.
 
 %description -n kernel%{_alt_kernel}-misc-vboxnetadp -l pl.UTF-8
-Moduł jądra Linuksa dla VirtualBoksa OSE - sterownik witrualnej
-karty sieciowej.
+Moduł jądra Linuksa dla VirtualBoksa OSE - sterownik witrualnej karty
+sieciowej.
 
 %package -n kernel%{_alt_kernel}-misc-vboxnetflt
-Summary:	VirtualBox OSE Network Filter Driver.
+Summary:	VirtualBox OSE Network Filter Driver
 Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa OSE
 Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
@@ -333,6 +333,7 @@ Summary:	X.org video driver for VirtualBox OSE guest OS
 Summary(pl.UTF-8):	Sterownik grafiki dla systemu gościa w VirtualBoksie OSE
 Release:	%{rel}
 Group:		X11/Applications
+Requires:	xorg-xserver-libdri >= 1.7.4
 Requires:	xorg-xserver-server >= 1.0.99.901
 Requires:	xorg-xserver-server(videodrv-abi) <= 6.0
 Requires:	xorg-xserver-server(videodrv-abi) >= 2.0
@@ -658,6 +659,7 @@ fi
 %{_desktopdir}/%{pname}.desktop
 
 %files additions
+%defattr(644,root,root,755)
 %{_libdir}/VirtualBox/additions/VBoxGuestAdditions.iso
 
 %files udev
