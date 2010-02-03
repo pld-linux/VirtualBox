@@ -357,9 +357,9 @@ Sterownik grafiki dla systemu gościa w VirtualBoksie OSE.
 %{__sed} -i -e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/linux/virtualbox.desktop
 
 cat <<'EOF' > udev.conf
-KERNEL=="vboxdrv", NAME="%k", GROUP="vbox", MODE="0660"
-KERNEL=="vboxguest", NAME="%k", GROUP="vbox", MODE="0660"
-KERNEL=="vboxnetctl", NAME="%k", GROUP="vbox", MODE="0660"
+KERNEL=="vboxdrv", GROUP="vbox", MODE="0660"
+KERNEL=="vboxguest", GROUP="vbox", MODE="0660"
+KERNEL=="vboxnetctl", GROUP="vbox", MODE="0660"
 EOF
 
 cp -a %{SOURCE1} .
