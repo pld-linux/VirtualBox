@@ -5,7 +5,6 @@
 # - Package utils (and write initscripts ?) for Guest OS.
 # - Check License of VBoxGuestAdditions_*.iso, it's probably not GPL v2.
 #   If so check if it is distributable.
-# - Add chkconfig script for vboxnetadp.
 #
 # Conditional build:
 %bcond_without	dist_kernel	# without distribution kernel
