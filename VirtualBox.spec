@@ -28,7 +28,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		4
+%define		rel		5
 %define		pname	VirtualBox
 Summary:	VirtualBox OSE - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox OSE - wirtualizator sprzętu x86
@@ -47,6 +47,7 @@ Source3:	%{pname}-vboxdrv.init
 Source4:	%{pname}-vboxguest.init
 Source5:	%{pname}-vboxnetflt.init
 Source6:	%{pname}-vboxvfs.init
+Source7:	%{pname}-vboxnetadp.init
 Source8:	%{pname}.sh
 Source9:	mount.vdi
 Patch0:		%{pname}-configure.patch
@@ -470,6 +471,7 @@ install -p %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxdrv
 install -p %{SOURCE4} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxguest
 install -p %{SOURCE5} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxnetflt
 install -p %{SOURCE6} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxvfs
+install -p %{SOURCE7} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxnetadp
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxdrv/vboxdrv -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxguest/vboxguest -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxnetadp/vboxnetadp -d misc
@@ -550,9 +552,17 @@ fi
 
 %post	-n kernel%{_alt_kernel}-misc-vboxnetadp
 %depmod %{_kernel_ver}
+/sbin/chkconfig --add vboxnetadp
+%service vboxnetadp restart "VirtualBox OSE Network HostOnly driver"
 
 %postun	-n kernel%{_alt_kernel}-misc-vboxnetadp
 %depmod %{_kernel_ver}
+
+%preun -n kernel%{_alt_kernel}-misc-vboxnetadp
+if [ "$1" = "0" ]; then
+	%service vboxnetadp stop
+	/sbin/chkconfig --del vboxnetadp
+fi
 
 %post	-n kernel%{_alt_kernel}-misc-vboxnetflt
 %depmod %{_kernel_ver}
@@ -721,6 +731,7 @@ fi
 
 %files -n kernel%{_alt_kernel}-misc-vboxnetadp
 %defattr(644,root,root,755)
+%attr(754,root,root) /etc/rc.d/init.d/vboxnetadp
 /lib/modules/%{_kernel_ver}/misc/vboxnetadp.ko*
 
 %files -n kernel%{_alt_kernel}-misc-vboxnetflt
