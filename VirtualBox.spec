@@ -53,7 +53,7 @@ Patch0:		%{pname}-configure.patch
 Patch1:		%{pname}-configure-spaces.patch
 Patch2:		%{pname}-export_modules.patch
 Patch3:		%{pname}-VBoxSysInfo.patch
-Patch4:		%{name}-gcc.patch
+Patch4:		%{pname}-gcc.patch
 URL:		http://www.virtualbox.org/
 BuildRequires:	rpmbuild(macros) >= 1.531
 %if %{with userspace}
@@ -422,7 +422,7 @@ for f in {VBox{BFE,Headless,Manage,SDL,SVC,Tunctl,XPCOMIPCD},VirtualBox}; do
 done
 
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname},%{_pixmapsdir}}/VBox.png
-mv $RPM_BUILD_ROOT{%{_libdir}/%{pname},%{_desktopdir}}/virtualbox.desktop 
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname},%{_desktopdir}}/virtualbox.desktop
 
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/vboxmouse_drv_17.so,%{_libdir}/xorg/modules/input/vboxmouse_drv.so}
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/vboxvideo_drv_17.so,%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so}
