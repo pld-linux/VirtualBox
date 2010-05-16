@@ -27,21 +27,21 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		4
+%define		rel		0.1
 %define		pname	VirtualBox
 Summary:	VirtualBox OSE - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox OSE - wirtualizator sprzętu x86
 Name:		%{pname}%{_alt_kernel}
-Version:	3.1.6
+Version:	3.1.8
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}-OSE.tar.bz2
-# Source0-md5:	6cb3c8161ad878c2a2732137c1621dc4
+# Source0-md5:	93b5caaac8571591c21b679987cbe518
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/UserManual.pdf
 # Source1-md5:	8561a2b883fbede1e93b7dfb2238e7cc
 Source2:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source2-md5:	f924e3a75c0d2d78f587b2ac89482074
+# Source2-md5:	bfcf00607c6def732365bf83c6a45315
 Source3:	%{pname}-vboxdrv.init
 Source4:	%{pname}-vboxguest.init
 Source5:	%{pname}-vboxnetflt.init
@@ -275,8 +275,8 @@ VirtualBox OSE Network Filter Driver.
 Moduł jądra Linuksa dla VirtualBoksa OSE - sterownik filtrowania sieci
 dla systemu głównego.
 
-%package -n kernel%{_alt_kernel}-misc-vboxvfs
-Summary:	Host file system access VFS for VirtualBox OSE
+%package -n kernel%{_alt_kernel}-misc-vboxsf
+Summary:	Host file system access (Shared Folders) for VirtualBox OSE
 Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa OSE
 Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
@@ -287,12 +287,13 @@ Requires:	kernel%{_alt_kernel}-misc-vboxguest
 %requires_releq_kernel
 Requires(postun):	%releq_kernel
 %endif
-Provides:	kernel(vboxvfs) = %{version}-%{rel}
+Provides:	kernel(vboxsf) = %{version}-%{rel}
+Obsoletes:	kernel%{_alt_kernel}-misc-vboxvfs
 
-%description -n kernel%{_alt_kernel}-misc-vboxvfs
-Host file system access VFS for VirtualBox OSE.
+%description -n kernel%{_alt_kernel}-misc-vboxsf
+Host file system access (Shared Folders) for VirtualBox OSE.
 
-%description -n kernel%{_alt_kernel}-misc-vboxvfs -l pl.UTF-8
+%description -n kernel%{_alt_kernel}-misc-vboxsf -l pl.UTF-8
 Moduł jądra Linuksa dla VirtualBoksa OSE - dostęp do plików systemu
 głównego z poziomu systemu gościa.
 
@@ -391,8 +392,8 @@ cd PLD-MODULE-BUILD
 %build_kernel_modules -m vboxdrv -C vboxdrv
 %build_kernel_modules -m vboxnetadp -C vboxnetadp
 %build_kernel_modules -m vboxnetflt -C vboxnetflt
-cp -a vboxguest/Module.symvers vboxvfs
-%build_kernel_modules -m vboxvfs -C vboxvfs -c
+cp -a vboxguest/Module.symvers vboxsf
+%build_kernel_modules -m vboxsf -C vboxsf -c
 %build_kernel_modules -m vboxvideo -C vboxvideo_drm
 cd ..
 %{__cc} %{rpmcflags} %{rpmldflags} -Wall -Werror src/VBox/Additions/linux/sharedfolders/mount.vboxsf.c -o mount.vboxsf
@@ -477,15 +478,11 @@ install -p %{SOURCE7} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxnetadp
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxguest/vboxguest -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxnetadp/vboxnetadp -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxnetflt/vboxnetflt -d misc
-%install_kernel_modules -m PLD-MODULE-BUILD/vboxvfs/vboxvfs -d misc
+%install_kernel_modules -m PLD-MODULE-BUILD/vboxsf/vboxsf -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxvideo_drm/vboxvideo -d misc
 
 install -p mount.vboxsf $RPM_BUILD_ROOT%{_sbindir}/mount.vboxsf
 
-cat <<'EOF' > $RPM_BUILD_ROOT/etc/modprobe.d/vboxvfs.conf
-# Filesystem name has got it's name from Shared Folders, while module is from VFS
-alias vboxsf vboxvfs
-EOF
 %endif
 
 %clean
@@ -505,7 +502,7 @@ Additionally you might want to install:
 
 On Guest Linux system you might want to install:
     kernel-misc-vboxguest-%{version}-%{rel}@%{_kernel_ver_str}
-    kernel-misc-vboxvfs-%{version}-%{rel}@%{_kernel_ver_str}
+    kernel-misc-vboxsf-%{version}-%{rel}@%{_kernel_ver_str}
     kernel-misc-vboxvideo-%{version}-%{rel}@%{_kernel_ver_str}
 
 NOTE: for different kernel brands append after word kernel the brand, like:
@@ -579,18 +576,18 @@ if [ "$1" = "0" ]; then
 	/sbin/chkconfig --del vboxnetflt
 fi
 
-%post	-n kernel%{_alt_kernel}-misc-vboxvfs
+%post	-n kernel%{_alt_kernel}-misc-vboxsf
 %depmod %{_kernel_ver}
-/sbin/chkconfig --add vboxvfs
-%service vboxvfs restart "VirtualBox OSE Host file system access VFS"
+/sbin/chkconfig --add vboxsf
+%service vboxsf restart "VirtualBox OSE Host file system access (Shared Folders)"
 
-%postun	-n kernel%{_alt_kernel}-misc-vboxvfs
+%postun	-n kernel%{_alt_kernel}-misc-vboxsf
 %depmod %{_kernel_ver}
 
-%preun -n kernel%{_alt_kernel}-misc-vboxvfs
+%preun -n kernel%{_alt_kernel}-misc-vboxsf
 if [ "$1" = "0" ]; then
-	%service vboxvfs stop
-	/sbin/chkconfig --del vboxvfs
+	%service vboxsf stop
+	/sbin/chkconfig --del vboxsf
 fi
 
 %post	-n kernel%{_alt_kernel}-misc-vboxvideo
@@ -740,12 +737,11 @@ fi
 %attr(754,root,root) /etc/rc.d/init.d/vboxnetflt
 /lib/modules/%{_kernel_ver}/misc/vboxnetflt.ko*
 
-%files -n kernel%{_alt_kernel}-misc-vboxvfs
+%files -n kernel%{_alt_kernel}-misc-vboxsf
 %defattr(644,root,root,755)
 %attr(754,root,root) /etc/rc.d/init.d/vboxvfs
 %attr(755,root,root) %{_sbindir}/mount.vboxsf
-/etc/modprobe.d/vboxvfs.conf
-/lib/modules/%{_kernel_ver}/misc/vboxvfs.ko*
+/lib/modules/%{_kernel_ver}/misc/vboxsf.ko*
 
 %files -n kernel%{_alt_kernel}-misc-vboxvideo
 %defattr(644,root,root,755)
