@@ -27,7 +27,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		0.1
+%define		rel		1
 %define		pname	VirtualBox
 Summary:	VirtualBox OSE - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox OSE - wirtualizator sprzętu x86
@@ -55,7 +55,7 @@ Patch2:		%{pname}-export_modules.patch
 Patch3:		%{pname}-VBoxSysInfo.patch
 Patch4:		%{pname}-gcc.patch
 URL:		http://www.virtualbox.org/
-BuildRequires:	rpmbuild(macros) >= 1.531
+BuildRequires:	rpmbuild(macros) >= 1.535
 %if %{with userspace}
 %ifarch %{x8664}
 BuildRequires:	gcc-multilib
@@ -306,7 +306,9 @@ Requires(post,postun):	/sbin/depmod
 Requires:	dev >= 2.9.0-7
 %if %{with dist_kernel}
 %requires_releq_kernel
+%if "%{rpm_build_macros}" >= "1.531"
 %requires_releq_kernel -n drm
+%endif
 Requires(postun):	%releq_kernel
 %endif
 Provides:	kernel(vboxvideo) = %{version}-%{rel}
@@ -323,7 +325,7 @@ Summary(pl.UTF-8):	Sterownik myszy dla systemu gościa w VirtualBoksie OSE
 Release:	%{rel}
 Group:		X11/Applications
 Requires:	xorg-xserver-server >= 1.0.99.901
-Requires:	xorg-xserver-server(xinput-abi) <= 7.0
+Requires:	xorg-xserver-server(xinput-abi) <= 9.0
 Requires:	xorg-xserver-server(xinput-abi) >= 4.0
 
 %description -n xorg-driver-input-vboxmouse
@@ -339,7 +341,7 @@ Release:	%{rel}
 Group:		X11/Applications
 Requires:	xorg-xserver-libdri >= 1.7.4
 Requires:	xorg-xserver-server >= 1.0.99.901
-Requires:	xorg-xserver-server(videodrv-abi) <= 6.0
+Requires:	xorg-xserver-server(videodrv-abi) <= 7.0
 Requires:	xorg-xserver-server(videodrv-abi) >= 2.0
 
 %description -n xorg-driver-video-vboxvideo
@@ -425,12 +427,12 @@ done
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname},%{_pixmapsdir}}/VBox.png
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname},%{_desktopdir}}/virtualbox.desktop
 
-mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/vboxmouse_drv_17.so,%{_libdir}/xorg/modules/input/vboxmouse_drv.so}
-mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/vboxvideo_drv_17.so,%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so}
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/vboxmouse_drv_18.so,%{_libdir}/xorg/modules/input/vboxmouse_drv.so}
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/vboxvideo_drv_18.so,%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so}
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/VBoxOGL.so,%{_libdir}/xorg/modules/dri/vboxvideo_dri.so}
 # xorg other driver versions
-rm -f $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/vboxmouse_drv*.{o,so}
-rm -f $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/vboxvideo_drv*.{o,so}
+rm -vf $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/vboxmouse_drv*.{o,so}
+rm -vf $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/vboxvideo_drv*.{o,so}
 
 # XXX: where else to install them that vboxvideo_dri.so finds them? patch with rpath?
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLcrutil.so
