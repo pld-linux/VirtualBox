@@ -12,24 +12,24 @@
 # Source function library
 . /etc/rc.d/init.d/functions
 
-VBOX_DEVICE="/dev/vboxvfs"
-VBOX_MODULE="vboxvfs"
+VBOX_DEVICE="/dev/vboxsf"
+VBOX_MODULE="vboxsf"
 
 # Get service config - may override defaults
 [ -f /etc/sysconfig/virtualbox ] && . /etc/sysconfig/virtualbox
 
 start() {
-	if [ ! -f /var/lock/subsys/vboxvfs ]; then
+	if [ ! -f /var/lock/subsys/vboxsf ]; then
 		modprobe -s $VBOX_MODULE
 		# set proper /dev/vboxdrv for systems with static dev
-		touch /var/lock/subsys/vboxvfs
+		touch /var/lock/subsys/vboxsf
 	fi
 }
 
 stop() {
 	# NOTE: rmmod will wait if device is in use, so automatic rmmod probably is not the best idea
 	/sbin/rmmod $VBOX_MODULE
-	rm -f /var/lock/subsys/vboxvfs
+	rm -f /var/lock/subsys/vboxsf
 }
 
 RETVAL=0

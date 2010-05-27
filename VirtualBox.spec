@@ -45,7 +45,7 @@ Source2:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions
 Source3:	%{pname}-vboxdrv.init
 Source4:	%{pname}-vboxguest.init
 Source5:	%{pname}-vboxnetflt.init
-Source6:	%{pname}-vboxvfs.init
+Source6:	%{pname}-vboxsf.init
 Source7:	%{pname}-vboxnetadp.init
 Source8:	%{pname}.sh
 Source9:	mount.vdi
@@ -472,7 +472,7 @@ install -d $RPM_BUILD_ROOT{/etc/{rc.d/init.d,modprobe.d},%{_sbindir}}
 install -p %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxdrv
 install -p %{SOURCE4} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxguest
 install -p %{SOURCE5} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxnetflt
-install -p %{SOURCE6} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxvfs
+install -p %{SOURCE6} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxsf
 install -p %{SOURCE7} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxnetadp
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxdrv/vboxdrv -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxguest/vboxguest -d misc
@@ -739,7 +739,7 @@ fi
 
 %files -n kernel%{_alt_kernel}-misc-vboxsf
 %defattr(644,root,root,755)
-%attr(754,root,root) /etc/rc.d/init.d/vboxvfs
+%attr(754,root,root) /etc/rc.d/init.d/vboxsf
 %attr(755,root,root) %{_sbindir}/mount.vboxsf
 /lib/modules/%{_kernel_ver}/misc/vboxsf.ko*
 
