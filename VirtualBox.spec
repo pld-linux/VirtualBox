@@ -325,7 +325,11 @@ Summary(pl.UTF-8):	Sterownik myszy dla systemu gościa w VirtualBoksie OSE
 Release:	%{rel}
 Group:		X11/Applications
 Requires:	xorg-xserver-server >= 1.0.99.901
+%if "%{pld_release}" == "ti"
+Requires:	xorg-xserver-server(xinput-abi) <= 7.0
+%else
 Requires:	xorg-xserver-server(xinput-abi) <= 9.0
+%endif
 Requires:	xorg-xserver-server(xinput-abi) >= 4.0
 
 %description -n xorg-driver-input-vboxmouse
@@ -341,7 +345,11 @@ Release:	%{rel}
 Group:		X11/Applications
 Requires:	xorg-xserver-libdri >= 1.7.4
 Requires:	xorg-xserver-server >= 1.0.99.901
+%if "%{pld_release}" == "ti"
+Requires:	xorg-xserver-server(videodrv-abi) <= 6.0
+%else
 Requires:	xorg-xserver-server(videodrv-abi) <= 7.0
+%endif
 Requires:	xorg-xserver-server(videodrv-abi) >= 2.0
 
 %description -n xorg-driver-video-vboxvideo
@@ -427,8 +435,13 @@ done
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname},%{_pixmapsdir}}/VBox.png
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname},%{_desktopdir}}/virtualbox.desktop
 
+%if "%{pld_release}" == "ti"
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/vboxmouse_drv_17.so,%{_libdir}/xorg/modules/input/vboxmouse_drv.so}
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/vboxvideo_drv_17.so,%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so}
+%else
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/vboxmouse_drv_18.so,%{_libdir}/xorg/modules/input/vboxmouse_drv.so}
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/vboxvideo_drv_18.so,%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so}
+%endif
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/VBoxOGL.so,%{_libdir}/xorg/modules/dri/vboxvideo_dri.so}
 # xorg other driver versions
 rm -vf $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/vboxmouse_drv*.{o,so}
