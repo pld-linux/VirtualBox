@@ -124,7 +124,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_sbindir	/sbin
 
 %description
-InnoTek VirtualBox OSE is a general-purpose full virtualizer for x86
+Oracle VirtualBox OSE is a general-purpose full virtualizer for x86
 hardware. Targeted at server, desktop and embedded use, it is now the
 only professional-quality virtualization solution that is also Open
 Source Software.
@@ -146,7 +146,7 @@ local machines. Virtual machine definitions can therefore easily be
 ported to other computers.
 
 %description -l pl.UTF-8
-InnoTek VirtualBox OSE jest emulatorem sprzętu x86. Kierowany do
+Oracle VirtualBox OSE jest emulatorem sprzętu x86. Kierowany do
 zastosowań serwerowych, desktopowych oraz wbudowanych jest obecnie
 jedynym wysokiej jakości rozwiązaniem wirtualizacyjnym dostępnym
 również jako Otwarte Oprogramowanie.
