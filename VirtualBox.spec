@@ -27,21 +27,21 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		2
+%define		rel		1
 %define		pname	VirtualBox
 Summary:	VirtualBox OSE - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox OSE - wirtualizator sprzętu x86
 Name:		%{pname}%{_alt_kernel}
-Version:	3.1.8
+Version:	3.2.2
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}-OSE.tar.bz2
-# Source0-md5:	93b5caaac8571591c21b679987cbe518
+# Source0-md5:	a00884da2f5dd8dc2fad5e27940446c6
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/UserManual.pdf
-# Source1-md5:	8561a2b883fbede1e93b7dfb2238e7cc
+# Source1-md5:	187f655c0df29a1e100bffc86cb1b918
 Source2:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source2-md5:	bfcf00607c6def732365bf83c6a45315
+# Source2-md5:	00647d660e3ffcb878617cd5e7f33e4e
 Source3:	%{pname}-vboxdrv.init
 Source4:	%{pname}-vboxguest.init
 Source5:	%{pname}-vboxnetflt.init
@@ -53,7 +53,6 @@ Patch0:		%{pname}-configure.patch
 Patch1:		%{pname}-configure-spaces.patch
 Patch2:		%{pname}-export_modules.patch
 Patch3:		%{pname}-VBoxSysInfo.patch
-Patch4:		%{pname}-gcc.patch
 URL:		http://www.virtualbox.org/
 BuildRequires:	rpmbuild(macros) >= 1.535
 %if %{with userspace}
@@ -364,7 +363,6 @@ Sterownik grafiki dla systemu gościa w VirtualBoksie OSE.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
 
 %{__sed} -i -e 's,$VBOX_DOC_PATH,%{_docdir}/%{name}-%{version},' src/VBox/Installer/linux/virtualbox.desktop
 %{__sed} -i -e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/linux/virtualbox.desktop
