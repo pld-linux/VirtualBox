@@ -53,6 +53,7 @@ Patch0:		%{pname}-configure.patch
 Patch1:		%{pname}-configure-spaces.patch
 Patch2:		%{pname}-export_modules.patch
 Patch3:		%{pname}-VBoxSysInfo.patch
+Patch4:		%{pname}-warning_workaround.patch
 URL:		http://www.virtualbox.org/
 BuildRequires:	rpmbuild(macros) >= 1.535
 %if %{with userspace}
@@ -90,6 +91,7 @@ BuildRequires:	libuuid-devel
 BuildRequires:	libxml2-devel >= 2.6.26
 BuildRequires:	libxslt-devel >= 1.1.17
 BuildRequires:	libxslt-progs >= 1.1.17
+BuildRequires:	pam-devel
 BuildRequires:	pkgconfig
 BuildRequires:	pulseaudio-devel >= 0.9.0
 BuildRequires:	python-devel
@@ -363,6 +365,7 @@ Sterownik grafiki dla systemu gościa w VirtualBoksie OSE.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %{__sed} -i -e 's,$VBOX_DOC_PATH,%{_docdir}/%{name}-%{version},' src/VBox/Installer/linux/virtualbox.desktop
 %{__sed} -i -e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/linux/virtualbox.desktop
