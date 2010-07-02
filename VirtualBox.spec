@@ -400,9 +400,9 @@ kmk -j1 %{?with_verbose:KBUILD_VERBOSE=3} USER=$(id -un)
 %if %{with kernel}
 cd PLD-MODULE-BUILD
 %build_kernel_modules -m vboxguest -C vboxguest
-%build_kernel_modules -m vboxdrv -C vboxdrv
-%build_kernel_modules -m vboxnetadp -C vboxnetadp
-%build_kernel_modules -m vboxnetflt -C vboxnetflt
+%build_kernel_modules -m vboxdrv -C .vbox_modules/vboxdrv
+%build_kernel_modules -m vboxnetadp -C .vbox_modules/vboxnetadp
+%build_kernel_modules -m vboxnetflt -C .vbox_modules/vboxnetflt
 cp -a vboxguest/Module.symvers vboxsf
 %build_kernel_modules -m vboxsf -C vboxsf -c
 %build_kernel_modules -m vboxvideo -C vboxvideo_drm
@@ -461,7 +461,7 @@ cp -a udev.conf $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
 # cleanup unpackaged
 rm -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/{src,sdk,testcase}
 rm -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/src
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/vboxkeyboard.tar.gz
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/vboxkeyboard.tar.bz2
 rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/tst*
 
 # unknown - checkme
@@ -490,10 +490,10 @@ install -p %{SOURCE4} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxguest
 install -p %{SOURCE5} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxnetflt
 install -p %{SOURCE6} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxsf
 install -p %{SOURCE7} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxnetadp
-%install_kernel_modules -m PLD-MODULE-BUILD/vboxdrv/vboxdrv -d misc
+%install_kernel_modules -m PLD-MODULE-BUILD/.vbox_modules/vboxdrv/vboxdrv -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxguest/vboxguest -d misc
-%install_kernel_modules -m PLD-MODULE-BUILD/vboxnetadp/vboxnetadp -d misc
-%install_kernel_modules -m PLD-MODULE-BUILD/vboxnetflt/vboxnetflt -d misc
+%install_kernel_modules -m PLD-MODULE-BUILD/.vbox_modules/vboxnetadp/vboxnetadp -d misc
+%install_kernel_modules -m PLD-MODULE-BUILD/.vbox_modules/vboxnetflt/vboxnetflt -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxsf/vboxsf -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxvideo_drm/vboxvideo -d misc
 
@@ -640,6 +640,7 @@ fi
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxDD.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxDD2.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxDDU.so
+%attr(755,root,root) %{_libdir}/VirtualBox/VBoxGuestControlSvc.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxGuestPropSvc.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxKeyboard.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxNetAdpCtl
@@ -678,14 +679,17 @@ fi
 %lang(ar) %{_libdir}/VirtualBox/nls/*_ar.qm
 %lang(bg) %{_libdir}/VirtualBox/nls/*_bg.qm
 %lang(ca) %{_libdir}/VirtualBox/nls/*_ca.qm
+%lang(ca_VA) %{_libdir}/VirtualBox/nls/*_ca_VA.qm
 %lang(cs) %{_libdir}/VirtualBox/nls/*_cs.qm
 %lang(da) %{_libdir}/VirtualBox/nls/*_da.qm
 %lang(de) %{_libdir}/VirtualBox/nls/*_de.qm
 %lang(el) %{_libdir}/VirtualBox/nls/*_el.qm
+%lang(en) %{_libdir}/VirtualBox/nls/*_en.qm
 %lang(es) %{_libdir}/VirtualBox/nls/*_es.qm
 %lang(eu) %{_libdir}/VirtualBox/nls/*_eu.qm
 %lang(fi) %{_libdir}/VirtualBox/nls/*_fi.qm
 %lang(fr) %{_libdir}/VirtualBox/nls/*_fr.qm
+%lang(gl_ES) %{_libdir}/VirtualBox/nls/*_gl_ES.qm
 %lang(hu) %{_libdir}/VirtualBox/nls/*_hu.qm
 %lang(id) %{_libdir}/VirtualBox/nls/*_id.qm
 %lang(it) %{_libdir}/VirtualBox/nls/*_it.qm
