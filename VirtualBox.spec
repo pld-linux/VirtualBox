@@ -27,7 +27,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		8
+%define		rel		9
 %define		pname	VirtualBox
 Summary:	VirtualBox OSE - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox OSE - wirtualizator sprzętu x86
@@ -646,8 +646,7 @@ fi
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxOGLhostcrutil.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxOGLhosterrorspu.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxOGLrenderspu.so
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxPython.so
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxPython2_6.so
+%attr(755,root,root) %{_libdir}/VirtualBox/VBoxPython*.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxREM.so
 %ifarch %{ix86}
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxREM32.so
