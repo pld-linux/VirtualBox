@@ -30,3 +30,14 @@
      --with-openssl-dir=*)
        OPENSSLDIR=`echo $option | cut -d'=' -f2`
        INCCRYPTO="-I${OPENSSLDIR}/include"
+--- VirtualBox-3.1.8_OSE/configure~	2010-07-08 19:00:15.575150896 +0200
++++ VirtualBox-3.1.8_OSE/configure	2010-07-08 19:02:26.226178887 +0200
+@@ -1762,7 +1762,7 @@
+   found=
+ # For Solaris we use libpython2.4 for compatibility with Solaris 10 and passing IPS pkg audit
+   if [ "$OS" != "solaris" ]; then
+-    SUPPYTHONLIBS="python2.6 python2.5 python2.4 python2.3"
++    SUPPYTHONLIBS="python2.7 python2.6 python2.5 python2.4 python2.3"
+   else
+     SUPPYTHONLIBS="python2.4"
+   fi
