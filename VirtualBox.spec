@@ -27,21 +27,21 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		9
+%define		rel		0.1
 %define		pname	VirtualBox
 Summary:	VirtualBox OSE - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox OSE - wirtualizator sprzętu x86
 Name:		%{pname}%{_alt_kernel}
-Version:	3.1.8
+Version:	3.2.6
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}-OSE.tar.bz2
-# Source0-md5:	93b5caaac8571591c21b679987cbe518
+# Source0-md5:	65b822ab3c08ff882d9621101996dc14
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/UserManual.pdf
-# Source1-md5:	8561a2b883fbede1e93b7dfb2238e7cc
+# Source1-md5:	8891557360f816f7604d26aac7503489
 Source2:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source2-md5:	bfcf00607c6def732365bf83c6a45315
+# Source2-md5:	9542cf2fb93e1921a860930ac2a1d0de
 Source3:	%{pname}-vboxdrv.init
 Source4:	%{pname}-vboxguest.init
 Source5:	%{pname}-vboxnetflt.init
@@ -53,7 +53,7 @@ Patch0:		%{pname}-configure.patch
 Patch1:		%{pname}-configure-spaces.patch
 Patch2:		%{pname}-export_modules.patch
 Patch3:		%{pname}-VBoxSysInfo.patch
-Patch4:		%{pname}-gcc.patch
+Patch4:		%{pname}-warning_workaround.patch
 URL:		http://www.virtualbox.org/
 BuildRequires:	rpmbuild(macros) >= 1.535
 %if %{with userspace}
@@ -91,6 +91,7 @@ BuildRequires:	libuuid-devel
 BuildRequires:	libxml2-devel >= 2.6.26
 BuildRequires:	libxslt-devel >= 1.1.17
 BuildRequires:	libxslt-progs >= 1.1.17
+BuildRequires:	pam-devel
 BuildRequires:	pkgconfig
 BuildRequires:	pulseaudio-devel >= 0.9.0
 BuildRequires:	python-devel
@@ -125,7 +126,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_sbindir	/sbin
 
 %description
-InnoTek VirtualBox OSE is a general-purpose full virtualizer for x86
+Oracle VirtualBox OSE is a general-purpose full virtualizer for x86
 hardware. Targeted at server, desktop and embedded use, it is now the
 only professional-quality virtualization solution that is also Open
 Source Software.
@@ -147,7 +148,7 @@ local machines. Virtual machine definitions can therefore easily be
 ported to other computers.
 
 %description -l pl.UTF-8
-InnoTek VirtualBox OSE jest emulatorem sprzętu x86. Kierowany do
+Oracle VirtualBox OSE jest emulatorem sprzętu x86. Kierowany do
 zastosowań serwerowych, desktopowych oraz wbudowanych jest obecnie
 jedynym wysokiej jakości rozwiązaniem wirtualizacyjnym dostępnym
 również jako Otwarte Oprogramowanie.
@@ -190,6 +191,14 @@ Requires:	%{name} = %{version}-%{release}
 VirtualBox Guest Additions.
 
 This package contains ISO9660 image with drivers for Guest OS.
+
+%package -n pam-pam_vbox
+Summary:	PAM module to perform automated guest logons
+Group:		Base
+
+%description  -n pam-pam_vbox
+PAM module (Pluggable Authentication Module) which can be used
+to perform automated guest logons.
 
 %package -n kernel%{_alt_kernel}-misc-vboxguest
 Summary:	VirtualBox OSE Guest Additions for Linux Module
@@ -399,9 +408,9 @@ kmk -j1 %{?with_verbose:KBUILD_VERBOSE=3} USER=$(id -un)
 %if %{with kernel}
 cd PLD-MODULE-BUILD
 %build_kernel_modules -m vboxguest -C vboxguest
-%build_kernel_modules -m vboxdrv -C vboxdrv
-%build_kernel_modules -m vboxnetadp -C vboxnetadp
-%build_kernel_modules -m vboxnetflt -C vboxnetflt
+%build_kernel_modules -m vboxdrv -C .vbox_modules/vboxdrv
+%build_kernel_modules -m vboxnetadp -C .vbox_modules/vboxnetadp
+%build_kernel_modules -m vboxnetflt -C .vbox_modules/vboxnetflt
 cp -a vboxguest/Module.symvers vboxsf
 %build_kernel_modules -m vboxsf -C vboxsf -c
 %build_kernel_modules -m vboxvideo -C vboxvideo_drm
@@ -457,10 +466,13 @@ mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLpassthroughs
 install -d $RPM_BUILD_ROOT/etc/udev/rules.d
 cp -a udev.conf $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
 
+install -d $RPM_BUILD_ROOT/%{_lib}/security
+mv $RPM_BUILD_ROOT{%{_libdir}/VirtualBox/additions,/%{_lib}/security}/pam_vbox.so
+
 # cleanup unpackaged
 rm -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/{src,sdk,testcase}
 rm -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/src
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/vboxkeyboard.tar.gz
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/vboxkeyboard.tar.bz2
 rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/tst*
 
 # unknown - checkme
@@ -489,10 +501,10 @@ install -p %{SOURCE4} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxguest
 install -p %{SOURCE5} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxnetflt
 install -p %{SOURCE6} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxsf
 install -p %{SOURCE7} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxnetadp
-%install_kernel_modules -m PLD-MODULE-BUILD/vboxdrv/vboxdrv -d misc
+%install_kernel_modules -m PLD-MODULE-BUILD/.vbox_modules/vboxdrv/vboxdrv -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxguest/vboxguest -d misc
-%install_kernel_modules -m PLD-MODULE-BUILD/vboxnetadp/vboxnetadp -d misc
-%install_kernel_modules -m PLD-MODULE-BUILD/vboxnetflt/vboxnetflt -d misc
+%install_kernel_modules -m PLD-MODULE-BUILD/.vbox_modules/vboxnetadp/vboxnetadp -d misc
+%install_kernel_modules -m PLD-MODULE-BUILD/.vbox_modules/vboxnetflt/vboxnetflt -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxsf/vboxsf -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/vboxvideo_drm/vboxvideo -d misc
 
@@ -639,6 +651,7 @@ fi
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxDD.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxDD2.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxDDU.so
+%attr(755,root,root) %{_libdir}/VirtualBox/VBoxGuestControlSvc.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxGuestPropSvc.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxKeyboard.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxNetAdpCtl
@@ -676,14 +689,17 @@ fi
 %lang(ar) %{_libdir}/VirtualBox/nls/*_ar.qm
 %lang(bg) %{_libdir}/VirtualBox/nls/*_bg.qm
 %lang(ca) %{_libdir}/VirtualBox/nls/*_ca.qm
+%lang(ca_VA) %{_libdir}/VirtualBox/nls/*_ca_VA.qm
 %lang(cs) %{_libdir}/VirtualBox/nls/*_cs.qm
 %lang(da) %{_libdir}/VirtualBox/nls/*_da.qm
 %lang(de) %{_libdir}/VirtualBox/nls/*_de.qm
 %lang(el) %{_libdir}/VirtualBox/nls/*_el.qm
+%lang(en) %{_libdir}/VirtualBox/nls/*_en.qm
 %lang(es) %{_libdir}/VirtualBox/nls/*_es.qm
 %lang(eu) %{_libdir}/VirtualBox/nls/*_eu.qm
 %lang(fi) %{_libdir}/VirtualBox/nls/*_fi.qm
 %lang(fr) %{_libdir}/VirtualBox/nls/*_fr.qm
+%lang(gl_ES) %{_libdir}/VirtualBox/nls/*_gl_ES.qm
 %lang(hu) %{_libdir}/VirtualBox/nls/*_hu.qm
 %lang(id) %{_libdir}/VirtualBox/nls/*_id.qm
 %lang(it) %{_libdir}/VirtualBox/nls/*_it.qm
@@ -709,6 +725,10 @@ fi
 %files additions
 %defattr(644,root,root,755)
 %{_libdir}/VirtualBox/additions/VBoxGuestAdditions.iso
+
+%files -n pam-pam_vbox
+%defattr(644,root,root,755)
+/%{_lib}/security/pam_vbox.so
 
 %files udev
 %defattr(644,root,root,755)
