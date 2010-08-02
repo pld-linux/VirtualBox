@@ -278,6 +278,8 @@ Conflicts:	kernel%{_alt_kernel}-misc-vboxdrv
 %description -n kernel%{_alt_kernel}-misc-vboxguest
 VirtualBox OSE Guest Additions for Linux Module.
 
+You should install this package in your Guest OS.
+
 %description -n kernel%{_alt_kernel}-misc-vboxguest -l pl.UTF-8
 Moduł jądra Linuksa vboxguest dla VirtualBoksa OSE - dodatki dla
 systemu gościa.
@@ -297,6 +299,8 @@ Provides:	kernel(vboxdrv) = %{version}-%{rel}
 
 %description -n kernel%{_alt_kernel}-misc-vboxdrv
 VirtualBox OSE Support Driver.
+
+You should install this package in your Host OS.
 
 %description -n kernel%{_alt_kernel}-misc-vboxdrv -l pl.UTF-8
 Moduł jądra Linuksa dla VirtualBoksa OSE - sterownik wsparcia dla
@@ -319,6 +323,8 @@ Provides:	kernel(vboxnetflt) = %{version}-%{rel}
 %description -n kernel%{_alt_kernel}-misc-vboxnetadp
 VirtualBox OSE Network Adapter Driver.
 
+You should install this package in your Host OS.
+
 %description -n kernel%{_alt_kernel}-misc-vboxnetadp -l pl.UTF-8
 Moduł jądra Linuksa dla VirtualBoksa OSE - sterownik witrualnej karty
 sieciowej.
@@ -339,6 +345,8 @@ Provides:	kernel(vboxnetflt) = %{version}-%{rel}
 
 %description -n kernel%{_alt_kernel}-misc-vboxnetflt
 VirtualBox OSE Network Filter Driver.
+
+You should install this package in your Host OS.
 
 %description -n kernel%{_alt_kernel}-misc-vboxnetflt -l pl.UTF-8
 Moduł jądra Linuksa dla VirtualBoksa OSE - sterownik filtrowania sieci
@@ -362,6 +370,8 @@ Obsoletes:	kernel%{_alt_kernel}-misc-vboxvfs
 %description -n kernel%{_alt_kernel}-misc-vboxsf
 Host file system access (Shared Folders) for VirtualBox OSE.
 
+You should install this package in your Guest OS.
+
 %description -n kernel%{_alt_kernel}-misc-vboxsf -l pl.UTF-8
 Moduł jądra Linuksa dla VirtualBoksa OSE - dostęp do plików systemu
 głównego z poziomu systemu gościa.
@@ -384,6 +394,8 @@ Provides:	kernel(vboxvideo) = %{version}-%{rel}
 
 %description -n kernel%{_alt_kernel}-misc-vboxvideo
 DRM support for VirtualBox OSE.
+
+You should install this package in your Guest OS.
 
 %description -n kernel%{_alt_kernel}-misc-vboxvideo -l pl.UTF-8
 Moduł jądra Linuksa dla VirtualBoksa OSE - sterownik obsługi DRM.
