@@ -222,6 +222,43 @@ Group:		Base
 PAM module (Pluggable Authentication Module) which can be used to
 perform automated guest logons.
 
+%package -n xorg-driver-input-vboxmouse
+Summary:	X.org mouse driver for VirtualBox OSE guest OS
+Summary(pl.UTF-8):	Sterownik myszy dla systemu gościa w VirtualBoksie OSE
+Group:		X11/Applications
+Requires:	xorg-xserver-server >= 1.0.99.901
+%if "%{pld_release}" == "ti"
+Requires:	xorg-xserver-server(xinput-abi) <= 7.0
+%else
+Requires:	xorg-xserver-server(xinput-abi) <= 9.0
+%endif
+Requires:	xorg-xserver-server(xinput-abi) >= 4.0
+
+%description -n xorg-driver-input-vboxmouse
+X.org mouse driver for VirtualBox OSE guest OS.
+
+%description -n xorg-driver-input-vboxmouse  -l pl.UTF-8
+Sterownik myszy dla systemu gościa w VirtualBoksie.
+
+%package -n xorg-driver-video-vboxvideo
+Summary:	X.org video driver for VirtualBox OSE guest OS
+Summary(pl.UTF-8):	Sterownik grafiki dla systemu gościa w VirtualBoksie OSE
+Group:		X11/Applications
+Requires:	xorg-xserver-libdri >= 1.7.4
+Requires:	xorg-xserver-server >= 1.0.99.901
+%if "%{pld_release}" == "ti"
+Requires:	xorg-xserver-server(videodrv-abi) <= 6.0
+%else
+Requires:	xorg-xserver-server(videodrv-abi) <= 7.0
+%endif
+Requires:	xorg-xserver-server(videodrv-abi) >= 2.0
+
+%description -n xorg-driver-video-vboxvideo
+X.org video driver for VirtualBox OSE guest OS.
+
+%description -n xorg-driver-video-vboxvideo -l pl.UTF-8
+Sterownik grafiki dla systemu gościa w VirtualBoksie OSE.
+
 %package -n kernel%{_alt_kernel}-misc-vboxguest
 Summary:	VirtualBox OSE Guest Additions for Linux Module
 Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa OSE
@@ -349,45 +386,6 @@ DRM support for VirtualBox OSE.
 
 %description -n kernel%{_alt_kernel}-misc-vboxvideo -l pl.UTF-8
 Moduł jądra Linuksa dla VirtualBoksa OSE - sterownik obsługi DRM.
-
-%package -n xorg-driver-input-vboxmouse
-Summary:	X.org mouse driver for VirtualBox OSE guest OS
-Summary(pl.UTF-8):	Sterownik myszy dla systemu gościa w VirtualBoksie OSE
-Release:	%{rel}
-Group:		X11/Applications
-Requires:	xorg-xserver-server >= 1.0.99.901
-%if "%{pld_release}" == "ti"
-Requires:	xorg-xserver-server(xinput-abi) <= 7.0
-%else
-Requires:	xorg-xserver-server(xinput-abi) <= 9.0
-%endif
-Requires:	xorg-xserver-server(xinput-abi) >= 4.0
-
-%description -n xorg-driver-input-vboxmouse
-X.org mouse driver for VirtualBox OSE guest OS.
-
-%description -n xorg-driver-input-vboxmouse  -l pl.UTF-8
-Sterownik myszy dla systemu gościa w VirtualBoksie.
-
-%package -n xorg-driver-video-vboxvideo
-Summary:	X.org video driver for VirtualBox OSE guest OS
-Summary(pl.UTF-8):	Sterownik grafiki dla systemu gościa w VirtualBoksie OSE
-Release:	%{rel}
-Group:		X11/Applications
-Requires:	xorg-xserver-libdri >= 1.7.4
-Requires:	xorg-xserver-server >= 1.0.99.901
-%if "%{pld_release}" == "ti"
-Requires:	xorg-xserver-server(videodrv-abi) <= 6.0
-%else
-Requires:	xorg-xserver-server(videodrv-abi) <= 7.0
-%endif
-Requires:	xorg-xserver-server(videodrv-abi) >= 2.0
-
-%description -n xorg-driver-video-vboxvideo
-X.org video driver for VirtualBox OSE guest OS.
-
-%description -n xorg-driver-video-vboxvideo -l pl.UTF-8
-Sterownik grafiki dla systemu gościa w VirtualBoksie OSE.
 
 %prep
 %setup -q -n %{pname}-%{version}_OSE
