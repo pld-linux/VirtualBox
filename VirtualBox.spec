@@ -198,8 +198,8 @@ Summary:	PAM module to perform automated guest logons
 Group:		Base
 
 %description  -n pam-pam_vbox
-PAM module (Pluggable Authentication Module) which can be used
-to perform automated guest logons.
+PAM module (Pluggable Authentication Module) which can be used to
+perform automated guest logons.
 
 %package -n kernel%{_alt_kernel}-misc-vboxguest
 Summary:	VirtualBox OSE Guest Additions for Linux Module
@@ -521,7 +521,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 cat << 'EOF'
-You must also install kernel module for this software to work:
+You must install vboxdrv kernel module for this software to work:
     kernel-misc-vboxdrv-%{version}-%{rel}@%{_kernel_ver_str}
 
 Additionally you might want to install:
@@ -532,14 +532,6 @@ On Guest Linux system you might want to install:
     kernel-misc-vboxguest-%{version}-%{rel}@%{_kernel_ver_str}
     kernel-misc-vboxsf-%{version}-%{rel}@%{_kernel_ver_str}
     kernel-misc-vboxvideo-%{version}-%{rel}@%{_kernel_ver_str}
-
-NOTE: for different kernel brands append after word kernel the brand, like:
-    kernel-desktop-misc-vboxdrv-%{version}-%{rel}@%{_kernel_ver_str}
-    kernel-laptop-misc-vboxdrv-%{version}-%{rel}@%{_kernel_ver_str}
-    kernel-vanilla-misc-vboxdrv-%{version}-%{rel}@%{_kernel_ver_str}
-    ...etc.
-
-Depending on which kernel brand You use.
 
 EOF
 
@@ -640,7 +632,7 @@ fi
 %attr(755,root,root) %{_bindir}/VBoxTunctl
 %attr(755,root,root) %{_bindir}/VBoxXPCOMIPCD
 %attr(755,root,root) %{_bindir}/VirtualBox
-%attr(755,root,root) /sbin/mount.vdi
+%attr(755,root,root) %{_sbindir}/mount.vdi
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxSVC
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxBFE
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxHeadless
@@ -729,7 +721,7 @@ fi
 
 %files -n pam-pam_vbox
 %defattr(644,root,root,755)
-/%{_lib}/security/pam_vbox.so
+%attr(755,root,root) /%{_lib}/security/pam_vbox.so
 
 %files udev
 %defattr(644,root,root,755)
