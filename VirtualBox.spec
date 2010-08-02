@@ -148,6 +148,8 @@ virtual machines are stored entirely in XML and are independent of the
 local machines. Virtual machine definitions can therefore easily be
 ported to other computers.
 
+You should install this package in your Host OS.
+
 %description -l pl.UTF-8
 Oracle VirtualBox OSE jest emulatorem sprzętu x86. Kierowany do
 zastosowań serwerowych, desktopowych oraz wbudowanych jest obecnie
@@ -180,6 +182,8 @@ Requires:	udev-core
 %description udev
 udev rules for VirtualBox OSE kernel modules.
 
+You should install this package in your Host OS.
+
 %description udev -l pl.UTF-8
 Reguły udev dla modułów jądra Linuksa dla VirtualBoksa.
 
@@ -192,6 +196,23 @@ Requires:	%{name} = %{version}-%{release}
 VirtualBox Guest Additions.
 
 This package contains ISO9660 image with drivers for Guest OS.
+
+You should install this package in your Host OS.
+
+%package guest
+Summary:	VirtualBox Guest Additions
+Group:		Base
+Requires:	kernel%{_alt_kernel}-misc-vboxsf = %{version}-%{release}
+Requires:	kernel%{_alt_kernel}-misc-vboxvideo = %{version}-%{release}
+Requires:	xorg-driver-input-vboxmouse = %{version}-%{release}
+Requires:	xorg-driver-video-vboxvideo = %{version}-%{release}
+
+%description guest
+Tools that utilize kernel modules for supporting integration with the
+Host, including file sharing and tracking of mouse pointer movement
+and X.org X11 video and mouse driver.
+
+You should install this package in your Guest OS.
 
 %package -n pam-pam_vbox
 Summary:	PAM module to perform automated guest logons
@@ -458,10 +479,11 @@ rm -vf $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/vboxmouse_drv*.{o,so}
 rm -vf $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/vboxvideo_drv*.{o,so}
 
 # XXX: where else to install them that vboxvideo_dri.so finds them? patch with rpath?
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLarrayspu.so
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLcrutil.so
-mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLpackspu.so
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLerrorspu.so
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLfeedbackspu.so
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLpackspu.so
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLpassthroughspu.so
 
 install -d $RPM_BUILD_ROOT/etc/udev/rules.d
@@ -476,20 +498,23 @@ rm -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/src
 rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/vboxkeyboard.tar.bz2
 rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/tst*
 
+# IPRT Testcase / Tool - Source Code Massager.
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/scm
+
+# Guest Only Tools
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_bindir}}/VBoxService
+
 # unknown - checkme
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/EfiThunk
+%if 1
 rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/SUPInstall
 rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/SUPLoggerCtl
 rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/SUPUninstall
 rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/VBox.sh
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/VBoxEFI32.fd
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/VBoxEFI64.fd
 rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/VBoxClient
 rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/VBoxControl
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/VBoxOGLarrayspu.so
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/VBoxService
 rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/vboxshell.py
 rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/xpidl
+%endif
 
 # packaged by kernel part
 rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/mount.vboxsf
@@ -674,6 +699,9 @@ fi
 %{_libdir}/VirtualBox/VBoxDD2R0.r0
 %{_libdir}/VirtualBox/VBoxDDR0.r0
 %{_libdir}/VirtualBox/VMMR0.r0
+%{_libdir}/VirtualBox/EfiThunk
+%{_libdir}/VirtualBox/VBoxEFI32.fd
+%{_libdir}/VirtualBox/VBoxEFI64.fd
 %{_libdir}/VirtualBox/components/VBoxXPCOMBase.xpt
 %{_libdir}/VirtualBox/components/VirtualBox_XPCOM.xpt
 %attr(755,root,root) %{_libdir}/VirtualBox/components/VBoxC.so
@@ -719,6 +747,10 @@ fi
 %defattr(644,root,root,755)
 %{_libdir}/VirtualBox/additions/VBoxGuestAdditions.iso
 
+%files guest
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/VBoxService
+
 %files -n pam-pam_vbox
 %defattr(644,root,root,755)
 %attr(755,root,root) /%{_lib}/security/pam_vbox.so
@@ -736,6 +768,7 @@ fi
 %attr(755,root,root) %{_libdir}/xorg/modules/drivers/vboxvideo_drv.so
 %attr(755,root,root) %{_libdir}/xorg/modules/dri/vboxvideo_dri.so
 # vboxvideo_dri.so deps
+%attr(755,root,root) %{_libdir}/VBoxOGLarrayspu.so
 %attr(755,root,root) %{_libdir}/VBoxOGLcrutil.so
 %attr(755,root,root) %{_libdir}/VBoxOGLerrorspu.so
 %attr(755,root,root) %{_libdir}/VBoxOGLfeedbackspu.so
