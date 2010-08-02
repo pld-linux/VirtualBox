@@ -50,6 +50,7 @@ Source6:	%{pname}-vboxsf.init
 Source7:	%{pname}-vboxnetadp.init
 Source8:	%{pname}.sh
 Source9:	mount.vdi
+Source10:	udev.rules
 Patch0:		%{pname}-configure.patch
 Patch1:		%{pname}-configure-spaces.patch
 Patch2:		%{pname}-export_modules.patch
@@ -398,12 +399,6 @@ Moduł jądra Linuksa dla VirtualBoksa OSE - sterownik obsługi DRM.
 %{__sed} -i -e 's,$VBOX_DOC_PATH,%{_docdir}/%{name}-%{version},' src/VBox/Installer/linux/virtualbox.desktop
 %{__sed} -i -e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/linux/virtualbox.desktop
 
-cat <<'EOF' > udev.conf
-KERNEL=="vboxdrv", GROUP="vbox", MODE="0660"
-KERNEL=="vboxguest", GROUP="vbox", MODE="0660"
-KERNEL=="vboxnetctl", GROUP="vbox", MODE="0660"
-EOF
-
 cp -a %{SOURCE1} .
 sed 's#@LIBDIR@#%{_libdir}#' < %{SOURCE8} > VirtualBox-wrapper.sh
 
@@ -485,7 +480,7 @@ mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLpackspu.so
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLpassthroughspu.so
 
 install -d $RPM_BUILD_ROOT/etc/udev/rules.d
-cp -a udev.conf $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
+cp -a %{SOURCE10} $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
 
 install -d $RPM_BUILD_ROOT/%{_lib}/security
 mv $RPM_BUILD_ROOT{%{_libdir}/VirtualBox/additions,/%{_lib}/security}/pam_vbox.so
