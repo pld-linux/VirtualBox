@@ -419,7 +419,7 @@ cd PLD-MODULE-BUILD
 ../src/VBox/Additions/linux/export_modules guest-modules.tar.gz
 tar -zxf guest-modules.tar.gz -C GuestDrivers
 
-../src/VBox/HostDrivers/linux/export_modules host-modules.tar.gz --without-hardening && \
+../src/VBox/HostDrivers/linux/export_modules host-modules.tar.gz --without-hardening
 tar -zxf host-modules.tar.gz -C HostDrivers
 cd -
 
