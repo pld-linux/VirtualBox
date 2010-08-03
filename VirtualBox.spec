@@ -414,11 +414,14 @@ Moduł jądra Linuksa dla VirtualBoksa OSE - sterownik obsługi DRM.
 cp -a %{SOURCE1} .
 sed 's#@LIBDIR@#%{_libdir}#' < %{SOURCE8} > VirtualBox-wrapper.sh
 
-rm -rf PLD-MODULE-BUILD && mkdir PLD-MODULE-BUILD && cd PLD-MODULE-BUILD
-../src/VBox/Additions/linux/export_modules modules.tar.gz
-	tar -zxf modules.tar.gz && rm -f modules.tar.gz
-../src/VBox/HostDrivers/linux/export_modules modules.tar.gz --without-hardening && \
-	tar -zxf modules.tar.gz && rm -f modules.tar.gz
+install -d PLD-MODULE-BUILD/{GuestDrivers,HostDrivers}
+cd PLD-MODULE-BUILD
+../src/VBox/Additions/linux/export_modules guest-modules.tar.gz
+tar -zxf guest-modules.tar.gz -C GuestDrivers
+
+../src/VBox/HostDrivers/linux/export_modules host-modules.tar.gz --without-hardening && \
+tar -zxf host-modules.tar.gz -C HostDrivers
+cd -
 
 %build
 %if %{with userspace}
@@ -433,15 +436,17 @@ kmk -j1 %{?with_verbose:KBUILD_VERBOSE=3} USER=$(id -un)
 %endif
 
 %if %{with kernel}
-cd PLD-MODULE-BUILD
+cd PLD-MODULE-BUILD/HostDrivers
+%build_kernel_modules -m vboxdrv -C vboxdrv
+%build_kernel_modules -m vboxnetadp -C vboxnetadp
+%build_kernel_modules -m vboxnetflt -C vboxnetflt
+
+cd ../GuestDrivers
 %build_kernel_modules -m vboxguest -C vboxguest
-%build_kernel_modules -m vboxdrv -C .vbox_modules/vboxdrv
-%build_kernel_modules -m vboxnetadp -C .vbox_modules/vboxnetadp
-%build_kernel_modules -m vboxnetflt -C .vbox_modules/vboxnetflt
 cp -a vboxguest/Module.symvers vboxsf
 %build_kernel_modules -m vboxsf -C vboxsf -c
 %build_kernel_modules -m vboxvideo -C vboxvideo_drm
-cd ..
+cd ../..
 %{__cc} %{rpmcflags} %{rpmldflags} -Wall -Werror src/VBox/Additions/linux/sharedfolders/mount.vboxsf.c -o mount.vboxsf
 %endif
 
@@ -532,12 +537,12 @@ install -p %{SOURCE4} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxguest
 install -p %{SOURCE5} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxnetflt
 install -p %{SOURCE6} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxsf
 install -p %{SOURCE7} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxnetadp
-%install_kernel_modules -m PLD-MODULE-BUILD/.vbox_modules/vboxdrv/vboxdrv -d misc
-%install_kernel_modules -m PLD-MODULE-BUILD/vboxguest/vboxguest -d misc
-%install_kernel_modules -m PLD-MODULE-BUILD/.vbox_modules/vboxnetadp/vboxnetadp -d misc
-%install_kernel_modules -m PLD-MODULE-BUILD/.vbox_modules/vboxnetflt/vboxnetflt -d misc
-%install_kernel_modules -m PLD-MODULE-BUILD/vboxsf/vboxsf -d misc
-%install_kernel_modules -m PLD-MODULE-BUILD/vboxvideo_drm/vboxvideo -d misc
+%install_kernel_modules -m PLD-MODULE-BUILD/HostDrivers/vboxdrv/vboxdrv -d misc
+%install_kernel_modules -m PLD-MODULE-BUILD/HostDrivers/vboxnetadp/vboxnetadp -d misc
+%install_kernel_modules -m PLD-MODULE-BUILD/HostDrivers/vboxnetflt/vboxnetflt -d misc
+%install_kernel_modules -m PLD-MODULE-BUILD/GuestDrivers/vboxguest/vboxguest -d misc
+%install_kernel_modules -m PLD-MODULE-BUILD/GuestDrivers/vboxsf/vboxsf -d misc
+%install_kernel_modules -m PLD-MODULE-BUILD/GuestDrivers/vboxvideo_drm/vboxvideo -d misc
 
 install -p mount.vboxsf $RPM_BUILD_ROOT%{_sbindir}/mount.vboxsf
 

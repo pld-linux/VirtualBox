@@ -16,26 +16,3 @@
  # Only temporary, omit from archive
  rm $PATH_TMP/version-generated.h
  
---- VirtualBox-3.1.2_OSE/src/VBox/HostDrivers/linux/export_modules.org	2010-01-12 13:08:56.187604615 +0100
-+++ VirtualBox-3.1.2_OSE/src/VBox/HostDrivers/linux/export_modules	2010-01-12 13:14:32.244857217 +0100
-@@ -90,6 +92,20 @@
-     sed -e "s;-DVBOX_WITH_HARDENING;;g" < $PATH_VBOXNET/linux/Makefile > $PATH_TMP/vboxnetflt/Makefile
- fi
- 
-+# vboxnetadp (VirtualBox host-only network kernel module)
-+mkdir $PATH_TMP/vboxnetadp || exit 1
-+for f in $VBOX_VBOXNETADP_SOURCES; do
-+    install -D -m 0644 `echo $f|cut -d'=' -f1` "$PATH_TMP/vboxnetadp/`echo $f|cut -d'>' -f2`"
-+done
-+sed -e "s;_VERSION_;$VBOX_VERSION_STRING;g" < $PATH_LINUX/build_in_tmp > $PATH_TMP/vboxnetadp/build_in_tmp
-+chmod 0755 $PATH_TMP/vboxnetadp/build_in_tmp
-+sed -e "s;_VERSION_;$VBOX_VERSION_STRING;g" < $PATH_VBOXADP/linux/dkms.conf > $PATH_TMP/vboxnetadp/dkms.conf
-+if [ -n "$VBOX_WITH_HARDENING" ]; then
-+    cat                                   $PATH_VBOXADP/linux/Makefile > $PATH_TMP/vboxnetadp/Makefile
-+else
-+    sed -e "s;-DVBOX_WITH_HARDENING;;g" < $PATH_VBOXADP/linux/Makefile > $PATH_TMP/vboxnetadp/Makefile
-+fi
-+
- install -D -m 0644 $PATH_LINUX/Makefile $PATH_TMP/Makefile
- 
- # Only temporary, omit from archive
