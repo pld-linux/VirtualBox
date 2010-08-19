@@ -27,7 +27,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		4
+%define		rel		5
 %define		pname		VirtualBox
 
 Summary:	VirtualBox OSE - x86 hardware virtualizer
@@ -176,14 +176,13 @@ konfigurację maszyny wirtualnej na inny komputer.
 %package udev
 Summary:	udev rules for VirtualBox OSE kernel modules
 Summary(pl.UTF-8):	Reguły udev dla modułów jądra Linuksa dla VirtualBoksa
-Release:	%{rel}
 Group:		Base/Kernel
 Requires:	udev-core
 
 %description udev
 udev rules for VirtualBox OSE kernel modules.
 
-You should install this package in your Host OS.
+You should install this package in your Host OS and in Guest OS.
 
 %description udev -l pl.UTF-8
 Reguły udev dla modułów jądra Linuksa dla VirtualBoksa.
@@ -203,8 +202,8 @@ You should install this package in your Host OS.
 %package guest
 Summary:	VirtualBox Guest Additions
 Group:		Base
-Requires:	kernel%{_alt_kernel}-misc-vboxsf = %{version}-%{release}
-Requires:	kernel%{_alt_kernel}-misc-vboxvideo = %{version}-%{release}
+Requires:	kernel%{_alt_kernel}-misc-vboxsf = %{version}-%{rel}@%{_kernel_ver_str}
+Requires:	kernel%{_alt_kernel}-misc-vboxvideo = %{version}-%{rel}@%{_kernel_ver_str}
 Requires:	xorg-driver-input-vboxmouse = %{version}-%{release}
 Requires:	xorg-driver-video-vboxvideo = %{version}-%{release}
 
