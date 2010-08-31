@@ -410,7 +410,6 @@ Moduł jądra Linuksa dla VirtualBoksa OSE - sterownik obsługi DRM.
 %patch4 -p1
 %patch5 -p1
 
-%{__sed} -i -e 's,#VBOX_WITH_VNC,VBOX_WITH_VNC,'
 %{__sed} -i -e 's,$VBOX_DOC_PATH,%{_docdir}/%{name}-%{version},' src/VBox/Installer/linux/virtualbox.desktop
 %{__sed} -i -e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/linux/virtualbox.desktop
 
