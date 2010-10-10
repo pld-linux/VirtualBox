@@ -27,7 +27,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		12
+%define		rel		13
 %define		pname		VirtualBox
 
 Summary:	VirtualBox OSE - x86 hardware virtualizer
