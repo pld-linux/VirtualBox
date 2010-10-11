@@ -761,6 +761,9 @@ fi
 
 %files guest
 %defattr(644,root,root,755)
+# NOTE: unfinished, should contain .desktop files for starting up mouse
+# integration and other desktop services
+# NOTE: the filelist is incopmplete too
 %attr(755,root,root) %{_bindir}/VBoxService
 
 %files -n pam-pam_vbox
