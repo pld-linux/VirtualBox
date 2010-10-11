@@ -203,8 +203,6 @@ You should install this package in your Host OS.
 %package guest
 Summary:	VirtualBox Guest Additions
 Group:		Base
-Requires:	kernel%{_alt_kernel}-misc-vboxsf = %{version}-%{rel}@%{_kernel_ver_str}
-Requires:	kernel%{_alt_kernel}-misc-vboxvideo = %{version}-%{rel}@%{_kernel_ver_str}
 Requires:	xorg-driver-input-vboxmouse = %{version}-%{release}
 Requires:	xorg-driver-video-vboxvideo = %{version}-%{release}
 
