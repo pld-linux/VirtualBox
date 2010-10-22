@@ -27,7 +27,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		2
+%define		rel		3
 %define		pname		VirtualBox
 
 Summary:	VirtualBox OSE - x86 hardware virtualizer
@@ -114,7 +114,7 @@ Requires(post,preun):	/sbin/chkconfig
 Requires(postun):	/usr/sbin/groupdel
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
-Requires:	QtCore >= 4.6.1
+Requires:	QtCore >= 4.7.0
 Suggests:	gxmessage
 Provides:	group(vbox)
 ExclusiveArch:	%{ix86} %{x8664}
