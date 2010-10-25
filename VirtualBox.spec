@@ -27,7 +27,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		3
+%define		rel		4
 %define		pname		VirtualBox
 
 Summary:	VirtualBox OSE - x86 hardware virtualizer
@@ -56,6 +56,7 @@ Patch1:		%{pname}-export_modules.patch
 Patch2:		%{pname}-VBoxSysInfo.patch
 Patch3:		%{pname}-warning_workaround.patch
 Patch4:		%{pname}-vnc.patch
+Patch5:		%{pname}-noorigin.patch
 URL:		http://www.virtualbox.org/
 BuildRequires:	rpmbuild(macros) >= 1.535
 %if %{with userspace}
@@ -407,6 +408,7 @@ Moduł jądra Linuksa dla VirtualBoksa OSE - sterownik obsługi DRM.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p0
 
 %{__sed} -i -e 's,$VBOX_DOC_PATH,%{_docdir}/%{name}-%{version},' src/VBox/Installer/linux/virtualbox.desktop
 %{__sed} -i -e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/linux/virtualbox.desktop
