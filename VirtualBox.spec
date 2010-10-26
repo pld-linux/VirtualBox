@@ -27,7 +27,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		4
+%define		rel		5
 %define		pname		VirtualBox
 
 Summary:	VirtualBox OSE - x86 hardware virtualizer
@@ -57,6 +57,7 @@ Patch2:		%{pname}-VBoxSysInfo.patch
 Patch3:		%{pname}-warning_workaround.patch
 Patch4:		%{pname}-vnc.patch
 Patch5:		%{pname}-noorigin.patch
+Patch6:		%{pname}-dri.patch
 URL:		http://www.virtualbox.org/
 BuildRequires:	rpmbuild(macros) >= 1.535
 %if %{with userspace}
@@ -410,6 +411,7 @@ Moduł jądra Linuksa dla VirtualBoksa OSE - sterownik obsługi DRM.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p0
+%patch6 -p1
 
 %{__sed} -i -e 's,$VBOX_DOC_PATH,%{_docdir}/%{name}-%{version},' src/VBox/Installer/linux/virtualbox.desktop
 %{__sed} -i -e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/linux/virtualbox.desktop
@@ -499,9 +501,6 @@ mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLerrorspu.so
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLfeedbackspu.so
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLpackspu.so
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLpassthroughspu.so
-
-install -d $RPM_BUILD_ROOT/usr/lib/dri
-ln -s %{_libdir}/xorg/modules/dri/swrast_dri.so $RPM_BUILD_ROOT/usr/lib/dri/swrast_dri.so
 
 install -d $RPM_BUILD_ROOT/etc/udev/rules.d
 cp -a %{SOURCE10} $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
@@ -795,7 +794,6 @@ fi
 %attr(755,root,root) %{_libdir}/VBoxOGLfeedbackspu.so
 %attr(755,root,root) %{_libdir}/VBoxOGLpackspu.so
 %attr(755,root,root) %{_libdir}/VBoxOGLpassthroughspu.so
-/usr/lib/dri
 %endif
 
 %if %{with kernel}

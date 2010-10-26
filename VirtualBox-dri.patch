@@ -1,0 +1,16 @@
+--- VirtualBox-3.2.10_OSE/src/VBox/Additions/common/crOpenGL/fakedri_drv.c~	2010-10-08 22:09:04.000000000 +0200
++++ VirtualBox-3.2.10_OSE/src/VBox/Additions/common/crOpenGL/fakedri_drv.c	2010-10-26 18:51:52.394244805 +0200
+@@ -37,10 +37,10 @@
+ 
+ //@todo this could be different...
+ #ifdef RT_ARCH_AMD64
+-# define DRI_DEFAULT_DRIVER_DIR "/usr/lib64/dri:/usr/lib/dri"
+-# define DRI_XORG_DRV_DIR "/usr/lib/xorg/modules/drivers/"
++# define DRI_DEFAULT_DRIVER_DIR "/usr/lib64/xorg/modules/dri:/usr/lib/xorg/modules/dri"
++# define DRI_XORG_DRV_DIR "/usr/lib64/xorg/modules/drivers/"
+ #else
+-# define DRI_DEFAULT_DRIVER_DIR "/usr/lib/dri"
++# define DRI_DEFAULT_DRIVER_DIR "/usr/lib/xorg/modules/dri"
+ # define DRI_XORG_DRV_DIR "/usr/lib/xorg/modules/drivers/"
+ #endif
+ 
