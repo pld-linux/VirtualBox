@@ -246,6 +246,7 @@ Sterownik myszy dla systemu gościa w VirtualBoksie.
 Summary:	X.org video driver for VirtualBox OSE guest OS
 Summary(pl.UTF-8):	Sterownik grafiki dla systemu gościa w VirtualBoksie OSE
 Group:		X11/Applications
+Requires:	Mesa-dri-driver-swrast
 Requires:	xorg-xserver-libdri >= 1.7.4
 Requires:	xorg-xserver-server >= 1.0.99.901
 %if "%{pld_release}" == "ti"
@@ -498,6 +499,9 @@ mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLerrorspu.so
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLfeedbackspu.so
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLpackspu.so
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLpassthroughspu.so
+
+install -d $RPM_BUILD_ROOT/usr/lib/dri
+ln -s %{_libdir}/xorg/modules/dri/swrast_dri.so $RPM_BUILD_ROOT/usr/lib/dri/swrast_dri.so
 
 install -d $RPM_BUILD_ROOT/etc/udev/rules.d
 cp -a %{SOURCE10} $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
@@ -791,6 +795,7 @@ fi
 %attr(755,root,root) %{_libdir}/VBoxOGLfeedbackspu.so
 %attr(755,root,root) %{_libdir}/VBoxOGLpackspu.so
 %attr(755,root,root) %{_libdir}/VBoxOGLpassthroughspu.so
+/usr/lib/dri
 %endif
 
 %if %{with kernel}
