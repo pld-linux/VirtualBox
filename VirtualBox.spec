@@ -27,7 +27,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		8
+%define		rel		9
 %define		pname		VirtualBox
 
 Summary:	VirtualBox OSE - x86 hardware virtualizer
@@ -231,7 +231,7 @@ Summary(pl.UTF-8):	Sterownik myszy dla systemu gościa w VirtualBoksie OSE
 Group:		X11/Applications
 Requires:	xorg-xserver-server >= 1.0.99.901
 %if "%{pld_release}" == "ti"
-Requires:	xorg-xserver-server(xinput-abi) <= 7.0
+Requires:	xorg-xserver-server(xinput-abi) <= 11.0
 %else
 Requires:	xorg-xserver-server(xinput-abi) <= 11.0
 %endif
@@ -251,7 +251,7 @@ Requires:	Mesa-dri-driver-swrast
 Requires:	xorg-xserver-libdri >= 1.7.4
 Requires:	xorg-xserver-server >= 1.0.99.901
 %if "%{pld_release}" == "ti"
-Requires:	xorg-xserver-server(videodrv-abi) <= 6.0
+Requires:	xorg-xserver-server(videodrv-abi) <= 8.0
 %else
 Requires:	xorg-xserver-server(videodrv-abi) <= 8.0
 %endif
