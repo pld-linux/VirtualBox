@@ -483,8 +483,8 @@ mv $RPM_BUILD_ROOT{%{_libdir}/%{pname},%{_pixmapsdir}}/VBox.png
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname},%{_desktopdir}}/virtualbox.desktop
 
 %if "%{pld_release}" == "ti"
-mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/vboxmouse_drv_17.so,%{_libdir}/xorg/modules/input/vboxmouse_drv.so}
-mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/vboxvideo_drv_17.so,%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so}
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/vboxmouse_drv_19.so,%{_libdir}/xorg/modules/input/vboxmouse_drv.so}
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/vboxvideo_drv_19.so,%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so}
 %else
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/vboxmouse_drv_19.so,%{_libdir}/xorg/modules/input/vboxmouse_drv.so}
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/vboxvideo_drv_19.so,%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so}
