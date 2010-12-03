@@ -27,22 +27,22 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		12
+%define		rel		1
 %define		pname		VirtualBox
 
 Summary:	VirtualBox OSE - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox OSE - wirtualizator sprzętu x86
 Name:		%{pname}%{_alt_kernel}
-Version:	3.2.10
+Version:	3.2.12
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}-OSE.tar.bz2
-# Source0-md5:	5aad764cd4e886f9d80d7bde42163c7a
+# Source0-md5:	4ba1d6c960691f60d1cbfc19c98294d6
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/UserManual.pdf
-# Source1-md5:	370bb3e893acffa584536c8f9e966c79
+# Source1-md5:	d7f8685fe5fd84757b33d46e6f0b6bc5
 Source2:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source2-md5:	4fde0f279854334b84c01972fbed2874
+# Source2-md5:	2f670cc8d4f85ff92257252f8de4d7c1
 Source3:	%{pname}-vboxdrv.init
 Source4:	%{pname}-vboxguest.init
 Source5:	%{pname}-vboxnetflt.init
@@ -56,8 +56,7 @@ Patch1:		%{pname}-export_modules.patch
 Patch2:		%{pname}-VBoxSysInfo.patch
 Patch3:		%{pname}-warning_workaround.patch
 Patch4:		%{pname}-vnc.patch
-Patch5:		%{pname}-noorigin.patch
-Patch6:		%{pname}-dri.patch
+Patch5:		%{pname}-dri.patch
 URL:		http://www.virtualbox.org/
 BuildRequires:	rpmbuild(macros) >= 1.535
 %if %{with userspace}
@@ -410,8 +409,7 @@ Moduł jądra Linuksa dla VirtualBoksa OSE - sterownik obsługi DRM.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p0
-%patch6 -p1
+%patch5 -p1
 
 %{__sed} -i -e 's,$VBOX_DOC_PATH,%{_docdir}/%{name}-%{version},' src/VBox/Installer/linux/virtualbox.desktop
 %{__sed} -i -e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/linux/virtualbox.desktop
