@@ -1,4 +1,0 @@
-# udev rules for VirtualBox OSE
-KERNEL=="vboxdrv",    GROUP="vbox", MODE="0660"
-KERNEL=="vboxguest",  GROUP="vbox", MODE="0660"
-KERNEL=="vboxnetctl", GROUP="vbox", MODE="0660"
