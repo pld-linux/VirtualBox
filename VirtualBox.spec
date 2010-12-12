@@ -781,10 +781,6 @@ fi
 %files additions
 %defattr(644,root,root,755)
 %{_libdir}/VirtualBox/additions/VBoxGuestAdditions.iso
-%attr(755,root,root) %{_libdir}/VirtualBox/additions/autorun.sh
-%attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxadd
-%attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxadd-service
-%attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxadd-x11
 
 %files guest
 %defattr(644,root,root,755)
@@ -792,6 +788,11 @@ fi
 # integration and other desktop services
 # NOTE: the filelist is incopmplete too
 %attr(755,root,root) %{_bindir}/VBoxService
+
+%attr(755,root,root) %{_libdir}/VirtualBox/additions/autorun.sh
+%attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxadd
+%attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxadd-service
+%attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxadd-x11
 
 %files -n pam-pam_vbox
 %defattr(644,root,root,755)
