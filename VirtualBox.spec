@@ -28,7 +28,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		0.2
+%define		rel		1
 %define		pre		BETA2
 %define		pname		VirtualBox
 
