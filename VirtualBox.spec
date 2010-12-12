@@ -28,7 +28,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		0.1
+%define		rel		0.2
 %define		pre		BETA2
 %define		pname		VirtualBox
 
@@ -467,8 +467,8 @@ cd ../..
 rm -rf $RPM_BUILD_ROOT
 
 %if %{with userspace}
-install -d \
-	$RPM_BUILD_ROOT{%{_bindir},%{_sbindir},%{_libdir},%{_pixmapsdir},%{_desktopdir}} \
+install -d $RPM_BUILD_ROOT{%{_bindir},%{_sbindir},%{_libdir}/%{pname}/ExtensionPacks} \
+	$RPM_BUILD_ROOT{%{_pixmapsdir},%{_desktopdir}} \
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/{drivers,dri,input}
 
 # test if we can hardlink -- %{_builddir} and $RPM_BUILD_ROOT on same partition
@@ -477,7 +477,7 @@ if cp -al VBox.png $RPM_BUILD_ROOT/Vbox.png 2>/dev/null; then
 	rm -f $RPM_BUILD_ROOT/VBox.png
 fi
 
-cp -a$l %{outdir} $RPM_BUILD_ROOT%{_libdir}/%{pname}
+cp -a$l %{outdir}/* $RPM_BUILD_ROOT%{_libdir}/%{pname}
 
 cp -a %{SOURCE2} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/additions/VBoxGuestAdditions.iso
 install -p %{SOURCE9} $RPM_BUILD_ROOT%{_sbindir}/mount.vdi
@@ -669,8 +669,10 @@ fi
 %defattr(644,root,root,755)
 %doc UserManual.pdf
 %dir %{_libdir}/VirtualBox
+%dir %{_libdir}/VirtualBox/ExtensionPacks
 %dir %{_libdir}/VirtualBox/additions
 %dir %{_libdir}/VirtualBox/components
+%dir %{_libdir}/VirtualBox/icons
 %dir %{_libdir}/VirtualBox/nls
 %attr(755,root,root) %{_bindir}/VBoxBFE
 %attr(755,root,root) %{_bindir}/VBoxHeadless
