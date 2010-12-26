@@ -664,7 +664,12 @@ fi
 %if %{with userspace}
 %files
 %defattr(644,root,root,755)
+%ifarch %{x8664}
 %doc out/linux.amd64/release/bin/UserManual.pdf
+%endif
+%ifarch	%{ix86}
+%doc out/linux.x86/release/bin/UserManual.pdf
+%endif
 %dir %{_libdir}/VirtualBox
 %dir %{_libdir}/VirtualBox/ExtensionPacks
 %dir %{_libdir}/VirtualBox/additions
