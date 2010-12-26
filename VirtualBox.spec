@@ -460,7 +460,7 @@ cp -a vboxguest/Module.symvers vboxsf
 %build_kernel_modules -m vboxsf -C vboxsf -c
 %build_kernel_modules -m vboxvideo -C vboxvideo_drm
 cd ../..
-%{__cc} %{rpmcflags} %{rpmldflags} -Wall -Werror src/VBox/Additions/linux/sharedfolders/mount.vboxsf.c -o mount.vboxsf
+%{__cc} %{rpmcflags} %{rpmldflags} -Wall -Werror src/VBox/Additions/linux/sharedfolders/{mount.vboxsf.c,vbsfmount.c} -o mount.vboxsf
 %endif
 
 %install
