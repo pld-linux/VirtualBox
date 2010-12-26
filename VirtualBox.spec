@@ -97,6 +97,7 @@ BuildRequires:	libvncserver-devel
 BuildRequires:	libxml2-devel >= 2.6.26
 BuildRequires:	libxslt-devel >= 1.1.17
 BuildRequires:	libxslt-progs >= 1.1.17
+BuildRequires:	mkisofs
 BuildRequires:	makeself
 BuildRequires:	pam-devel
 BuildRequires:	pkgconfig
