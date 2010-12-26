@@ -28,23 +28,22 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		1
-%define		pre		BETA2
+%define		rel		0.1
 %define		pname		VirtualBox
 
 Summary:	VirtualBox OSE - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox OSE - wirtualizator sprzętu x86
 Name:		%{pname}%{_alt_kernel}
 Version:	4.0.0
-Release:	0.%{pre}.%{rel}
+Release:	%{rel}
 License:	GPL v2
 Group:		Applications/Emulators
-Source0:	http://download.virtualbox.org/virtualbox/%{version}_%{pre}/%{pname}-%{version}_%{pre}-OSE.tar.bz2
-# Source0-md5:	f98a5d3b838f519b0e39afed05cde08b
-Source1:	http://download.virtualbox.org/virtualbox/%{version}_%{pre}/UserManual.pdf
-# Source1-md5:	ead79ebb6409760ce69ca23a4593b1b7
-Source2:	http://download.virtualbox.org/virtualbox/%{version}_%{pre}/VBoxGuestAdditions_%{version}_%{pre}.iso
-# Source2-md5:	07e2c6e15ac309907ac94e2c17d4037f
+Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
+# Source0-md5:	0d8c3d2cb4924140b602bfc115c5801f
+Source1:	http://download.virtualbox.org/virtualbox/%{version}/UserManual.pdf
+# Source1-md5:	349a694ce09f6ae945ce19e683673362
+Source2:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
+# Source2-md5:	89957a63bdd79e15e0b1b8df35acc635
 Source3:	%{pname}-vboxdrv.init
 Source4:	%{pname}-vboxguest.init
 Source5:	%{pname}-vboxnetflt.init
@@ -419,8 +418,8 @@ Moduł jądra Linuksa dla VirtualBoksa OSE - sterownik obsługi DRM.
 %patch4 -p1
 %patch5 -p1
 
-%{__sed} -i -e 's,$VBOX_DOC_PATH,%{_docdir}/%{name}-%{version},' src/VBox/Installer/linux/virtualbox.desktop
-%{__sed} -i -e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/linux/virtualbox.desktop
+%{__sed} -i -e 's,@VBOX_DOC_PATH@,%{_docdir}/%{name}-%{version},' \
+	-e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/common/virtualbox.desktop.in
 
 cp -a %{SOURCE1} .
 sed 's#@LIBDIR@#%{_libdir}#' < %{SOURCE8} > VirtualBox-wrapper.sh
