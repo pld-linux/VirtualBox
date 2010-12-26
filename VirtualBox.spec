@@ -41,7 +41,7 @@ Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
 # Source0-md5:	0d8c3d2cb4924140b602bfc115c5801f
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/UserManual.pdf
-# Source1-md5:	349a694ce09f6ae945ce19e683673362
+# Source1-md5:	975cc79cdc9c9843284a71e43670266e
 Source2:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
 # Source2-md5:	89957a63bdd79e15e0b1b8df35acc635
 Source3:	%{pname}-vboxdrv.init
