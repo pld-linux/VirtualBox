@@ -40,10 +40,8 @@ License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
 # Source0-md5:	0d8c3d2cb4924140b602bfc115c5801f
-Source1:	http://download.virtualbox.org/virtualbox/%{version}/UserManual.pdf
-# Source1-md5:	975cc79cdc9c9843284a71e43670266e
-Source2:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source2-md5:	89957a63bdd79e15e0b1b8df35acc635
+Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
+# Source1-md5:	89957a63bdd79e15e0b1b8df35acc635
 Source3:	%{pname}-vboxdrv.init
 Source4:	%{pname}-vboxguest.init
 Source5:	%{pname}-vboxnetflt.init
@@ -422,7 +420,6 @@ Moduł jądra Linuksa dla VirtualBoksa OSE - sterownik obsługi DRM.
 %{__sed} -i -e 's,@VBOX_DOC_PATH@,%{_docdir}/%{name}-%{version},' \
 	-e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/common/virtualbox.desktop.in
 
-cp -a %{SOURCE1} .
 sed 's#@LIBDIR@#%{_libdir}#' < %{SOURCE8} > VirtualBox-wrapper.sh
 
 install -d PLD-MODULE-BUILD/{GuestDrivers,HostDrivers}
@@ -479,7 +476,7 @@ fi
 
 cp -a$l %{outdir}/* $RPM_BUILD_ROOT%{_libdir}/%{pname}
 
-cp -a %{SOURCE2} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/additions/VBoxGuestAdditions.iso
+cp -a %{SOURCE1} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/additions/VBoxGuestAdditions.iso
 install -p %{SOURCE9} $RPM_BUILD_ROOT%{_sbindir}/mount.vdi
 install -p VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_libdir}/%{pname}
 for f in {VBox{BFE,Headless,Manage,SDL,SVC,Tunctl,XPCOMIPCD},VirtualBox}; do
@@ -667,7 +664,7 @@ fi
 %if %{with userspace}
 %files
 %defattr(644,root,root,755)
-%doc UserManual.pdf
+%doc out/linux.amd64/release/bin/UserManual.pdf
 %dir %{_libdir}/VirtualBox
 %dir %{_libdir}/VirtualBox/ExtensionPacks
 %dir %{_libdir}/VirtualBox/additions
