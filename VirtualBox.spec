@@ -1,5 +1,6 @@
 #
-# TODO:
+# TODO
+# - java bindings
 # - Find how to compile with PLD CFLAGS/CXXFLAGS/LDFLAGS.
 # - Package SDK.
 # - Package utils (and write initscripts ?) for Guest OS.
@@ -27,22 +28,20 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		3
+%define		rel		0.1
 %define		pname		VirtualBox
 
 Summary:	VirtualBox OSE - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox OSE - wirtualizator sprzętu x86
 Name:		%{pname}%{_alt_kernel}
-Version:	3.2.12
+Version:	4.0.0
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/Emulators
-Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}-OSE.tar.bz2
-# Source0-md5:	4ba1d6c960691f60d1cbfc19c98294d6
-Source1:	http://download.virtualbox.org/virtualbox/%{version}/UserManual.pdf
-# Source1-md5:	d7f8685fe5fd84757b33d46e6f0b6bc5
-Source2:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source2-md5:	2f670cc8d4f85ff92257252f8de4d7c1
+Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
+# Source0-md5:	0d8c3d2cb4924140b602bfc115c5801f
+Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
+# Source1-md5:	89957a63bdd79e15e0b1b8df35acc635
 Source3:	%{pname}-vboxdrv.init
 Source4:	%{pname}-vboxguest.init
 Source5:	%{pname}-vboxnetflt.init
@@ -84,6 +83,7 @@ BuildRequires:	bash
 BuildRequires:	bcc
 BuildRequires:	bin86
 BuildRequires:	curl-devel
+BuildRequires:	docbook-dtd44-xml
 BuildRequires:	gcc >= 5:3.2.3
 BuildRequires:	libIDL-devel
 BuildRequires:	libcap-static
@@ -95,6 +95,8 @@ BuildRequires:	libvncserver-devel
 BuildRequires:	libxml2-devel >= 2.6.26
 BuildRequires:	libxslt-devel >= 1.1.17
 BuildRequires:	libxslt-progs >= 1.1.17
+BuildRequires:	mkisofs
+BuildRequires:	makeself
 BuildRequires:	pam-devel
 BuildRequires:	pkgconfig
 BuildRequires:	pulseaudio-devel >= 0.9.0
@@ -103,6 +105,10 @@ BuildRequires:	python-modules
 BuildRequires:	qt4-build >= 4.2.0
 BuildRequires:	qt4-linguist
 BuildRequires:	sed >= 4.0
+BuildRequires:	texlive-fonts-bitstream
+BuildRequires:	texlive-fonts-other
+BuildRequires:	texlive-fonts-type1-bitstream
+BuildRequires:	texlive-format-pdflatex
 BuildRequires:	which
 BuildRequires:	xalan-c-devel >= 1.10.0
 BuildRequires:	xerces-c-devel >= 2.6.0
@@ -411,10 +417,9 @@ Moduł jądra Linuksa dla VirtualBoksa OSE - sterownik obsługi DRM.
 %patch4 -p1
 %patch5 -p1
 
-%{__sed} -i -e 's,$VBOX_DOC_PATH,%{_docdir}/%{name}-%{version},' src/VBox/Installer/linux/virtualbox.desktop
-%{__sed} -i -e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/linux/virtualbox.desktop
+%{__sed} -i -e 's,@VBOX_DOC_PATH@,%{_docdir}/%{name}-%{version},' \
+	-e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/common/virtualbox.desktop.in
 
-cp -a %{SOURCE1} .
 sed 's#@LIBDIR@#%{_libdir}#' < %{SOURCE8} > VirtualBox-wrapper.sh
 
 install -d PLD-MODULE-BUILD/{GuestDrivers,HostDrivers}
@@ -432,6 +437,7 @@ echo "VBOX_WITH_TESTCASES := " > LocalConfig.kmk
 ./configure \
 	--with-gcc="%{__cc}" \
 	--with-g++="%{__cxx}" \
+	--disable-java \
 	--disable-hardening \
 	--disable-kmods
 
@@ -451,15 +457,15 @@ cp -a vboxguest/Module.symvers vboxsf
 %build_kernel_modules -m vboxsf -C vboxsf -c
 %build_kernel_modules -m vboxvideo -C vboxvideo_drm
 cd ../..
-%{__cc} %{rpmcflags} %{rpmldflags} -Wall -Werror src/VBox/Additions/linux/sharedfolders/mount.vboxsf.c -o mount.vboxsf
+%{__cc} %{rpmcflags} %{rpmldflags} -Wall -Werror src/VBox/Additions/linux/sharedfolders/{mount.vboxsf.c,vbsfmount.c} -o mount.vboxsf
 %endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
 %if %{with userspace}
-install -d \
-	$RPM_BUILD_ROOT{%{_bindir},%{_sbindir},%{_libdir},%{_pixmapsdir},%{_desktopdir}} \
+install -d $RPM_BUILD_ROOT{%{_bindir},%{_sbindir},%{_libdir}/%{pname}/ExtensionPacks} \
+	$RPM_BUILD_ROOT{%{_pixmapsdir},%{_desktopdir}} \
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/{drivers,dri,input}
 
 # test if we can hardlink -- %{_builddir} and $RPM_BUILD_ROOT on same partition
@@ -468,9 +474,9 @@ if cp -al VBox.png $RPM_BUILD_ROOT/Vbox.png 2>/dev/null; then
 	rm -f $RPM_BUILD_ROOT/VBox.png
 fi
 
-cp -a$l %{outdir} $RPM_BUILD_ROOT%{_libdir}/%{pname}
+cp -a$l %{outdir}/* $RPM_BUILD_ROOT%{_libdir}/%{pname}
 
-cp -a %{SOURCE2} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/additions/VBoxGuestAdditions.iso
+cp -a %{SOURCE1} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/additions/VBoxGuestAdditions.iso
 install -p %{SOURCE9} $RPM_BUILD_ROOT%{_sbindir}/mount.vdi
 install -p VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_libdir}/%{pname}
 for f in {VBox{BFE,Headless,Manage,SDL,SVC,Tunctl,XPCOMIPCD},VirtualBox}; do
@@ -658,10 +664,17 @@ fi
 %if %{with userspace}
 %files
 %defattr(644,root,root,755)
-%doc UserManual.pdf
+%ifarch %{x8664}
+%doc out/linux.amd64/release/bin/UserManual.pdf
+%endif
+%ifarch	%{ix86}
+%doc out/linux.x86/release/bin/UserManual.pdf
+%endif
 %dir %{_libdir}/VirtualBox
+%dir %{_libdir}/VirtualBox/ExtensionPacks
 %dir %{_libdir}/VirtualBox/additions
 %dir %{_libdir}/VirtualBox/components
+%dir %{_libdir}/VirtualBox/icons
 %dir %{_libdir}/VirtualBox/nls
 %attr(755,root,root) %{_bindir}/VBoxBFE
 %attr(755,root,root) %{_bindir}/VBoxHeadless
@@ -672,20 +685,21 @@ fi
 %attr(755,root,root) %{_bindir}/VBoxXPCOMIPCD
 %attr(755,root,root) %{_bindir}/VirtualBox
 %attr(755,root,root) %{_sbindir}/mount.vdi
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxSVC
+%attr(755,root,root) %{_libdir}/VirtualBox/DBGCPlugInDiggers.so
+%attr(755,root,root) %{_libdir}/VirtualBox/VBoxAuth.so
+%attr(755,root,root) %{_libdir}/VirtualBox/VBoxAuthSimple.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxBFE
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxHeadless
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxManage
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxSDL
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxTestOGL
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxTunctl
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxXPCOMIPCD
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxDD.so
+%attr(755,root,root) %{_libdir}/VirtualBox/VBoxCreateUSBNode.sh
+%attr(755,root,root) %{_libdir}/VirtualBox/VBoxDbg.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxDD2.so
+%attr(755,root,root) %{_libdir}/VirtualBox/VBoxDD.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxDDU.so
+%attr(755,root,root) %{_libdir}/VirtualBox/VBoxExtPackHelperApp
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxGuestControlSvc.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxGuestPropSvc.so
+%attr(755,root,root) %{_libdir}/VirtualBox/VBoxHeadless
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxKeyboard.so
+%attr(755,root,root) %{_libdir}/VirtualBox/VBoxManage
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxNetAdpCtl
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxNetDHCP
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxOGLhostcrutil.so
@@ -698,15 +712,20 @@ fi
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxREM64.so
 %endif
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxRT.so
+%attr(755,root,root) %{_libdir}/VirtualBox/VBoxSDL
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxSharedClipboard.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxSharedCrOpenGL.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxSharedFolders.so
+%attr(755,root,root) %{_libdir}/VirtualBox/VBoxSVC
+%attr(755,root,root) %{_libdir}/VirtualBox/VBoxSysInfo.sh
+%attr(755,root,root) %{_libdir}/VirtualBox/VBoxTestOGL
+%attr(755,root,root) %{_libdir}/VirtualBox/VBoxTunctl
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxVMM.so
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxXPCOM.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxXPCOMC.so
+%attr(755,root,root) %{_libdir}/VirtualBox/VBoxXPCOMIPCD
+%attr(755,root,root) %{_libdir}/VirtualBox/VBoxXPCOM.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VirtualBox
 %attr(755,root,root) %{_libdir}/VirtualBox/VirtualBox-wrapper.sh
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxSysInfo.sh
 %{_libdir}/VirtualBox/VBoxDD2GC.gc
 %{_libdir}/VirtualBox/VBoxDDGC.gc
 %{_libdir}/VirtualBox/VMMGC.gc
@@ -757,6 +776,11 @@ fi
 %lang(zh_TW) %{_libdir}/VirtualBox/nls/*_zh_TW.qm
 %{_pixmapsdir}/VBox.png
 %{_desktopdir}/*.desktop
+%{_libdir}/VirtualBox/icons/*/virtualbox-ova.png
+%{_libdir}/VirtualBox/icons/*/virtualbox-ovf.png
+%{_libdir}/VirtualBox/icons/*/virtualbox-vbox-extpack.png
+%{_libdir}/VirtualBox/icons/*/virtualbox-vbox.png
+%{_libdir}/VirtualBox/virtualbox.xml
 
 %files additions
 %defattr(644,root,root,755)
@@ -768,6 +792,11 @@ fi
 # integration and other desktop services
 # NOTE: the filelist is incopmplete too
 %attr(755,root,root) %{_bindir}/VBoxService
+
+%attr(755,root,root) %{_libdir}/VirtualBox/additions/autorun.sh
+%attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxadd
+%attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxadd-service
+%attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxadd-x11
 
 %files -n pam-pam_vbox
 %defattr(644,root,root,755)

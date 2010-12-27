@@ -6,6 +6,6 @@
  # Enable the VNC server in VBoxHeadless (GPL only).
 -#VBOX_WITH_VNC = 1
 +VBOX_WITH_VNC = 1
+ # Enable S3 support (requires libcurl)
+ VBOX_WITH_S3 = 1
  ## @}
- 
- 
