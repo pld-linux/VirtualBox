@@ -8,6 +8,7 @@
 #   If so check if it is distributable.
 #
 # Conditional build:
+%bcond_without	doc		# don't build the documentation
 %bcond_without	dist_kernel	# without distribution kernel
 %bcond_without	kernel		# don't build kernel module
 %bcond_without	userspace	# don't build userspace package
@@ -83,7 +84,7 @@ BuildRequires:	bash
 BuildRequires:	bcc
 BuildRequires:	bin86
 BuildRequires:	curl-devel
-BuildRequires:	docbook-dtd44-xml
+%{?with_doc:BuildRequires:	docbook-dtd44-xml}
 BuildRequires:	gcc >= 5:3.2.3
 BuildRequires:	libIDL-devel
 BuildRequires:	libcap-static
@@ -105,10 +106,12 @@ BuildRequires:	python-modules
 BuildRequires:	qt4-build >= 4.2.0
 BuildRequires:	qt4-linguist
 BuildRequires:	sed >= 4.0
+%if %{with doc}
 BuildRequires:	texlive-fonts-bitstream
 BuildRequires:	texlive-fonts-other
 BuildRequires:	texlive-fonts-type1-bitstream
 BuildRequires:	texlive-format-pdflatex
+%endif
 BuildRequires:	which
 BuildRequires:	xalan-c-devel >= 1.10.0
 BuildRequires:	xerces-c-devel >= 2.6.0
@@ -235,11 +238,7 @@ Summary:	X.org mouse driver for VirtualBox OSE guest OS
 Summary(pl.UTF-8):	Sterownik myszy dla systemu gościa w VirtualBoksie OSE
 Group:		X11/Applications
 Requires:	xorg-xserver-server >= 1.0.99.901
-%if "%{pld_release}" == "ti"
 Requires:	xorg-xserver-server(xinput-abi) <= 11.0
-%else
-Requires:	xorg-xserver-server(xinput-abi) <= 11.0
-%endif
 Requires:	xorg-xserver-server(xinput-abi) >= 4.0
 
 %description -n xorg-driver-input-vboxmouse
@@ -255,11 +254,7 @@ Group:		X11/Applications
 Requires:	Mesa-dri-driver-swrast
 Requires:	xorg-xserver-libdri >= 1.7.4
 Requires:	xorg-xserver-server >= 1.0.99.901
-%if "%{pld_release}" == "ti"
 Requires:	xorg-xserver-server(videodrv-abi) <= 8.0
-%else
-Requires:	xorg-xserver-server(videodrv-abi) <= 8.0
-%endif
 Requires:	xorg-xserver-server(videodrv-abi) >= 2.0
 
 %description -n xorg-driver-video-vboxvideo
@@ -437,6 +432,7 @@ echo "VBOX_WITH_TESTCASES := " > LocalConfig.kmk
 ./configure \
 	--with-gcc="%{__cc}" \
 	--with-g++="%{__cxx}" \
+	%{!?with_doc:--disable-docs} \
 	--disable-java \
 	--disable-hardening \
 	--disable-kmods
@@ -486,13 +482,8 @@ done
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname},%{_pixmapsdir}}/VBox.png
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname},%{_desktopdir}}/virtualbox.desktop
 
-%if "%{pld_release}" == "ti"
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/vboxmouse_drv_19.so,%{_libdir}/xorg/modules/input/vboxmouse_drv.so}
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/vboxvideo_drv_19.so,%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so}
-%else
-mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/vboxmouse_drv_19.so,%{_libdir}/xorg/modules/input/vboxmouse_drv.so}
-mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/vboxvideo_drv_19.so,%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so}
-%endif
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/VBoxOGL.so,%{_libdir}/xorg/modules/dri/vboxvideo_dri.so}
 # xorg other driver versions
 rm -vf $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/vboxmouse_drv*.{o,so}
@@ -664,7 +655,7 @@ fi
 %if %{with userspace}
 %files
 %defattr(644,root,root,755)
-%doc %{outdir}/UserManual.pdf
+%{?with_doc:%doc %{outdir}/UserManual.pdf}
 %dir %{_libdir}/VirtualBox
 %dir %{_libdir}/VirtualBox/ExtensionPacks
 %dir %{_libdir}/VirtualBox/additions
