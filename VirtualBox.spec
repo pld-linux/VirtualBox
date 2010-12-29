@@ -29,7 +29,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		2
+%define		rel		2.1
 %define		pname		VirtualBox
 
 Summary:	VirtualBox OSE - x86 hardware virtualizer
@@ -57,6 +57,7 @@ Patch2:		%{pname}-VBoxSysInfo.patch
 Patch3:		%{pname}-warning_workaround.patch
 Patch4:		%{pname}-vnc.patch
 Patch5:		%{pname}-dri.patch
+Patch6:		%{pname}-vboxnetflt-no-qdisc.patch
 URL:		http://www.virtualbox.org/
 BuildRequires:	rpmbuild(macros) >= 1.535
 %if %{with userspace}
@@ -425,6 +426,7 @@ tar -zxf guest-modules.tar.gz -C GuestDrivers
 ../src/VBox/HostDrivers/linux/export_modules host-modules.tar.gz --without-hardening
 tar -zxf host-modules.tar.gz -C HostDrivers
 cd -
+%patch6 -p1
 
 %build
 %if %{with userspace}
