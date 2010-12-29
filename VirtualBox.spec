@@ -29,7 +29,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		1
+%define		rel		2
 %define		pname		VirtualBox
 
 Summary:	VirtualBox OSE - x86 hardware virtualizer
@@ -661,6 +661,7 @@ fi
 %dir %{_libdir}/VirtualBox/additions
 %dir %{_libdir}/VirtualBox/components
 %dir %{_libdir}/VirtualBox/icons
+%dir %{_libdir}/VirtualBox/icons/*x*
 %dir %{_libdir}/VirtualBox/nls
 %attr(755,root,root) %{_bindir}/VBoxBFE
 %attr(755,root,root) %{_bindir}/VBoxHeadless
