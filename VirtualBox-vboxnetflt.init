@@ -19,11 +19,12 @@ VBOX_MODULE="vboxnetflt"
 [ -f /etc/sysconfig/virtualbox ] && . /etc/sysconfig/virtualbox
 
 start() {
-	if [ ! -f /var/lock/subsys/vboxnetflt ]; then
-		modprobe -s $VBOX_MODULE
-		# set proper /dev/vboxdrv for systems with static dev
-		touch /var/lock/subsys/vboxnetflt
+	if [ -f /var/lock/subsys/vboxnetflt ]; then
+		return
 	fi
+
+	modprobe -s $VBOX_MODULE
+	touch /var/lock/subsys/vboxnetflt
 }
 
 stop() {
@@ -33,12 +34,13 @@ stop() {
 }
 
 condrestart() {
-	if [ -f /var/lock/subsys/vboxnetflt ]; then
-		stop
-		start
-	else
+	if [ ! -f /var/lock/subsys/vboxnetflt ]; then
 		RETVAL=$1
+		return
 	fi
+
+	stop
+	start
 }
 
 RETVAL=0

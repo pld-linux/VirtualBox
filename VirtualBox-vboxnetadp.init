@@ -19,11 +19,12 @@ VBOX_MODULE="vboxnetadp"
 [ -f /etc/sysconfig/virtualbox ] && . /etc/sysconfig/virtualbox
 
 start() {
-	if [ ! -f /var/lock/subsys/vboxnetadp ]; then
-		modprobe -s $VBOX_MODULE
-		# set proper /dev/vboxdrv for systems with static dev
-		touch /var/lock/subsys/vboxnetadp
+	if [ -f /var/lock/subsys/vboxnetadp ]; then
+		return
 	fi
+
+	modprobe -s $VBOX_MODULE
+	touch /var/lock/subsys/vboxnetadp
 }
 
 stop() {
