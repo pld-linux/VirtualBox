@@ -29,7 +29,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		9
+%define		rel		10
 %define		pname		VirtualBox
 
 Summary:	VirtualBox OSE - x86 hardware virtualizer
@@ -58,6 +58,12 @@ Patch3:		%{pname}-warning_workaround.patch
 Patch4:		%{pname}-vnc.patch
 Patch5:		%{pname}-dri.patch
 Patch6:		%{pname}-vboxnetflt-no-qdisc.patch
+# ubuntu patches
+Patch7:		16-no-update.patch
+Patch8:		18-system-xorg.patch
+Patch9:		22-no-static-libstdcpp.patch
+# /ubuntu patches
+Patch10:	%{pname}-gcc.patch
 URL:		http://www.virtualbox.org/
 BuildRequires:	rpmbuild(macros) >= 1.535
 %if %{with userspace}
@@ -72,6 +78,7 @@ BuildRequires:	XFree86-devel
 %else
 BuildRequires:	xorg-lib-libXcursor-devel
 BuildRequires:	xorg-lib-libXmu-devel
+BuildRequires:	xorg-xserver-server-devel
 %endif
 BuildRequires:	OpenGL-GLU-devel
 BuildRequires:	OpenGL-devel
@@ -89,6 +96,7 @@ BuildRequires:	curl-devel
 BuildRequires:	gcc >= 5:3.2.3
 BuildRequires:	libIDL-devel
 BuildRequires:	libcap-static
+BuildRequires:	libdrm-devel
 BuildRequires:	libpng-devel >= 1.2.5
 BuildRequires:	libstdc++-devel >= 5:3.2.3
 BuildRequires:	libstdc++-static >= 5:3.2.3
@@ -100,6 +108,7 @@ BuildRequires:	libxslt-progs >= 1.1.17
 BuildRequires:	mkisofs
 BuildRequires:	makeself
 BuildRequires:	pam-devel
+BuildRequires:	pixman-devel
 BuildRequires:	pkgconfig
 BuildRequires:	pulseaudio-devel >= 0.9.0
 BuildRequires:	python-devel
@@ -112,6 +121,7 @@ BuildRequires:	texlive-fonts-bitstream
 BuildRequires:	texlive-fonts-other
 BuildRequires:	texlive-fonts-type1-bitstream
 BuildRequires:	texlive-format-pdflatex
+BuildRequires:	texlive-latex-ucs
 %endif
 BuildRequires:	which
 BuildRequires:	xalan-c-devel >= 1.10.0
@@ -427,6 +437,10 @@ tar -zxf guest-modules.tar.gz -C GuestDrivers
 tar -zxf host-modules.tar.gz -C HostDrivers
 cd -
 %patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
 
 %build
 %if %{with userspace}
@@ -440,7 +454,10 @@ echo "VBOX_WITH_TESTCASES := " > LocalConfig.kmk
 	--disable-kmods
 
 . ./env.sh && \
-kmk -j1 %{?with_verbose:KBUILD_VERBOSE=3} USER=$(id -un)
+kmk -j1 \
+	%{?with_verbose:KBUILD_VERBOSE=3} \
+	USER=$(id -un) \
+	XSERVER_VERSION="$(rpm -q --queryformat '%{VERSION}\n' xorg-xserver-server-devel | awk -F. ' { print $1 $2 } ' 2> /dev/null || echo ERROR)"
 %endif
 
 %if %{with kernel}
@@ -484,8 +501,8 @@ done
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname},%{_pixmapsdir}}/VBox.png
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname},%{_desktopdir}}/virtualbox.desktop
 
-mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/vboxmouse_drv_110.so,%{_libdir}/xorg/modules/input/vboxmouse_drv.so}
-mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/vboxvideo_drv_110.so,%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so}
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/vboxmouse_drv.so,%{_libdir}/xorg/modules/input/vboxmouse_drv.so}
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/vboxvideo_drv.so,%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so}
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/VBoxOGL.so,%{_libdir}/xorg/modules/dri/vboxvideo_dri.so}
 # xorg other driver versions
 rm -vf $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/vboxmouse_drv*.{o,so}
