@@ -76,6 +76,7 @@ BuildRequires:	libstdc++-multilib-static
 %if "%{pld_release}" == "ac"
 BuildRequires:	XFree86-devel
 %else
+BuildRequires:	xorg-lib-libXcomposite-devel
 BuildRequires:	xorg-lib-libXcursor-devel
 BuildRequires:	xorg-lib-libXmu-devel
 BuildRequires:	xorg-xserver-server-devel
