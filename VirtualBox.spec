@@ -123,6 +123,7 @@ BuildRequires:	texlive-fonts-other
 BuildRequires:	texlive-fonts-type1-bitstream
 BuildRequires:	texlive-format-pdflatex
 BuildRequires:	texlive-latex-ucs
+BuildRequires:	texlive-xetex
 %endif
 BuildRequires:	which
 BuildRequires:	xalan-c-devel >= 1.10.0
