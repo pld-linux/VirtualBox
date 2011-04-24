@@ -29,20 +29,20 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		13
+%define		rel		1
 %define		pname		VirtualBox
 
 Summary:	VirtualBox OSE - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox OSE - wirtualizator sprzętu x86
 Name:		%{pname}%{_alt_kernel}
-Version:	4.0.4
+Version:	4.0.6
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	b4770ca14d1a8cbad9b3eb0e0028ff4b
+# Source0-md5:	cf274f0585c35c5c137e2bd9b48b462a
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	88604a0e94bf1b8c0d0f18fe4314cfdf
+# Source1-md5:	d3c3d1848cfcb005f86db622d8a3f7db
 Source3:	%{pname}-vboxdrv.init
 Source4:	%{pname}-vboxguest.init
 Source5:	%{pname}-vboxnetflt.init
@@ -681,8 +681,6 @@ fi
 %dir %{_libdir}/VirtualBox/ExtensionPacks
 %dir %{_libdir}/VirtualBox/additions
 %dir %{_libdir}/VirtualBox/components
-%dir %{_libdir}/VirtualBox/icons
-%dir %{_libdir}/VirtualBox/icons/*x*
 %dir %{_libdir}/VirtualBox/nls
 %attr(755,root,root) %{_bindir}/VBoxBFE
 %attr(755,root,root) %{_bindir}/VBoxHeadless
@@ -784,10 +782,7 @@ fi
 %lang(zh_TW) %{_libdir}/VirtualBox/nls/*_zh_TW.qm
 %{_pixmapsdir}/VBox.png
 %{_desktopdir}/*.desktop
-%{_libdir}/VirtualBox/icons/*/virtualbox-ova.png
-%{_libdir}/VirtualBox/icons/*/virtualbox-ovf.png
-%{_libdir}/VirtualBox/icons/*/virtualbox-vbox-extpack.png
-%{_libdir}/VirtualBox/icons/*/virtualbox-vbox.png
+%{_libdir}/VirtualBox/icons
 %{_libdir}/VirtualBox/virtualbox.xml
 
 %files additions
