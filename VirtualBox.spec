@@ -500,7 +500,7 @@ for f in {VBox{BFE,Headless,Manage,SDL,SVC,Tunctl,XPCOMIPCD},VirtualBox}; do
 	ln -s %{_libdir}/%{pname}/VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_bindir}/$f
 done
 
-mv $RPM_BUILD_ROOT{%{_libdir}/%{pname},%{_pixmapsdir}}/VBox.png
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/VBox.png,%{_pixmapsdir}/virtualbox.png}
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname},%{_desktopdir}}/virtualbox.desktop
 
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/vboxmouse_drv.so,%{_libdir}/xorg/modules/input/vboxmouse_drv.so}
@@ -780,7 +780,7 @@ fi
 %lang(uk) %{_libdir}/VirtualBox/nls/*_uk.qm
 %lang(zh_CN) %{_libdir}/VirtualBox/nls/*_zh_CN.qm
 %lang(zh_TW) %{_libdir}/VirtualBox/nls/*_zh_TW.qm
-%{_pixmapsdir}/VBox.png
+%{_pixmapsdir}/virtualbox.png
 %{_desktopdir}/*.desktop
 %{_libdir}/VirtualBox/icons
 %{_libdir}/VirtualBox/virtualbox.xml
