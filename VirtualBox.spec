@@ -6,6 +6,9 @@
 # - Package utils (and write initscripts ?) for Guest OS.
 # - Check License of VBoxGuestAdditions_*.iso, it's probably not GPL v2.
 #   If so check if it is distributable.
+# - resolve mess with subpackages?
+#   - addtions: iso (containing additions/*.iso)
+#   - guest: to be installed to guests (deps on x11 drivers)
 #
 # Conditional build:
 %bcond_without	doc		# don't build the documentation
@@ -455,11 +458,13 @@ echo "VBOX_WITH_TESTCASES := " > LocalConfig.kmk
 	--disable-hardening \
 	--disable-kmods
 
+XSERVER_VERSION=$(rpm -q --queryformat '%{VERSION}\n' xorg-xserver-server-devel | awk -F. ' { print $1 $2 } ' 2> /dev/null || echo ERROR)
 . ./env.sh && \
 kmk -j1 \
 	%{?with_verbose:KBUILD_VERBOSE=3} \
 	USER=$(id -un) \
-	XSERVER_VERSION="$(rpm -q --queryformat '%{VERSION}\n' xorg-xserver-server-devel | awk -F. ' { print $1 $2 } ' 2> /dev/null || echo ERROR)"
+	VBOX_VERSION_STRING='$(VBOX_VERSION_MAJOR).$(VBOX_VERSION_MINOR).$(VBOX_VERSION_BUILD)'_PLD \
+	XSERVER_VERSION="$XSERVER_VERSION"
 %endif
 
 %if %{with kernel}
@@ -793,7 +798,7 @@ fi
 %defattr(644,root,root,755)
 # NOTE: unfinished, should contain .desktop files for starting up mouse
 # integration and other desktop services
-# NOTE: the filelist is incopmplete too
+# NOTE: the filelist is incomplete too
 %attr(755,root,root) %{_bindir}/VBoxService
 
 %attr(755,root,root) %{_libdir}/VirtualBox/additions/autorun.sh
