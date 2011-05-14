@@ -109,8 +109,8 @@ BuildRequires:	libvncserver-devel
 BuildRequires:	libxml2-devel >= 2.6.26
 BuildRequires:	libxslt-devel >= 1.1.17
 BuildRequires:	libxslt-progs >= 1.1.17
-BuildRequires:	mkisofs
 BuildRequires:	makeself
+BuildRequires:	mkisofs
 BuildRequires:	pam-devel
 BuildRequires:	pixman-devel
 BuildRequires:	pkgconfig
@@ -200,6 +200,13 @@ wirtualnych są w całości przechowywane w XML-u i są niezależne od
 lokalnej maszyny. Dzięki temu można szybko i łatwo przenieść
 konfigurację maszyny wirtualnej na inny komputer.
 
+%package doc
+Summary:	VirtualBox documentation
+Group:		Documentation
+
+%description doc
+This package contains VirtualBox User Manual.
+
 %package udev
 Summary:	udev rules for VirtualBox OSE kernel modules
 Summary(pl.UTF-8):	Reguły udev dla modułów jądra Linuksa dla VirtualBoksa
@@ -229,10 +236,10 @@ You should install this package in your Host OS.
 %package guest
 Summary:	VirtualBox Guest Additions
 Group:		Base
-Suggests:	kernel%{_alt_kernel}-misc-vboxsf = %{version}-%{rel}@%{_kernel_ver_str}
-Suggests:	kernel%{_alt_kernel}-misc-vboxvideo = %{version}-%{rel}@%{_kernel_ver_str}
 Requires:	xorg-driver-input-vboxmouse = %{version}-%{release}
 Requires:	xorg-driver-video-vboxvideo = %{version}-%{release}
+Suggests:	kernel%{_alt_kernel}-misc-vboxsf = %{version}-%{rel}@%{_kernel_ver_str}
+Suggests:	kernel%{_alt_kernel}-misc-vboxvideo = %{version}-%{rel}@%{_kernel_ver_str}
 
 %description guest
 Tools that utilize kernel modules for supporting integration with the
@@ -539,7 +546,14 @@ rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/tst*
 rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/scm
 
 # Guest Only Tools
+install -d $RPM_BUILD_ROOT/etc/{X11/xinit/xinitrc.d,xdg/autostart}
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_bindir}}/VBoxService
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_bindir}}/VBoxClient
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_bindir}}/VBoxControl
+install -p -D src/VBox/Additions/x11/Installer/98vboxadd-xclient \
+	$RPM_BUILD_ROOT/etc/X11/xinit/xinitrc.d/98vboxadd-xclient.sh
+cp -p src/VBox/Additions/x11/Installer/vboxclient.desktop \
+	$RPM_BUILD_ROOT/etc/xdg/autostart/vboxclient.desktop
 
 # unknown - checkme
 %if 1
@@ -547,8 +561,6 @@ rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/SUPInstall
 rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/SUPLoggerCtl
 rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/SUPUninstall
 rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/VBox.sh
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/VBoxClient
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/VBoxControl
 rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/vboxshell.py
 rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/xpidl
 %endif
@@ -681,7 +693,6 @@ fi
 %if %{with userspace}
 %files
 %defattr(644,root,root,755)
-%{?with_doc:%doc %{outdir}/UserManual.pdf}
 %dir %{_libdir}/VirtualBox
 %dir %{_libdir}/VirtualBox/ExtensionPacks
 %dir %{_libdir}/VirtualBox/additions
@@ -800,6 +811,11 @@ fi
 # integration and other desktop services
 # NOTE: the filelist is incomplete too
 %attr(755,root,root) %{_bindir}/VBoxService
+%attr(755,root,root) %{_bindir}/VBoxClient
+%attr(755,root,root) %{_bindir}/VBoxControl
+%attr(755,root,root) %{_bindir}/VBoxService
+/etc/X11/xinit/xinitrc.d/98vboxadd-xclient.sh
+/etc/xdg/autostart/vboxclient.desktop
 
 %attr(755,root,root) %{_libdir}/VirtualBox/additions/autorun.sh
 %attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxadd
@@ -809,6 +825,12 @@ fi
 %files -n pam-pam_vbox
 %defattr(644,root,root,755)
 %attr(755,root,root) /%{_lib}/security/pam_vbox.so
+
+%if %{with doc}
+%files doc
+%defattr(644,root,root,755)
+%doc %{outdir}/UserManual.pdf
+%endif
 
 %files udev
 %defattr(644,root,root,755)
