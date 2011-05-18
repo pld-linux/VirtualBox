@@ -38,14 +38,14 @@
 Summary:	VirtualBox OSE - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox OSE - wirtualizator sprzętu x86
 Name:		%{pname}%{_alt_kernel}
-Version:	4.0.6
+Version:	4.0.8
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	cf274f0585c35c5c137e2bd9b48b462a
+# Source0-md5:	a3e81289f2357fcf4bbe3e77805f38b6
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	d3c3d1848cfcb005f86db622d8a3f7db
+# Source1-md5:	598ca9b231c1f1ff7817aa76c80f55d6
 Source3:	%{pname}-vboxdrv.init
 Source4:	%{pname}-vboxguest.init
 Source5:	%{pname}-vboxnetflt.init
@@ -66,7 +66,6 @@ Patch7:		16-no-update.patch
 Patch8:		18-system-xorg.patch
 Patch9:		22-no-static-libstdcpp.patch
 # /ubuntu patches
-Patch10:	%{pname}-gcc.patch
 URL:		http://www.virtualbox.org/
 BuildRequires:	rpmbuild(macros) >= 1.535
 %if %{with userspace}
@@ -452,7 +451,6 @@ cd -
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
-%patch10 -p1
 
 %build
 %if %{with userspace}
@@ -810,7 +808,6 @@ fi
 # NOTE: unfinished, should contain .desktop files for starting up mouse
 # integration and other desktop services
 # NOTE: the filelist is incomplete too
-%attr(755,root,root) %{_bindir}/VBoxService
 %attr(755,root,root) %{_bindir}/VBoxClient
 %attr(755,root,root) %{_bindir}/VBoxControl
 %attr(755,root,root) %{_bindir}/VBoxService
