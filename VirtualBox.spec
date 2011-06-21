@@ -81,6 +81,7 @@ BuildRequires:	XFree86-devel
 BuildRequires:	xorg-lib-libXcomposite-devel
 BuildRequires:	xorg-lib-libXcursor-devel
 BuildRequires:	xorg-lib-libXmu-devel
+BuildRequires:	xorg-proto-glproto-devel
 BuildRequires:	xorg-xserver-server-devel
 %endif
 BuildRequires:	OpenGL-GLU-devel
