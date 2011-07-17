@@ -106,7 +106,7 @@ BuildRequires:	libpng-devel >= 1.2.5
 BuildRequires:	libstdc++-devel >= 5:3.2.3
 BuildRequires:	libstdc++-static >= 5:3.2.3
 BuildRequires:	libuuid-devel
-BuildRequires:	libvncserver-devel
+BuildRequires:	libvncserver-devel >= 0.9.7
 BuildRequires:	libxml2-devel >= 2.6.26
 BuildRequires:	libxslt-devel >= 1.1.17
 BuildRequires:	libxslt-progs >= 1.1.17
@@ -464,7 +464,8 @@ echo "VBOX_WITH_TESTCASES := " > LocalConfig.kmk
 	%{!?with_doc:--disable-docs} \
 	--disable-java \
 	--disable-hardening \
-	--disable-kmods
+	--disable-kmods \
+	--enable-vnc
 
 XSERVER_VERSION=$(rpm -q --queryformat '%{VERSION}\n' xorg-xserver-server-devel | awk -F. ' { print $1 $2 } ' 2> /dev/null || echo ERROR)
 . ./env.sh && \
