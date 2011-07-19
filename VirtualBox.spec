@@ -38,14 +38,14 @@
 Summary:	VirtualBox OSE - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox OSE - wirtualizator sprzętu x86
 Name:		%{pname}%{_alt_kernel}
-Version:	4.0.12
+Version:	4.1.0
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	5b39b99c2a36c96a062913e8ac67c60f
+# Source0-md5:	02556a6b4877cfdfbaa3ce0a0c0dcf31
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	3573d8233bc2a343ff6a5c9cfa6764c2
+# Source1-md5:	0f4cd4926333d0567e8dea7faf3138c7
 Source3:	%{pname}-vboxdrv.init
 Source4:	%{pname}-vboxguest.init
 Source5:	%{pname}-vboxnetflt.init
@@ -60,13 +60,11 @@ Patch2:		%{pname}-VBoxSysInfo.patch
 Patch3:		%{pname}-warning_workaround.patch
 Patch4:		%{pname}-vnc.patch
 Patch5:		%{pname}-dri.patch
-Patch6:		%{pname}-vboxnetflt-no-qdisc.patch
 # ubuntu patches
-Patch7:		16-no-update.patch
-Patch8:		18-system-xorg.patch
-Patch9:		22-no-static-libstdcpp.patch
+Patch6:		16-no-update.patch
+Patch7:		18-system-xorg.patch
 # /ubuntu patches
-Patch10:	%{pname}-disable_build_NetBiosBin.patch
+Patch8:	%{pname}-disable_build_NetBiosBin.patch
 URL:		http://www.virtualbox.org/
 BuildRequires:	rpmbuild(macros) >= 1.535
 %if %{with userspace}
@@ -452,8 +450,6 @@ cd -
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
-%patch9 -p1
-%patch10 -p1
 
 %build
 %if %{with userspace}
