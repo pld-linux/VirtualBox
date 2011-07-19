@@ -51,20 +51,22 @@ Source4:	%{pname}-vboxguest.init
 Source5:	%{pname}-vboxnetflt.init
 Source6:	%{pname}-vboxsf.init
 Source7:	%{pname}-vboxnetadp.init
-Source8:	%{pname}.sh
-Source9:	mount.vdi
-Source10:	udev.rules
+Source8:	%{pname}-vboxpci.init
+Source9:	%{pname}.sh
+Source10:	mount.vdi
+Source11:	udev.rules
 Patch0:		%{pname}-configure-spaces.patch
 Patch1:		%{pname}-export_modules.patch
 Patch2:		%{pname}-VBoxSysInfo.patch
 Patch3:		%{pname}-warning_workaround.patch
 Patch4:		%{pname}-vnc.patch
 Patch5:		%{pname}-dri.patch
+Patch6:		%{pname}-disable_build_NetBiosBin.patch
+Patch7:		%{pname}-build.patch
 # ubuntu patches
-Patch6:		16-no-update.patch
-Patch7:		18-system-xorg.patch
+Patch10:		16-no-update.patch
+Patch11:		18-system-xorg.patch
 # /ubuntu patches
-Patch8:	%{pname}-disable_build_NetBiosBin.patch
 URL:		http://www.virtualbox.org/
 BuildRequires:	rpmbuild(macros) >= 1.535
 %if %{with userspace}
@@ -377,6 +379,30 @@ You should install this package in your Host OS.
 Moduł jądra Linuksa dla VirtualBoksa OSE - sterownik filtrowania sieci
 dla systemu głównego.
 
+%package -n kernel%{_alt_kernel}-misc-vboxpci
+Summary:	VirtualBox OSE PCI card passthrough Driver
+Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa OSE
+Release:	%{rel}@%{_kernel_ver_str}
+Group:		Base/Kernel
+Requires(post,postun):	/sbin/depmod
+Requires:	dev >= 2.9.0-7
+Requires:	kernel%{_alt_kernel}-misc-vboxdrv
+%if %{with dist_kernel}
+%requires_releq_kernel
+Requires(postun):	%releq_kernel
+%endif
+Provides:	kernel(vboxpci) = %{version}-%{rel}
+
+%description -n kernel%{_alt_kernel}-misc-vboxpci
+VirtualBox OSE PCI card passthrough driver that works as host proxy between
+guest and PCI hardware.
+
+You should install this package in your Host OS.
+
+%description -n kernel%{_alt_kernel}-misc-vboxnetflt -l pl.UTF-8
+Moduł jądra Linuksa dla VirtualBoksa OSE - sterownik, ktory działa jako proxy
+między gościem i gospodarzem sprzętu PCI.
+
 %package -n kernel%{_alt_kernel}-misc-vboxsf
 Summary:	Host file system access (Shared Folders) for VirtualBox OSE
 Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa OSE
@@ -433,11 +459,13 @@ Moduł jądra Linuksa dla VirtualBoksa OSE - sterownik obsługi DRM.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
+%patch7 -p1
 
 %{__sed} -i -e 's,@VBOX_DOC_PATH@,%{_docdir}/%{name}-%{version},' \
 	-e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/common/virtualbox.desktop.in
 
-sed 's#@LIBDIR@#%{_libdir}#' < %{SOURCE8} > VirtualBox-wrapper.sh
+sed 's#@LIBDIR@#%{_libdir}#' < %{SOURCE9} > VirtualBox-wrapper.sh
 
 install -d PLD-MODULE-BUILD/{GuestDrivers,HostDrivers}
 cd PLD-MODULE-BUILD
@@ -447,9 +475,9 @@ tar -zxf guest-modules.tar.gz -C GuestDrivers
 ../src/VBox/HostDrivers/linux/export_modules host-modules.tar.gz --without-hardening
 tar -zxf host-modules.tar.gz -C HostDrivers
 cd -
-%patch6 -p1
-%patch7 -p1
-%patch8 -p1
+%patch10 -p1
+%patch11 -p1
+
 
 %build
 %if %{with userspace}
@@ -477,6 +505,7 @@ cd PLD-MODULE-BUILD/HostDrivers
 %build_kernel_modules -m vboxdrv -C vboxdrv
 %build_kernel_modules -m vboxnetadp -C vboxnetadp
 %build_kernel_modules -m vboxnetflt -C vboxnetflt
+%build_kernel_modules -m vboxpci -C vboxpci
 
 cd ../GuestDrivers
 %build_kernel_modules -m vboxguest -C vboxguest
@@ -504,7 +533,7 @@ fi
 cp -a$l %{outdir}/* $RPM_BUILD_ROOT%{_libdir}/%{pname}
 
 cp -a %{SOURCE1} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/additions/VBoxGuestAdditions.iso
-install -p %{SOURCE9} $RPM_BUILD_ROOT%{_sbindir}/mount.vdi
+install -p %{SOURCE10} $RPM_BUILD_ROOT%{_sbindir}/mount.vdi
 install -p VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_libdir}/%{pname}
 for f in {VBox{BFE,Headless,Manage,SDL,SVC,Tunctl,XPCOMIPCD},VirtualBox}; do
 	ln -s %{_libdir}/%{pname}/VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_bindir}/$f
@@ -529,7 +558,7 @@ mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLpackspu.so
 mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLpassthroughspu.so
 
 install -d $RPM_BUILD_ROOT/etc/udev/rules.d
-cp -a %{SOURCE10} $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
+cp -a %{SOURCE11} $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
 
 install -d $RPM_BUILD_ROOT/%{_lib}/security
 mv $RPM_BUILD_ROOT{%{_libdir}/VirtualBox/additions,/%{_lib}/security}/pam_vbox.so
@@ -574,9 +603,11 @@ install -p %{SOURCE4} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxguest
 install -p %{SOURCE5} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxnetflt
 install -p %{SOURCE6} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxsf
 install -p %{SOURCE7} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxnetadp
+install -p %{SOURCE8} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxpci
 %install_kernel_modules -m PLD-MODULE-BUILD/HostDrivers/vboxdrv/vboxdrv -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/HostDrivers/vboxnetadp/vboxnetadp -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/HostDrivers/vboxnetflt/vboxnetflt -d misc
+%install_kernel_modules -m PLD-MODULE-BUILD/HostDrivers/vboxpci/vboxpci -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/GuestDrivers/vboxguest/vboxguest -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/GuestDrivers/vboxsf/vboxsf -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/GuestDrivers/vboxvideo_drm/vboxvideo -d misc
@@ -599,6 +630,7 @@ You must install vboxdrv kernel module for this software to work:
 Additionally you might want to install:
     kernel-misc-vboxnetadp-%{version}-%{rel}@%{_kernel_ver_str}
     kernel-misc-vboxnetflt-%{version}-%{rel}@%{_kernel_ver_str}
+    kernel-misc-vboxpci-%{version}-%{rel}@%{_kernel_ver_str}
 
 On Guest Linux system you might want to install:
     kernel-misc-vboxguest-%{version}-%{rel}@%{_kernel_ver_str}
@@ -668,6 +700,20 @@ if [ "$1" = "0" ]; then
 	/sbin/chkconfig --del vboxnetflt
 fi
 
+%post	-n kernel%{_alt_kernel}-misc-vboxpci
+%depmod %{_kernel_ver}
+/sbin/chkconfig --add vboxpci
+%service vboxnetflt restart "VirtualBox OSE PCI passthrough driver"
+
+%postun	-n kernel%{_alt_kernel}-misc-vboxpci
+%depmod %{_kernel_ver}
+
+%preun -n kernel%{_alt_kernel}-misc-vboxpci
+if [ "$1" = "0" ]; then
+	%service vboxpci stop
+	/sbin/chkconfig --del vboxpci
+fi
+
 %post	-n kernel%{_alt_kernel}-misc-vboxsf
 %depmod %{_kernel_ver}
 /sbin/chkconfig --add vboxsf
@@ -709,6 +755,7 @@ fi
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxAuth.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxAuthSimple.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxBFE
+%attr(755,root,root) %{_libdir}/VirtualBox/VBoxBalloonCtrl
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxCreateUSBNode.sh
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxDbg.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxDD2.so
@@ -870,6 +917,11 @@ fi
 %defattr(644,root,root,755)
 %attr(754,root,root) /etc/rc.d/init.d/vboxnetflt
 /lib/modules/%{_kernel_ver}/misc/vboxnetflt.ko*
+
+%files -n kernel%{_alt_kernel}-misc-vboxpci
+%defattr(644,root,root,755)
+%attr(754,root,root) /etc/rc.d/init.d/vboxpci
+/lib/modules/%{_kernel_ver}/misc/vboxpci.ko*
 
 %files -n kernel%{_alt_kernel}-misc-vboxsf
 %defattr(644,root,root,755)
