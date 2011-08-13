@@ -287,6 +287,8 @@ X.org video driver for VirtualBox OSE guest OS.
 %description -n xorg-driver-video-vboxvideo -l pl.UTF-8
 Sterownik grafiki dla systemu gościa w VirtualBoksie OSE.
 
+# KERNEL PACKAGES
+# KEEP ALL REGULAR SUBPACKAGES BEFORE KERNEL PACKAGES.
 %package -n kernel%{_alt_kernel}-misc-vboxguest
 Summary:	VirtualBox OSE Guest Additions for Linux Module
 Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa OSE
