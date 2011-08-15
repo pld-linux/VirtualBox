@@ -35,8 +35,8 @@
 %define		rel		2
 %define		pname		VirtualBox
 
-Summary:	VirtualBox OSE - x86 hardware virtualizer
-Summary(pl.UTF-8):	VirtualBox OSE - wirtualizator sprzętu x86
+Summary:	VirtualBox - x86 hardware virtualizer
+Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{_alt_kernel}
 Version:	4.1.0
 Release:	%{rel}
@@ -156,21 +156,21 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_sbindir	/sbin
 
 %description
-Oracle VirtualBox OSE is a general-purpose full virtualizer for x86
+Oracle VirtualBox is a general-purpose full virtualizer for x86
 hardware. Targeted at server, desktop and embedded use, it is now the
 only professional-quality virtualization solution that is also Open
 Source Software.
 
-Some of the features of VirtualBox OSE are:
+Some of the features of VirtualBox are:
 
-Modularity: VirtualBox OSE has an extremely modular design with
+Modularity: VirtualBox has an extremely modular design with
 well-defined internal programming interfaces and a client/server
 design. This makes it easy to control it from several interfaces at
 once: for example, you can start a virtual machine in a typical
 virtual machine GUI and then control that machine from the command
-line. VirtualBox OSE also comes with a full Software Development Kit:
-even though it is Open Source Software, you don't have to hack the
-source to write a new interface for VirtualBox OSE.
+line. VirtualBox also comes with a full Software Development Kit: even
+though it is Open Source Software, you don't have to hack the source
+to write a new interface for VirtualBox.
 
 Virtual machine descriptions in XML: the configuration settings of
 virtual machines are stored entirely in XML and are independent of the
@@ -180,21 +180,20 @@ ported to other computers.
 You should install this package in your Host OS.
 
 %description -l pl.UTF-8
-Oracle VirtualBox OSE jest emulatorem sprzętu x86. Kierowany do
-zastosowań serwerowych, desktopowych oraz wbudowanych jest obecnie
-jedynym wysokiej jakości rozwiązaniem wirtualizacyjnym dostępnym
-również jako Otwarte Oprogramowanie.
+Oracle VirtualBox jest emulatorem sprzętu x86. Kierowany do zastosowań
+serwerowych, desktopowych oraz wbudowanych jest obecnie jedynym
+wysokiej jakości rozwiązaniem wirtualizacyjnym dostępnym również jako
+Otwarte Oprogramowanie.
 
 Przykładowe cechy VirtualBoksa:
 
-Modularność: VirtualBox OSE jest wysoce zmodularyzowanym produktem z
+Modularność: VirtualBox jest wysoce zmodularyzowanym produktem z
 dobrze zaprojektowanym wewnętrznym interfejsem programowym typu
 klient/serwer. Dzięki temu można łatwo kontrolować go za pomocą
 różnych interfejsów. Można na przykład uruchomić maszynę wirtualną z
 poziomu interfejsu graficznego, a później kontrolować ją z linii
-poleceń. VirtualBox OSE dostarcza również pełny pakiet deweloperski,
-co pozwala stworzyć dowolny inny interfejs zarządzania maszyną
-wirtualną.
+poleceń. VirtualBox dostarcza również pełny pakiet deweloperski, co
+pozwala stworzyć dowolny inny interfejs zarządzania maszyną wirtualną.
 
 Opisy maszyn wirtualnych w XML-u: konfiguracje poszczególnych maszyn
 wirtualnych są w całości przechowywane w XML-u i są niezależne od
@@ -209,13 +208,13 @@ Group:		Documentation
 This package contains VirtualBox User Manual.
 
 %package udev
-Summary:	udev rules for VirtualBox OSE kernel modules
+Summary:	udev rules for VirtualBox kernel modules
 Summary(pl.UTF-8):	Reguły udev dla modułów jądra Linuksa dla VirtualBoksa
 Group:		Base/Kernel
 Requires:	udev-core
 
 %description udev
-udev rules for VirtualBox OSE kernel modules.
+udev rules for VirtualBox kernel modules.
 
 You should install this package in your Host OS and in Guest OS.
 
@@ -258,22 +257,22 @@ PAM module (Pluggable Authentication Module) which can be used to
 perform automated guest logons.
 
 %package -n xorg-driver-input-vboxmouse
-Summary:	X.org mouse driver for VirtualBox OSE guest OS
-Summary(pl.UTF-8):	Sterownik myszy dla systemu gościa w VirtualBoksie OSE
+Summary:	X.org mouse driver for VirtualBox guest OS
+Summary(pl.UTF-8):	Sterownik myszy dla systemu gościa w VirtualBoksie
 Group:		X11/Applications
 Requires:	xorg-xserver-server >= 1.0.99.901
 Requires:	xorg-xserver-server(xinput-abi) <= 12.2
 Requires:	xorg-xserver-server(xinput-abi) >= 4.0
 
 %description -n xorg-driver-input-vboxmouse
-X.org mouse driver for VirtualBox OSE guest OS.
+X.org mouse driver for VirtualBox guest OS.
 
 %description -n xorg-driver-input-vboxmouse  -l pl.UTF-8
 Sterownik myszy dla systemu gościa w VirtualBoksie.
 
 %package -n xorg-driver-video-vboxvideo
-Summary:	X.org video driver for VirtualBox OSE guest OS
-Summary(pl.UTF-8):	Sterownik grafiki dla systemu gościa w VirtualBoksie OSE
+Summary:	X.org video driver for VirtualBox guest OS
+Summary(pl.UTF-8):	Sterownik grafiki dla systemu gościa w VirtualBoksie
 Group:		X11/Applications
 Requires:	Mesa-dri-driver-swrast
 Requires:	xorg-xserver-libdri >= 1.7.4
@@ -282,16 +281,16 @@ Requires:	xorg-xserver-server(videodrv-abi) <= 10.0
 Requires:	xorg-xserver-server(videodrv-abi) >= 2.0
 
 %description -n xorg-driver-video-vboxvideo
-X.org video driver for VirtualBox OSE guest OS.
+X.org video driver for VirtualBox guest OS.
 
 %description -n xorg-driver-video-vboxvideo -l pl.UTF-8
-Sterownik grafiki dla systemu gościa w VirtualBoksie OSE.
+Sterownik grafiki dla systemu gościa w VirtualBoksie.
 
 # KERNEL PACKAGES
 # KEEP ALL REGULAR SUBPACKAGES BEFORE KERNEL PACKAGES.
 %package -n kernel%{_alt_kernel}-misc-vboxguest
-Summary:	VirtualBox OSE Guest Additions for Linux Module
-Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa OSE
+Summary:	VirtualBox Guest Additions for Linux Module
+Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
 Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
@@ -305,17 +304,17 @@ Obsoletes:	kernel%{_alt_kernel}-misc-vboxadd
 Conflicts:	kernel%{_alt_kernel}-misc-vboxdrv
 
 %description -n kernel%{_alt_kernel}-misc-vboxguest
-VirtualBox OSE Guest Additions for Linux Module.
+VirtualBox Guest Additions for Linux Module.
 
 You should install this package in your Guest OS.
 
 %description -n kernel%{_alt_kernel}-misc-vboxguest -l pl.UTF-8
-Moduł jądra Linuksa vboxguest dla VirtualBoksa OSE - dodatki dla
-systemu gościa.
+Moduł jądra Linuksa vboxguest dla VirtualBoksa - dodatki dla systemu
+gościa.
 
 %package -n kernel%{_alt_kernel}-misc-vboxdrv
-Summary:	VirtualBox OSE Support Driver
-Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa OSE
+Summary:	VirtualBox Support Driver
+Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
 Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
@@ -327,17 +326,17 @@ Requires(postun):	%releq_kernel
 Provides:	kernel(vboxdrv) = %{version}-%{rel}
 
 %description -n kernel%{_alt_kernel}-misc-vboxdrv
-VirtualBox OSE Support Driver.
+VirtualBox Support Driver.
 
 You should install this package in your Host OS.
 
 %description -n kernel%{_alt_kernel}-misc-vboxdrv -l pl.UTF-8
-Moduł jądra Linuksa dla VirtualBoksa OSE - sterownik wsparcia dla
-systemu głównego.
+Moduł jądra Linuksa dla VirtualBoksa - sterownik wsparcia dla systemu
+głównego.
 
 %package -n kernel%{_alt_kernel}-misc-vboxnetadp
-Summary:	VirtualBox OSE Network Adapter Driver
-Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa OSE
+Summary:	VirtualBox Network Adapter Driver
+Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
 Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
@@ -350,17 +349,17 @@ Requires(postun):	%releq_kernel
 Provides:	kernel(vboxnetflt) = %{version}-%{rel}
 
 %description -n kernel%{_alt_kernel}-misc-vboxnetadp
-VirtualBox OSE Network Adapter Driver.
+VirtualBox Network Adapter Driver.
 
 You should install this package in your Host OS.
 
 %description -n kernel%{_alt_kernel}-misc-vboxnetadp -l pl.UTF-8
-Moduł jądra Linuksa dla VirtualBoksa OSE - sterownik witrualnej karty
+Moduł jądra Linuksa dla VirtualBoksa - sterownik witrualnej karty
 sieciowej.
 
 %package -n kernel%{_alt_kernel}-misc-vboxnetflt
-Summary:	VirtualBox OSE Network Filter Driver
-Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa OSE
+Summary:	VirtualBox Network Filter Driver
+Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
 Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
@@ -373,17 +372,17 @@ Requires(postun):	%releq_kernel
 Provides:	kernel(vboxnetflt) = %{version}-%{rel}
 
 %description -n kernel%{_alt_kernel}-misc-vboxnetflt
-VirtualBox OSE Network Filter Driver.
+VirtualBox Network Filter Driver.
 
 You should install this package in your Host OS.
 
 %description -n kernel%{_alt_kernel}-misc-vboxnetflt -l pl.UTF-8
-Moduł jądra Linuksa dla VirtualBoksa OSE - sterownik filtrowania sieci
-dla systemu głównego.
+Moduł jądra Linuksa dla VirtualBoksa - sterownik filtrowania sieci dla
+systemu głównego.
 
 %package -n kernel%{_alt_kernel}-misc-vboxpci
-Summary:	VirtualBox OSE PCI card passthrough Driver
-Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa OSE
+Summary:	VirtualBox PCI card passthrough Driver
+Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
 Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
@@ -396,18 +395,18 @@ Requires(postun):	%releq_kernel
 Provides:	kernel(vboxpci) = %{version}-%{rel}
 
 %description -n kernel%{_alt_kernel}-misc-vboxpci
-VirtualBox OSE PCI card passthrough driver that works as host proxy between
-guest and PCI hardware.
+VirtualBox PCI card passthrough driver that works as host proxy
+between guest and PCI hardware.
 
 You should install this package in your Host OS.
 
 %description -n kernel%{_alt_kernel}-misc-vboxnetflt -l pl.UTF-8
-Moduł jądra Linuksa dla VirtualBoksa OSE - sterownik, ktory działa jako proxy
-między gościem i gospodarzem sprzętu PCI.
+Moduł jądra Linuksa dla VirtualBoksa - sterownik, ktory działa jako
+proxy między gościem i gospodarzem sprzętu PCI.
 
 %package -n kernel%{_alt_kernel}-misc-vboxsf
-Summary:	Host file system access (Shared Folders) for VirtualBox OSE
-Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa OSE
+Summary:	Host file system access (Shared Folders) for VirtualBox
+Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
 Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
@@ -421,17 +420,17 @@ Provides:	kernel(vboxsf) = %{version}-%{rel}
 Obsoletes:	kernel%{_alt_kernel}-misc-vboxvfs
 
 %description -n kernel%{_alt_kernel}-misc-vboxsf
-Host file system access (Shared Folders) for VirtualBox OSE.
+Host file system access (Shared Folders) for VirtualBox.
 
 You should install this package in your Guest OS.
 
 %description -n kernel%{_alt_kernel}-misc-vboxsf -l pl.UTF-8
-Moduł jądra Linuksa dla VirtualBoksa OSE - dostęp do plików systemu
+Moduł jądra Linuksa dla VirtualBoksa - dostęp do plików systemu
 głównego z poziomu systemu gościa.
 
 %package -n kernel%{_alt_kernel}-misc-vboxvideo
-Summary:	DRM support for VirtualBox OSE
-Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa OSE
+Summary:	DRM support for VirtualBox
+Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
 Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
@@ -446,12 +445,12 @@ Requires(postun):	%releq_kernel
 Provides:	kernel(vboxvideo) = %{version}-%{rel}
 
 %description -n kernel%{_alt_kernel}-misc-vboxvideo
-DRM support for VirtualBox OSE.
+DRM support for VirtualBox.
 
 You should install this package in your Guest OS.
 
 %description -n kernel%{_alt_kernel}-misc-vboxvideo -l pl.UTF-8
-Moduł jądra Linuksa dla VirtualBoksa OSE - sterownik obsługi DRM.
+Moduł jądra Linuksa dla VirtualBoksa - sterownik obsługi DRM.
 
 %prep
 %setup -q -n %{pname}-%{version}_OSE
@@ -649,7 +648,7 @@ fi
 %post	-n kernel%{_alt_kernel}-misc-vboxguest
 %depmod %{_kernel_ver}
 /sbin/chkconfig --add vboxguest
-%service vboxguest restart "VirtualBox OSE Guest additions driver"
+%service vboxguest restart "VirtualBox Guest additions driver"
 
 %postun	-n kernel%{_alt_kernel}-misc-vboxguest
 %depmod %{_kernel_ver}
@@ -663,7 +662,7 @@ fi
 %post	-n kernel%{_alt_kernel}-misc-vboxdrv
 %depmod %{_kernel_ver}
 /sbin/chkconfig --add vboxdrv
-%service vboxdrv restart "VirtualBox OSE Support Driver"
+%service vboxdrv restart "VirtualBox Support Driver"
 
 %postun	-n kernel%{_alt_kernel}-misc-vboxdrv
 %depmod %{_kernel_ver}
@@ -677,7 +676,7 @@ fi
 %post	-n kernel%{_alt_kernel}-misc-vboxnetadp
 %depmod %{_kernel_ver}
 /sbin/chkconfig --add vboxnetadp
-%service vboxnetadp restart "VirtualBox OSE Network HostOnly driver"
+%service vboxnetadp restart "VirtualBox Network HostOnly driver"
 
 %postun	-n kernel%{_alt_kernel}-misc-vboxnetadp
 %depmod %{_kernel_ver}
@@ -691,7 +690,7 @@ fi
 %post	-n kernel%{_alt_kernel}-misc-vboxnetflt
 %depmod %{_kernel_ver}
 /sbin/chkconfig --add vboxnetflt
-%service vboxnetflt restart "VirtualBox OSE Network Filter driver"
+%service vboxnetflt restart "VirtualBox Network Filter driver"
 
 %postun	-n kernel%{_alt_kernel}-misc-vboxnetflt
 %depmod %{_kernel_ver}
@@ -705,7 +704,7 @@ fi
 %post	-n kernel%{_alt_kernel}-misc-vboxpci
 %depmod %{_kernel_ver}
 /sbin/chkconfig --add vboxpci
-%service vboxnetflt restart "VirtualBox OSE PCI passthrough driver"
+%service vboxnetflt restart "VirtualBox PCI passthrough driver"
 
 %postun	-n kernel%{_alt_kernel}-misc-vboxpci
 %depmod %{_kernel_ver}
@@ -719,7 +718,7 @@ fi
 %post	-n kernel%{_alt_kernel}-misc-vboxsf
 %depmod %{_kernel_ver}
 /sbin/chkconfig --add vboxsf
-%service vboxsf restart "VirtualBox OSE Host file system access (Shared Folders)"
+%service vboxsf restart "VirtualBox Host file system access (Shared Folders)"
 
 %postun	-n kernel%{_alt_kernel}-misc-vboxsf
 %depmod %{_kernel_ver}
