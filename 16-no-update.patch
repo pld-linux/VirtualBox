@@ -15,21 +15,20 @@ diff -Nur virtualbox-ose-4.0.0-dfsg.orig/src/VBox/Frontends/VirtualBox/src/globa
      /* Silently check in one day after current time-stamp */
      QTimer::singleShot (24 /* hours */   * 60   /* minutes */ *
                          60 /* seconds */ * 1000 /* milliseconds */,
-diff -Nur virtualbox-ose-4.0.0-dfsg.orig/src/VBox/Frontends/VirtualBox/src/runtime/UIMachineMenuBar.cpp virtualbox-ose-4.0.0-dfsg/src/VBox/Frontends/VirtualBox/src/runtime/UIMachineMenuBar.cpp
---- virtualbox-ose-4.0.0-dfsg.orig/src/VBox/Frontends/VirtualBox/src/runtime/UIMachineMenuBar.cpp	2010-11-22 11:05:07.000000000 +0100
-+++ virtualbox-ose-4.0.0-dfsg/src/VBox/Frontends/VirtualBox/src/runtime/UIMachineMenuBar.cpp	2011-01-01 23:56:55.292774878 +0100
-@@ -266,13 +266,6 @@
+--- VirtualBox-4.1.2_OSE/src/VBox/Frontends/VirtualBox/src/runtime/UIMachineMenuBar.cpp.orig	2011-08-15 14:28:35.000000000 +0200
++++ VirtualBox-4.1.2_OSE/src/VBox/Frontends/VirtualBox/src/runtime/UIMachineMenuBar.cpp	2011-08-16 23:27:21.954256054 +0200
+@@ -275,13 +275,6 @@
  #if defined(Q_WS_MAC) && (QT_VERSION < 0x040700)
      if (m_fIsFirstTime)
  # endif
--        pMenu->addAction(pActionsPool->action(UIActionIndex_Simple_Update));
+-        pMenu->addAction(gActionPool->action(UIActionIndex_Simple_Update));
 -#ifndef Q_WS_MAC
 -    pMenu->addSeparator();
 -#endif /* !Q_WS_MAC */
 -#if defined(Q_WS_MAC) && (QT_VERSION < 0x040700)
 -    if (m_fIsFirstTime)
 -# endif
-         pMenu->addAction(pActionsPool->action(UIActionIndex_Simple_About));
+         pMenu->addAction(gActionPool->action(UIActionIndex_Simple_About));
  
  
 diff -Nur virtualbox-ose-4.0.0-dfsg.orig/src/VBox/Frontends/VirtualBox/src/settings/UISettingsDialogSpecific.cpp virtualbox-ose-4.0.0-dfsg/src/VBox/Frontends/VirtualBox/src/settings/UISettingsDialogSpecific.cpp
@@ -46,20 +45,18 @@ diff -Nur virtualbox-ose-4.0.0-dfsg.orig/src/VBox/Frontends/VirtualBox/src/setti
          default:
              break;
      }
-diff -Nur virtualbox-ose-4.0.0-dfsg.orig/src/VBox/Frontends/VirtualBox/src/VBoxHelpActions.cpp virtualbox-ose-4.0.0-dfsg/src/VBox/Frontends/VirtualBox/src/VBoxHelpActions.cpp
---- virtualbox-ose-4.0.0-dfsg.orig/src/VBox/Frontends/VirtualBox/src/VBoxHelpActions.cpp	2010-08-13 12:17:07.000000000 +0200
-+++ virtualbox-ose-4.0.0-dfsg/src/VBox/Frontends/VirtualBox/src/VBoxHelpActions.cpp	2011-01-02 00:00:00.599195342 +0100
-@@ -90,13 +90,6 @@
-         GetExtraData (VBoxDefs::GUI_RegistrationDlgWinID).isEmpty());
- #endif
+--- VirtualBox-4.1.2_OSE/src/VBox/Frontends/VirtualBox/src/selector/VBoxSelectorWnd.cpp.orig	2011-08-15 14:28:35.000000000 +0200
++++ VirtualBox-4.1.2_OSE/src/VBox/Frontends/VirtualBox/src/selector/VBoxSelectorWnd.cpp	2011-08-17 22:48:08.700558251 +0200
+@@ -1747,12 +1747,6 @@
+     pMenu->addAction(gActionPool->action(UIActionIndex_Simple_Register));
+ #endif /* VBOX_WITH_REGISTRATION */
  
--    aMenu->addAction (updateAction);
--    updateAction->setEnabled (vboxGlobal().virtualBox().
--        GetExtraData (VBoxDefs::GUI_UpdateDlgWinID).isEmpty());
+-    pMenu->addAction(gActionPool->action(UIActionIndex_Simple_Update));
 -
 -#ifndef Q_WS_MAC
--    aMenu->addSeparator();
--#endif /* Q_WS_MAC */
-     aMenu->addAction (aboutAction);
- }
+-    pMenu->addSeparator();
+-#endif /* !Q_WS_MAC */
+-
+     pMenu->addAction(gActionPool->action(UIActionIndex_Simple_About));
  
+     /* Configure connections: */

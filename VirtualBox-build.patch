@@ -1,19 +1,20 @@
---- VirtualBox-4.1.0_OSE/src/VBox/HostDrivers/VBoxPci/Makefile.kmk.orig	2011-04-28 10:01:04.000000000 +0200
-+++ VirtualBox-4.1.0_OSE/src/VBox/HostDrivers/VBoxPci/Makefile.kmk	2011-07-19 20:51:04.149020310 +0200
-@@ -5,6 +5,7 @@
- 
+--- VirtualBox-4.1.2_OSE/src/VBox/HostDrivers/VBoxPci/Makefile.kmk.orig	2011-08-15 14:28:45.000000000 +0200
++++ VirtualBox-4.1.2_OSE/src/VBox/HostDrivers/VBoxPci/Makefile.kmk	2011-08-17 20:01:33.698295944 +0200
+@@ -18,7 +18,7 @@
+ SUB_DEPTH = ../../../..
+ include $(KBUILD_PATH)/subheader.kmk
  if1of ($(KBUILD_TARGET), linux)
- 
+-
 + ifdef VBOX_WITH_VBOXDRV
- SYSMODS += VBoxPci
- VBoxPci_TEMPLATE         = VBOXR0DRV
- VBoxPci_INST = $(INST_VBOXPCI)$(if $(eq $(KBUILD_TARGET),darwin),Contents/MacOS/)
-@@ -22,7 +23,7 @@
- VBoxPci_SOURCES          =
- VBoxPci_LIBS            += \
- 	$(PATH_LIB)/SUPR0IdcClient$(VBOX_SUFF_LIB)
+  #
+  # The driver.
+  # Note! For Linux, this is just a compile test. Don't use the binary!
+@@ -82,7 +82,7 @@
+ 	$(QUIET)$(RM) -f -- $@
+ 	$(QUIET)$(SED) -e "s;_VERSION_;${VBOX_VERSION_STRING};g; s;_MODULE_;vboxpci;g; s;_BUILDTYPE_;${KBUILD_TYPE};g" --output $@ $<
+ 	$(QUIET)$(CHMOD) 0755 $@
 -
 + endif
- endif
- 
+ endif # Supported platform.
+ include $(KBUILD_PATH)/subfooter.kmk
  
