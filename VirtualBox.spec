@@ -32,7 +32,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		3
+%define		rel		4
 %define		pname		VirtualBox
 
 Summary:	VirtualBox - x86 hardware virtualizer
