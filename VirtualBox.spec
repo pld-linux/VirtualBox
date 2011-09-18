@@ -32,9 +32,8 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		4
+%define		rel		5
 %define		pname		VirtualBox
-
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{_alt_kernel}
@@ -624,6 +623,8 @@ rm -rf $RPM_BUILD_ROOT
 %groupadd -g 221 -r -f vbox
 
 %post
+%update_desktop_database
+
 cat << 'EOF'
 You must install vboxdrv kernel module for this software to work:
     kernel-misc-vboxdrv-%{version}-%{rel}@%{_kernel_ver_str}
