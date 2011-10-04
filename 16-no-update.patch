@@ -2,19 +2,6 @@ Description: Disable "Check for Updates" action.
 Bug-Ubuntu: https://bugs.launchpad.net/bugs/272212
 Author: Daniel Hahler <ubuntu@thequod.de>, Felix Geyer <debfx-pkg@fobos.de>
 
-diff -Nur virtualbox-ose-4.0.0-dfsg.orig/src/VBox/Frontends/VirtualBox/src/globals/VBoxGlobal.cpp virtualbox-ose-4.0.0-dfsg/src/VBox/Frontends/VirtualBox/src/globals/VBoxGlobal.cpp
---- virtualbox-ose-4.0.0-dfsg.orig/src/VBox/Frontends/VirtualBox/src/globals/VBoxGlobal.cpp	2010-12-17 16:14:24.000000000 +0100
-+++ virtualbox-ose-4.0.0-dfsg/src/VBox/Frontends/VirtualBox/src/globals/VBoxGlobal.cpp	2011-01-01 23:55:23.240440031 +0100
-@@ -4565,6 +4565,9 @@
-  */
- void VBoxGlobal::showUpdateDialog (bool aForce)
- {
-+    // Updates are handled through package managers.
-+    return;
-+
-     /* Silently check in one day after current time-stamp */
-     QTimer::singleShot (24 /* hours */   * 60   /* minutes */ *
-                         60 /* seconds */ * 1000 /* milliseconds */,
 --- VirtualBox-4.1.2_OSE/src/VBox/Frontends/VirtualBox/src/runtime/UIMachineMenuBar.cpp.orig	2011-08-15 14:28:35.000000000 +0200
 +++ VirtualBox-4.1.2_OSE/src/VBox/Frontends/VirtualBox/src/runtime/UIMachineMenuBar.cpp	2011-08-16 23:27:21.954256054 +0200
 @@ -275,13 +275,6 @@
