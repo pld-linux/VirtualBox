@@ -32,19 +32,19 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		6
+%define		rel		1
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{_alt_kernel}
-Version:	4.1.4
+Version:	4.1.6
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	dc6e6801b3823332b6ca2e9915221aae
+# Source0-md5:	03cd0875729558a46f910483e1984316
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	3ea70652459c8590efb8c64f83f4736a
+# Source1-md5:	69d144809cec66c61aadcbbf16005d48
 Source3:	%{pname}-vboxdrv.init
 Source4:	%{pname}-vboxguest.init
 Source5:	%{pname}-vboxnetflt.init
@@ -61,7 +61,6 @@ Patch3:		%{pname}-warning_workaround.patch
 Patch4:		%{pname}-vnc.patch
 Patch5:		%{pname}-dri.patch
 Patch6:		%{pname}-disable_build_NetBiosBin.patch
-Patch7:		%{pname}-build.patch
 # ubuntu patches
 Patch10:		16-no-update.patch
 Patch11:		18-system-xorg.patch
@@ -460,7 +459,6 @@ Moduł jądra Linuksa dla VirtualBoksa - sterownik obsługi DRM.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
-%patch7 -p1
 
 %{__sed} -i -e 's,@VBOX_DOC_PATH@,%{_docdir}/%{name}-%{version},' \
 	-e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/common/virtualbox.desktop.in
