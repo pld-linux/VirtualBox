@@ -2,22 +2,6 @@ Description: Disable "Check for Updates" action.
 Bug-Ubuntu: https://bugs.launchpad.net/bugs/272212
 Author: Daniel Hahler <ubuntu@thequod.de>, Felix Geyer <debfx-pkg@fobos.de>
 
---- VirtualBox-4.1.2_OSE/src/VBox/Frontends/VirtualBox/src/runtime/UIMachineMenuBar.cpp.orig	2011-08-15 14:28:35.000000000 +0200
-+++ VirtualBox-4.1.2_OSE/src/VBox/Frontends/VirtualBox/src/runtime/UIMachineMenuBar.cpp	2011-08-16 23:27:21.954256054 +0200
-@@ -275,13 +275,6 @@
- #if defined(Q_WS_MAC) && (QT_VERSION < 0x040700)
-     if (m_fIsFirstTime)
- # endif
--        pMenu->addAction(gActionPool->action(UIActionIndex_Simple_Update));
--#ifndef Q_WS_MAC
--    pMenu->addSeparator();
--#endif /* !Q_WS_MAC */
--#if defined(Q_WS_MAC) && (QT_VERSION < 0x040700)
--    if (m_fIsFirstTime)
--# endif
-         pMenu->addAction(gActionPool->action(UIActionIndex_Simple_About));
- 
- 
 diff -Nur virtualbox-ose-4.0.0-dfsg.orig/src/VBox/Frontends/VirtualBox/src/settings/UISettingsDialogSpecific.cpp virtualbox-ose-4.0.0-dfsg/src/VBox/Frontends/VirtualBox/src/settings/UISettingsDialogSpecific.cpp
 --- virtualbox-ose-4.0.0-dfsg.orig/src/VBox/Frontends/VirtualBox/src/settings/UISettingsDialogSpecific.cpp	2010-12-17 16:14:24.000000000 +0100
 +++ virtualbox-ose-4.0.0-dfsg/src/VBox/Frontends/VirtualBox/src/settings/UISettingsDialogSpecific.cpp	2011-01-02 00:03:55.120533579 +0100
