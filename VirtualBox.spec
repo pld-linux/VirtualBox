@@ -32,7 +32,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		2
+%define		rel		3
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
@@ -152,6 +152,16 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %endif
 %define		outdir		out/%{vbox_platform}/release/bin
 %define		_sbindir	/sbin
+
+# workaround buggy 'file' results:
+#
+# EfiThunk:     \0
+# qt_ro.qm:     \0 "<\270d\030\312\357\234\225\315!\034\277`\241\275\335B"
+# VBoxEFI32.fd: \0
+# VBoxEFI64.fd: \0
+#
+# which lead to 'Stripping ... ELF shared libraries... (...)/nls/qt_ro.qm: File format not recognized'
+%define		_noautostrip	.*%{_libdir}/%{name}/.*
 
 %description
 Oracle VirtualBox is a general-purpose full virtualizer for x86
