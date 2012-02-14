@@ -54,6 +54,12 @@ Source8:	%{pname}-vboxpci.init
 Source9:	%{pname}.sh
 Source10:	mount.vdi
 Source11:	udev.rules
+Source12:	%{pname}-vboxdrv-modules-load.conf
+Source13:	%{pname}-vboxguest-modules-load.conf
+Source14:	%{pname}-vboxnetflt-modules-load.conf
+Source15:	%{pname}-vboxsf-modules-load.conf
+Source16:	%{pname}-vboxnetadp-modules-load.conf
+Source17:	%{pname}-vboxpci-modules-load.conf
 Patch0:		%{pname}-configure-spaces.patch
 Patch1:		%{pname}-export_modules.patch
 Patch2:		%{pname}-VBoxSysInfo.patch
@@ -622,6 +628,21 @@ install -p %{SOURCE8} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxpci
 
 install -p mount.vboxsf $RPM_BUILD_ROOT%{_sbindir}/mount.vboxsf
 
+# Tell systemd to load modules
+install -p %{SOURCE12} $RPM_BUILD_ROOT/etc/modules-load.d/vboxdrv.conf
+install -p %{SOURCE13} $RPM_BUILD_ROOT/etc/modules-load.d/vboxguest.conf
+install -p %{SOURCE14} $RPM_BUILD_ROOT/etc/modules-load.d/vboxnetflt.conf
+install -p %{SOURCE15} $RPM_BUILD_ROOT/etc/modules-load.d/vboxsf.conf
+install -p %{SOURCE16} $RPM_BUILD_ROOT/etc/modules-load.d/vboxnetadp.conf
+install -p %{SOURCE17} $RPM_BUILD_ROOT/etc/modules-load.d/vboxpci.conf
+
+# And mask module-loading services
+ln -sf /dev/null $RPM_BUILD_ROOT%{systemdunitdir}/vboxdrv.service
+ln -sf /dev/null $RPM_BUILD_ROOT%{systemdunitdir}/vboxguest.service
+ln -sf /dev/null $RPM_BUILD_ROOT%{systemdunitdir}/vboxnetflt.service
+ln -sf /dev/null $RPM_BUILD_ROOT%{systemdunitdir}/vboxsf.service
+ln -sf /dev/null $RPM_BUILD_ROOT%{systemdunitdir}/vboxnetadp.service
+ln -sf /dev/null $RPM_BUILD_ROOT%{systemdunitdir}/vboxpci.service
 %endif
 
 %clean
@@ -911,31 +932,43 @@ fi
 %files -n kernel%{_alt_kernel}-misc-vboxguest
 %defattr(644,root,root,755)
 %attr(754,root,root) /etc/rc.d/init.d/vboxguest
+%config(noreplace) %verify(not md5 mtime size) /etc/modules-load.d/vboxguest.conf
+%{systemdunitdir}/vboxguest.service
 /lib/modules/%{_kernel_ver}/misc/vboxguest.ko*
 
 %files -n kernel%{_alt_kernel}-misc-vboxdrv
 %defattr(644,root,root,755)
 %attr(754,root,root) /etc/rc.d/init.d/vboxdrv
+%config(noreplace) %verify(not md5 mtime size) /etc/modules-load.d/vboxdrv.conf
+%{systemdunitdir}/vboxdrv.service
 /lib/modules/%{_kernel_ver}/misc/vboxdrv.ko*
 
 %files -n kernel%{_alt_kernel}-misc-vboxnetadp
 %defattr(644,root,root,755)
 %attr(754,root,root) /etc/rc.d/init.d/vboxnetadp
+%config(noreplace) %verify(not md5 mtime size) /etc/modules-load.d/vboxnetadp.conf
+%{systemdunitdir}/vboxnetadp.service
 /lib/modules/%{_kernel_ver}/misc/vboxnetadp.ko*
 
 %files -n kernel%{_alt_kernel}-misc-vboxnetflt
 %defattr(644,root,root,755)
 %attr(754,root,root) /etc/rc.d/init.d/vboxnetflt
+%config(noreplace) %verify(not md5 mtime size) /etc/modules-load.d/vboxnetflt.conf
+%{systemdunitdir}/vboxnetflt.service
 /lib/modules/%{_kernel_ver}/misc/vboxnetflt.ko*
 
 %files -n kernel%{_alt_kernel}-misc-vboxpci
 %defattr(644,root,root,755)
 %attr(754,root,root) /etc/rc.d/init.d/vboxpci
+%config(noreplace) %verify(not md5 mtime size) /etc/modules-load.d/vboxpci.conf
+%{systemdunitdir}/vboxpci.service
 /lib/modules/%{_kernel_ver}/misc/vboxpci.ko*
 
 %files -n kernel%{_alt_kernel}-misc-vboxsf
 %defattr(644,root,root,755)
 %attr(754,root,root) /etc/rc.d/init.d/vboxsf
+%config(noreplace) %verify(not md5 mtime size) /etc/modules-load.d/vboxsf.conf
+%{systemdunitdir}/vboxsf.service
 %attr(755,root,root) %{_sbindir}/mount.vboxsf
 /lib/modules/%{_kernel_ver}/misc/vboxsf.ko*
 
