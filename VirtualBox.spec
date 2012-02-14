@@ -124,6 +124,7 @@ BuildRequires:	python-devel
 BuildRequires:	python-modules
 BuildRequires:	qt4-build >= 4.2.0
 BuildRequires:	qt4-linguist
+BuildRequires:	rpmbuild(macros) >= 1.627
 BuildRequires:	sed >= 4.0
 %if %{with doc}
 BuildRequires:	texlive-fonts-bitstream
@@ -313,6 +314,7 @@ Requires:	dev >= 2.9.0-7
 %requires_releq_kernel
 Requires(postun):	%releq_kernel
 %endif
+Requires:	systemd-units >= 37-0.10
 Provides:	kernel(vboxguest) = %{version}-%{rel}
 Obsoletes:	kernel%{_alt_kernel}-misc-vboxadd
 Conflicts:	kernel%{_alt_kernel}-misc-vboxdrv
@@ -337,6 +339,7 @@ Requires:	dev >= 2.9.0-7
 %requires_releq_kernel
 Requires(postun):	%releq_kernel
 %endif
+Requires:	systemd-units >= 37-0.10
 Provides:	kernel(vboxdrv) = %{version}-%{rel}
 
 %description -n kernel%{_alt_kernel}-misc-vboxdrv
@@ -360,6 +363,7 @@ Requires:	kernel%{_alt_kernel}-misc-vboxdrv
 %requires_releq_kernel
 Requires(postun):	%releq_kernel
 %endif
+Requires:	systemd-units >= 37-0.10
 Provides:	kernel(vboxnetflt) = %{version}-%{rel}
 
 %description -n kernel%{_alt_kernel}-misc-vboxnetadp
@@ -383,6 +387,7 @@ Requires:	kernel%{_alt_kernel}-misc-vboxdrv
 %requires_releq_kernel
 Requires(postun):	%releq_kernel
 %endif
+Requires:	systemd-units >= 37-0.10
 Provides:	kernel(vboxnetflt) = %{version}-%{rel}
 
 %description -n kernel%{_alt_kernel}-misc-vboxnetflt
@@ -406,6 +411,7 @@ Requires:	kernel%{_alt_kernel}-misc-vboxdrv
 %requires_releq_kernel
 Requires(postun):	%releq_kernel
 %endif
+Requires:	systemd-units >= 37-0.10
 Provides:	kernel(vboxpci) = %{version}-%{rel}
 
 %description -n kernel%{_alt_kernel}-misc-vboxpci
@@ -430,6 +436,7 @@ Requires:	kernel%{_alt_kernel}-misc-vboxguest
 %requires_releq_kernel
 Requires(postun):	%releq_kernel
 %endif
+Requires:	systemd-units >= 37-0.10
 Provides:	kernel(vboxsf) = %{version}-%{rel}
 Obsoletes:	kernel%{_alt_kernel}-misc-vboxvfs
 
@@ -611,7 +618,7 @@ rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/mount.vboxsf
 %endif
 
 %if %{with kernel}
-install -d $RPM_BUILD_ROOT{/etc/{rc.d/init.d,modprobe.d},%{_sbindir}}
+install -d $RPM_BUILD_ROOT{/etc/{rc.d/init.d,modules-load.d},%{_sbindir},%{systemdunitdir}}
 install -p %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxdrv
 install -p %{SOURCE4} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxguest
 install -p %{SOURCE5} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxnetflt
@@ -679,6 +686,7 @@ fi
 %depmod %{_kernel_ver}
 /sbin/chkconfig --add vboxguest
 %service vboxguest restart "VirtualBox Guest additions driver"
+%systemd_reload
 
 %postun	-n kernel%{_alt_kernel}-misc-vboxguest
 %depmod %{_kernel_ver}
@@ -693,6 +701,7 @@ fi
 %depmod %{_kernel_ver}
 /sbin/chkconfig --add vboxdrv
 %service vboxdrv restart "VirtualBox Support Driver"
+%systemd_reload
 
 %postun	-n kernel%{_alt_kernel}-misc-vboxdrv
 %depmod %{_kernel_ver}
@@ -707,6 +716,7 @@ fi
 %depmod %{_kernel_ver}
 /sbin/chkconfig --add vboxnetadp
 %service vboxnetadp restart "VirtualBox Network HostOnly driver"
+%systemd_reload
 
 %postun	-n kernel%{_alt_kernel}-misc-vboxnetadp
 %depmod %{_kernel_ver}
@@ -721,6 +731,7 @@ fi
 %depmod %{_kernel_ver}
 /sbin/chkconfig --add vboxnetflt
 %service vboxnetflt restart "VirtualBox Network Filter driver"
+%systemd_reload
 
 %postun	-n kernel%{_alt_kernel}-misc-vboxnetflt
 %depmod %{_kernel_ver}
@@ -735,6 +746,7 @@ fi
 %depmod %{_kernel_ver}
 /sbin/chkconfig --add vboxpci
 %service vboxnetflt restart "VirtualBox PCI passthrough driver"
+%systemd_reload
 
 %postun	-n kernel%{_alt_kernel}-misc-vboxpci
 %depmod %{_kernel_ver}
@@ -749,6 +761,7 @@ fi
 %depmod %{_kernel_ver}
 /sbin/chkconfig --add vboxsf
 %service vboxsf restart "VirtualBox Host file system access (Shared Folders)"
+%systemd_reload
 
 %postun	-n kernel%{_alt_kernel}-misc-vboxsf
 %depmod %{_kernel_ver}
