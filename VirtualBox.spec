@@ -67,6 +67,7 @@ Patch3:		%{pname}-warning_workaround.patch
 Patch4:		%{pname}-vnc.patch
 Patch5:		%{pname}-dri.patch
 Patch6:		%{pname}-disable_build_NetBiosBin.patch
+Patch7:		xserver-1.12.patch
 # ubuntu patches
 Patch10:		16-no-update.patch
 Patch11:		18-system-xorg.patch
@@ -482,6 +483,7 @@ Moduł jądra Linuksa dla VirtualBoksa - sterownik obsługi DRM.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 
 %{__sed} -i -e 's,@VBOX_DOC_PATH@,%{_docdir}/%{name}-%{version},' \
 	-e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/common/virtualbox.desktop.in

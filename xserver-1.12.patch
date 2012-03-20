@@ -1,0 +1,20 @@
+--- VirtualBox-4.1.8_OSE/src/VBox/Additions/common/crOpenGL/glx_c_exports.c~	2011-12-19 13:58:54.000000000 +0100
++++ VirtualBox-4.1.8_OSE/src/VBox/Additions/common/crOpenGL/glx_c_exports.c	2012-03-20 19:23:14.921396646 +0100
+@@ -16,6 +16,7 @@
+  * hope that it will be useful, but WITHOUT ANY WARRANTY of any kind.
+  */
+ 
++#include "xorg/xorg-server.h"
+ #include "stub.h"
+ #include "dri_glx.h"
+ #include "fakedri_drv.h"
+--- VirtualBox-4.1.8_OSE/src/VBox/Additions/common/crOpenGL/fakedri_drv.c~	2012-03-20 18:05:06.047425764 +0100
++++ VirtualBox-4.1.8_OSE/src/VBox/Additions/common/crOpenGL/fakedri_drv.c	2012-03-20 19:26:39.608072546 +0100
+@@ -18,6 +18,7 @@
+ 
+ #define _GNU_SOURCE 1
+ 
++#include "xorg/xorg-server.h"
+ #include "cr_error.h"
+ #include "cr_gl.h"
+ #include "cr_mem.h"
