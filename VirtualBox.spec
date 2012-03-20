@@ -474,7 +474,7 @@ You should install this package in your Guest OS.
 Moduł jądra Linuksa dla VirtualBoksa - sterownik obsługi DRM.
 
 %prep
-%setup -q -n %{pname}-%{version}_OSE
+%setup -q
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
