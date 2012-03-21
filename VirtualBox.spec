@@ -32,40 +32,41 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		2
+%define		rel		3
+%define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
-Name:		VirtualBox
+Name:		%{pname}%{_alt_kernel}
 Version:	4.1.10
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/Emulators
-Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{name}-%{version}.tar.bz2
+Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
 # Source0-md5:	263e495ef3a7ab75943af28d446ee702
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
 # Source1-md5:	322a8fdaec597bc2aad5f8ae8a37f21b
-Source3:	%{name}-vboxdrv.init
-Source4:	%{name}-vboxguest.init
-Source5:	%{name}-vboxnetflt.init
-Source6:	%{name}-vboxsf.init
-Source7:	%{name}-vboxnetadp.init
-Source8:	%{name}-vboxpci.init
-Source9:	%{name}.sh
+Source3:	%{pname}-vboxdrv.init
+Source4:	%{pname}-vboxguest.init
+Source5:	%{pname}-vboxnetflt.init
+Source6:	%{pname}-vboxsf.init
+Source7:	%{pname}-vboxnetadp.init
+Source8:	%{pname}-vboxpci.init
+Source9:	%{pname}.sh
 Source10:	mount.vdi
 Source11:	udev.rules
-Source12:	%{name}-vboxdrv-modules-load.conf
-Source13:	%{name}-vboxguest-modules-load.conf
-Source14:	%{name}-vboxnetflt-modules-load.conf
-Source15:	%{name}-vboxsf-modules-load.conf
-Source16:	%{name}-vboxnetadp-modules-load.conf
-Source17:	%{name}-vboxpci-modules-load.conf
-Patch0:		%{name}-configure-spaces.patch
-Patch1:		%{name}-export_modules.patch
-Patch2:		%{name}-VBoxSysInfo.patch
-Patch3:		%{name}-warning_workaround.patch
-Patch4:		%{name}-vnc.patch
-Patch5:		%{name}-dri.patch
-Patch6:		%{name}-disable_build_NetBiosBin.patch
+Source12:	%{pname}-vboxdrv-modules-load.conf
+Source13:	%{pname}-vboxguest-modules-load.conf
+Source14:	%{pname}-vboxnetflt-modules-load.conf
+Source15:	%{pname}-vboxsf-modules-load.conf
+Source16:	%{pname}-vboxnetadp-modules-load.conf
+Source17:	%{pname}-vboxpci-modules-load.conf
+Patch0:		%{pname}-configure-spaces.patch
+Patch1:		%{pname}-export_modules.patch
+Patch2:		%{pname}-VBoxSysInfo.patch
+Patch3:		%{pname}-warning_workaround.patch
+Patch4:		%{pname}-vnc.patch
+Patch5:		%{pname}-dri.patch
+Patch6:		%{pname}-disable_build_NetBiosBin.patch
 Patch7:		xserver-1.12.patch
 # ubuntu patches
 Patch10:		16-no-update.patch
@@ -474,7 +475,7 @@ You should install this package in your Guest OS.
 Moduł jądra Linuksa dla VirtualBoksa - sterownik obsługi DRM.
 
 %prep
-%setup -q
+%setup -q -n %{pname}-%{version}
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
@@ -542,7 +543,7 @@ cd ../..
 rm -rf $RPM_BUILD_ROOT
 
 %if %{with userspace}
-install -d $RPM_BUILD_ROOT{%{_bindir},%{_sbindir},%{_libdir}/%{name}/ExtensionPacks} \
+install -d $RPM_BUILD_ROOT{%{_bindir},%{_sbindir},%{_libdir}/%{pname}/ExtensionPacks} \
 	$RPM_BUILD_ROOT{%{_pixmapsdir},%{_desktopdir}} \
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/{drivers,dri,input}
 
@@ -552,32 +553,32 @@ if cp -al VBox.png $RPM_BUILD_ROOT/Vbox.png 2>/dev/null; then
 	rm -f $RPM_BUILD_ROOT/VBox.png
 fi
 
-cp -a$l %{outdir}/* $RPM_BUILD_ROOT%{_libdir}/%{name}
+cp -a$l %{outdir}/* $RPM_BUILD_ROOT%{_libdir}/%{pname}
 
 cp -a %{SOURCE1} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/additions/VBoxGuestAdditions.iso
 install -p %{SOURCE10} $RPM_BUILD_ROOT%{_sbindir}/mount.vdi
-install -p VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_libdir}/%{name}
+install -p VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_libdir}/%{pname}
 for f in {VBox{BFE,Headless,Manage,SDL,SVC,Tunctl,XPCOMIPCD},VirtualBox}; do
-	ln -s %{_libdir}/%{name}/VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_bindir}/$f
+	ln -s %{_libdir}/%{pname}/VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_bindir}/$f
 done
 
-mv $RPM_BUILD_ROOT{%{_libdir}/%{name}/VBox.png,%{_pixmapsdir}/virtualbox.png}
-mv $RPM_BUILD_ROOT{%{_libdir}/%{name},%{_desktopdir}}/virtualbox.desktop
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/VBox.png,%{_pixmapsdir}/virtualbox.png}
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname},%{_desktopdir}}/virtualbox.desktop
 
-mv $RPM_BUILD_ROOT{%{_libdir}/%{name}/vboxmouse_drv.so,%{_libdir}/xorg/modules/input/vboxmouse_drv.so}
-mv $RPM_BUILD_ROOT{%{_libdir}/%{name}/additions/vboxvideo_drv.so,%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so}
-mv $RPM_BUILD_ROOT{%{_libdir}/%{name}/additions/VBoxOGL.so,%{_libdir}/xorg/modules/dri/vboxvideo_dri.so}
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/vboxmouse_drv.so,%{_libdir}/xorg/modules/input/vboxmouse_drv.so}
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/vboxvideo_drv.so,%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so}
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/VBoxOGL.so,%{_libdir}/xorg/modules/dri/vboxvideo_dri.so}
 # xorg other driver versions
-rm -vf $RPM_BUILD_ROOT%{_libdir}/%{name}/vboxmouse_drv*.{o,so}
-rm -vf $RPM_BUILD_ROOT%{_libdir}/%{name}/vboxvideo_drv*.{o,so}
+rm -vf $RPM_BUILD_ROOT%{_libdir}/%{pname}/vboxmouse_drv*.{o,so}
+rm -vf $RPM_BUILD_ROOT%{_libdir}/%{pname}/vboxvideo_drv*.{o,so}
 
 # XXX: where else to install them that vboxvideo_dri.so finds them? patch with rpath?
-mv $RPM_BUILD_ROOT{%{_libdir}/%{name}/additions,%{_libdir}}/VBoxOGLarrayspu.so
-mv $RPM_BUILD_ROOT{%{_libdir}/%{name}/additions,%{_libdir}}/VBoxOGLcrutil.so
-mv $RPM_BUILD_ROOT{%{_libdir}/%{name}/additions,%{_libdir}}/VBoxOGLerrorspu.so
-mv $RPM_BUILD_ROOT{%{_libdir}/%{name}/additions,%{_libdir}}/VBoxOGLfeedbackspu.so
-mv $RPM_BUILD_ROOT{%{_libdir}/%{name}/additions,%{_libdir}}/VBoxOGLpackspu.so
-mv $RPM_BUILD_ROOT{%{_libdir}/%{name}/additions,%{_libdir}}/VBoxOGLpassthroughspu.so
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLarrayspu.so
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLcrutil.so
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLerrorspu.so
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLfeedbackspu.so
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLpackspu.so
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLpassthroughspu.so
 
 install -d $RPM_BUILD_ROOT/etc/udev/rules.d
 cp -a %{SOURCE11} $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
@@ -586,19 +587,19 @@ install -d $RPM_BUILD_ROOT/%{_lib}/security
 mv $RPM_BUILD_ROOT{%{_libdir}/VirtualBox/additions,/%{_lib}/security}/pam_vbox.so
 
 # cleanup unpackaged
-rm -r $RPM_BUILD_ROOT%{_libdir}/%{name}/{src,sdk,testcase}
-rm -r $RPM_BUILD_ROOT%{_libdir}/%{name}/additions/src
-rm $RPM_BUILD_ROOT%{_libdir}/%{name}/vboxkeyboard.tar.bz2
-rm $RPM_BUILD_ROOT%{_libdir}/%{name}/tst*
+rm -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/{src,sdk,testcase}
+rm -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/src
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/vboxkeyboard.tar.bz2
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/tst*
 
 # IPRT Testcase / Tool - Source Code Massager.
-rm $RPM_BUILD_ROOT%{_libdir}/%{name}/scm
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/scm
 
 # Guest Only Tools
 install -d $RPM_BUILD_ROOT/etc/{X11/xinit/xinitrc.d,xdg/autostart}
-mv $RPM_BUILD_ROOT{%{_libdir}/%{name}/additions,%{_bindir}}/VBoxService
-mv $RPM_BUILD_ROOT{%{_libdir}/%{name}/additions,%{_bindir}}/VBoxClient
-mv $RPM_BUILD_ROOT{%{_libdir}/%{name}/additions,%{_bindir}}/VBoxControl
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_bindir}}/VBoxService
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_bindir}}/VBoxClient
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_bindir}}/VBoxControl
 install -p -D src/VBox/Additions/x11/Installer/98vboxadd-xclient \
 	$RPM_BUILD_ROOT/etc/X11/xinit/xinitrc.d/98vboxadd-xclient.sh
 cp -p src/VBox/Additions/x11/Installer/vboxclient.desktop \
@@ -606,16 +607,16 @@ cp -p src/VBox/Additions/x11/Installer/vboxclient.desktop \
 
 # unknown - checkme
 %if 1
-rm $RPM_BUILD_ROOT%{_libdir}/%{name}/SUPInstall
-rm $RPM_BUILD_ROOT%{_libdir}/%{name}/SUPLoggerCtl
-rm $RPM_BUILD_ROOT%{_libdir}/%{name}/SUPUninstall
-rm $RPM_BUILD_ROOT%{_libdir}/%{name}/VBox.sh
-rm $RPM_BUILD_ROOT%{_libdir}/%{name}/vboxshell.py
-rm $RPM_BUILD_ROOT%{_libdir}/%{name}/xpidl
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/SUPInstall
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/SUPLoggerCtl
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/SUPUninstall
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/VBox.sh
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/vboxshell.py
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/xpidl
 %endif
 
 # packaged by kernel part
-rm $RPM_BUILD_ROOT%{_libdir}/%{name}/additions/mount.vboxsf
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/mount.vboxsf
 %endif
 
 %if %{with kernel}
