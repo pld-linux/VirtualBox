@@ -20,9 +20,9 @@ VBOX_MODULE="vboxguest"
 
 setup() {
 	modprobe -s $VBOX_MODULE
-	# set proper /dev/vboxdrv for systems with static dev
+	RETVAL=$?
 	if [ -d /dev/.udev ]; then
-		return
+		return $RETVAL
 	fi
 
 	# set proper $VBOX_DEVICE for systems with static dev
@@ -37,24 +37,28 @@ setup() {
 			VBOX_MAJOR=$(awk '$2 == "misc" {print $1}' /proc/devices)
 		fi
 	fi
+
 	if [ -z "$VBOX_MAJOR" ]; then
 		/sbin/rmmod $VBOX_MODULE
-		fail
+		RETVAL=1
 	elif ! mknod -m 0660 $VBOX_DEVICE c $VBOX_MAJOR $VBOX_MINOR; then
+		RETVAL=$?
 		rmmod $VBOX_MODNAME
 		fail
 	elif ! chown root:vbox $VBOX_DEVICE; then
+		RETVAL=$?
 		fail
 	else
 		ok
 	fi
+	return $RETVAL
 }
 
 start() {
 	if [ -f /var/lock/subsys/vboxguest ]; then
 		return
 	fi
-	setup
+	setup || exit $?
 	touch /var/lock/subsys/vboxguest
 }
 
