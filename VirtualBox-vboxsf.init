@@ -12,7 +12,6 @@
 # Source function library
 . /etc/rc.d/init.d/functions
 
-VBOX_DEVICE="/dev/vboxsf"
 VBOX_MODULE="vboxsf"
 
 # Get service config - may override defaults
