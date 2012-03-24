@@ -12,7 +12,6 @@
 # Source function library
 . /etc/rc.d/init.d/functions
 
-VBOX_DEVICE="/dev/vboxnetflt"
 VBOX_MODULE="vboxnetflt"
 
 # Get service config - may override defaults
