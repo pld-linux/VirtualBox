@@ -21,7 +21,8 @@ VBOX_MODULE="vboxnetadp"
 setup() {
 	modprobe -s $VBOX_MODULE
 	RETVAL=$?
-	if [ -d /dev/.udev ]; then
+
+	if [ -d /dev/.udev ] || [ -d /run/udev/rules.d ]; then
 		return $RETVAL
 	fi
 
