@@ -12,13 +12,15 @@
 # Source function library
 . /etc/rc.d/init.d/functions
 
-VBOX_DEVICE="/dev/vboxguest"
 VBOX_MODULE="vboxguest"
+VBOX_GUEST_DEVICE="/dev/vboxguest"
+VBOX_USER_DEVICE="/dev/vboxuser"
 
 # Get service config - may override defaults
 [ -f /etc/sysconfig/virtualbox ] && . /etc/sysconfig/virtualbox
 
 setup() {
+	local VBOX_MODULE=$1 VBOX_DEVICE=$2
 	modprobe -s $VBOX_MODULE
 	RETVAL=$?
 
@@ -60,7 +62,8 @@ start() {
 		return
 	fi
 
-	setup || exit $?
+	setup $VBOX_MODULE $VBOX_GUEST_DEVICE || exit $?
+	setup $VBOX_MODULE $VBOX_USER_DEVICE || exit $?
 	touch /var/lock/subsys/$VBOX_MODULE
 }
 
