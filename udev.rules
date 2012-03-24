@@ -1,4 +1,3 @@
 # udev rules for VirtualBox
 KERNEL=="vboxdrv",    GROUP="vbox", MODE="0660"
-KERNEL=="vboxguest",  GROUP="vbox", MODE="0660"
 KERNEL=="vboxnetctl", GROUP="vbox", MODE="0660"
