@@ -28,11 +28,11 @@ setup() {
 	# set proper $VBOX_DEVICE for systems with static dev
 	show "Setting $VBOX_DEVICE entry"; busy
 	rm -f $VBOX_DEVICE
-	VBOX_MAJOR=$(awk '$2 == "vboxdrv" {print $1}' /proc/devices)
+	VBOX_MAJOR=$(awk -vdevice="${VBOX_DEVICE#/dev/}" '$2 == device {print $1}' /proc/devices)
 	if [ -n "$VBOX_MAJOR" ]; then
 		VBOX_MINOR=0
 	else
-		VBOX_MINOR=$(awk '$2 == "vboxdrv" {print $1}' /proc/misc)
+		VBOX_MINOR=$(awk -vdevice="${VBOX_DEVICE#/dev/}" '$2 == device {print $1}' /proc/misc)
 		if [ -n "$VBOX_MINOR" ]; then
 			VBOX_MAJOR=$(awk '$2 == "misc" {print $1}' /proc/devices)
 		fi
@@ -55,18 +55,27 @@ setup() {
 }
 
 start() {
-	if [ -f /var/lock/subsys/vboxdrv ]; then
+	if [ -f /var/lock/subsys/$VBOX_MODULE ]; then
 		return
 	fi
 
 	setup || exit $?
-	touch /var/lock/subsys/vboxdrv
+	touch /var/lock/subsys/$VBOX_MODULE
 }
 
 stop() {
 	# NOTE: rmmod will wait if device is in use, so automatic rmmod probably is not the best idea
 	/sbin/rmmod $VBOX_MODULE
-	rm -f /var/lock/subsys/vboxdrv
+	rm -f /var/lock/subsys/$VBOX_MODULE
+}
+
+condrestart() {
+	if [ -f /var/lock/subsys/$VBOX_MODULE ]; then
+		stop
+		start
+	else
+		RETVAL=$1
+	fi
 }
 
 RETVAL=0
@@ -81,6 +90,12 @@ case "$1" in
   restart)
 	stop
 	start
+	;;
+  try-restart)
+	condrestart 0
+	;;
+  force-reload)
+	condrestart 7
 	;;
   setup)
 	setup
@@ -100,7 +115,7 @@ case "$1" in
 	fi
 	;;
   *)
-	msg_usage "$0 {start|stop|restart|setup|status}"
+	msg_usage "$0 {start|stop|restart|try-restart|force-reload|setup|status}"
 	exit 3
 esac
 
