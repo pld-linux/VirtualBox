@@ -277,7 +277,7 @@ Summary:	X.org mouse driver for VirtualBox guest OS
 Summary(pl.UTF-8):	Sterownik myszy dla systemu gościa w VirtualBoksie
 Group:		X11/Applications
 Requires:	xorg-xserver-server >= 1.0.99.901
-Requires:	xorg-xserver-server(xinput-abi) <= 13.0
+Requires:	xorg-xserver-server(xinput-abi) <= 16.0
 Requires:	xorg-xserver-server(xinput-abi) >= 4.0
 
 %description -n xorg-driver-input-vboxmouse
@@ -293,7 +293,7 @@ Group:		X11/Applications
 Requires:	Mesa-dri-driver-swrast
 Requires:	xorg-xserver-libdri >= 1.7.4
 Requires:	xorg-xserver-server >= 1.0.99.901
-Requires:	xorg-xserver-server(videodrv-abi) <= 11.0
+Requires:	xorg-xserver-server(videodrv-abi) <= 12.0
 Requires:	xorg-xserver-server(videodrv-abi) >= 2.0
 
 %description -n xorg-driver-video-vboxvideo
