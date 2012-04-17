@@ -310,12 +310,13 @@ Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
 Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
+Requires(post):	systemd-units >= 38
 Requires:	dev >= 2.9.0-7
 %if %{with dist_kernel}
 %requires_releq_kernel
 Requires(postun):	%releq_kernel
 %endif
-Requires:	systemd-units >= 37-0.10
+Requires:	systemd-units >= 38
 Provides:	kernel(vboxguest) = %{version}-%{rel}
 Obsoletes:	kernel%{_alt_kernel}-misc-vboxadd
 Conflicts:	kernel%{_alt_kernel}-misc-vboxdrv
@@ -335,12 +336,13 @@ Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
 Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
+Requires(post):	systemd-units >= 38
 Requires:	dev >= 2.9.0-7
 %if %{with dist_kernel}
 %requires_releq_kernel
 Requires(postun):	%releq_kernel
 %endif
-Requires:	systemd-units >= 37-0.10
+Requires:	systemd-units >= 38
 Provides:	kernel(vboxdrv) = %{version}-%{rel}
 
 %description -n kernel%{_alt_kernel}-misc-vboxdrv
@@ -358,13 +360,14 @@ Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
 Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
+Requires(post):	systemd-units >= 38
 Requires:	dev >= 2.9.0-7
 Requires:	kernel%{_alt_kernel}-misc-vboxdrv
 %if %{with dist_kernel}
 %requires_releq_kernel
 Requires(postun):	%releq_kernel
 %endif
-Requires:	systemd-units >= 37-0.10
+Requires:	systemd-units >= 38
 Provides:	kernel(vboxnetflt) = %{version}-%{rel}
 
 %description -n kernel%{_alt_kernel}-misc-vboxnetadp
@@ -382,13 +385,14 @@ Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
 Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
+Requires(post):	systemd-units >= 38
 Requires:	dev >= 2.9.0-7
 Requires:	kernel%{_alt_kernel}-misc-vboxdrv
 %if %{with dist_kernel}
 %requires_releq_kernel
 Requires(postun):	%releq_kernel
 %endif
-Requires:	systemd-units >= 37-0.10
+Requires:	systemd-units >= 38
 Provides:	kernel(vboxnetflt) = %{version}-%{rel}
 
 %description -n kernel%{_alt_kernel}-misc-vboxnetflt
@@ -406,13 +410,14 @@ Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
 Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
+Requires(post):	systemd-units >= 38
 Requires:	dev >= 2.9.0-7
 Requires:	kernel%{_alt_kernel}-misc-vboxdrv
 %if %{with dist_kernel}
 %requires_releq_kernel
 Requires(postun):	%releq_kernel
 %endif
-Requires:	systemd-units >= 37-0.10
+Requires:	systemd-units >= 38
 Provides:	kernel(vboxpci) = %{version}-%{rel}
 
 %description -n kernel%{_alt_kernel}-misc-vboxpci
@@ -431,13 +436,14 @@ Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
 Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
+Requires(post):	systemd-units >= 38
 Requires:	dev >= 2.9.0-7
 Requires:	kernel%{_alt_kernel}-misc-vboxguest
 %if %{with dist_kernel}
 %requires_releq_kernel
 Requires(postun):	%releq_kernel
 %endif
-Requires:	systemd-units >= 37-0.10
+Requires:	systemd-units >= 38
 Provides:	kernel(vboxsf) = %{version}-%{rel}
 Obsoletes:	kernel%{_alt_kernel}-misc-vboxvfs
 
