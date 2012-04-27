@@ -530,6 +530,7 @@ kmk -j1 \
 %endif
 
 %if %{with kernel}
+export KERN_DIR=%{_kernelsrcdir}
 cd PLD-MODULE-BUILD/HostDrivers
 %build_kernel_modules -m vboxdrv -C vboxdrv
 %build_kernel_modules -m vboxnetadp -C vboxnetadp
