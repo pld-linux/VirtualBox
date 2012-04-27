@@ -918,6 +918,7 @@ fi
 %attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxadd
 %attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxadd-service
 %attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxadd-x11
+%attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxvideo_drv_111.so
 
 %files -n pam-pam_vbox
 %defattr(644,root,root,755)
