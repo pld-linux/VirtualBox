@@ -1,0 +1,64 @@
+--- VirtualBox-1.6.0_OSE/src/VBox/Additions/x11/xclient/Makefile.kmk	2008-04-30 16:05:59.000000000 +0200
++++ VirtualBox-1.6.0_OSE/src/VBox/Additions/x11/xclient/Makefile.kmk	2008-05-05 09:42:04.000000000 +0200
+@@ -63,14 +63,14 @@
+ # Link aginst libstdc++.a. (http://www.trilithium.com/johan/2005/06/static-libstdc/).
+ # (It would've been preferred to avoid features depending on libstdc++, of course...)
+ #
+-VBoxClient_LIBPATH  += $(PATH_TARGET)/VBoxClient
+-VBoxClient_ORDERDEPS = $(PATH_TARGET)/VBoxClient/libstdc++.a
+-VBoxClient_CLEAN     = $(PATH_TARGET)/VBoxClient/libstdc++.a
+-$(PATH_TARGET)/VBoxClient/libstdc++.a:
+-	$(call MSG_L1,Forcing static libstdc++)
+-	$(QUIET)$(MKDIR) -p $(@D)
+-	$(QUIET)$(LN_EXT) -sf `$(TOOL_$(VBOX_GCC32_TOOL)_CXX) -print-file-name=libstdc++.a` $@ \
+-	     || $(CP_EXT) -f  `$(TOOL_$(VBOX_GCC32_TOOL)_CXX) -print-file-name=libstdc++.a` $@
++#VBoxClient_LIBPATH  += $(PATH_TARGET)/VBoxClient
++#VBoxClient_ORDERDEPS = $(PATH_TARGET)/VBoxClient/libstdc++.a
++#VBoxClient_CLEAN     = $(PATH_TARGET)/VBoxClient/libstdc++.a
++#$(PATH_TARGET)/VBoxClient/libstdc++.a:
++#	$(call MSG_L1,Forcing static libstdc++)
++#	$(QUIET)$(MKDIR) -p $(@D)
++#	$(QUIET)$(LN_EXT) -sf `$(TOOL_$(VBOX_GCC32_TOOL)_CXX) -print-file-name=libstdc++.a` $@ \
++#	     || $(CP_EXT) -f  `$(TOOL_$(VBOX_GCC32_TOOL)_CXX) -print-file-name=libstdc++.a` $@
+ 
+ 
+ ifdef VBOX_X11_SEAMLESS_GUEST
+--- VirtualBox-1.6.0_OSE/configure.orig	2008-05-12 10:07:04.000000000 +0200
++++ VirtualBox-1.6.0_OSE/configure	2008-05-12 10:09:23.000000000 +0200
+@@ -1302,28 +1302,6 @@
+   fi
+ }
+ 
+-
+-#
+-# Check whether static libstdc++ is installed
+-#
+-check_staticlibstdcxx()
+-{
+-  test_header "static stc++ library"
+-  libstdcxx=`$CXX -print-file-name=libstdc++.a`
+-  cat > .tmp_src.cc << EOF
+-#include <string>
+-
+-extern "C" int main(void)
+-{
+-  std::string s = "test";
+-  return 0;
+-}
+-EOF
+-  if test_compile "$libstdcxx" libstdc++ libstdc++; then
+-    log_success "found"
+-  fi
+-}
+-
+ #
+ # Check for Linux sources
+ #
+@@ -1816,7 +1794,6 @@
+ 
+ # Linux-specific
+ if [ "$OS" = "linux" ]; then
+-  check_staticlibstdcxx
+   if [ $WITH_KMODS -eq 1 ]; then
+     check_linux
+   else
