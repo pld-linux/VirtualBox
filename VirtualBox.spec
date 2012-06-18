@@ -561,6 +561,7 @@ if cp -al VBox.png $RPM_BUILD_ROOT/Vbox.png 2>/dev/null; then
 fi
 
 cp -a$l %{outdir}/* $RPM_BUILD_ROOT%{_libdir}/%{pname}
+ln -sf %{_docdir}/%{pname]-doc-%{version}/UserManual.pdf $RPM_BUILD_ROOT%{_libdir}/%{pname}/UserManual.pdf
 
 cp -a %{SOURCE1} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/additions/VBoxGuestAdditions.iso
 install -p %{SOURCE10} $RPM_BUILD_ROOT%{_sbindir}/mount.vdi
@@ -927,6 +928,9 @@ fi
 %if %{with doc}
 %files doc
 %defattr(644,root,root,755)
+# this is a symlink...
+%doc %{_libdir}/%{pname}/UserManual.pdf
+# ..to this file
 %doc %{outdir}/UserManual.pdf
 %endif
 
