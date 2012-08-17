@@ -32,7 +32,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		0.1
+%define		rel		0.2
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
@@ -41,10 +41,10 @@ Version:	4.2.0
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/Emulators
-Source0:	http://download.virtualbox.org/virtualbox/%{version}_BETA1/%{pname}-%{version}_BETA1.tar.bz2
-# Source0-md5:	6f2f004f632efb7e6c5cbb7840b89599
-Source1:	http://download.virtualbox.org/virtualbox/%{version}_BETA1/VBoxGuestAdditions_%{version}_BETA1.iso
-# Source1-md5:	23da6e1de57eac8136ea9c50384e2e34
+Source0:	http://download.virtualbox.org/virtualbox/%{version}_RC1/%{pname}-%{version}_RC1.tar.bz2
+# Source0-md5:	7054b78e43207f7050e30ca3bfa772e6
+Source1:	http://download.virtualbox.org/virtualbox/%{version}_RC1/VBoxGuestAdditions_%{version}_RC1.iso
+# Source1-md5:	4e467c9959ce5ea64202c5522b3364ef
 Source3:	%{pname}-vboxdrv.init
 Source4:	%{pname}-vboxguest.init
 Source5:	%{pname}-vboxnetflt.init
@@ -481,7 +481,7 @@ You should install this package in your Guest OS.
 Moduł jądra Linuksa dla VirtualBoksa - sterownik obsługi DRM.
 
 %prep
-%setup -q -n %{pname}-%{version}
+%setup -q -n %{pname}-%{version}_RC1
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
@@ -504,7 +504,7 @@ tar -zxf guest-modules.tar.gz -C GuestDrivers
 ../src/VBox/HostDrivers/linux/export_modules host-modules.tar.gz --without-hardening
 tar -zxf host-modules.tar.gz -C HostDrivers
 cd -
-#%patch10 -p1 // needs updating
+%patch10 -p1
 %patch11 -p1
 
 
@@ -857,7 +857,7 @@ fi
 %{_libdir}/VirtualBox/VBoxDD2R0.r0
 %{_libdir}/VirtualBox/VBoxDDR0.r0
 %{_libdir}/VirtualBox/VMMR0.r0
-%{_libdir}/VirtualBox/EfiThunk
+#%{_libdir}/VirtualBox/EfiThunk
 %{_libdir}/VirtualBox/VBoxEFI32.fd
 %{_libdir}/VirtualBox/VBoxEFI64.fd
 %{_libdir}/VirtualBox/components/VBoxXPCOMBase.xpt
