@@ -32,7 +32,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		4
+%define		rel		5
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
@@ -293,7 +293,7 @@ Group:		X11/Applications
 Requires:	Mesa-dri-driver-swrast
 Requires:	xorg-xserver-libdri >= 1.7.4
 Requires:	xorg-xserver-server >= 1.0.99.901
-Requires:	xorg-xserver-server(videodrv-abi) <= 12.0
+Requires:	xorg-xserver-server(videodrv-abi) <= 12.1
 Requires:	xorg-xserver-server(videodrv-abi) >= 2.0
 
 %description -n xorg-driver-video-vboxvideo
