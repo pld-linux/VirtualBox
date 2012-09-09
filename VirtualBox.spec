@@ -32,7 +32,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		0.4
+%define		rel		0.5
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
@@ -41,10 +41,10 @@ Version:	4.2.0
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/Emulators
-Source0:	http://download.virtualbox.org/virtualbox/%{version}_RC3/%{pname}-%{version}_RC3.tar.bz2
-# Source0-md5:	cc019414a29aa021d82952d763541a2c
-Source1:	http://download.virtualbox.org/virtualbox/%{version}_RC3/VBoxGuestAdditions_%{version}_RC3.iso
-# Source1-md5:	820ca266e3c6463a58a4d10769791bc2
+Source0:	http://download.virtualbox.org/virtualbox/%{version}_RC4/%{pname}-%{version}_RC4.tar.bz2
+# Source0-md5:	697790b7d150569e6e3cc869242ddfe3
+Source1:	http://download.virtualbox.org/virtualbox/%{version}_RC4/VBoxGuestAdditions_%{version}_RC4.iso
+# Source1-md5:	861eedfbbb16eed27c46d2a2c35086d6
 Source3:	%{pname}-vboxdrv.init
 Source4:	%{pname}-vboxguest.init
 Source5:	%{pname}-vboxnetflt.init
@@ -111,7 +111,7 @@ BuildRequires:	libpng-devel >= 1.2.5
 BuildRequires:	libstdc++-devel >= 5:3.2.3
 BuildRequires:	libstdc++-static >= 5:3.2.3
 BuildRequires:	libuuid-devel
-BuildRequires:	libvncserver-devel >= 0.9.7
+BuildRequires:	libvncserver-devel >= 0.9.9
 BuildRequires:	libxml2-devel >= 2.6.26
 BuildRequires:	libxslt-devel >= 1.1.17
 BuildRequires:	libxslt-progs >= 1.1.17
@@ -148,6 +148,7 @@ Requires(postun):	/usr/sbin/groupdel
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
 Requires:	QtCore >= 4.7.0
+Requires:	libvncserver >= 0.9.9
 Suggests:	gxmessage
 Provides:	group(vbox)
 ExclusiveArch:	%{ix86} %{x8664}
@@ -481,7 +482,7 @@ You should install this package in your Guest OS.
 Moduł jądra Linuksa dla VirtualBoksa - sterownik obsługi DRM.
 
 %prep
-%setup -q -n %{pname}-%{version}_RC3
+%setup -q -n %{pname}-%{version}_RC4
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
@@ -561,7 +562,10 @@ if cp -al VBox.png $RPM_BUILD_ROOT/Vbox.png 2>/dev/null; then
 fi
 
 cp -a$l %{outdir}/* $RPM_BUILD_ROOT%{_libdir}/%{pname}
+
+%if %{with doc}
 ln -sf %{_docdir}/%{pname}-doc-%{version}/UserManual.pdf $RPM_BUILD_ROOT%{_libdir}/%{pname}/UserManual.pdf
+%endif
 
 cp -a %{SOURCE1} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/additions/VBoxGuestAdditions.iso
 install -p %{SOURCE10} $RPM_BUILD_ROOT%{_sbindir}/mount.vdi
@@ -866,14 +870,14 @@ fi
 %attr(755,root,root) %{_libdir}/VirtualBox/components/VBoxC.so
 %attr(755,root,root) %{_libdir}/VirtualBox/components/VBoxSVCM.so
 %attr(755,root,root) %{_libdir}/VirtualBox/components/VBoxXPCOMIPCC.so
-%lang(ar) %{_libdir}/VirtualBox/nls/*_ar.qm
+#%lang(ar) %{_libdir}/VirtualBox/nls/*_ar.qm
 %lang(bg) %{_libdir}/VirtualBox/nls/*_bg.qm
 %lang(ca) %{_libdir}/VirtualBox/nls/*_ca.qm
 %lang(ca_VA) %{_libdir}/VirtualBox/nls/*_ca_VA.qm
 %lang(cs) %{_libdir}/VirtualBox/nls/*_cs.qm
 %lang(da) %{_libdir}/VirtualBox/nls/*_da.qm
 %lang(de) %{_libdir}/VirtualBox/nls/*_de.qm
-%lang(el) %{_libdir}/VirtualBox/nls/*_el.qm
+#%lang(el) %{_libdir}/VirtualBox/nls/*_el.qm
 %lang(en) %{_libdir}/VirtualBox/nls/*_en.qm
 %lang(es) %{_libdir}/VirtualBox/nls/*_es.qm
 %lang(eu) %{_libdir}/VirtualBox/nls/*_eu.qm
