@@ -32,7 +32,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		0.5
+%define		rel		1
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
@@ -41,10 +41,10 @@ Version:	4.2.0
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/Emulators
-Source0:	http://download.virtualbox.org/virtualbox/%{version}_RC4/%{pname}-%{version}_RC4.tar.bz2
-# Source0-md5:	697790b7d150569e6e3cc869242ddfe3
-Source1:	http://download.virtualbox.org/virtualbox/%{version}_RC4/VBoxGuestAdditions_%{version}_RC4.iso
-# Source1-md5:	861eedfbbb16eed27c46d2a2c35086d6
+Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
+# Source0-md5:	691b4134983ce7d89b9fb683305cb647
+Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
+# Source1-md5:	ee74e968bab97466c3b463a0b4d665f5
 Source3:	%{pname}-vboxdrv.init
 Source4:	%{pname}-vboxguest.init
 Source5:	%{pname}-vboxnetflt.init
@@ -482,7 +482,7 @@ You should install this package in your Guest OS.
 Moduł jądra Linuksa dla VirtualBoksa - sterownik obsługi DRM.
 
 %prep
-%setup -q -n %{pname}-%{version}_RC4
+%setup -q -n %{pname}-%{version}
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
