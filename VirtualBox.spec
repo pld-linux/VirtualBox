@@ -868,14 +868,12 @@ fi
 %attr(755,root,root) %{_libdir}/VirtualBox/components/VBoxC.so
 %attr(755,root,root) %{_libdir}/VirtualBox/components/VBoxSVCM.so
 %attr(755,root,root) %{_libdir}/VirtualBox/components/VBoxXPCOMIPCC.so
-#%lang(ar) %{_libdir}/VirtualBox/nls/*_ar.qm
 %lang(bg) %{_libdir}/VirtualBox/nls/*_bg.qm
 %lang(ca) %{_libdir}/VirtualBox/nls/*_ca.qm
 %lang(ca_VA) %{_libdir}/VirtualBox/nls/*_ca_VA.qm
 %lang(cs) %{_libdir}/VirtualBox/nls/*_cs.qm
 %lang(da) %{_libdir}/VirtualBox/nls/*_da.qm
 %lang(de) %{_libdir}/VirtualBox/nls/*_de.qm
-#%lang(el) %{_libdir}/VirtualBox/nls/*_el.qm
 %lang(en) %{_libdir}/VirtualBox/nls/*_en.qm
 %lang(es) %{_libdir}/VirtualBox/nls/*_es.qm
 %lang(eu) %{_libdir}/VirtualBox/nls/*_eu.qm
@@ -927,6 +925,7 @@ fi
 %attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxadd-service
 %attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxadd-x11
 %attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxvideo_drv_111.so
+%attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxvideo_drv_113.so
 
 %files -n pam-pam_vbox
 %defattr(644,root,root,755)
