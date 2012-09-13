@@ -32,19 +32,19 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		5
+%define		rel		1
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{_alt_kernel}
-Version:	4.1.18
+Version:	4.2.0
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	38db0a87cba659b484af868b0c2bd3ac
+# Source0-md5:	691b4134983ce7d89b9fb683305cb647
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	f8da062c7a116796304a8e8faf3fc32f
+# Source1-md5:	ee74e968bab97466c3b463a0b4d665f5
 Source3:	%{pname}-vboxdrv.init
 Source4:	%{pname}-vboxguest.init
 Source5:	%{pname}-vboxnetflt.init
@@ -64,7 +64,7 @@ Patch0:		%{pname}-configure-spaces.patch
 Patch1:		%{pname}-export_modules.patch
 Patch2:		%{pname}-VBoxSysInfo.patch
 Patch3:		%{pname}-warning_workaround.patch
-Patch4:		%{pname}-vnc.patch
+
 Patch5:		%{pname}-dri.patch
 Patch6:		%{pname}-disable_build_NetBiosBin.patch
 Patch7:		xserver-1.12.patch
@@ -111,7 +111,7 @@ BuildRequires:	libpng-devel >= 1.2.5
 BuildRequires:	libstdc++-devel >= 5:3.2.3
 BuildRequires:	libstdc++-static >= 5:3.2.3
 BuildRequires:	libuuid-devel
-BuildRequires:	libvncserver-devel >= 0.9.7
+BuildRequires:	libvncserver-devel >= 0.9.9
 BuildRequires:	libxml2-devel >= 2.6.26
 BuildRequires:	libxslt-devel >= 1.1.17
 BuildRequires:	libxslt-progs >= 1.1.17
@@ -148,6 +148,7 @@ Requires(postun):	/usr/sbin/groupdel
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
 Requires:	QtCore >= 4.7.0
+Requires:	libvncserver >= 0.9.9
 Suggests:	gxmessage
 Provides:	group(vbox)
 ExclusiveArch:	%{ix86} %{x8664}
@@ -486,7 +487,7 @@ Moduł jądra Linuksa dla VirtualBoksa - sterownik obsługi DRM.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
+
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
@@ -561,7 +562,10 @@ if cp -al VBox.png $RPM_BUILD_ROOT/Vbox.png 2>/dev/null; then
 fi
 
 cp -a$l %{outdir}/* $RPM_BUILD_ROOT%{_libdir}/%{pname}
+
+%if %{with doc}
 ln -sf %{_docdir}/%{pname}-doc-%{version}/UserManual.pdf $RPM_BUILD_ROOT%{_libdir}/%{pname}/UserManual.pdf
+%endif
 
 cp -a %{SOURCE1} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/additions/VBoxGuestAdditions.iso
 install -p %{SOURCE10} $RPM_BUILD_ROOT%{_sbindir}/mount.vdi
@@ -599,9 +603,7 @@ rm -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/{src,sdk,testcase}
 rm -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/src
 rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/vboxkeyboard.tar.bz2
 rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/tst*
-
-# IPRT Testcase / Tool - Source Code Massager.
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/scm
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/ExtensionPacks/VNC/ExtPack-license.*
 
 # Guest Only Tools
 install -d $RPM_BUILD_ROOT/etc/{X11/xinit/xinitrc.d,xdg/autostart}
@@ -793,6 +795,8 @@ fi
 %defattr(644,root,root,755)
 %dir %{_libdir}/VirtualBox
 %dir %{_libdir}/VirtualBox/ExtensionPacks
+%dir %{_libdir}/VirtualBox/ExtensionPacks/VNC
+%dir %{_libdir}/VirtualBox/ExtensionPacks/VNC/linux*
 %dir %{_libdir}/VirtualBox/additions
 %dir %{_libdir}/VirtualBox/components
 %dir %{_libdir}/VirtualBox/nls
@@ -808,6 +812,7 @@ fi
 %attr(755,root,root) %{_libdir}/VirtualBox/DBGCPlugInDiggers.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxAuth.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxAuthSimple.so
+%attr(755,root,root) %{_libdir}/VirtualBox/VBoxAutostart
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxBFE
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxBalloonCtrl
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxCreateUSBNode.sh
@@ -815,6 +820,7 @@ fi
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxDD2.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxDD.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxDDU.so
+%attr(755,root,root) %{_libdir}/VirtualBox/VBoxDragAndDropSvc.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxExtPackHelperApp
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxGuestControlSvc.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxGuestPropSvc.so
@@ -842,33 +848,36 @@ fi
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxTestOGL
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxTunctl
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxVMM.so
+%attr(755,root,root) %{_libdir}/VirtualBox/VBoxVMMPreload
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxXPCOMC.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxXPCOMIPCD
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxXPCOM.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VirtualBox
 %attr(755,root,root) %{_libdir}/VirtualBox/VirtualBox-wrapper.sh
+%attr(755,root,root) %{_libdir}/VirtualBox/ExtensionPacks/VNC/linux*/VBoxVNC*.so
 %{_libdir}/VirtualBox/VBoxDD2GC.gc
 %{_libdir}/VirtualBox/VBoxDDGC.gc
 %{_libdir}/VirtualBox/VMMGC.gc
 %{_libdir}/VirtualBox/VBoxDD2R0.r0
 %{_libdir}/VirtualBox/VBoxDDR0.r0
 %{_libdir}/VirtualBox/VMMR0.r0
-%{_libdir}/VirtualBox/EfiThunk
+#%{_libdir}/VirtualBox/EfiThunk
 %{_libdir}/VirtualBox/VBoxEFI32.fd
 %{_libdir}/VirtualBox/VBoxEFI64.fd
 %{_libdir}/VirtualBox/components/VBoxXPCOMBase.xpt
+%{_libdir}/VirtualBox/ExtensionPacks/VNC/ExtPack.xml
 %{_libdir}/VirtualBox/components/VirtualBox_XPCOM.xpt
 %attr(755,root,root) %{_libdir}/VirtualBox/components/VBoxC.so
 %attr(755,root,root) %{_libdir}/VirtualBox/components/VBoxSVCM.so
 %attr(755,root,root) %{_libdir}/VirtualBox/components/VBoxXPCOMIPCC.so
-%lang(ar) %{_libdir}/VirtualBox/nls/*_ar.qm
+#%lang(ar) %{_libdir}/VirtualBox/nls/*_ar.qm
 %lang(bg) %{_libdir}/VirtualBox/nls/*_bg.qm
 %lang(ca) %{_libdir}/VirtualBox/nls/*_ca.qm
 %lang(ca_VA) %{_libdir}/VirtualBox/nls/*_ca_VA.qm
 %lang(cs) %{_libdir}/VirtualBox/nls/*_cs.qm
 %lang(da) %{_libdir}/VirtualBox/nls/*_da.qm
 %lang(de) %{_libdir}/VirtualBox/nls/*_de.qm
-%lang(el) %{_libdir}/VirtualBox/nls/*_el.qm
+#%lang(el) %{_libdir}/VirtualBox/nls/*_el.qm
 %lang(en) %{_libdir}/VirtualBox/nls/*_en.qm
 %lang(es) %{_libdir}/VirtualBox/nls/*_es.qm
 %lang(eu) %{_libdir}/VirtualBox/nls/*_eu.qm

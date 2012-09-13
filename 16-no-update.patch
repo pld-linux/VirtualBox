@@ -2,32 +2,31 @@ Description: Disable "Check for Updates" action.
 Bug-Ubuntu: https://bugs.launchpad.net/bugs/272212
 Author: Daniel Hahler <ubuntu@thequod.de>, Felix Geyer <debfx-pkg@fobos.de>
 
-diff -Nur virtualbox-ose-4.0.0-dfsg.orig/src/VBox/Frontends/VirtualBox/src/settings/UISettingsDialogSpecific.cpp virtualbox-ose-4.0.0-dfsg/src/VBox/Frontends/VirtualBox/src/settings/UISettingsDialogSpecific.cpp
---- virtualbox-ose-4.0.0-dfsg.orig/src/VBox/Frontends/VirtualBox/src/settings/UISettingsDialogSpecific.cpp	2010-12-17 16:14:24.000000000 +0100
-+++ virtualbox-ose-4.0.0-dfsg/src/VBox/Frontends/VirtualBox/src/settings/UISettingsDialogSpecific.cpp	2011-01-02 00:03:55.120533579 +0100
-@@ -501,6 +501,10 @@
+--- VirtualBox-4.2.0_RC1/src/VBox/Frontends/VirtualBox/src/settings/UISettingsDialogSpecific.cpp.orig	2012-08-13 13:35:11.000000000 +0200
++++ VirtualBox-4.2.0_RC1/src/VBox/Frontends/VirtualBox/src/settings/UISettingsDialogSpecific.cpp	2012-08-16 02:12:54.423685632 +0200
+@@ -544,6 +544,11 @@
  #endif /* !VBOX_WITH_NETFLT */
              break;
          }
 +        case GLSettingsPage_Update:
 +        {
-+            return false;
-+        }
++             return false;
++             break;
++         }
          default:
              break;
      }
---- VirtualBox-4.1.2_OSE/src/VBox/Frontends/VirtualBox/src/selector/VBoxSelectorWnd.cpp.orig	2011-08-15 14:28:35.000000000 +0200
-+++ VirtualBox-4.1.2_OSE/src/VBox/Frontends/VirtualBox/src/selector/VBoxSelectorWnd.cpp	2011-08-17 22:48:08.700558251 +0200
-@@ -1747,12 +1747,6 @@
-     pMenu->addAction(gActionPool->action(UIActionIndex_Simple_Register));
+--- VirtualBox-4.2.0_RC1/src/VBox/Frontends/VirtualBox/src/selector/UISelectorWindow.cpp.orig	2012-08-13 13:35:09.000000000 +0200
++++ VirtualBox-4.2.0_RC1/src/VBox/Frontends/VirtualBox/src/selector/UISelectorWindow.cpp	2012-08-16 02:03:36.328578159 +0200
+@@ -1291,11 +1291,7 @@
+     m_pRegisterAction = gActionPool->action(UIActionIndex_Simple_Register);
+     pMenu->addAction(m_pRegisterAction);
  #endif /* VBOX_WITH_REGISTRATION */
- 
--    pMenu->addAction(gActionPool->action(UIActionIndex_Simple_Update));
--
+     m_pUpdateAction = gActionPool->action(UIActionIndex_Simple_CheckForUpdates);
+-    pMenu->addAction(m_pUpdateAction);
 -#ifndef Q_WS_MAC
 -    pMenu->addSeparator();
 -#endif /* !Q_WS_MAC */
--
-     pMenu->addAction(gActionPool->action(UIActionIndex_Simple_About));
- 
-     /* Configure connections: */
+     m_pAboutAction = gActionPool->action(UIActionIndex_Simple_About);
+     pMenu->addAction(m_pAboutAction);
+ }
