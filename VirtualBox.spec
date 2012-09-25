@@ -32,7 +32,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		2
+%define		rel		3
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
@@ -925,7 +925,7 @@ fi
 %attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxadd-service
 %attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxadd-x11
 %attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxvideo_drv_111.so
-%attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxvideo_drv_113.so
+#attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxvideo_drv_113.so
 
 %files -n pam-pam_vbox
 %defattr(644,root,root,755)
