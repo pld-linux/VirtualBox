@@ -72,7 +72,6 @@ Patch10:		16-no-update.patch
 Patch11:		18-system-xorg.patch
 # /ubuntu patches
 URL:		http://www.virtualbox.org/
-BuildRequires:	rpmbuild(macros) >= 1.535
 %if %{with userspace}
 %ifarch %{x8664}
 BuildRequires:	gcc-multilib
@@ -302,6 +301,20 @@ X.org video driver for VirtualBox guest OS.
 %description -n xorg-driver-video-vboxvideo -l pl.UTF-8
 Sterownik grafiki dla systemu gościa w VirtualBoksie.
 
+%package kernel-init-host
+Summary:	SysV initscripts for host kernel modules
+Group:		Base/Kernel
+
+%description kernel-init-host
+SysV initscripts for host kernel modules.
+
+%package kernel-init-guest
+Summary:	SysV initscripts for guest kernel modules
+Group:		Base/Kernel
+
+%description kernel-init-guest
+SysV initscripts for guest kernel modules.
+
 # KERNEL PACKAGES
 # KEEP ALL REGULAR SUBPACKAGES BEFORE KERNEL PACKAGES.
 %package -n kernel%{_alt_kernel}-misc-vboxguest
@@ -317,6 +330,7 @@ Requires:	dev >= 2.9.0-7
 Requires(postun):	%releq_kernel
 %endif
 Requires:	systemd-units >= 38
+Suggests:	%{name}-kernel-init-guest >= %{version}-%{rel}
 Provides:	kernel(vboxguest) = %{version}-%{rel}
 Obsoletes:	kernel%{_alt_kernel}-misc-vboxadd
 Conflicts:	kernel%{_alt_kernel}-misc-vboxdrv
@@ -343,6 +357,7 @@ Requires:	dev >= 2.9.0-7
 Requires(postun):	%releq_kernel
 %endif
 Requires:	systemd-units >= 38
+Suggests:	%{name}-kernel-init-host >= %{version}-%{rel}
 Provides:	kernel(vboxdrv) = %{version}-%{rel}
 
 %description -n kernel%{_alt_kernel}-misc-vboxdrv
@@ -368,6 +383,7 @@ Requires:	kernel%{_alt_kernel}-misc-vboxdrv
 Requires(postun):	%releq_kernel
 %endif
 Requires:	systemd-units >= 38
+Suggests:	%{name}-kernel-init-host >= %{version}-%{rel}
 Provides:	kernel(vboxnetflt) = %{version}-%{rel}
 
 %description -n kernel%{_alt_kernel}-misc-vboxnetadp
@@ -393,6 +409,7 @@ Requires:	kernel%{_alt_kernel}-misc-vboxdrv
 Requires(postun):	%releq_kernel
 %endif
 Requires:	systemd-units >= 38
+Suggests:	%{name}-kernel-init-host >= %{version}-%{rel}
 Provides:	kernel(vboxnetflt) = %{version}-%{rel}
 
 %description -n kernel%{_alt_kernel}-misc-vboxnetflt
@@ -418,6 +435,7 @@ Requires:	kernel%{_alt_kernel}-misc-vboxdrv
 Requires(postun):	%releq_kernel
 %endif
 Requires:	systemd-units >= 38
+Suggests:	%{name}-kernel-init-host >= %{version}-%{rel}
 Provides:	kernel(vboxpci) = %{version}-%{rel}
 
 %description -n kernel%{_alt_kernel}-misc-vboxpci
@@ -444,6 +462,7 @@ Requires:	kernel%{_alt_kernel}-misc-vboxguest
 Requires(postun):	%releq_kernel
 %endif
 Requires:	systemd-units >= 38
+Suggests:	%{name}-kernel-init-guest >= %{version}-%{rel}
 Provides:	kernel(vboxsf) = %{version}-%{rel}
 Obsoletes:	kernel%{_alt_kernel}-misc-vboxvfs
 
@@ -465,9 +484,7 @@ Requires(post,postun):	/sbin/depmod
 Requires:	dev >= 2.9.0-7
 %if %{with dist_kernel}
 %requires_releq_kernel
-%if "%{rpm_build_macros}" >= "1.531"
 %requires_releq_kernel -n drm
-%endif
 Requires(postun):	%releq_kernel
 %endif
 Provides:	kernel(vboxvideo) = %{version}-%{rel}
@@ -968,46 +985,52 @@ fi
 %endif
 
 %if %{with kernel}
-%files -n kernel%{_alt_kernel}-misc-vboxguest
+%files kernel-init-host
+%defattr(644,root,root,755)
+%attr(754,root,root) /etc/rc.d/init.d/vboxdrv
+%attr(754,root,root) /etc/rc.d/init.d/vboxnetadp
+%attr(754,root,root) /etc/rc.d/init.d/vboxnetflt
+%attr(754,root,root) /etc/rc.d/init.d/vboxpci
+%{systemdunitdir}/vboxdrv.service
+%{systemdunitdir}/vboxnetadp.service
+%{systemdunitdir}/vboxnetflt.service
+%{systemdunitdir}/vboxpci.service
+
+%files kernel-init-guest
 %defattr(644,root,root,755)
 %attr(754,root,root) /etc/rc.d/init.d/vboxguest
-%config(noreplace) %verify(not md5 mtime size) /etc/modules-load.d/vboxguest.conf
+%attr(754,root,root) /etc/rc.d/init.d/vboxsf
 %{systemdunitdir}/vboxguest.service
+%{systemdunitdir}/vboxsf.service
+
+%files -n kernel%{_alt_kernel}-misc-vboxguest
+%defattr(644,root,root,755)
+%config(noreplace) %verify(not md5 mtime size) /etc/modules-load.d/vboxguest.conf
 /lib/modules/%{_kernel_ver}/misc/vboxguest.ko*
 
 %files -n kernel%{_alt_kernel}-misc-vboxdrv
 %defattr(644,root,root,755)
-%attr(754,root,root) /etc/rc.d/init.d/vboxdrv
 %config(noreplace) %verify(not md5 mtime size) /etc/modules-load.d/vboxdrv.conf
-%{systemdunitdir}/vboxdrv.service
 /lib/modules/%{_kernel_ver}/misc/vboxdrv.ko*
 
 %files -n kernel%{_alt_kernel}-misc-vboxnetadp
 %defattr(644,root,root,755)
-%attr(754,root,root) /etc/rc.d/init.d/vboxnetadp
 %config(noreplace) %verify(not md5 mtime size) /etc/modules-load.d/vboxnetadp.conf
-%{systemdunitdir}/vboxnetadp.service
 /lib/modules/%{_kernel_ver}/misc/vboxnetadp.ko*
 
 %files -n kernel%{_alt_kernel}-misc-vboxnetflt
 %defattr(644,root,root,755)
-%attr(754,root,root) /etc/rc.d/init.d/vboxnetflt
 %config(noreplace) %verify(not md5 mtime size) /etc/modules-load.d/vboxnetflt.conf
-%{systemdunitdir}/vboxnetflt.service
 /lib/modules/%{_kernel_ver}/misc/vboxnetflt.ko*
 
 %files -n kernel%{_alt_kernel}-misc-vboxpci
 %defattr(644,root,root,755)
-%attr(754,root,root) /etc/rc.d/init.d/vboxpci
 %config(noreplace) %verify(not md5 mtime size) /etc/modules-load.d/vboxpci.conf
-%{systemdunitdir}/vboxpci.service
 /lib/modules/%{_kernel_ver}/misc/vboxpci.ko*
 
 %files -n kernel%{_alt_kernel}-misc-vboxsf
 %defattr(644,root,root,755)
-%attr(754,root,root) /etc/rc.d/init.d/vboxsf
 %config(noreplace) %verify(not md5 mtime size) /etc/modules-load.d/vboxsf.conf
-%{systemdunitdir}/vboxsf.service
 %attr(755,root,root) %{_sbindir}/mount.vboxsf
 /lib/modules/%{_kernel_ver}/misc/vboxsf.ko*
 
