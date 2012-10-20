@@ -32,19 +32,19 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		7
+%define		rel		1
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{_alt_kernel}
-Version:	4.2.0
+Version:	4.2.2
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	691b4134983ce7d89b9fb683305cb647
+# Source0-md5:	2b65dcd9649e56ac6338670b3fb4a14d
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	ee74e968bab97466c3b463a0b4d665f5
+# Source1-md5:	5336ec5a543549df7b5792b050376aa6
 Source3:	%{pname}-vboxdrv.init
 Source4:	%{pname}-vboxguest.init
 Source5:	%{pname}-vboxnetflt.init
@@ -277,7 +277,7 @@ Summary:	X.org mouse driver for VirtualBox guest OS
 Summary(pl.UTF-8):	Sterownik myszy dla systemu gościa w VirtualBoksie
 Group:		X11/Applications
 Requires:	xorg-xserver-server >= 1.0.99.901
-Requires:	xorg-xserver-server(xinput-abi) <= 16.0
+Requires:	xorg-xserver-server(xinput-abi) <= 18.0
 Requires:	xorg-xserver-server(xinput-abi) >= 4.0
 
 %description -n xorg-driver-input-vboxmouse
@@ -293,7 +293,7 @@ Group:		X11/Applications
 Requires:	Mesa-dri-driver-swrast
 Requires:	xorg-xserver-libdri >= 1.7.4
 Requires:	xorg-xserver-server >= 1.0.99.901
-Requires:	xorg-xserver-server(videodrv-abi) <= 12.1
+Requires:	xorg-xserver-server(videodrv-abi) <= 13.0
 Requires:	xorg-xserver-server(videodrv-abi) >= 2.0
 
 %description -n xorg-driver-video-vboxvideo
