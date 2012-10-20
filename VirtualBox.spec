@@ -960,7 +960,7 @@ fi
 %lang(fr) %doc %{_libdir}/%{pname}/UserManual_fr_FR.pdf
 # ..to this file
 %doc %{outdir}/UserManual.pdf
-%lang(fr) %doc %{_outdir}/UserManual_fr_FR.pdf
+%lang(fr) %doc %{outdir}/UserManual_fr_FR.pdf
 %endif
 
 %files udev
