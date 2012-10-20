@@ -844,7 +844,9 @@ fi
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxHostChannel.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxKeyboard.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxManage
+%if %{with doc}
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxManageHelp
+%endif
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxNetAdpCtl
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxNetDHCP
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxOGLhostcrutil.so
