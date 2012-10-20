@@ -523,6 +523,9 @@ cd -
 %patch10 -p1
 %patch11 -p1
 
+# fix build translations (missing qt_fa_IR.ts)
+cp src/VBox/Frontends/VirtualBox/nls/{qt_en,qt_fa_IR}.ts
+
 
 %build
 %if %{with userspace}
