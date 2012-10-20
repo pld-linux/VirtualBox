@@ -563,6 +563,7 @@ cp -a$l %{outdir}/* $RPM_BUILD_ROOT%{_libdir}/%{pname}
 
 %if %{with doc}
 ln -sf %{_docdir}/%{pname}-doc-%{version}/UserManual.pdf $RPM_BUILD_ROOT%{_libdir}/%{pname}/UserManual.pdf
+ln -sf %{_docdir}/%{pname}-doc-%{version}/UserManual_fr_FR.pdf $RPM_BUILD_ROOT%{_libdir}/%{pname}/UserManual_fr_FR.pdf
 %endif
 
 cp -a %{SOURCE1} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/additions/VBoxGuestAdditions.iso
@@ -823,8 +824,10 @@ fi
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxGuestControlSvc.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxGuestPropSvc.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxHeadless
+%attr(755,root,root) %{_libdir}/VirtualBox/VBoxHostChannel.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxKeyboard.so
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxManage
+%attr(755,root,root) %{_libdir}/VirtualBox/VBoxManageHelp
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxNetAdpCtl
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxNetDHCP
 %attr(755,root,root) %{_libdir}/VirtualBox/VBoxOGLhostcrutil.so
@@ -877,6 +880,7 @@ fi
 %lang(en) %{_libdir}/VirtualBox/nls/*_en.qm
 %lang(es) %{_libdir}/VirtualBox/nls/*_es.qm
 %lang(eu) %{_libdir}/VirtualBox/nls/*_eu.qm
+%lang(fi) %{_libdir}/VirtualBox/nls/*_fa_IR.qm
 %lang(fi) %{_libdir}/VirtualBox/nls/*_fi.qm
 %lang(fr) %{_libdir}/VirtualBox/nls/*_fr.qm
 %lang(gl_ES) %{_libdir}/VirtualBox/nls/*_gl_ES.qm
@@ -925,7 +929,7 @@ fi
 %attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxadd-service
 %attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxadd-x11
 %attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxvideo_drv_111.so
-#attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxvideo_drv_113.so
+%attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxvideo_drv_112.so
 
 %files -n pam-pam_vbox
 %defattr(644,root,root,755)
@@ -936,8 +940,10 @@ fi
 %defattr(644,root,root,755)
 # this is a symlink...
 %doc %{_libdir}/%{pname}/UserManual.pdf
+%lang(fr) %doc %{_libdir}/%{pname}/UserManual_fr_FR.pdf
 # ..to this file
 %doc %{outdir}/UserManual.pdf
+%lang(fr) %doc %{_outdir}/UserManual_fr_FR.pdf
 %endif
 
 %files udev
