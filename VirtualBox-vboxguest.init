@@ -48,9 +48,6 @@ setup() {
 		RETVAL=$?
 		rmmod $VBOX_MODNAME
 		fail
-	elif ! chown root:vbox $VBOX_DEVICE; then
-		RETVAL=$?
-		fail
 	else
 		ok
 	fi
