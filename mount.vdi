@@ -113,8 +113,8 @@ OFFSET=
 OLDIFS=$IFS
 IFS=", "
 for opt in $OPTIONS; do
-    KEY=${opt%=*};
-    VAL=${opt#*=};
+	KEY=${opt%=*};
+	VAL=${opt#*=};
 	case "$KEY" in
 	part|partition)
 		PARTITION="$VAL"
@@ -164,5 +164,5 @@ fi
 # $MOUNTPOINT might not exist as mount can try to read it from /etc/fstab
 $MOUNT $MOUNTARGS ${FSTYPE:+-t "$FSTYPE"} ${MOUNTOPTIONS:+-o "$MOUNTOPTIONS"} "$DEVICE" "$MOUNTPOINT"
 if [ $? -ne 0 ]; then
-    echo >&2 "$PROGRAM: error mounting $DEVICE"
+	echo >&2 "$PROGRAM: error mounting $DEVICE"
 fi
