@@ -68,8 +68,8 @@ Patch4:		%{pname}-dri.patch
 Patch5:		%{pname}-disable_build_NetBiosBin.patch
 Patch6:		xserver-1.12.patch
 # ubuntu patches
-Patch10:		16-no-update.patch
-Patch11:		18-system-xorg.patch
+Patch10:	16-no-update.patch
+Patch11:	18-system-xorg.patch
 # /ubuntu patches
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
@@ -316,7 +316,9 @@ Group:		Base/Kernel
 SysV initscripts for guest kernel modules.
 
 # KERNEL PACKAGES
+
 # KEEP ALL REGULAR SUBPACKAGES BEFORE KERNEL PACKAGES.
+
 %package -n kernel%{_alt_kernel}-misc-vboxguest
 Summary:	VirtualBox Guest Additions for Linux Module
 Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
@@ -524,8 +526,7 @@ cd -
 %patch11 -p1
 
 # fix build translations (missing qt_fa_IR.ts)
-cp src/VBox/Frontends/VirtualBox/nls/{qt_en,qt_fa_IR}.ts
-
+cp -p src/VBox/Frontends/VirtualBox/nls/{qt_en,qt_fa_IR}.ts
 
 %build
 %if %{with userspace}
@@ -667,12 +668,12 @@ install -p %{SOURCE8} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxpci
 install -p mount.vboxsf $RPM_BUILD_ROOT%{_sbindir}/mount.vboxsf
 
 # Tell systemd to load modules
-install -p %{SOURCE12} $RPM_BUILD_ROOT/etc/modules-load.d/vboxdrv.conf
-install -p %{SOURCE13} $RPM_BUILD_ROOT/etc/modules-load.d/vboxguest.conf
-install -p %{SOURCE14} $RPM_BUILD_ROOT/etc/modules-load.d/vboxnetflt.conf
-install -p %{SOURCE15} $RPM_BUILD_ROOT/etc/modules-load.d/vboxsf.conf
-install -p %{SOURCE16} $RPM_BUILD_ROOT/etc/modules-load.d/vboxnetadp.conf
-install -p %{SOURCE17} $RPM_BUILD_ROOT/etc/modules-load.d/vboxpci.conf
+cp -p %{SOURCE12} $RPM_BUILD_ROOT/etc/modules-load.d/vboxdrv.conf
+cp -p %{SOURCE13} $RPM_BUILD_ROOT/etc/modules-load.d/vboxguest.conf
+cp -p %{SOURCE14} $RPM_BUILD_ROOT/etc/modules-load.d/vboxnetflt.conf
+cp -p %{SOURCE15} $RPM_BUILD_ROOT/etc/modules-load.d/vboxsf.conf
+cp -p %{SOURCE16} $RPM_BUILD_ROOT/etc/modules-load.d/vboxnetadp.conf
+cp -p %{SOURCE17} $RPM_BUILD_ROOT/etc/modules-load.d/vboxpci.conf
 
 # And mask module-loading services
 ln -sf /dev/null $RPM_BUILD_ROOT%{systemdunitdir}/vboxdrv.service
@@ -950,6 +951,8 @@ fi
 %attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxadd
 %attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxadd-service
 %attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxadd-x11
+# XXX these files belong to xorg-driver-video-vboxvideo
+# but probably 18-system-xorg.patch patch is broken?
 %attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxvideo_drv_111.so
 %attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxvideo_drv_112.so
 
