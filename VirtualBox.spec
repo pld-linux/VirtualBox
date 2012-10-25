@@ -9,6 +9,7 @@
 # - resolve mess with subpackages?
 #   - addtions: iso (containing additions/*.iso)
 #   - guest: to be installed to guests (deps on x11 drivers)
+# - enable VDE networking: --enable-vde
 #
 # Conditional build:
 %bcond_without	doc		# don't build the documentation
@@ -587,7 +588,8 @@ ln -sf %{_docdir}/%{pname}-doc-%{version}/UserManual.pdf $RPM_BUILD_ROOT%{_libdi
 ln -sf %{_docdir}/%{pname}-doc-%{version}/UserManual_fr_FR.pdf $RPM_BUILD_ROOT%{_libdir}/%{pname}/UserManual_fr_FR.pdf
 %endif
 
-cp -a %{SOURCE1} $RPM_BUILD_ROOT%{_libdir}/VirtualBox/additions/VBoxGuestAdditions.iso
+install -d $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions
+cp -a %{SOURCE1} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/VBoxGuestAdditions.iso
 install -p %{SOURCE10} $RPM_BUILD_ROOT%{_sbindir}/mount.vdi
 install -p VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_libdir}/%{pname}
 for f in {VBox{BFE,Headless,Manage,SDL,SVC,Tunctl,XPCOMIPCD},VirtualBox}; do
@@ -616,7 +618,7 @@ install -d $RPM_BUILD_ROOT/etc/udev/rules.d
 cp -a %{SOURCE11} $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
 
 install -d $RPM_BUILD_ROOT/%{_lib}/security
-mv $RPM_BUILD_ROOT{%{_libdir}/VirtualBox/additions,/%{_lib}/security}/pam_vbox.so
+mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,/%{_lib}/security}/pam_vbox.so
 
 # cleanup unpackaged
 rm -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/{src,sdk,testcase}
@@ -643,6 +645,16 @@ rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/SUPUninstall
 rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/VBox.sh
 rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/vboxshell.py
 rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/xpidl
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/runasroot.sh
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/amd64/CPUMInternal.d
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/amd64/cpumctx.d
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/amd64/vbox-arch-types.d
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/amd64/vbox-types.d
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/amd64/vm.d
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/amd64/x86.d
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/testcase/amd64/vbox-vm-struct-test.d
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/load.sh
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/loadall.sh
 %endif
 
 # packaged by kernel part
@@ -813,13 +825,13 @@ fi
 %if %{with userspace}
 %files
 %defattr(644,root,root,755)
-%dir %{_libdir}/VirtualBox
-%dir %{_libdir}/VirtualBox/ExtensionPacks
-%dir %{_libdir}/VirtualBox/ExtensionPacks/VNC
-%dir %{_libdir}/VirtualBox/ExtensionPacks/VNC/linux*
-%dir %{_libdir}/VirtualBox/additions
-%dir %{_libdir}/VirtualBox/components
-%dir %{_libdir}/VirtualBox/nls
+%dir %{_libdir}/%{pname}
+%dir %{_libdir}/%{pname}/ExtensionPacks
+%dir %{_libdir}/%{pname}/ExtensionPacks/VNC
+%dir %{_libdir}/%{pname}/ExtensionPacks/VNC/linux*
+%dir %{_libdir}/%{pname}/additions
+%dir %{_libdir}/%{pname}/components
+%dir %{_libdir}/%{pname}/nls
 %attr(755,root,root) %{_bindir}/VBoxBFE
 %attr(755,root,root) %{_bindir}/VBoxHeadless
 %attr(755,root,root) %{_bindir}/VBoxManage
@@ -829,112 +841,112 @@ fi
 %attr(755,root,root) %{_bindir}/VBoxXPCOMIPCD
 %attr(755,root,root) %{_bindir}/VirtualBox
 %attr(755,root,root) %{_sbindir}/mount.vdi
-%attr(755,root,root) %{_libdir}/VirtualBox/DBGCPlugInDiggers.so
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxAuth.so
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxAuthSimple.so
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxAutostart
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxBFE
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxBalloonCtrl
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxCreateUSBNode.sh
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxDbg.so
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxDD2.so
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxDD.so
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxDDU.so
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxDragAndDropSvc.so
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxExtPackHelperApp
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxGuestControlSvc.so
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxGuestPropSvc.so
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxHeadless
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxHostChannel.so
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxKeyboard.so
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxManage
+%attr(755,root,root) %{_libdir}/%{pname}/DBGCPlugInDiggers.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxAuth.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxAuthSimple.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxAutostart
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxBFE
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxBalloonCtrl
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxCreateUSBNode.sh
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxDbg.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxDD2.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxDD.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxDDU.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxDragAndDropSvc.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxExtPackHelperApp
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxGuestControlSvc.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxGuestPropSvc.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxHeadless
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxHostChannel.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxKeyboard.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxManage
 %if %{with doc}
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxManageHelp
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxManageHelp
 %endif
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxNetAdpCtl
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxNetDHCP
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxOGLhostcrutil.so
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxOGLhosterrorspu.so
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxOGLrenderspu.so
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxPython*.so
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxREM.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxNetAdpCtl
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxNetDHCP
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxOGLhostcrutil.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxOGLhosterrorspu.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxOGLrenderspu.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxPython*.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxREM.so
 %ifarch %{ix86}
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxREM32.so
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxREM64.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxREM32.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxREM64.so
 %endif
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxRT.so
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxSDL
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxSharedClipboard.so
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxSharedCrOpenGL.so
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxSharedFolders.so
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxSVC
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxSysInfo.sh
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxTestOGL
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxTunctl
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxVMM.so
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxVMMPreload
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxXPCOMC.so
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxXPCOMIPCD
-%attr(755,root,root) %{_libdir}/VirtualBox/VBoxXPCOM.so
-%attr(755,root,root) %{_libdir}/VirtualBox/VirtualBox
-%attr(755,root,root) %{_libdir}/VirtualBox/VirtualBox-wrapper.sh
-%attr(755,root,root) %{_libdir}/VirtualBox/ExtensionPacks/VNC/linux*/VBoxVNC*.so
-%{_libdir}/VirtualBox/VBoxDD2GC.gc
-%{_libdir}/VirtualBox/VBoxDDGC.gc
-%{_libdir}/VirtualBox/VMMGC.gc
-%{_libdir}/VirtualBox/VBoxDD2R0.r0
-%{_libdir}/VirtualBox/VBoxDDR0.r0
-%{_libdir}/VirtualBox/VMMR0.r0
-#%{_libdir}/VirtualBox/EfiThunk
-%{_libdir}/VirtualBox/VBoxEFI32.fd
-%{_libdir}/VirtualBox/VBoxEFI64.fd
-%{_libdir}/VirtualBox/components/VBoxXPCOMBase.xpt
-%{_libdir}/VirtualBox/ExtensionPacks/VNC/ExtPack.xml
-%{_libdir}/VirtualBox/components/VirtualBox_XPCOM.xpt
-%attr(755,root,root) %{_libdir}/VirtualBox/components/VBoxC.so
-%attr(755,root,root) %{_libdir}/VirtualBox/components/VBoxSVCM.so
-%attr(755,root,root) %{_libdir}/VirtualBox/components/VBoxXPCOMIPCC.so
-%lang(bg) %{_libdir}/VirtualBox/nls/*_bg.qm
-%lang(ca) %{_libdir}/VirtualBox/nls/*_ca.qm
-%lang(ca_VA) %{_libdir}/VirtualBox/nls/*_ca_VA.qm
-%lang(cs) %{_libdir}/VirtualBox/nls/*_cs.qm
-%lang(da) %{_libdir}/VirtualBox/nls/*_da.qm
-%lang(de) %{_libdir}/VirtualBox/nls/*_de.qm
-%lang(en) %{_libdir}/VirtualBox/nls/*_en.qm
-%lang(es) %{_libdir}/VirtualBox/nls/*_es.qm
-%lang(eu) %{_libdir}/VirtualBox/nls/*_eu.qm
-%lang(fi) %{_libdir}/VirtualBox/nls/*_fa_IR.qm
-%lang(fi) %{_libdir}/VirtualBox/nls/*_fi.qm
-%lang(fr) %{_libdir}/VirtualBox/nls/*_fr.qm
-%lang(gl_ES) %{_libdir}/VirtualBox/nls/*_gl_ES.qm
-%lang(hu) %{_libdir}/VirtualBox/nls/*_hu.qm
-%lang(id) %{_libdir}/VirtualBox/nls/*_id.qm
-%lang(it) %{_libdir}/VirtualBox/nls/*_it.qm
-%lang(ja) %{_libdir}/VirtualBox/nls/*_ja.qm
-%lang(km_KH) %{_libdir}/VirtualBox/nls/*_km_KH.qm
-%lang(ko) %{_libdir}/VirtualBox/nls/*_ko.qm
-%lang(lt) %{_libdir}/VirtualBox/nls/*_lt.qm
-%lang(nl) %{_libdir}/VirtualBox/nls/*_nl.qm
-%lang(pl) %{_libdir}/VirtualBox/nls/*_pl.qm
-%lang(pt) %{_libdir}/VirtualBox/nls/*_pt.qm
-%lang(pt_BR) %{_libdir}/VirtualBox/nls/*_pt_BR.qm
-%lang(ro) %{_libdir}/VirtualBox/nls/*_ro.qm
-%lang(ru) %{_libdir}/VirtualBox/nls/*_ru.qm
-%lang(sk) %{_libdir}/VirtualBox/nls/*_sk.qm
-%lang(sr) %{_libdir}/VirtualBox/nls/*_sr.qm
-%lang(sv) %{_libdir}/VirtualBox/nls/*_sv.qm
-%lang(tr) %{_libdir}/VirtualBox/nls/*_tr.qm
-%lang(uk) %{_libdir}/VirtualBox/nls/*_uk.qm
-%lang(zh_CN) %{_libdir}/VirtualBox/nls/*_zh_CN.qm
-%lang(zh_TW) %{_libdir}/VirtualBox/nls/*_zh_TW.qm
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxRT.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxSDL
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxSharedClipboard.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxSharedCrOpenGL.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxSharedFolders.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxSVC
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxSysInfo.sh
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxTestOGL
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxTunctl
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxVMM.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxVMMPreload
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxXPCOMC.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxXPCOMIPCD
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxXPCOM.so
+%attr(755,root,root) %{_libdir}/%{pname}/VirtualBox
+%attr(755,root,root) %{_libdir}/%{pname}/VirtualBox-wrapper.sh
+%attr(755,root,root) %{_libdir}/%{pname}/ExtensionPacks/VNC/linux*/VBoxVNC*.so
+%{_libdir}/%{pname}/VBoxDD2GC.gc
+%{_libdir}/%{pname}/VBoxDDGC.gc
+%{_libdir}/%{pname}/VMMGC.gc
+%{_libdir}/%{pname}/VBoxDD2R0.r0
+%{_libdir}/%{pname}/VBoxDDR0.r0
+%{_libdir}/%{pname}/VMMR0.r0
+#%{_libdir}/%{pname}/EfiThunk
+%{_libdir}/%{pname}/VBoxEFI32.fd
+%{_libdir}/%{pname}/VBoxEFI64.fd
+%{_libdir}/%{pname}/components/VBoxXPCOMBase.xpt
+%{_libdir}/%{pname}/ExtensionPacks/VNC/ExtPack.xml
+%{_libdir}/%{pname}/components/VirtualBox_XPCOM.xpt
+%attr(755,root,root) %{_libdir}/%{pname}/components/VBoxC.so
+%attr(755,root,root) %{_libdir}/%{pname}/components/VBoxSVCM.so
+%attr(755,root,root) %{_libdir}/%{pname}/components/VBoxXPCOMIPCC.so
+%lang(bg) %{_libdir}/%{pname}/nls/*_bg.qm
+%lang(ca) %{_libdir}/%{pname}/nls/*_ca.qm
+%lang(ca_VA) %{_libdir}/%{pname}/nls/*_ca_VA.qm
+%lang(cs) %{_libdir}/%{pname}/nls/*_cs.qm
+%lang(da) %{_libdir}/%{pname}/nls/*_da.qm
+%lang(de) %{_libdir}/%{pname}/nls/*_de.qm
+%lang(en) %{_libdir}/%{pname}/nls/*_en.qm
+%lang(es) %{_libdir}/%{pname}/nls/*_es.qm
+%lang(eu) %{_libdir}/%{pname}/nls/*_eu.qm
+%lang(fi) %{_libdir}/%{pname}/nls/*_fa_IR.qm
+%lang(fi) %{_libdir}/%{pname}/nls/*_fi.qm
+%lang(fr) %{_libdir}/%{pname}/nls/*_fr.qm
+%lang(gl_ES) %{_libdir}/%{pname}/nls/*_gl_ES.qm
+%lang(hu) %{_libdir}/%{pname}/nls/*_hu.qm
+%lang(id) %{_libdir}/%{pname}/nls/*_id.qm
+%lang(it) %{_libdir}/%{pname}/nls/*_it.qm
+%lang(ja) %{_libdir}/%{pname}/nls/*_ja.qm
+%lang(km_KH) %{_libdir}/%{pname}/nls/*_km_KH.qm
+%lang(ko) %{_libdir}/%{pname}/nls/*_ko.qm
+%lang(lt) %{_libdir}/%{pname}/nls/*_lt.qm
+%lang(nl) %{_libdir}/%{pname}/nls/*_nl.qm
+%lang(pl) %{_libdir}/%{pname}/nls/*_pl.qm
+%lang(pt) %{_libdir}/%{pname}/nls/*_pt.qm
+%lang(pt_BR) %{_libdir}/%{pname}/nls/*_pt_BR.qm
+%lang(ro) %{_libdir}/%{pname}/nls/*_ro.qm
+%lang(ru) %{_libdir}/%{pname}/nls/*_ru.qm
+%lang(sk) %{_libdir}/%{pname}/nls/*_sk.qm
+%lang(sr) %{_libdir}/%{pname}/nls/*_sr.qm
+%lang(sv) %{_libdir}/%{pname}/nls/*_sv.qm
+%lang(tr) %{_libdir}/%{pname}/nls/*_tr.qm
+%lang(uk) %{_libdir}/%{pname}/nls/*_uk.qm
+%lang(zh_CN) %{_libdir}/%{pname}/nls/*_zh_CN.qm
+%lang(zh_TW) %{_libdir}/%{pname}/nls/*_zh_TW.qm
 %{_pixmapsdir}/virtualbox.png
 %{_desktopdir}/*.desktop
-%{_libdir}/VirtualBox/icons
-%{_libdir}/VirtualBox/virtualbox.xml
+%{_libdir}/%{pname}/icons
+%{_libdir}/%{pname}/virtualbox.xml
 
 %files additions
 %defattr(644,root,root,755)
-%{_libdir}/VirtualBox/additions/VBoxGuestAdditions.iso
+%{_libdir}/%{pname}/additions/VBoxGuestAdditions.iso
 
 %files guest
 %defattr(644,root,root,755)
@@ -947,14 +959,14 @@ fi
 /etc/X11/xinit/xinitrc.d/98vboxadd-xclient.sh
 /etc/xdg/autostart/vboxclient.desktop
 
-%attr(755,root,root) %{_libdir}/VirtualBox/additions/autorun.sh
-%attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxadd
-%attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxadd-service
-%attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxadd-x11
+%attr(755,root,root) %{_libdir}/%{pname}/additions/autorun.sh
+%attr(755,root,root) %{_libdir}/%{pname}/additions/vboxadd
+%attr(755,root,root) %{_libdir}/%{pname}/additions/vboxadd-service
+%attr(755,root,root) %{_libdir}/%{pname}/additions/vboxadd-x11
 # XXX these files belong to xorg-driver-video-vboxvideo
 # but probably 18-system-xorg.patch patch is broken?
-%attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxvideo_drv_111.so
-%attr(755,root,root) %{_libdir}/VirtualBox/additions/vboxvideo_drv_112.so
+%attr(755,root,root) %{_libdir}/%{pname}/additions/vboxvideo_drv_111.so
+%attr(755,root,root) %{_libdir}/%{pname}/additions/vboxvideo_drv_112.so
 
 %files -n pam-pam_vbox
 %defattr(644,root,root,755)
