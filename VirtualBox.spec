@@ -38,14 +38,14 @@
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{_alt_kernel}
-Version:	4.2.2
+Version:	4.2.4
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	2b65dcd9649e56ac6338670b3fb4a14d
+# Source0-md5:	d1ec2d2a3f2f3f0b277dfe2c520c2e33
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	5336ec5a543549df7b5792b050376aa6
+# Source1-md5:	46fc9cf002e384fb199029c681efd7e8
 Source3:	%{pname}-vboxdrv.init
 Source4:	%{pname}-vboxguest.init
 Source5:	%{pname}-vboxnetflt.init
@@ -62,7 +62,7 @@ Source15:	%{pname}-vboxsf-modules-load.conf
 Source16:	%{pname}-vboxnetadp-modules-load.conf
 Source17:	%{pname}-vboxpci-modules-load.conf
 Patch0:		%{pname}-configure-spaces.patch
-Patch1:		%{pname}-export_modules.patch
+
 Patch2:		%{pname}-VBoxSysInfo.patch
 Patch3:		%{pname}-warning_workaround.patch
 Patch4:		%{pname}-dri.patch
@@ -504,7 +504,7 @@ Moduł jądra Linuksa dla VirtualBoksa - sterownik obsługi DRM.
 %prep
 %setup -q -n %{pname}-%{version}
 %patch0 -p1
-%patch1 -p1
+
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
@@ -526,9 +526,6 @@ tar -zxf host-modules.tar.gz -C HostDrivers
 cd -
 %patch10 -p1
 %patch11 -p1
-
-# fix build translations (missing qt_fa_IR.ts)
-cp -p src/VBox/Frontends/VirtualBox/nls/{qt_en,qt_fa_IR}.ts
 
 %build
 %if %{with userspace}
@@ -563,7 +560,7 @@ cd ../GuestDrivers
 %build_kernel_modules -m vboxguest -C vboxguest
 cp -a vboxguest/Module.symvers vboxsf
 %build_kernel_modules -m vboxsf -C vboxsf -c
-%build_kernel_modules -m vboxvideo -C vboxvideo_drm
+%build_kernel_modules -m vboxvideo -C vboxvideo
 cd ../..
 %{__cc} %{rpmcflags} %{rpmldflags} -Wall -Werror src/VBox/Additions/linux/sharedfolders/{mount.vboxsf.c,vbsfmount.c} -o mount.vboxsf
 %endif
@@ -676,7 +673,7 @@ install -p %{SOURCE8} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxpci
 %install_kernel_modules -m PLD-MODULE-BUILD/HostDrivers/vboxpci/vboxpci -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/GuestDrivers/vboxguest/vboxguest -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/GuestDrivers/vboxsf/vboxsf -d misc
-%install_kernel_modules -m PLD-MODULE-BUILD/GuestDrivers/vboxvideo_drm/vboxvideo -d misc
+%install_kernel_modules -m PLD-MODULE-BUILD/GuestDrivers/vboxvideo/vboxvideo -d misc
 
 install -p mount.vboxsf $RPM_BUILD_ROOT%{_sbindir}/mount.vboxsf
 
