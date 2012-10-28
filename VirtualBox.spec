@@ -154,10 +154,11 @@ ExclusiveArch:	%{ix86} %{x8664}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %ifarch %{x8664}
-%define		vbox_platform	linux.amd64
+%define		vbox_arch	amd64
 %else
-%define		vbox_platform	linux.x86
+%define		vbox_arch	x86
 %endif
+%define		vbox_platform	linux.%{vbox_arch}
 %define		outdir		out/%{vbox_platform}/release/bin
 %define		_sbindir	/sbin
 
@@ -646,15 +647,15 @@ rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/VBox.sh
 rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/vboxshell.py
 rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/xpidl
 rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/runasroot.sh
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/amd64/CPUMInternal.d
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/amd64/cpumctx.d
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/amd64/vbox-arch-types.d
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/amd64/vbox-types.d
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/amd64/vm.d
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/amd64/x86.d
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/testcase/amd64/vbox-vm-struct-test.d
 rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/load.sh
 rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/loadall.sh
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/%{vbox_arch}/CPUMInternal.d
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/%{vbox_arch}/cpumctx.d
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/%{vbox_arch}/vbox-arch-types.d
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/%{vbox_arch}/vbox-types.d
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/%{vbox_arch}/vm.d
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/%{vbox_arch}/x86.d
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/testcase/%{vbox_arch}/vbox-vm-struct-test.d
 %endif
 
 # packaged by kernel part
