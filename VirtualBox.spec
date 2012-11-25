@@ -1,7 +1,5 @@
-#
 # TODO
 # - java bindings
-# - Find how to compile with PLD CFLAGS/CXXFLAGS/LDFLAGS.
 # - Package SDK.
 # - Package utils (and write initscripts ?) for Guest OS.
 # - Check License of VBoxGuestAdditions_*.iso, it's probably not GPL v2.
@@ -514,7 +512,11 @@ Moduł jądra Linuksa dla VirtualBoksa - sterownik obsługi DRM.
 %{__sed} -i -e 's,@VBOX_DOC_PATH@,%{_docdir}/%{name}-%{version},' \
 	-e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/common/virtualbox.desktop.in
 
-sed 's#@LIBDIR@#%{_libdir}#' < %{SOURCE9} > VirtualBox-wrapper.sh
+# Respect LDFLAGS
+%{__sed} -i -e "s@_LDFLAGS\.%{vbox_arch}*.*=@& %{rpmldflags}@g" \
+	-i Config.kmk src/libs/xpcom18a4/Config.kmk
+
+%{__sed} 's#@LIBDIR@#%{_libdir}#' < %{SOURCE9} > VirtualBox-wrapper.sh
 
 install -d PLD-MODULE-BUILD/{GuestDrivers,HostDrivers}
 cd PLD-MODULE-BUILD
@@ -545,9 +547,13 @@ XSERVER_VERSION=$(rpm -q --queryformat '%{VERSION}\n' xorg-xserver-server-devel 
 . ./env.sh && \
 kmk -j1 \
 	%{?with_verbose:KBUILD_VERBOSE=3} \
-	USER=$(id -un) \
+	USER=%(id -un) \
 	VBOX_VERSION_STRING='$(VBOX_VERSION_MAJOR).$(VBOX_VERSION_MINOR).$(VBOX_VERSION_BUILD)'_PLD \
-	XSERVER_VERSION="$XSERVER_VERSION"
+	XSERVER_VERSION="$XSERVER_VERSION" \
+	TOOL_GCC3_CFLAGS="%{rpmcflags}" \
+	TOOL_GCC3_CXXFLAGS="%{rpmcxxflags}" \
+	VBOX_GCC_OPT="%{rpmcxxflags}" \
+	%{nil}
 %endif
 
 %if %{with kernel}
