@@ -102,6 +102,7 @@ BuildRequires:	curl-devel
 %{?with_doc:BuildRequires:	docbook-dtd44-xml}
 BuildRequires:	gcc >= 5:3.2.3
 %{?with_webservice:BuildRequires:	gsoap-devel}
+BuildRequires:	kBuild >= 0.1.9998-2
 BuildRequires:	libIDL-devel
 BuildRequires:	libcap-static
 BuildRequires:	libdrm-devel
@@ -529,6 +530,9 @@ cd -
 %patch10 -p1
 %patch11 -p1
 
+# using system kBuild package
+%{__rm} -r kBuild
+
 %build
 %if %{with userspace}
 echo "VBOX_WITH_TESTCASES := " > LocalConfig.kmk
@@ -544,8 +548,7 @@ echo "VBOX_WITH_TESTCASES := " > LocalConfig.kmk
 	%{nil}
 
 XSERVER_VERSION=$(rpm -q --queryformat '%{VERSION}\n' xorg-xserver-server-devel | awk -F. ' { print $1 $2 } ' 2> /dev/null || echo ERROR)
-. ./env.sh && \
-kmk -j1 \
+kmk %{?_smp_mflags} \
 	%{?with_verbose:KBUILD_VERBOSE=3} \
 	USER=%(id -un) \
 	VBOX_VERSION_STRING='$(VBOX_VERSION_MAJOR).$(VBOX_VERSION_MINOR).$(VBOX_VERSION_BUILD)'_PLD \
