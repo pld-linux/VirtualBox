@@ -16,6 +16,7 @@
 %bcond_without	dist_kernel	# without distribution kernel
 %bcond_without	kernel		# don't build kernel module
 %bcond_without	userspace	# don't build userspace package
+%bcond_with	webservice	# webservice (soap) support
 %bcond_with	force_userspace # force userspace build (useful if alt_kernel is set)
 %bcond_with	verbose
 
@@ -102,6 +103,7 @@ BuildRequires:	bin86
 BuildRequires:	curl-devel
 %{?with_doc:BuildRequires:	docbook-dtd44-xml}
 BuildRequires:	gcc >= 5:3.2.3
+%{?with_webservice:BuildRequires:	gsoap-devel}
 BuildRequires:	libIDL-devel
 BuildRequires:	libcap-static
 BuildRequires:	libdrm-devel
@@ -535,7 +537,9 @@ echo "VBOX_WITH_TESTCASES := " > LocalConfig.kmk
 	--disable-java \
 	--disable-hardening \
 	--disable-kmods \
-	--enable-vnc
+	--enable-vnc \
+	%{__enable webservice} \
+	%{nil}
 
 XSERVER_VERSION=$(rpm -q --queryformat '%{VERSION}\n' xorg-xserver-server-devel | awk -F. ' { print $1 $2 } ' 2> /dev/null || echo ERROR)
 . ./env.sh && \
