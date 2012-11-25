@@ -17,8 +17,8 @@
 %bcond_without	kernel		# don't build kernel module
 %bcond_without	userspace	# don't build userspace package
 %bcond_with	webservice	# webservice (soap) support
+%bcond_without	verbose
 %bcond_with	force_userspace # force userspace build (useful if alt_kernel is set)
-%bcond_with	verbose
 
 %if %{without kernel}
 %undefine	with_dist_kernel
