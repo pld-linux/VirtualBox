@@ -147,6 +147,7 @@ Requires(postun):	/usr/sbin/groupdel
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
 Requires:	QtCore >= 4.7.0
+Requires:	desktop-file-utils
 Requires:	libvncserver >= 0.9.9
 Suggests:	gxmessage
 Provides:	group(vbox)
