@@ -32,19 +32,19 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		11
+%define		rel		1
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{_alt_kernel}
-Version:	4.2.4
+Version:	4.2.6
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	d1ec2d2a3f2f3f0b277dfe2c520c2e33
+# Source0-md5:	d680aeb3b4379b8281527aeb012b2df5
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	46fc9cf002e384fb199029c681efd7e8
+# Source1-md5:	53fc6c0e400e1e40d1896d35ba46a945
 Source3:	%{pname}-vboxdrv.init
 Source4:	%{pname}-vboxguest.init
 Source5:	%{pname}-vboxnetflt.init
@@ -99,6 +99,7 @@ BuildRequires:	bash
 BuildRequires:	bcc
 BuildRequires:	bin86
 BuildRequires:	curl-devel
+BuildRequires:	device-mapper-devel
 %{?with_doc:BuildRequires:	docbook-dtd44-xml}
 BuildRequires:	gcc >= 5:3.2.3
 %{?with_webservice:BuildRequires:	gsoap-devel}
@@ -137,6 +138,7 @@ BuildRequires:	texlive-xetex
 BuildRequires:	which
 BuildRequires:	xalan-c-devel >= 1.10.0
 BuildRequires:	xerces-c-devel >= 2.6.0
+BuildRequires:	yasm
 BuildRequires:	zlib-devel >= 1.2.1
 %endif
 %if %{with dist_kernel}
