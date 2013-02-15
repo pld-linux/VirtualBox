@@ -601,7 +601,7 @@ ln -sf %{_docdir}/%{pname}-doc-%{version}/UserManual_fr_FR.pdf $RPM_BUILD_ROOT%{
 %endif
 
 install -d $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions
-cp -a %{SOURCE1} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/VBoxGuestAdditions.iso
+cp -a$l %{SOURCE1} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/VBoxGuestAdditions.iso
 install -p %{SOURCE10} $RPM_BUILD_ROOT%{_sbindir}/mount.vdi
 install -p VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_libdir}/%{pname}
 for f in {VBox{BFE,Headless,Manage,SDL,SVC,Tunctl,XPCOMIPCD},VirtualBox}; do
@@ -667,6 +667,11 @@ rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/%{vbox_arch}/vbox-types.d
 rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/%{vbox_arch}/vm.d
 rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/%{vbox_arch}/x86.d
 rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/testcase/%{vbox_arch}/vbox-vm-struct-test.d
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/helpers/generate_service_file
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/scripts/VBoxHeadlessXOrg.sh
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/scripts/generated.sh
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/scripts/init_template.sh
+rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/scripts/install_service
 %endif
 
 # packaged by kernel part
