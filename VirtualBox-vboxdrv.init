@@ -1,13 +1,9 @@
 #!/bin/sh
 #
 # virtualbox	VirtualBox virtualizer for x86 hardware
-#
-# chkconfig:	345 82 27
-#
+# chkconfig:	345 82 18
 # description:	Oracle VirtualBox is a general-purpose full virtualizer for x86 \
 #		hardware. Targeted at server, desktop and embedded use.
-#
-# $Id$
 
 # Source function library
 . /etc/rc.d/init.d/functions
