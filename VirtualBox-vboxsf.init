@@ -23,8 +23,23 @@ start() {
 }
 
 stop() {
-	# NOTE: rmmod will wait if device is in use, so automatic rmmod probably is not the best idea
+	# umount vboxsf mounts, no retry, just don't stack them :)
+	local mount errors out rc=0
+	show "Unmounting vboxsf file systems"; busy
+	awk '$3 == "vboxsf" {print $2}' /proc/mounts | while read mount; do
+		if ! umount "$mount"; then
+			rc=$?
+		fi
+	done
+	if [ $rc = 0 ]; then
+		ok
+	else
+		fail
+	fi
+
+	# NOTE: rmmod will say module in use if there are remaining mounts
 	/sbin/rmmod $VBOX_MODULE
+
 	rm -f /var/lock/subsys/vboxsf
 }
 
