@@ -256,7 +256,7 @@ You should install this package in your Host OS.
 %package guest
 Summary:	VirtualBox Guest Additions
 Group:		Base
-Requires:	xorg-driver-input-vboxmouse = %{version}-%{release}
+Obsoletes:	xorg-driver-input-vboxmouse < %{version}-%{release}
 Requires:	xorg-driver-video-vboxvideo = %{version}-%{release}
 Suggests:	kernel%{_alt_kernel}-misc-vboxsf = %{version}-%{rel}@%{_kernel_ver_str}
 Suggests:	kernel%{_alt_kernel}-misc-vboxvideo = %{version}-%{rel}@%{_kernel_ver_str}
@@ -275,20 +275,6 @@ Group:		Base
 %description  -n pam-pam_vbox
 PAM module (Pluggable Authentication Module) which can be used to
 perform automated guest logons.
-
-%package -n xorg-driver-input-vboxmouse
-Summary:	X.org mouse driver for VirtualBox guest OS
-Summary(pl.UTF-8):	Sterownik myszy dla systemu gościa w VirtualBoksie
-Group:		X11/Applications
-Requires:	xorg-xserver-server >= 1.0.99.901
-Requires:	xorg-xserver-server(xinput-abi) <= 18.0
-Requires:	xorg-xserver-server(xinput-abi) >= 4.0
-
-%description -n xorg-driver-input-vboxmouse
-X.org mouse driver for VirtualBox guest OS.
-
-%description -n xorg-driver-input-vboxmouse  -l pl.UTF-8
-Sterownik myszy dla systemu gościa w VirtualBoksie.
 
 %package -n xorg-driver-video-vboxvideo
 Summary:	X.org video driver for VirtualBox guest OS
@@ -612,11 +598,9 @@ done
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/VBox.png,%{_pixmapsdir}/virtualbox.png}
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname},%{_desktopdir}}/virtualbox.desktop
 
-%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/vboxmouse_drv.so,%{_libdir}/xorg/modules/input/vboxmouse_drv.so}
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/vboxvideo_drv_system.so,%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so}
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/VBoxOGL.so,%{_libdir}/xorg/modules/dri/vboxvideo_dri.so}
 # xorg other driver versions
-%{__rm} -vf $RPM_BUILD_ROOT%{_libdir}/%{pname}/vboxmouse_drv*.{o,so}
 %{__rm} -vf $RPM_BUILD_ROOT%{_libdir}/%{pname}/vboxvideo_drv*.{o,so}
 
 # XXX: where else to install them that vboxvideo_dri.so finds them? patch with rpath?
@@ -1004,10 +988,6 @@ fi
 %files udev
 %defattr(644,root,root,755)
 %config(noreplace) %verify(not md5 mtime size) /etc/udev/rules.d/virtualbox.rules
-
-%files -n xorg-driver-input-vboxmouse
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/xorg/modules/input/vboxmouse_drv.so
 
 %files -n xorg-driver-video-vboxvideo
 %defattr(644,root,root,755)
