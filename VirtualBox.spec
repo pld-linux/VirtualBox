@@ -591,7 +591,7 @@ install -d $RPM_BUILD_ROOT{%{_bindir},%{_sbindir},%{_libdir}/%{pname}/ExtensionP
 # test if we can hardlink -- %{_builddir} and $RPM_BUILD_ROOT on same partition
 if cp -al VBox.png $RPM_BUILD_ROOT/Vbox.png 2>/dev/null; then
 	l=l
-	rm -f $RPM_BUILD_ROOT/VBox.png
+	%{__rm} -f $RPM_BUILD_ROOT/VBox.png
 fi
 
 cp -a$l %{outdir}/* $RPM_BUILD_ROOT%{_libdir}/%{pname}
@@ -609,42 +609,42 @@ for f in {VBox{BFE,Headless,Manage,SDL,SVC,Tunctl,XPCOMIPCD},VirtualBox}; do
 	ln -s %{_libdir}/%{pname}/VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_bindir}/$f
 done
 
-mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/VBox.png,%{_pixmapsdir}/virtualbox.png}
-mv $RPM_BUILD_ROOT{%{_libdir}/%{pname},%{_desktopdir}}/virtualbox.desktop
+%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/VBox.png,%{_pixmapsdir}/virtualbox.png}
+%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname},%{_desktopdir}}/virtualbox.desktop
 
-mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/vboxmouse_drv.so,%{_libdir}/xorg/modules/input/vboxmouse_drv.so}
-mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/vboxvideo_drv_system.so,%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so}
-mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/VBoxOGL.so,%{_libdir}/xorg/modules/dri/vboxvideo_dri.so}
+%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/vboxmouse_drv.so,%{_libdir}/xorg/modules/input/vboxmouse_drv.so}
+%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/vboxvideo_drv_system.so,%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so}
+%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/VBoxOGL.so,%{_libdir}/xorg/modules/dri/vboxvideo_dri.so}
 # xorg other driver versions
-rm -vf $RPM_BUILD_ROOT%{_libdir}/%{pname}/vboxmouse_drv*.{o,so}
-rm -vf $RPM_BUILD_ROOT%{_libdir}/%{pname}/vboxvideo_drv*.{o,so}
+%{__rm} -vf $RPM_BUILD_ROOT%{_libdir}/%{pname}/vboxmouse_drv*.{o,so}
+%{__rm} -vf $RPM_BUILD_ROOT%{_libdir}/%{pname}/vboxvideo_drv*.{o,so}
 
 # XXX: where else to install them that vboxvideo_dri.so finds them? patch with rpath?
-mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLarrayspu.so
-mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLcrutil.so
-mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLerrorspu.so
-mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLfeedbackspu.so
-mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLpackspu.so
-mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLpassthroughspu.so
+%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLarrayspu.so
+%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLcrutil.so
+%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLerrorspu.so
+%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLfeedbackspu.so
+%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLpackspu.so
+%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLpassthroughspu.so
 
 install -d $RPM_BUILD_ROOT/etc/udev/rules.d
 cp -a %{SOURCE11} $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
 
 install -d $RPM_BUILD_ROOT/%{_lib}/security
-mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,/%{_lib}/security}/pam_vbox.so
+%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,/%{_lib}/security}/pam_vbox.so
 
 # cleanup unpackaged
-rm -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/{src,sdk,testcase}
-rm -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/src
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/vboxkeyboard.tar.bz2
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/tst*
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/ExtensionPacks/VNC/ExtPack-license.*
+%{__rm} -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/{src,sdk,testcase}
+%{__rm} -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/src
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/vboxkeyboard.tar.bz2
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/tst*
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/ExtensionPacks/VNC/ExtPack-license.*
 
 # Guest Only Tools
 install -d $RPM_BUILD_ROOT/etc/{X11/xinit/xinitrc.d,xdg/autostart}
-mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_bindir}}/VBoxService
-mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_bindir}}/VBoxClient
-mv $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_bindir}}/VBoxControl
+%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_bindir}}/VBoxService
+%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_bindir}}/VBoxClient
+%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_bindir}}/VBoxControl
 install -p -D src/VBox/Additions/x11/Installer/98vboxadd-xclient \
 	$RPM_BUILD_ROOT/etc/X11/xinit/xinitrc.d/98vboxadd-xclient.sh
 cp -p src/VBox/Additions/x11/Installer/vboxclient.desktop \
@@ -652,31 +652,31 @@ cp -p src/VBox/Additions/x11/Installer/vboxclient.desktop \
 
 # unknown - checkme
 %if 1
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/SUPInstall
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/SUPLoggerCtl
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/SUPUninstall
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/VBox.sh
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/vboxshell.py
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/xpidl
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/runasroot.sh
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/load.sh
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/loadall.sh
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/%{vbox_arch}/CPUMInternal.d
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/%{vbox_arch}/cpumctx.d
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/%{vbox_arch}/vbox-arch-types.d
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/%{vbox_arch}/vbox-types.d
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/%{vbox_arch}/vm.d
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/%{vbox_arch}/x86.d
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/testcase/%{vbox_arch}/vbox-vm-struct-test.d
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/helpers/generate_service_file
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/scripts/VBoxHeadlessXOrg.sh
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/scripts/generated.sh
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/scripts/init_template.sh
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/scripts/install_service
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/SUPInstall
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/SUPLoggerCtl
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/SUPUninstall
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/VBox.sh
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/vboxshell.py
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/xpidl
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/runasroot.sh
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/load.sh
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/loadall.sh
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/%{vbox_arch}/CPUMInternal.d
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/%{vbox_arch}/cpumctx.d
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/%{vbox_arch}/vbox-arch-types.d
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/%{vbox_arch}/vbox-types.d
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/%{vbox_arch}/vm.d
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/%{vbox_arch}/x86.d
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/testcase/%{vbox_arch}/vbox-vm-struct-test.d
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/helpers/generate_service_file
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/scripts/VBoxHeadlessXOrg.sh
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/scripts/generated.sh
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/scripts/init_template.sh
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/scripts/install_service
 %endif
 
 # packaged by kernel part
-rm $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/mount.vboxsf
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/mount.vboxsf
 %endif
 
 %if %{with kernel}
