@@ -32,7 +32,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		2
+%define		rel		3
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
@@ -174,6 +174,15 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 #
 # which lead to 'Stripping ... ELF shared libraries... (...)/nls/qt_ro.qm: File format not recognized'
 %define		_noautostrip	.*%{_libdir}/%{name}/.*
+
+%define		vbox_kernel_post(d:)	\
+if [ -x /etc/rc.d/init.d/%{-d*} ]; then \
+	%{expand:%service %%{-d*} restart %%*} \
+else \
+	/sbin/rmmod %{-d*} || : \
+	/sbin/modprobe -s %{-d*} || : \
+fi \
+%{nil}
 
 %description
 Oracle VirtualBox is a general-purpose full virtualizer for x86
@@ -726,101 +735,115 @@ if [ "$1" = "0" ]; then
 	%groupremove vbox
 fi
 
-%post	-n kernel%{_alt_kernel}-misc-vboxguest
-%depmod %{_kernel_ver}
-/sbin/chkconfig --add vboxguest
-%service vboxguest restart "VirtualBox Guest additions driver"
-%systemd_reload
-
-%postun	-n kernel%{_alt_kernel}-misc-vboxguest
-%depmod %{_kernel_ver}
-
-%preun -n kernel%{_alt_kernel}-misc-vboxguest
-if [ "$1" = "0" ]; then
-	%service vboxguest stop
-	/sbin/chkconfig --del vboxguest
-fi
-
 %post	-n kernel%{_alt_kernel}-misc-vboxdrv
 %depmod %{_kernel_ver}
-/sbin/chkconfig --add vboxdrv
-%service vboxdrv restart "VirtualBox Support Driver"
-%systemd_reload
-
-%postun	-n kernel%{_alt_kernel}-misc-vboxdrv
-%depmod %{_kernel_ver}
+%vbox_kernel_post -d vboxdrv VirtualBox Support Driver
 
 %preun -n kernel%{_alt_kernel}-misc-vboxdrv
 if [ "$1" = "0" ]; then
 	%service vboxdrv stop
-	/sbin/chkconfig --del vboxdrv
 fi
+
+%postun	-n kernel%{_alt_kernel}-misc-vboxdrv
+%depmod %{_kernel_ver}
 
 %post	-n kernel%{_alt_kernel}-misc-vboxnetadp
 %depmod %{_kernel_ver}
-/sbin/chkconfig --add vboxnetadp
-%service vboxnetadp restart "VirtualBox Network HostOnly driver"
-%systemd_reload
-
-%postun	-n kernel%{_alt_kernel}-misc-vboxnetadp
-%depmod %{_kernel_ver}
+%vbox_kernel_post -d vboxnetadp VirtualBox Network HostOnly driver
 
 %preun -n kernel%{_alt_kernel}-misc-vboxnetadp
 if [ "$1" = "0" ]; then
 	%service vboxnetadp stop
-	/sbin/chkconfig --del vboxnetadp
 fi
+
+%postun	-n kernel%{_alt_kernel}-misc-vboxnetadp
+%depmod %{_kernel_ver}
 
 %post	-n kernel%{_alt_kernel}-misc-vboxnetflt
 %depmod %{_kernel_ver}
-/sbin/chkconfig --add vboxnetflt
-%service vboxnetflt restart "VirtualBox Network Filter driver"
-%systemd_reload
-
-%postun	-n kernel%{_alt_kernel}-misc-vboxnetflt
-%depmod %{_kernel_ver}
+%vbox_kernel_post -d vboxnetflt VirtualBox Network Filter driver
 
 %preun -n kernel%{_alt_kernel}-misc-vboxnetflt
 if [ "$1" = "0" ]; then
 	%service vboxnetflt stop
-	/sbin/chkconfig --del vboxnetflt
 fi
+
+%postun	-n kernel%{_alt_kernel}-misc-vboxnetflt
+%depmod %{_kernel_ver}
 
 %post	-n kernel%{_alt_kernel}-misc-vboxpci
 %depmod %{_kernel_ver}
-/sbin/chkconfig --add vboxpci
-%service vboxnetflt restart "VirtualBox PCI passthrough driver"
-%systemd_reload
-
-%postun	-n kernel%{_alt_kernel}-misc-vboxpci
-%depmod %{_kernel_ver}
+%vbox_kernel_post -d vboxpci VirtualBox PCI passthrough driver
 
 %preun -n kernel%{_alt_kernel}-misc-vboxpci
 if [ "$1" = "0" ]; then
 	%service vboxpci stop
-	/sbin/chkconfig --del vboxpci
 fi
+
+%postun	-n kernel%{_alt_kernel}-misc-vboxpci
+%depmod %{_kernel_ver}
+
+%post	-n kernel%{_alt_kernel}-misc-vboxguest
+%depmod %{_kernel_ver}
+%vbox_kernel_post -d vboxguest VirtualBox Guest additions driver
+
+%preun -n kernel%{_alt_kernel}-misc-vboxguest
+if [ "$1" = "0" ]; then
+	%service vboxguest stop
+fi
+
+%postun	-n kernel%{_alt_kernel}-misc-vboxguest
+%depmod %{_kernel_ver}
 
 %post	-n kernel%{_alt_kernel}-misc-vboxsf
 %depmod %{_kernel_ver}
-/sbin/chkconfig --add vboxsf
-%service vboxsf restart "VirtualBox Host file system access (Shared Folders)"
-%systemd_reload
-
-%postun	-n kernel%{_alt_kernel}-misc-vboxsf
-%depmod %{_kernel_ver}
+%vbox_kernel_post -d vboxsf VirtualBox Host file system access (Shared Folders)
 
 %preun -n kernel%{_alt_kernel}-misc-vboxsf
 if [ "$1" = "0" ]; then
 	%service vboxsf stop
-	/sbin/chkconfig --del vboxsf
 fi
+
+%postun	-n kernel%{_alt_kernel}-misc-vboxsf
+%depmod %{_kernel_ver}
 
 %post	-n kernel%{_alt_kernel}-misc-vboxvideo
 %depmod %{_kernel_ver}
 
 %postun	-n kernel%{_alt_kernel}-misc-vboxvideo
 %depmod %{_kernel_ver}
+
+%post kernel-init-host
+/sbin/chkconfig --add vboxdrv
+/sbin/chkconfig --add vboxnetadp
+/sbin/chkconfig --add vboxnetflt
+/sbin/chkconfig --add vboxpci
+%systemd_reload
+
+%preun kernel-init-host
+if [ "$1" = "0" ]; then
+	/sbin/chkconfig --del vboxdrv
+	/sbin/chkconfig --del vboxnetadp
+	/sbin/chkconfig --del vboxnetflt
+	/sbin/chkconfig --del vboxpci
+fi
+
+%postun kernel-init-host
+%systemd_reload
+
+%post kernel-init-guest
+/sbin/chkconfig --add vboxguest
+/sbin/chkconfig --add vboxsf
+%systemd_reload
+
+%preun kernel-init-guest
+if [ "$1" = "0" ]; then
+	/sbin/chkconfig --del vboxguest
+	/sbin/chkconfig --del vboxsf
+fi
+
+%postun kernel-init-guest
+%systemd_reload
 
 %if %{with userspace}
 %files
