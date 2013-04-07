@@ -600,8 +600,6 @@ done
 
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/vboxvideo_drv_system.so,%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so}
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/VBoxOGL.so,%{_libdir}/xorg/modules/dri/vboxvideo_dri.so}
-# xorg other driver versions
-%{__rm} -vf $RPM_BUILD_ROOT%{_libdir}/%{pname}/vboxvideo_drv*.{o,so}
 
 # XXX: where else to install them that vboxvideo_dri.so finds them? patch with rpath?
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLarrayspu.so
@@ -965,10 +963,6 @@ fi
 %attr(755,root,root) %{_libdir}/%{pname}/additions/vboxadd
 %attr(755,root,root) %{_libdir}/%{pname}/additions/vboxadd-service
 %attr(755,root,root) %{_libdir}/%{pname}/additions/vboxadd-x11
-# XXX these files belong to xorg-driver-video-vboxvideo
-# but probably 18-system-xorg.patch patch is broken?
-%attr(755,root,root) %{_libdir}/%{pname}/additions/vboxvideo_drv_111.so
-%attr(755,root,root) %{_libdir}/%{pname}/additions/vboxvideo_drv_112.so
 
 %files -n pam-pam_vbox
 %defattr(644,root,root,755)
