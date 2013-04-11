@@ -32,7 +32,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		4
+%define		rel		5
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
@@ -151,8 +151,10 @@ Requires(pre):	/usr/sbin/groupadd
 Requires:	QtCore >= 4.7.0
 Requires:	desktop-file-utils
 Requires:	libvncserver >= 0.9.9
+Requires:	udev-core
 Suggests:	gxmessage
 Provides:	group(vbox)
+Obsoletes:	VirtualBox-udev < %{version}-%{release}
 ExclusiveArch:	%{ix86} %{x8664}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -235,20 +237,6 @@ Group:		Documentation
 
 %description doc
 This package contains VirtualBox User Manual.
-
-%package udev
-Summary:	udev rules for VirtualBox kernel modules
-Summary(pl.UTF-8):	Reguły udev dla modułów jądra Linuksa dla VirtualBoksa
-Group:		Base/Kernel
-Requires:	udev-core
-
-%description udev
-udev rules for VirtualBox kernel modules.
-
-You should install this package in your Host OS and in Guest OS.
-
-%description udev -l pl.UTF-8
-Reguły udev dla modułów jądra Linuksa dla VirtualBoksa.
 
 %package additions
 Summary:	VirtualBox Guest Additions
@@ -581,7 +569,8 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with userspace}
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_sbindir},%{_libdir}/%{pname}/ExtensionPacks} \
 	$RPM_BUILD_ROOT{%{_pixmapsdir},%{_desktopdir}} \
-	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/{drivers,dri,input}
+	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/{drivers,dri,input} \
+	$RPM_BUILD_ROOT{/lib/udev,/etc/udev/rules}
 
 # test if we can hardlink -- %{_builddir} and $RPM_BUILD_ROOT on same partition
 if cp -al VBox.png $RPM_BUILD_ROOT/Vbox.png 2>/dev/null; then
@@ -618,8 +607,8 @@ done
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLpackspu.so
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLpassthroughspu.so
 
-install -d $RPM_BUILD_ROOT/etc/udev/rules.d
 cp -a %{SOURCE11} $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
+%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname},/lib/udev}/VBoxCreateUSBNode.sh
 
 install -d $RPM_BUILD_ROOT/%{_lib}/security
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,/%{_lib}/security}/pam_vbox.so
@@ -713,6 +702,15 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 %update_desktop_database
+for i in /sys/bus/usb/devices/*; do
+	if [ -r "$i/dev" ]; then
+		dev="`cat "$i/dev" 2>/dev/null || true`"
+		major="`expr "$dev" : '\(.*\):' 2> /dev/null || true`"
+		minor="`expr "$dev" : '.*:\(.*\)' 2> /dev/null || true`"
+		class="`cat $i/bDeviceClass 2> /dev/null || true`"
+		/lib/udev/VBoxCreateUSBNode.sh "$major" "$minor" "$class" vbox 2>/dev/null
+	fi
+done
 
 cat << 'EOF'
 You must install vboxdrv kernel module for this software to work:
@@ -870,7 +868,6 @@ fi
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxAutostart
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxBFE
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxBalloonCtrl
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxCreateUSBNode.sh
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxDbg.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxDD2.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxDD.so
@@ -967,6 +964,9 @@ fi
 %{_libdir}/%{pname}/icons
 %{_libdir}/%{pname}/virtualbox.xml
 
+%config(noreplace) %verify(not md5 mtime size) /etc/udev/rules.d/virtualbox.rules
+%attr(755,root,root) /lib/udev/VBoxCreateUSBNode.sh
+
 %files additions
 %defattr(644,root,root,755)
 %{_libdir}/%{pname}/additions/VBoxGuestAdditions.iso
@@ -1001,10 +1001,6 @@ fi
 %doc %{outdir}/UserManual.pdf
 %lang(fr) %doc %{outdir}/UserManual_fr_FR.pdf
 %endif
-
-%files udev
-%defattr(644,root,root,755)
-%config(noreplace) %verify(not md5 mtime size) /etc/udev/rules.d/virtualbox.rules
 
 %files -n xorg-driver-video-vboxvideo
 %defattr(644,root,root,755)
