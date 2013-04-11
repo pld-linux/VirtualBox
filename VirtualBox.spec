@@ -154,7 +154,7 @@ Requires:	libvncserver >= 0.9.9
 Requires:	udev-core
 Suggests:	gxmessage
 Provides:	group(vbox)
-Obsoletes:	VirtualBox-udev < %{version}-%{release}
+Obsoletes:	VirtualBox-udev < 4.2.10-5
 ExclusiveArch:	%{ix86} %{x8664}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -253,10 +253,10 @@ You should install this package in your Host OS.
 %package guest
 Summary:	VirtualBox Guest Additions
 Group:		Base
-Obsoletes:	xorg-driver-input-vboxmouse < %{version}-%{release}
 Requires:	xorg-driver-video-vboxvideo = %{version}-%{release}
 Suggests:	kernel%{_alt_kernel}-misc-vboxsf = %{version}-%{rel}@%{_kernel_ver_str}
 Suggests:	kernel%{_alt_kernel}-misc-vboxvideo = %{version}-%{rel}@%{_kernel_ver_str}
+Obsoletes:	xorg-driver-input-vboxmouse < %{version}-%{release}
 
 %description guest
 Tools that utilize kernel modules for supporting integration with the
