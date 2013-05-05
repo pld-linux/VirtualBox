@@ -150,6 +150,8 @@ Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
 Requires:	QtCore >= 4.7.0
 Requires:	desktop-file-utils
+Requires:	fontconfig
+Requires:	fonts-Type1-urw
 Requires:	libvncserver >= 0.9.9
 Requires:	udev-core
 Suggests:	gxmessage
