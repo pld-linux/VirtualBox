@@ -9,3 +9,14 @@
               -o $cc_maj -gt 4 ]; then
          log_failure "gcc version $cc_ver found, expected gcc 3.x with x>1 or gcc 4.x with 0<x<8"
          fail really
+--- VirtualBox-4.2.12/Config.kmk~	2013-05-25 11:56:55.629895894 +0200
++++ VirtualBox-4.2.12/Config.kmk	2013-05-25 14:50:59.850448713 +0200
+@@ -2304,7 +2304,7 @@
+ #
+ ifdef VBOX_WITH_WARNINGS_AS_ERRORS
+  if $(VBOX_GCC_VERSION_CXX) >= 40000
+-  VBOX_GCC_WERR ?= -Werror
++  VBOX_GCC_WERR ?= -Werror -Wno-error=unused-parameter
+  endif
+  VBOX_VCC_WERR ?= -WX
+  VBOX_VCC_LD_WERR ?= ## @todo later also: -WX
