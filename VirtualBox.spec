@@ -32,7 +32,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		3
+%define		rel		4
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
@@ -66,6 +66,7 @@ Patch2:		%{pname}-warning_workaround.patch
 Patch3:		%{pname}-dri.patch
 Patch4:		%{pname}-disable_build_NetBiosBin.patch
 Patch5:		xserver-1.12.patch
+Patch6:		gcc48.patch
 # ubuntu patches
 Patch10:	16-no-update.patch
 Patch11:	18-system-xorg.patch
@@ -497,6 +498,7 @@ Moduł jądra Linuksa dla VirtualBoksa - sterownik obsługi DRM.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 %{__sed} -i -e 's,@VBOX_DOC_PATH@,%{_docdir}/%{name}-%{version},' \
 	-e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/common/virtualbox.desktop.in
