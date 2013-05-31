@@ -261,6 +261,7 @@ Requires(post,preun):	/sbin/chkconfig
 Requires:	rc-scripts
 Suggests:	kernel(vboxguest)
 Suggests:	kernel(vboxsf)
+Suggests:	pam-pam_vbox
 
 %description guest
 Tools that utilize kernel modules for supporting integration with the
