@@ -1,0 +1,91 @@
+#!/bin/sh
+#
+# vboxservice	VirtualBox guest services
+# chkconfig:	345 85 15
+# description:	VirtualBox guest services
+# processname:	VBoxService
+
+# Source function library
+. /etc/rc.d/init.d/functions
+
+# Get network config
+. /etc/sysconfig/network
+
+# Check that networking is up.
+if is_yes "${NETWORKING}"; then
+	if [ ! -f /var/lock/subsys/network -a "$1" != stop -a "$1" != status ]; then
+		msg_network_down "VBox Service"
+		exit 1
+	fi
+else
+	exit 0
+fi
+
+# Get service config - may override defaults
+[ -f /etc/sysconfig/vboxservice ] && . /etc/sysconfig/vboxservice
+
+start() {
+	# Check if the service is already running?
+	if [ -f /var/lock/subsys/vboxservice ]; then
+		msg_already_running "VBox Service"
+		return
+	fi
+
+	msg_starting "VBox Service"
+	daemon /usr/bin/VBoxService
+	RETVAL=$?
+	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/vboxservice
+}
+
+stop() {
+	if [ ! -f /var/lock/subsys/vboxservice ]; then
+		msg_not_running "VBox Service"
+		return
+	fi
+
+	# Stop daemons.
+	msg_stopping "VBox Service"
+	killproc VBoxService
+	rm -f /var/lock/subsys/vboxservice
+}
+
+condrestart() {
+	if [ ! -f /var/lock/subsys/vboxservice ]; then
+		msg_not_running "VBox Service"
+		RETVAL=$1
+		return
+	fi
+
+	stop
+	start
+}
+
+RETVAL=0
+# See how we were called.
+case "$1" in
+  start)
+	start
+	;;
+  stop)
+	stop
+	;;
+  restart)
+	stop
+	start
+	;;
+  try-restart)
+	condrestart 0
+	;;
+  force-reload)
+	condrestart 7
+	;;
+  status)
+	status vboxservice VBoxService
+	RETVAL=$?
+	;;
+  *)
+	msg_usage "$0 {start|stop|restart|try-restart|force-reload|status}"
+	exit 3
+esac
+
+exit $RETVAL

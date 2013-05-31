@@ -45,6 +45,7 @@ Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version
 # Source0-md5:	654e45054ae6589452508d37403dc800
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
 # Source1-md5:	403098e688f9e7f4273de680f6734983
+Source2:	vboxservice.init
 Source3:	%{pname}-vboxdrv.init
 Source4:	%{pname}-vboxguest.init
 Source5:	%{pname}-vboxnetflt.init
@@ -678,6 +679,7 @@ cp -p src/VBox/Additions/x11/Installer/vboxclient.desktop \
 
 %if %{with kernel}
 install -d $RPM_BUILD_ROOT{/etc/{rc.d/init.d,modules-load.d},%{_sbindir},%{systemdunitdir}}
+install -p %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxservice
 install -p %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxdrv
 install -p %{SOURCE4} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxguest
 install -p %{SOURCE5} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxnetflt
@@ -748,6 +750,14 @@ EOF
 %postun
 if [ "$1" = "0" ]; then
 	%groupremove vbox
+fi
+
+%post guest
+/sbin/chkconfig --add vboxdrv
+
+%postun guest
+if [ "$1" = "0" ]; then
+	/sbin/chkconfig --del vboxdrv
 fi
 
 %post	-n kernel%{_alt_kernel}-misc-vboxdrv
@@ -990,7 +1000,7 @@ fi
 
 %files guest
 %defattr(644,root,root,755)
-# TODO: initscript for VBoxService
+%attr(754,root,root) /etc/rc.d/init.d/vboxservice
 %attr(755,root,root) %{_bindir}/VBoxControl
 %attr(755,root,root) %{_bindir}/VBoxService
 
