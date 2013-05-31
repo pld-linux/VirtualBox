@@ -753,11 +753,13 @@ if [ "$1" = "0" ]; then
 fi
 
 %post guest
-/sbin/chkconfig --add vboxdrv
+/sbin/chkconfig --add vboxservice
+%service vboxservice restart
 
 %postun guest
 if [ "$1" = "0" ]; then
-	/sbin/chkconfig --del vboxdrv
+	/sbin/chkconfig --del vboxservice
+	%service vboxservice -q stop
 fi
 
 %post	-n kernel%{_alt_kernel}-misc-vboxdrv
