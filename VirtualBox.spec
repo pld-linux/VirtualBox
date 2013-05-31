@@ -257,6 +257,8 @@ You should install this package in your Host OS.
 %package guest
 Summary:	VirtualBox Guest tools
 Group:		Base
+Requires(post,preun):	/sbin/chkconfig
+Requires:	rc-scripts
 Suggests:	kernel(vboxguest)
 Suggests:	kernel(vboxsf)
 
