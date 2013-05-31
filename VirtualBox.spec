@@ -32,7 +32,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		6
+%define		rel		7
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
@@ -256,27 +256,28 @@ You should install this package in your Host OS.
 %package guest
 Summary:	VirtualBox Guest tools
 Group:		Base
-Suggests:	kernel%{_alt_kernel}-misc-vboxsf = %{version}-%{rel}@%{_kernel_ver_str}
-Requires:	kernel%{_alt_kernel}-misc-vboxguest = %{version}-%{rel}@%{_kernel_ver_str}
+Suggests:	kernel(vboxguest)
+Suggests:	kernel(vboxsf)
 
 %description guest
 Tools that utilize kernel modules for supporting integration with the
 Host, including file sharing.
 
-You should install this package in your Guest OS for base VirtualBox communication
+You should install this package in your Guest OS for base VirtualBox
+communication
 
 %package guest-x11
 Summary:	VirtualBox Guest Additions
 Group:		Base
 Requires:	%{name}-guest = %{version}-%{release}
 Requires:	xorg-driver-video-vboxvideo = %{version}-%{release}
-Suggests:	kernel%{_alt_kernel}-misc-vboxvideo = %{version}-%{rel}@%{_kernel_ver_str}
+Suggests:	kernel(vboxvideo)
 Obsoletes:	xorg-driver-input-vboxmouse < %{version}-%{release}
 
 %description guest-x11
-Tools for X11 session that utilize kernel modules for supporting integration
-with the Host, like tracking of mouse pointer movement and X.org X11 video and
-mouse drivers
+Tools for X11 session that utilize kernel modules for supporting
+integration with the Host, like tracking of mouse pointer movement and
+X.org X11 video and mouse drivers
 
 You should install this package in your Guest OS for X11 session.
 
@@ -994,6 +995,7 @@ fi
 %attr(755,root,root) %{_bindir}/VBoxService
 
 %files guest-x11
+%defattr(644,root,root,755)
 # NOTE: unfinished, should contain .desktop files for starting up mouse
 # integration and other desktop services
 # NOTE: the filelist is incomplete too
