@@ -32,7 +32,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		5
+%define		rel		6
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
@@ -254,19 +254,31 @@ This package contains ISO9660 image with drivers for Guest OS.
 You should install this package in your Host OS.
 
 %package guest
-Summary:	VirtualBox Guest Additions
+Summary:	VirtualBox Guest tools
 Group:		Base
-Requires:	xorg-driver-video-vboxvideo = %{version}-%{release}
 Suggests:	kernel%{_alt_kernel}-misc-vboxsf = %{version}-%{rel}@%{_kernel_ver_str}
-Suggests:	kernel%{_alt_kernel}-misc-vboxvideo = %{version}-%{rel}@%{_kernel_ver_str}
-Obsoletes:	xorg-driver-input-vboxmouse < %{version}-%{release}
+Requires:	kernel%{_alt_kernel}-misc-vboxguest = %{version}-%{rel}@%{_kernel_ver_str}
 
 %description guest
 Tools that utilize kernel modules for supporting integration with the
-Host, including file sharing and tracking of mouse pointer movement
-and X.org X11 video and mouse driver.
+Host, including file sharing.
 
-You should install this package in your Guest OS.
+You should install this package in your Guest OS for base VirtualBox communication
+
+%package guest-x11
+Summary:	VirtualBox Guest Additions
+Group:		Base
+Requires:	%{name}-guest = %{version}-%{release}
+Requires:	xorg-driver-video-vboxvideo = %{version}-%{release}
+Suggests:	kernel%{_alt_kernel}-misc-vboxvideo = %{version}-%{rel}@%{_kernel_ver_str}
+Obsoletes:	xorg-driver-input-vboxmouse < %{version}-%{release}
+
+%description guest-x11
+Tools for X11 session that utilize kernel modules for supporting integration
+with the Host, like tracking of mouse pointer movement and X.org X11 video and
+mouse drivers
+
+You should install this package in your Guest OS for X11 session.
 
 %package -n pam-pam_vbox
 Summary:	PAM module to perform automated guest logons
@@ -977,12 +989,15 @@ fi
 
 %files guest
 %defattr(644,root,root,755)
+# TODO: initscript for VBoxService
+%attr(755,root,root) %{_bindir}/VBoxControl
+%attr(755,root,root) %{_bindir}/VBoxService
+
+%files guest-x11
 # NOTE: unfinished, should contain .desktop files for starting up mouse
 # integration and other desktop services
 # NOTE: the filelist is incomplete too
 %attr(755,root,root) %{_bindir}/VBoxClient
-%attr(755,root,root) %{_bindir}/VBoxControl
-%attr(755,root,root) %{_bindir}/VBoxService
 /etc/X11/xinit/xinitrc.d/98vboxadd-xclient.sh
 /etc/xdg/autostart/vboxclient.desktop
 
