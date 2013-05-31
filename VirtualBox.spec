@@ -1004,6 +1004,7 @@ fi
 
 %files guest
 %defattr(644,root,root,755)
+%attr(755,root,root) %{_sbindir}/mount.vboxsf
 %attr(754,root,root) /etc/rc.d/init.d/vboxservice
 %attr(755,root,root) %{_bindir}/VBoxControl
 %attr(755,root,root) %{_bindir}/VBoxService
@@ -1097,7 +1098,6 @@ fi
 %files -n kernel%{_alt_kernel}-misc-vboxsf
 %defattr(644,root,root,755)
 %config(noreplace) %verify(not md5 mtime size) /etc/modules-load.d/vboxsf.conf
-%attr(755,root,root) %{_sbindir}/mount.vboxsf
 /lib/modules/%{_kernel_ver}/misc/vboxsf.ko*
 
 %files -n kernel%{_alt_kernel}-misc-vboxvideo
