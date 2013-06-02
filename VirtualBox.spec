@@ -500,7 +500,7 @@ You should install this package in your Guest OS.
 Moduł jądra Linuksa dla VirtualBoksa - dostęp do plików systemu
 głównego z poziomu systemu gościa.
 
-%package -n kernel%{_alt_kernel}-misc-vboxvideo
+%package -n kernel%{_alt_kernel}-video-vboxvideo
 Summary:	DRM support for VirtualBox
 Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
 Release:	%{rel}@%{_kernel_ver_str}
@@ -514,12 +514,12 @@ Requires(postun):	%releq_kernel
 %endif
 Provides:	kernel(vboxvideo) = %{version}-%{rel}
 
-%description -n kernel%{_alt_kernel}-misc-vboxvideo
+%description -n kernel%{_alt_kernel}-video-vboxvideo
 DRM support for VirtualBox.
 
 You should install this package in your Guest OS.
 
-%description -n kernel%{_alt_kernel}-misc-vboxvideo -l pl.UTF-8
+%description -n kernel%{_alt_kernel}-video-vboxvideo -l pl.UTF-8
 Moduł jądra Linuksa dla VirtualBoksa - sterownik obsługi DRM.
 
 %prep
@@ -773,7 +773,7 @@ Additionally you might want to install:
 On Guest Linux system you might want to install:
     kernel-misc-vboxguest-%{version}-%{rel}@%{_kernel_ver_str}
     kernel-misc-vboxsf-%{version}-%{rel}@%{_kernel_ver_str}
-    kernel-misc-vboxvideo-%{version}-%{rel}@%{_kernel_ver_str}
+    kernel-video-vboxvideo-%{version}-%{rel}@%{_kernel_ver_str}
 
 EOF
 
@@ -864,10 +864,10 @@ fi
 %postun	-n kernel%{_alt_kernel}-misc-vboxsf
 %depmod %{_kernel_ver}
 
-%post	-n kernel%{_alt_kernel}-misc-vboxvideo
+%post	-n kernel%{_alt_kernel}-video-vboxvideo
 %depmod %{_kernel_ver}
 
-%postun	-n kernel%{_alt_kernel}-misc-vboxvideo
+%postun	-n kernel%{_alt_kernel}-video-vboxvideo
 %depmod %{_kernel_ver}
 
 %post kernel-init-host
@@ -1135,7 +1135,7 @@ fi
 %config(noreplace) %verify(not md5 mtime size) /etc/modules-load.d/vboxsf.conf
 /lib/modules/%{_kernel_ver}/misc/vboxsf.ko*
 
-%files -n kernel%{_alt_kernel}-misc-vboxvideo
+%files -n kernel%{_alt_kernel}-video-vboxvideo
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}/misc/vboxvideo.ko*
 %endif
