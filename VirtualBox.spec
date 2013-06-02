@@ -1,20 +1,19 @@
 # TODO
 # - java bindings
 # - Package SDK.
-# - Package utils (and write initscripts ?) for Guest OS.
 # - Check License of VBoxGuestAdditions_*.iso, it's probably not GPL v2.
 #   If so check if it is distributable.
-# - resolve mess with subpackages?
-#   - addtions: iso (containing additions/*.iso)
-#   - guest: to be installed to guests (deps on x11 drivers)
+# - guest x11 additions: currently incomplete/untested
 # - enable VDE networking: --enable-vde
+# - initscripts for webservice
+# - install systemd vboxservice.service
 #
 # Conditional build:
 %bcond_without	doc		# don't build the documentation
 %bcond_without	dist_kernel	# without distribution kernel
 %bcond_without	kernel		# don't build kernel module
 %bcond_without	userspace	# don't build userspace package
-%bcond_with	webservice	# webservice (soap) support
+%bcond_with	webservice	# webservice (SOAP) support
 %bcond_without	lightdm	# lightdm greeter
 %bcond_without	verbose
 %bcond_with	force_userspace # force userspace build (useful if alt_kernel is set)
@@ -289,6 +288,15 @@ integration with the Host, like tracking of mouse pointer movement and
 X.org X11 video and mouse drivers
 
 You should install this package in your Guest OS for X11 session.
+
+%package webservice
+Summary:	VirtualBox Web Service
+Group:		Applications/Emulators
+Requires:	%{name} = %{version}-%{release}
+
+%description webservice
+This package contains VirtualBox web service API daemon. It allows to
+control virtual machines via web interface.
 
 %package -n lightdm-greeter-vbox
 Summary:	VirtualBox greeter for lightdm
@@ -1056,6 +1064,13 @@ fi
 %attr(755,root,root) %{_libdir}/%{pname}/additions/vboxadd
 %attr(755,root,root) %{_libdir}/%{pname}/additions/vboxadd-service
 %attr(755,root,root) %{_libdir}/%{pname}/additions/vboxadd-x11
+
+%if %{with webservice}
+%files webservice
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/%{pname}/vboxwebsrv
+%attr(755,root,root) %{_libdir}/%{pname}/webtest
+%endif
 
 %if %{with lightdm}
 %files -n lightdm-greeter-vbox
