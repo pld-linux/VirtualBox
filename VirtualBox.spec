@@ -108,6 +108,7 @@ BuildRequires:	device-mapper-devel
 %{?with_doc:BuildRequires:	docbook-dtd44-xml}
 BuildRequires:	gcc >= 5:3.2.3
 %{?with_webservice:BuildRequires:	gsoap-devel}
+BuildRequires:	issue
 BuildRequires:	kBuild >= 0.1.9998-2
 BuildRequires:	libIDL-devel
 BuildRequires:	libcap-static
