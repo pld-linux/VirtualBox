@@ -1,0 +1,8 @@
+VBOXADD_SERVICE_ARGS=""
+#VBOXADD_SERVICE_ARGS+=" --disable-timesync"
+#VBOXADD_SERVICE_ARGS+=" --timesync-interval 10000"
+#VBOXADD_SERVICE_ARGS+=" --timesync-min-adjust 1000"
+#VBOXADD_SERVICE_ARGS+=" --timesync-latency-factor 8"
+#VBOXADD_SERVICE_ARGS+=" --timesync-max-latency 250"
+#VBOXADD_SERVICE_ARGS+=" --disable-vminfo"
+#VBOXADD_SERVICE_ARGS+=" --vminfo-interval 10000"
