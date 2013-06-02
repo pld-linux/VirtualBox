@@ -174,7 +174,6 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		vbox_platform	linux.%{vbox_arch}
 %define		outdir		out/%{vbox_platform}/release/bin
 %define		objdir		out/%{vbox_platform}/release/obj
-%define		_sbindir	/sbin
 
 # workaround buggy 'file' results:
 #
@@ -609,7 +608,7 @@ cd ../..
 rm -rf $RPM_BUILD_ROOT
 
 %if %{with userspace}
-install -d $RPM_BUILD_ROOT{%{_bindir},%{_sbindir},%{_libdir}/%{pname}/ExtensionPacks} \
+install -d $RPM_BUILD_ROOT{%{_bindir},/sbin,%{_sbindir},%{_libdir}/%{pname}/ExtensionPacks} \
 	$RPM_BUILD_ROOT{%{_pixmapsdir},%{_desktopdir}} \
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/{drivers,dri,input} \
 	$RPM_BUILD_ROOT{/lib/udev,/etc/udev/rules.d}
@@ -629,7 +628,7 @@ ln -sf %{_docdir}/%{pname}-doc-%{version}/UserManual_fr_FR.pdf $RPM_BUILD_ROOT%{
 
 install -d $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions
 cp -a$l %{SOURCE1} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/VBoxGuestAdditions.iso
-install -p %{SOURCE10} $RPM_BUILD_ROOT%{_sbindir}/mount.vdi
+install -p %{SOURCE10} $RPM_BUILD_ROOT/sbin/mount.vdi
 install -p VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_libdir}/%{pname}
 for f in {VBox{BFE,Headless,Manage,SDL,SVC,Tunctl,XPCOMIPCD},VirtualBox}; do
 	ln -s %{_libdir}/%{pname}/VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_bindir}/$f
@@ -708,7 +707,7 @@ cp -p %{objdir}/Additions/Installer/linux/share/VBoxGuestAdditions/vbox-greeter.
 %endif
 
 %if %{with kernel}
-install -d $RPM_BUILD_ROOT{/etc/{rc.d/init.d,modules-load.d},%{_sbindir},%{systemdunitdir}}
+install -d $RPM_BUILD_ROOT{/etc/{rc.d/init.d,modules-load.d},/sbin,%{systemdunitdir}}
 install -p %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxservice
 install -p %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxdrv
 install -p %{SOURCE4} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxguest
@@ -724,7 +723,7 @@ install -p %{SOURCE8} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxpci
 %install_kernel_modules -m PLD-MODULE-BUILD/GuestDrivers/vboxsf/vboxsf -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/GuestDrivers/vboxvideo/vboxvideo -d misc
 
-install -p mount.vboxsf $RPM_BUILD_ROOT%{_sbindir}/mount.vboxsf
+install -p mount.vboxsf $RPM_BUILD_ROOT/sbin/mount.vboxsf
 
 # Tell systemd to load modules
 cp -p %{SOURCE12} $RPM_BUILD_ROOT/etc/modules-load.d/vboxdrv.conf
@@ -920,7 +919,7 @@ fi
 %attr(755,root,root) %{_bindir}/VBoxTunctl
 %attr(755,root,root) %{_bindir}/VBoxXPCOMIPCD
 %attr(755,root,root) %{_bindir}/VirtualBox
-%attr(755,root,root) %{_sbindir}/mount.vdi
+%attr(755,root,root) /sbin/mount.vdi
 %attr(755,root,root) %{_libdir}/%{pname}/DBGCPlugInDiggers.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxAuth.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxAuthSimple.so
@@ -1032,7 +1031,7 @@ fi
 
 %files guest
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_sbindir}/mount.vboxsf
+%attr(755,root,root) /sbin/mount.vboxsf
 %attr(754,root,root) /etc/rc.d/init.d/vboxservice
 %attr(755,root,root) %{_bindir}/VBoxControl
 %attr(755,root,root) %{_bindir}/VBoxService
