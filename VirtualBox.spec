@@ -793,6 +793,9 @@ if [ "$1" = "0" ]; then
 	%service vboxservice -q stop
 fi
 
+%pre -n lightdm-greeter-vbox
+%addusertogroup xdm vbox
+
 %post	-n kernel%{_alt_kernel}-misc-vboxdrv
 %depmod %{_kernel_ver}
 %vbox_kernel_post -d vboxdrv VirtualBox Support Driver
