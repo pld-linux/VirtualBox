@@ -19,26 +19,18 @@ start() {
 	fi
 
 	modprobe -s $VBOX_MODULE
+	run_cmd "Mount VirtualBox Shared Folders:" mount -a -t vboxsf
 	touch /var/lock/subsys/vboxsf
 }
 
 stop() {
-	# umount vboxsf mounts, no retry, just don't stack them :)
-	local mount errors out rc=0
-	show "Unmounting vboxsf file systems"; busy
-	awk '$3 == "vboxsf" {print $2}' /proc/mounts | while read mount; do
-		if ! umount "$mount"; then
-			rc=$?
-		fi
-	done
-	if [ $rc = 0 ]; then
-		ok
-	else
-		fail
+	if [ ! -f  /var/lock/subsys/vboxsf ]; then
+		return
 	fi
+	run_cmd "Unmount VirtualBox Shared Folders:" umount -a -t vboxsf
 
 	# NOTE: rmmod will say module in use if there are remaining mounts
-	/sbin/rmmod $VBOX_MODULE
+	rmmod -s $VBOX_MODULE
 
 	rm -f /var/lock/subsys/vboxsf
 }
