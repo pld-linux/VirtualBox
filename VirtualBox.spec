@@ -290,14 +290,14 @@ X.org X11 video and mouse drivers
 
 You should install this package in your Guest OS for X11 session.
 
-%package -n lightdm-vbox-greeter
+%package -n lightdm-greeter-vbox
 Summary:	VirtualBox greeter for lightdm
 Group:		Themes
 URL:		http://www.virtualbox.org/manual/ch09.html#autologon_unix_lightdm
 Requires:	lightdm >= 1.0.1
 Provides:	lightdm-greeter
 
-%description -n lightdm-vbox-greeter
+%description -n lightdm-greeter-vbox
 VirtualBox greeter for LightDM.
 
 %package -n pam-pam_vbox
@@ -1052,7 +1052,7 @@ fi
 %attr(755,root,root) %{_libdir}/%{pname}/additions/vboxadd-x11
 
 %if %{with lightdm}
-%files -n lightdm-vbox-greeter
+%files -n lightdm-greeter-vbox
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_sbindir}/vbox-greeter
 %{_datadir}/xgreeters/vbox-greeter.desktop
