@@ -292,6 +292,8 @@ You should install this package in your Guest OS for X11 session.
 %package -n lightdm-greeter-vbox
 Summary:	VirtualBox greeter for lightdm
 Group:		Themes
+# NOTE: '#' in url is lost because rpm treats it as comment, even hacking with
+# macros doesn't help as rpmbuild takes final result to parse
 URL:		http://www.virtualbox.org/manual/ch09.html#autologon_unix_lightdm
 Requires:	lightdm >= 1.0.1
 Provides:	lightdm-greeter
