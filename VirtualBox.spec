@@ -676,7 +676,7 @@ cp -p src/VBox/Additions/x11/Installer/vboxclient.desktop \
 
 %if %{with lightdm}
 install -d $RPM_BUILD_ROOT%{_datadir}/xgreeters
-install -p %{objdir}/vbox-greeter/vbox-greeter $RPM_BUILD_ROOT%{_sbindir}
+%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_sbindir}}/vbox-greeter
 cp -p %{objdir}/Additions/Installer/linux/share/VBoxGuestAdditions/vbox-greeter.desktop $RPM_BUILD_ROOT%{_datadir}/xgreeters
 %endif
 
