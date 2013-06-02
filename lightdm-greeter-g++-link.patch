@@ -1,0 +1,10 @@
+--- VirtualBox-4.2.12/src/VBox/Additions/linux/lightdm-greeter/Makefile.kmk~	2013-06-01 11:13:40.000000000 +0300
++++ VirtualBox-4.2.12/src/VBox/Additions/linux/lightdm-greeter/Makefile.kmk	2013-06-02 11:08:48.853803103 +0300
+@@ -82,4 +82,7 @@
+  endif
+ endif
+ 
++# as vbox build links this with gcc not g++, add -lsupc++
++vbox-greeter_LIBS += supc++
++
+ include $(FILE_KBUILD_SUB_FOOTER)

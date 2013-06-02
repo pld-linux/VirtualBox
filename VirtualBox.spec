@@ -15,7 +15,7 @@
 %bcond_without	kernel		# don't build kernel module
 %bcond_without	userspace	# don't build userspace package
 %bcond_with	webservice	# webservice (soap) support
-%bcond_with	lightdm	# lightdm greeter
+%bcond_without	lightdm	# lightdm greeter
 %bcond_without	verbose
 %bcond_with	force_userspace # force userspace build (useful if alt_kernel is set)
 
@@ -33,7 +33,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		7
+%define		rel		8
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
@@ -70,6 +70,7 @@ Patch4:		%{pname}-disable_build_NetBiosBin.patch
 Patch5:		xserver-1.12.patch
 Patch6:		gcc48.patch
 Patch7:		lightdm-greeter-glib-includes.patch
+Patch8:		lightdm-greeter-g++-link.patch
 # ubuntu patches
 Patch10:	16-no-update.patch
 Patch11:	18-system-xorg.patch
@@ -172,6 +173,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %endif
 %define		vbox_platform	linux.%{vbox_arch}
 %define		outdir		out/%{vbox_platform}/release/bin
+%define		objdir		out/%{vbox_platform}/release/obj
 %define		_sbindir	/sbin
 
 # workaround buggy 'file' results:
@@ -287,6 +289,16 @@ integration with the Host, like tracking of mouse pointer movement and
 X.org X11 video and mouse drivers
 
 You should install this package in your Guest OS for X11 session.
+
+%package -n lightdm-vbox-greeter
+Summary:	VirtualBox greeter for lightdm
+Group:		Themes
+URL:		http://www.virtualbox.org/manual/ch09.html#autologon_unix_lightdm
+Requires:	lightdm >= 1.0.1
+Provides:	lightdm-greeter
+
+%description -n lightdm-vbox-greeter
+VirtualBox greeter for LightDM.
 
 %package -n pam-pam_vbox
 Summary:	PAM module to perform automated guest logons
@@ -520,6 +532,7 @@ Moduł jądra Linuksa dla VirtualBoksa - sterownik obsługi DRM.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 
 %{__sed} -i -e 's,@VBOX_DOC_PATH@,%{_docdir}/%{name}-%{version},' \
 	-e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/common/virtualbox.desktop.in
@@ -658,6 +671,12 @@ install -p -D src/VBox/Additions/x11/Installer/98vboxadd-xclient \
 	$RPM_BUILD_ROOT/etc/X11/xinit/xinitrc.d/98vboxadd-xclient.sh
 cp -p src/VBox/Additions/x11/Installer/vboxclient.desktop \
 	$RPM_BUILD_ROOT/etc/xdg/autostart/vboxclient.desktop
+
+%if %{with lightdm}
+install -d $RPM_BUILD_ROOT%{_datadir}/xgreeters
+install -p %{objdir}/vbox-greeter/vbox-greeter $RPM_BUILD_ROOT%{_sbindir}
+cp -p %{objdir}/Additions/Installer/linux/share/VBoxGuestAdditions/vbox-greeter.desktop $RPM_BUILD_ROOT%{_datadir}/xgreeters
+%endif
 
 # unknown - checkme
 %if 1
@@ -1031,6 +1050,13 @@ fi
 %attr(755,root,root) %{_libdir}/%{pname}/additions/vboxadd
 %attr(755,root,root) %{_libdir}/%{pname}/additions/vboxadd-service
 %attr(755,root,root) %{_libdir}/%{pname}/additions/vboxadd-x11
+
+%if %{with lightdm}
+%files -n lightdm-vbox-greeter
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_sbindir}/vbox-greeter
+%{_datadir}/xgreeters/vbox-greeter.desktop
+%endif
 
 %files -n pam-pam_vbox
 %defattr(644,root,root,755)
