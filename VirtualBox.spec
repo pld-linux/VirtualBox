@@ -131,7 +131,7 @@ BuildRequires:	python-devel
 BuildRequires:	python-modules
 BuildRequires:	qt4-build >= 4.2.0
 BuildRequires:	qt4-linguist
-BuildRequires:	rpmbuild(macros) >= 1.627
+BuildRequires:	rpmbuild(macros) >= 1.664
 BuildRequires:	sed >= 4.0
 %if %{with doc}
 BuildRequires:	texlive-fonts-bitstream
