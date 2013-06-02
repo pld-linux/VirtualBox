@@ -1,0 +1,13 @@
+hardcoded paths instead of pkg-config. oh well
+
+--- VirtualBox-4.2.12/src/VBox/Additions/linux/lightdm-greeter/Makefile.kmk~	2013-04-12 13:35:14.000000000 +0300
++++ VirtualBox-4.2.12/src/VBox/Additions/linux/lightdm-greeter/Makefile.kmk	2013-06-01 11:13:40.977671744 +0300
+@@ -46,6 +46,8 @@
+ vbox-greeter_SOURCES  = vbox-greeter.cpp
+ ### todo: define some _INCS in Config.kmk and use 'pkg-config glib-2.0 --cflags' in configure to override 
+ vbox-greeter_INCS     = \
++	/usr/lib64/glib-2.0/include \
++	/usr/lib/glib-2.0/include \
+ 	/usr/lib/i386-linux-gnu/glib-2.0/include \
+ 	/usr/lib/x86_64-linux-gnu/glib-2.0/include \
+ 	/usr/include/glib-2.0 \

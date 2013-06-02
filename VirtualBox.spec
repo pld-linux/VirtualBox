@@ -15,6 +15,7 @@
 %bcond_without	kernel		# don't build kernel module
 %bcond_without	userspace	# don't build userspace package
 %bcond_with	webservice	# webservice (soap) support
+%bcond_with	lightdm	# lightdm greeter
 %bcond_without	verbose
 %bcond_with	force_userspace # force userspace build (useful if alt_kernel is set)
 
@@ -68,6 +69,7 @@ Patch3:		%{pname}-dri.patch
 Patch4:		%{pname}-disable_build_NetBiosBin.patch
 Patch5:		xserver-1.12.patch
 Patch6:		gcc48.patch
+Patch7:		lightdm-greeter-glib-includes.patch
 # ubuntu patches
 Patch10:	16-no-update.patch
 Patch11:	18-system-xorg.patch
@@ -117,6 +119,7 @@ BuildRequires:	libvncserver-devel >= 0.9.9
 BuildRequires:	libxml2-devel >= 2.6.26
 BuildRequires:	libxslt-devel >= 1.1.17
 BuildRequires:	libxslt-progs >= 1.1.17
+%{?with_lightdm:BuildRequires:	lightdm-devel}
 BuildRequires:	makeself
 BuildRequires:	mkisofs
 BuildRequires:	pam-devel
@@ -516,6 +519,7 @@ Moduł jądra Linuksa dla VirtualBoksa - sterownik obsługi DRM.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 
 %{__sed} -i -e 's,@VBOX_DOC_PATH@,%{_docdir}/%{name}-%{version},' \
 	-e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/common/virtualbox.desktop.in
@@ -561,6 +565,10 @@ kmk %{?_smp_mflags} \
 	VBOX_VERSION_STRING='$(VBOX_VERSION_MAJOR).$(VBOX_VERSION_MINOR).$(VBOX_VERSION_BUILD)'_PLD \
 	XSERVER_VERSION="$XSERVER_VERSION" \
 	VBOX_USE_SYSTEM_XORG_HEADERS=1 \
+%if %{with lightdm}
+	VBOX_WITH_LIGHTDM_GREETER=1 \
+	VBOX_WITH_LIGHTDM_GREETER_PACKING=1 \
+%endif
 	TOOL_GCC3_CFLAGS="%{rpmcflags}" \
 	TOOL_GCC3_CXXFLAGS="%{rpmcxxflags}" \
 	VBOX_GCC_OPT="%{rpmcxxflags}" \
