@@ -568,9 +568,25 @@ cd -
 # using system kBuild package
 %{__rm} -r kBuild
 
+cat <<'EOF'>> LocalConfig.kmk
+%{?with_verbose:KBUILD_VERBOSE=3}
+USERNAME=%(id -un)
+__VBOX_BUILD_PUBLISHER=_PLD
+VBOX_VERSION_STRING=$(VBOX_VERSION_MAJOR).$(VBOX_VERSION_MINOR).$(VBOX_VERSION_BUILD)_PLD
+XSERVER_VERSION=%(rpm -q --queryformat '%{V}\n' xorg-xserver-server-devel | awk -F. '{ print $1 $2 }' 2>/dev/null || echo ERROR)
+VBOX_USE_SYSTEM_XORG_HEADERS=1
+%if %{with lightdm}
+VBOX_WITH_LIGHTDM_GREETER=1
+VBOX_WITH_LIGHTDM_GREETER_PACKING=1
+%endif
+TOOL_GCC3_CFLAGS=%{rpmcflags}
+TOOL_GCC3_CXXFLAGS=%{rpmcxxflags}
+VBOX_GCC_OPT=%{rpmcxxflags}
+VBOX_WITH_TESTCASES=
+EOF
+
 %build
 %if %{with userspace}
-echo "VBOX_WITH_TESTCASES := " > LocalConfig.kmk
 ./configure \
 	--with-gcc="%{__cc}" \
 	--with-g++="%{__cxx}" \
@@ -583,20 +599,7 @@ echo "VBOX_WITH_TESTCASES := " > LocalConfig.kmk
 	%{nil}
 
 XSERVER_VERSION=$(rpm -q --queryformat '%{VERSION}\n' xorg-xserver-server-devel | awk -F. ' { print $1 $2 } ' 2> /dev/null || echo ERROR)
-kmk %{?_smp_mflags} \
-	%{?with_verbose:KBUILD_VERBOSE=3} \
-	USER=%(id -un) \
-	VBOX_VERSION_STRING='$(VBOX_VERSION_MAJOR).$(VBOX_VERSION_MINOR).$(VBOX_VERSION_BUILD)'_PLD \
-	XSERVER_VERSION="$XSERVER_VERSION" \
-	VBOX_USE_SYSTEM_XORG_HEADERS=1 \
-%if %{with lightdm}
-	VBOX_WITH_LIGHTDM_GREETER=1 \
-	VBOX_WITH_LIGHTDM_GREETER_PACKING=1 \
-%endif
-	TOOL_GCC3_CFLAGS="%{rpmcflags}" \
-	TOOL_GCC3_CXXFLAGS="%{rpmcxxflags}" \
-	VBOX_GCC_OPT="%{rpmcxxflags}" \
-	%{nil}
+kmk %{?_smp_mflags}
 %endif
 
 %if %{with kernel}
