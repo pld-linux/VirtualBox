@@ -800,7 +800,7 @@ fi
 /sbin/chkconfig --add vboxservice
 %service vboxservice restart
 
-%postun guest
+%preun guest
 if [ "$1" = "0" ]; then
 	/sbin/chkconfig --del vboxservice
 	%service vboxservice -q stop
