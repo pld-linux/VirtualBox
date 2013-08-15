@@ -67,7 +67,6 @@ Patch2:		%{pname}-warning_workaround.patch
 Patch3:		%{pname}-dri.patch
 Patch4:		%{pname}-disable_build_NetBiosBin.patch
 Patch5:		xserver-1.12.patch
-Patch6:		gcc48.patch
 Patch7:		lightdm-greeter-glib-includes.patch
 Patch8:		lightdm-greeter-g++-link.patch
 # ubuntu patches
@@ -541,7 +540,6 @@ Moduł jądra Linuksa dla VirtualBoksa - sterownik obsługi DRM.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
-%patch6 -p1
 %patch7 -p1
 %patch8 -p1
 
