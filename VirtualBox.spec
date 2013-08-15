@@ -14,7 +14,7 @@
 %bcond_without	kernel		# don't build kernel module
 %bcond_without	userspace	# don't build userspace package
 %bcond_with	webservice	# webservice (SOAP) support
-%bcond_without	lightdm	# lightdm greeter
+%bcond_without	lightdm		# lightdm greeter
 %bcond_without	verbose
 %bcond_with	force_userspace # force userspace build (useful if alt_kernel is set)
 
@@ -32,7 +32,7 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		16
+%define		rel		17
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
@@ -120,7 +120,7 @@ BuildRequires:	libvncserver-devel >= 0.9.9
 BuildRequires:	libxml2-devel >= 2.6.26
 BuildRequires:	libxslt-devel >= 1.1.17
 BuildRequires:	libxslt-progs >= 1.1.17
-%{?with_lightdm:BuildRequires:	lightdm-devel}
+%{?with_lightdm:BuildRequires:	lightdm-libs-qt-devel}
 BuildRequires:	makeself
 BuildRequires:	mkisofs
 BuildRequires:	pam-devel
