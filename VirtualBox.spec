@@ -32,19 +32,19 @@
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		8
+%define		rel		0.1
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{_alt_kernel}
-Version:	4.2.16
+Version:	4.3.0
 Release:	%{rel}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	c4a36e2099a317f4715cd3861cdae238
+# Source0-md5:	1f49237686d095859f3dbea0941f8b12
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	6074747feb9ae8b6eec365616347eef3
+# Source1-md5:	6b72a59aba1660afa4f430faa88d727a
 Source2:	vboxservice.init
 Source3:	%{pname}-vboxdrv.init
 Source4:	%{pname}-vboxguest.init
@@ -538,7 +538,7 @@ Moduł jądra Linuksa dla VirtualBoksa - sterownik obsługi DRM.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
+#%patch4 -p1
 %patch5 -p1
 %patch7 -p1
 %patch8 -p1
