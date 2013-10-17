@@ -65,7 +65,6 @@ Patch0:		%{pname}-configure-spaces.patch
 Patch1:		%{pname}-VBoxSysInfo.patch
 Patch2:		%{pname}-warning_workaround.patch
 Patch3:		%{pname}-dri.patch
-Patch4:		%{pname}-disable_build_NetBiosBin.patch
 Patch5:		xserver-1.12.patch
 Patch7:		lightdm-greeter-glib-includes.patch
 Patch8:		lightdm-greeter-g++-link.patch
@@ -538,7 +537,6 @@ Moduł jądra Linuksa dla VirtualBoksa - sterownik obsługi DRM.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-#%patch4 -p1
 %patch5 -p1
 %patch7 -p1
 %patch8 -p1
