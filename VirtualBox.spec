@@ -6,7 +6,6 @@
 # - guest x11 additions: currently incomplete/untested
 # - enable VDE networking: --enable-vde
 # - initscripts for webservice
-# - install systemd vboxservice.service
 #
 # Conditional build:
 %bcond_without	doc		# don't build the documentation
@@ -46,21 +45,12 @@ Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
 # Source1-md5:	6b72a59aba1660afa4f430faa88d727a
 Source2:	vboxservice.init
-Source3:	%{pname}-vboxdrv.init
-Source4:	%{pname}-vboxguest.init
-Source5:	%{pname}-vboxnetflt.init
-Source6:	%{pname}-vboxsf.init
-Source7:	%{pname}-vboxnetadp.init
-Source8:	%{pname}-vboxpci.init
-Source9:	%{pname}.sh
-Source10:	mount.vdi
-Source11:	udev.rules
-Source12:	%{pname}-vboxdrv-modules-load.conf
-Source13:	%{pname}-vboxguest-modules-load.conf
-Source14:	%{pname}-vboxnetflt-modules-load.conf
-Source15:	%{pname}-vboxsf-modules-load.conf
-Source16:	%{pname}-vboxnetadp-modules-load.conf
-Source17:	%{pname}-vboxpci-modules-load.conf
+Source3:	vboxservice.service
+Source4:	%{pname}.sh
+Source5:	mount.vdi
+Source6:	udev.rules
+Source7:	%{pname}-virtualbox-host-modules-load.conf
+Source8:	%{pname}-virtualbox-guest-modules-load.conf
 Patch0:		%{pname}-configure-spaces.patch
 Patch1:		%{pname}-VBoxSysInfo.patch
 Patch2:		%{pname}-warning_workaround.patch
@@ -181,16 +171,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 # VBoxEFI64.fd: \0
 #
 # which lead to 'Stripping ... ELF shared libraries... (...)/nls/qt_ro.qm: File format not recognized'
-%define		_noautostrip	.*%{_libdir}/%{name}/.*
-
-%define		vbox_kernel_post(d:)	\
-if [ -x /etc/rc.d/init.d/%{-d*} ]; then \
-	%{expand:%service %%{-d*} restart %%*} \
-else \
-	/sbin/rmmod %{-d*} || : \
-	/sbin/modprobe -s %{-d*} || : \
-fi \
-%{nil}
+#define		_noautostrip	.*%{_libdir}/%{name}/.*
 
 %description
 Oracle VirtualBox is a general-purpose full virtualizer for x86
@@ -260,6 +241,8 @@ You should install this package in your Host OS.
 Summary:	VirtualBox Guest tools
 Group:		Base
 Requires(post,preun):	/sbin/chkconfig
+Requires(post):	systemd-units >= 38
+Requires:	systemd-units >= 38
 Requires:	rc-scripts
 Suggests:	kernel(vboxguest)
 Suggests:	kernel(vboxsf)
@@ -302,7 +285,7 @@ Group:		Themes
 # NOTE: '#' in url is lost because rpm treats it as comment, even hacking with
 # macros doesn't help as rpmbuild takes final result to parse
 URL:		http://www.virtualbox.org/manual/ch09.html#autologon_unix_lightdm
-Requires:	kernel%{_alt_kernel}-misc-vboxguest
+Requires:	kernel(vboxguest)
 Requires:	lightdm >= 1.0.1
 Provides:	lightdm-greeter
 
@@ -333,54 +316,44 @@ X.org video driver for VirtualBox guest OS.
 %description -n xorg-driver-video-vboxvideo -l pl.UTF-8
 Sterownik grafiki dla systemu gościa w VirtualBoksie.
 
-%package kernel-init-host
-Summary:	SysV initscripts for host kernel modules
-Group:		Base/Kernel
-
-%description kernel-init-host
-SysV initscripts for host kernel modules.
-
-%package kernel-init-guest
-Summary:	SysV initscripts for guest kernel modules
-Group:		Base/Kernel
-
-%description kernel-init-guest
-SysV initscripts for guest kernel modules.
-
 # KERNEL PACKAGES
 
 # KEEP ALL REGULAR SUBPACKAGES BEFORE KERNEL PACKAGES.
 
-%package -n kernel%{_alt_kernel}-misc-vboxguest
-Summary:	VirtualBox Guest Additions for Linux Module
-Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
+%package -n kernel%{_alt_kernel}-virtualbox-guest
+Summary:	VirtualBox kernel modules for Linux Guest
+Summary(pl.UTF-8):	Moduły VirtualBoksa do jądra Linuksa dla systemu gościa
 Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 Requires(post):	systemd-units >= 38
 Requires:	dev >= 2.9.0-7
+Requires:	systemd-units >= 38
 %if %{with dist_kernel}
 %requires_releq_kernel
+%requires_releq_kernel -n drm
 Requires(postun):	%releq_kernel
 %endif
-Requires:	systemd-units >= 38
 Suggests:	%{name}-kernel-init-guest >= %{version}-%{rel}
 Provides:	kernel(vboxguest) = %{version}-%{rel}
-Obsoletes:	kernel%{_alt_kernel}-misc-vboxadd
-Conflicts:	kernel%{_alt_kernel}-misc-vboxdrv
+Provides:	kernel(vboxsf) = %{version}-%{rel}
+Provides:	kernel(vboxvideo) = %{version}-%{rel}
+Obsoletes:	kernel-init-guest
+Conflicts:	kernel%{_alt_kernel}-virtualbox-host
 
-%description -n kernel%{_alt_kernel}-misc-vboxguest
-VirtualBox Guest Additions for Linux Module.
+%description -n kernel%{_alt_kernel}-virtualbox-guest
+This package contains VirtualBox Guest Additions for Linux Module,
+host file system access (Shared Folders) and DRM support for
+Linux guest system.
 
-You should install this package in your Guest OS.
+%description -n kernel%{_alt_kernel}-virtualbox-guest -l pl.UTF-8
+Ten pakiet zawiera moduł jądra Linuksa vboxguest dla VirtualBoksa -
+dodatki dla systemu gościa, dostęp do plików systemu głównego z
+poziomu systemu gościa i sterownik obsługi DRM.
 
-%description -n kernel%{_alt_kernel}-misc-vboxguest -l pl.UTF-8
-Moduł jądra Linuksa vboxguest dla VirtualBoksa - dodatki dla systemu
-gościa.
-
-%package -n kernel%{_alt_kernel}-misc-vboxdrv
-Summary:	VirtualBox Support Driver
-Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
+%package -n kernel%{_alt_kernel}-virtualbox-host
+Summary:	VirtualBox Support Drivers
+Summary(pl.UTF-8):	Moduły jądra Linuksa dla VirtualBoksa
 Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
@@ -393,143 +366,21 @@ Requires(postun):	%releq_kernel
 Requires:	systemd-units >= 38
 Suggests:	%{name}-kernel-init-host >= %{version}-%{rel}
 Provides:	kernel(vboxdrv) = %{version}-%{rel}
-
-%description -n kernel%{_alt_kernel}-misc-vboxdrv
-VirtualBox Support Driver.
-
-You should install this package in your Host OS.
-
-%description -n kernel%{_alt_kernel}-misc-vboxdrv -l pl.UTF-8
-Moduł jądra Linuksa dla VirtualBoksa - sterownik wsparcia dla systemu
-głównego.
-
-%package -n kernel%{_alt_kernel}-misc-vboxnetadp
-Summary:	VirtualBox Network Adapter Driver
-Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
-Release:	%{rel}@%{_kernel_ver_str}
-Group:		Base/Kernel
-Requires(post,postun):	/sbin/depmod
-Requires(post):	systemd-units >= 38
-Requires:	dev >= 2.9.0-7
-Requires:	kernel%{_alt_kernel}-misc-vboxdrv
-%if %{with dist_kernel}
-%requires_releq_kernel
-Requires(postun):	%releq_kernel
-%endif
-Requires:	systemd-units >= 38
-Suggests:	%{name}-kernel-init-host >= %{version}-%{rel}
+Provides:	kernel(vboxnetadp) = %{version}-%{rel}
 Provides:	kernel(vboxnetflt) = %{version}-%{rel}
-
-%description -n kernel%{_alt_kernel}-misc-vboxnetadp
-VirtualBox Network Adapter Driver.
-
-You should install this package in your Host OS.
-
-%description -n kernel%{_alt_kernel}-misc-vboxnetadp -l pl.UTF-8
-Moduł jądra Linuksa dla VirtualBoksa - sterownik witrualnej karty
-sieciowej.
-
-%package -n kernel%{_alt_kernel}-misc-vboxnetflt
-Summary:	VirtualBox Network Filter Driver
-Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
-Release:	%{rel}@%{_kernel_ver_str}
-Group:		Base/Kernel
-Requires(post,postun):	/sbin/depmod
-Requires(post):	systemd-units >= 38
-Requires:	dev >= 2.9.0-7
-Requires:	kernel%{_alt_kernel}-misc-vboxdrv
-%if %{with dist_kernel}
-%requires_releq_kernel
-Requires(postun):	%releq_kernel
-%endif
-Requires:	systemd-units >= 38
-Suggests:	%{name}-kernel-init-host >= %{version}-%{rel}
-Provides:	kernel(vboxnetflt) = %{version}-%{rel}
-
-%description -n kernel%{_alt_kernel}-misc-vboxnetflt
-VirtualBox Network Filter Driver.
-
-You should install this package in your Host OS.
-
-%description -n kernel%{_alt_kernel}-misc-vboxnetflt -l pl.UTF-8
-Moduł jądra Linuksa dla VirtualBoksa - sterownik filtrowania sieci dla
-systemu głównego.
-
-%package -n kernel%{_alt_kernel}-misc-vboxpci
-Summary:	VirtualBox PCI card passthrough Driver
-Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
-Release:	%{rel}@%{_kernel_ver_str}
-Group:		Base/Kernel
-Requires(post,postun):	/sbin/depmod
-Requires(post):	systemd-units >= 38
-Requires:	dev >= 2.9.0-7
-Requires:	kernel%{_alt_kernel}-misc-vboxdrv
-%if %{with dist_kernel}
-%requires_releq_kernel
-Requires(postun):	%releq_kernel
-%endif
-Requires:	systemd-units >= 38
-Suggests:	%{name}-kernel-init-host >= %{version}-%{rel}
 Provides:	kernel(vboxpci) = %{version}-%{rel}
+Obsoletes:	kernel-init-host
 
-%description -n kernel%{_alt_kernel}-misc-vboxpci
-VirtualBox PCI card passthrough driver that works as host proxy
-between guest and PCI hardware.
+%description -n kernel%{_alt_kernel}-virtualbox-host
+This package contains VirtualBox Support Driver, Network Adapter
+Driver, Network Filter Driver and PCI card passthrough driver that
+works as host proxy between guest and PCI hardware.
 
-You should install this package in your Host OS.
-
-%description -n kernel%{_alt_kernel}-misc-vboxnetflt -l pl.UTF-8
-Moduł jądra Linuksa dla VirtualBoksa - sterownik, ktory działa jako
-proxy między gościem i gospodarzem sprzętu PCI.
-
-%package -n kernel%{_alt_kernel}-misc-vboxsf
-Summary:	Host file system access (Shared Folders) for VirtualBox
-Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
-Release:	%{rel}@%{_kernel_ver_str}
-Group:		Base/Kernel
-Requires(post,postun):	/sbin/depmod
-Requires(post):	systemd-units >= 38
-Requires:	dev >= 2.9.0-7
-Requires:	kernel%{_alt_kernel}-misc-vboxguest
-%if %{with dist_kernel}
-%requires_releq_kernel
-Requires(postun):	%releq_kernel
-%endif
-Requires:	systemd-units >= 38
-Suggests:	%{name}-kernel-init-guest >= %{version}-%{rel}
-Provides:	kernel(vboxsf) = %{version}-%{rel}
-Obsoletes:	kernel%{_alt_kernel}-misc-vboxvfs
-
-%description -n kernel%{_alt_kernel}-misc-vboxsf
-Host file system access (Shared Folders) for VirtualBox.
-
-You should install this package in your Guest OS.
-
-%description -n kernel%{_alt_kernel}-misc-vboxsf -l pl.UTF-8
-Moduł jądra Linuksa dla VirtualBoksa - dostęp do plików systemu
-głównego z poziomu systemu gościa.
-
-%package -n kernel%{_alt_kernel}-video-vboxvideo
-Summary:	DRM support for VirtualBox
-Summary(pl.UTF-8):	Moduł jądra Linuksa dla VirtualBoksa
-Release:	%{rel}@%{_kernel_ver_str}
-Group:		Base/Kernel
-Requires(post,postun):	/sbin/depmod
-Requires:	dev >= 2.9.0-7
-%if %{with dist_kernel}
-%requires_releq_kernel
-%requires_releq_kernel -n drm
-Requires(postun):	%releq_kernel
-%endif
-Provides:	kernel(vboxvideo) = %{version}-%{rel}
-
-%description -n kernel%{_alt_kernel}-video-vboxvideo
-DRM support for VirtualBox.
-
-You should install this package in your Guest OS.
-
-%description -n kernel%{_alt_kernel}-video-vboxvideo -l pl.UTF-8
-Moduł jądra Linuksa dla VirtualBoksa - sterownik obsługi DRM.
+%description -n kernel%{_alt_kernel}-virtualbox-host -l pl.UTF-8
+Ten pakiet zawiera sterownik wsparcia dla systemu głównego, sterownik
+witrualnej karty sieciowej, sterownik filtrowania sieci dla systemu
+głównego oraz sterownik, ktory działa jako proxy między gościem i
+gospodarzem sprzętu PCI.
 
 %prep
 %setup -q -n %{pname}-%{version}
@@ -548,7 +399,7 @@ Moduł jądra Linuksa dla VirtualBoksa - sterownik obsługi DRM.
 %{__sed} -i -e "s@_LDFLAGS\.%{vbox_arch}*.*=@& %{rpmldflags}@g" \
 	-i Config.kmk src/libs/xpcom18a4/Config.kmk
 
-%{__sed} 's#@LIBDIR@#%{_libdir}#' < %{SOURCE9} > VirtualBox-wrapper.sh
+%{__sed} 's#@LIBDIR@#%{_libdir}#' < %{SOURCE4} > VirtualBox-wrapper.sh
 
 install -d PLD-MODULE-BUILD/{GuestDrivers,HostDrivers}
 cd PLD-MODULE-BUILD
@@ -622,7 +473,8 @@ rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_bindir},/sbin,%{_sbindir},%{_libdir}/%{pname}/ExtensionPacks} \
 	$RPM_BUILD_ROOT{%{_pixmapsdir},%{_desktopdir}} \
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/{drivers,dri,input} \
-	$RPM_BUILD_ROOT{/lib/udev,/etc/udev/rules.d}
+	$RPM_BUILD_ROOT{/lib/udev,/etc/udev/rules.d} \
+	$RPM_BUILD_ROOT{/etc/rc.d/init.d,%{systemdunitdir}}
 
 # test if we can hardlink -- %{_builddir} and $RPM_BUILD_ROOT on same partition
 if cp -al VBox.png $RPM_BUILD_ROOT/Vbox.png 2>/dev/null; then
@@ -639,11 +491,14 @@ ln -sf %{_docdir}/%{pname}-doc-%{version}/UserManual_fr_FR.pdf $RPM_BUILD_ROOT%{
 
 install -d $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions
 cp -a$l %{SOURCE1} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/VBoxGuestAdditions.iso
-install -p %{SOURCE10} $RPM_BUILD_ROOT/sbin/mount.vdi
+install -p %{SOURCE5} $RPM_BUILD_ROOT/sbin/mount.vdi
 install -p VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_libdir}/%{pname}
 for f in {VBox{BFE,Headless,Manage,SDL,SVC,Tunctl,XPCOMIPCD},VirtualBox}; do
 	ln -s %{_libdir}/%{pname}/VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_bindir}/$f
 done
+
+install -p %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxservice
+install -p %{SOURCE3} $RPM_BUILD_ROOT%{systemdunitdir}/vboxservice.service
 
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/VBox.png,%{_pixmapsdir}/virtualbox.png}
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname},%{_desktopdir}}/virtualbox.desktop
@@ -659,7 +514,7 @@ done
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLpackspu.so
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLpassthroughspu.so
 
-cp -a %{SOURCE11} $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
+cp -a %{SOURCE6} $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname},/lib/udev}/VBoxCreateUSBNode.sh
 
 install -d $RPM_BUILD_ROOT/%{_lib}/security
@@ -718,14 +573,7 @@ cp -p %{objdir}/Additions/Installer/linux/share/VBoxGuestAdditions/vbox-greeter.
 %endif
 
 %if %{with kernel}
-install -d $RPM_BUILD_ROOT{/etc/{rc.d/init.d,modules-load.d},/sbin,%{systemdunitdir}}
-install -p %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxservice
-install -p %{SOURCE3} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxdrv
-install -p %{SOURCE4} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxguest
-install -p %{SOURCE5} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxnetflt
-install -p %{SOURCE6} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxsf
-install -p %{SOURCE7} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxnetadp
-install -p %{SOURCE8} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxpci
+install -d $RPM_BUILD_ROOT{/etc/modules-load.d,/sbin}
 %install_kernel_modules -m PLD-MODULE-BUILD/HostDrivers/vboxdrv/vboxdrv -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/HostDrivers/vboxnetadp/vboxnetadp -d misc
 %install_kernel_modules -m PLD-MODULE-BUILD/HostDrivers/vboxnetflt/vboxnetflt -d misc
@@ -737,20 +585,8 @@ install -p %{SOURCE8} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxpci
 install -p mount.vboxsf $RPM_BUILD_ROOT/sbin/mount.vboxsf
 
 # Tell systemd to load modules
-cp -p %{SOURCE12} $RPM_BUILD_ROOT/etc/modules-load.d/vboxdrv.conf
-cp -p %{SOURCE13} $RPM_BUILD_ROOT/etc/modules-load.d/vboxguest.conf
-cp -p %{SOURCE14} $RPM_BUILD_ROOT/etc/modules-load.d/vboxnetflt.conf
-cp -p %{SOURCE15} $RPM_BUILD_ROOT/etc/modules-load.d/vboxsf.conf
-cp -p %{SOURCE16} $RPM_BUILD_ROOT/etc/modules-load.d/vboxnetadp.conf
-cp -p %{SOURCE17} $RPM_BUILD_ROOT/etc/modules-load.d/vboxpci.conf
-
-# And mask module-loading services
-ln -sf /dev/null $RPM_BUILD_ROOT%{systemdunitdir}/vboxdrv.service
-ln -sf /dev/null $RPM_BUILD_ROOT%{systemdunitdir}/vboxguest.service
-ln -sf /dev/null $RPM_BUILD_ROOT%{systemdunitdir}/vboxnetflt.service
-ln -sf /dev/null $RPM_BUILD_ROOT%{systemdunitdir}/vboxsf.service
-ln -sf /dev/null $RPM_BUILD_ROOT%{systemdunitdir}/vboxnetadp.service
-ln -sf /dev/null $RPM_BUILD_ROOT%{systemdunitdir}/vboxpci.service
+cp -p %{SOURCE7} $RPM_BUILD_ROOT/etc/modules-load.d/virtualbox-host.conf
+cp -p %{SOURCE8} $RPM_BUILD_ROOT/etc/modules-load.d/virtualbox-guest.conf
 %endif
 
 %clean
@@ -772,18 +608,11 @@ for i in /sys/bus/usb/devices/*; do
 done
 
 cat << 'EOF'
-You must install vboxdrv kernel module for this software to work:
-    kernel-misc-vboxdrv-%{version}-%{rel}@%{_kernel_ver_str}
-
-Additionally you might want to install:
-    kernel-misc-vboxnetadp-%{version}-%{rel}@%{_kernel_ver_str}
-    kernel-misc-vboxnetflt-%{version}-%{rel}@%{_kernel_ver_str}
-    kernel-misc-vboxpci-%{version}-%{rel}@%{_kernel_ver_str}
+You must install vboxdrv kernel modules for this software to work:
+    kernel%{_alt_kernel}-virtualbox-host-%{version}-%{rel}@%{_kernel_ver_str}
 
 On Guest Linux system you might want to install:
-    kernel-misc-vboxguest-%{version}-%{rel}@%{_kernel_ver_str}
-    kernel-misc-vboxsf-%{version}-%{rel}@%{_kernel_ver_str}
-    kernel-video-vboxvideo-%{version}-%{rel}@%{_kernel_ver_str}
+    kernel%{_alt_kernel}-virtualbox-guest-%{version}-%{rel}@%{_kernel_ver_str}
 
 EOF
 
@@ -795,125 +624,35 @@ fi
 %post guest
 /sbin/chkconfig --add vboxservice
 %service vboxservice restart
+%systemd_post vboxservice.service
 
 %preun guest
 if [ "$1" = "0" ]; then
 	/sbin/chkconfig --del vboxservice
 	%service vboxservice -q stop
 fi
+%systemd_preun vboxservice.service
+
+%postun guest
+%systemd_reload
+
+%triggerpostun guest -- VirtualBox-guest < 4.3.0-1
+%systemd_trigger vboxservice.service
 
 %pre -n lightdm-greeter-vbox
 %addusertogroup xdm vbox
 
-%post	-n kernel%{_alt_kernel}-misc-vboxdrv
-%depmod %{_kernel_ver}
-%vbox_kernel_post -d vboxdrv VirtualBox Support Driver
-
-%preun -n kernel%{_alt_kernel}-misc-vboxdrv
-if [ "$1" = "0" ]; then
-	%service vboxdrv stop
-fi
-
-%postun	-n kernel%{_alt_kernel}-misc-vboxdrv
+%post -n kernel%{_alt_kernel}-virtualbox-guest
 %depmod %{_kernel_ver}
 
-%post	-n kernel%{_alt_kernel}-misc-vboxnetadp
-%depmod %{_kernel_ver}
-%vbox_kernel_post -d vboxnetadp VirtualBox Network HostOnly driver
-
-%preun -n kernel%{_alt_kernel}-misc-vboxnetadp
-if [ "$1" = "0" ]; then
-	%service vboxnetadp stop
-fi
-
-%postun	-n kernel%{_alt_kernel}-misc-vboxnetadp
+%postun	-n kernel%{_alt_kernel}-virtualbox-guest
 %depmod %{_kernel_ver}
 
-%post	-n kernel%{_alt_kernel}-misc-vboxnetflt
-%depmod %{_kernel_ver}
-%vbox_kernel_post -d vboxnetflt VirtualBox Network Filter driver
-
-%preun -n kernel%{_alt_kernel}-misc-vboxnetflt
-if [ "$1" = "0" ]; then
-	%service vboxnetflt stop
-fi
-
-%postun	-n kernel%{_alt_kernel}-misc-vboxnetflt
+%post	-n kernel%{_alt_kernel}-virtualbox-host
 %depmod %{_kernel_ver}
 
-%post	-n kernel%{_alt_kernel}-misc-vboxpci
+%postun	-n kernel%{_alt_kernel}-virtualbox-host
 %depmod %{_kernel_ver}
-%vbox_kernel_post -d vboxpci VirtualBox PCI passthrough driver
-
-%preun -n kernel%{_alt_kernel}-misc-vboxpci
-if [ "$1" = "0" ]; then
-	%service vboxpci stop
-fi
-
-%postun	-n kernel%{_alt_kernel}-misc-vboxpci
-%depmod %{_kernel_ver}
-
-%post	-n kernel%{_alt_kernel}-misc-vboxguest
-%depmod %{_kernel_ver}
-%vbox_kernel_post -d vboxguest VirtualBox Guest additions driver
-
-%preun -n kernel%{_alt_kernel}-misc-vboxguest
-if [ "$1" = "0" ]; then
-	%service vboxguest stop
-fi
-
-%postun	-n kernel%{_alt_kernel}-misc-vboxguest
-%depmod %{_kernel_ver}
-
-%post	-n kernel%{_alt_kernel}-misc-vboxsf
-%depmod %{_kernel_ver}
-%vbox_kernel_post -d vboxsf VirtualBox Host file system access (Shared Folders)
-
-%preun -n kernel%{_alt_kernel}-misc-vboxsf
-if [ "$1" = "0" ]; then
-	%service vboxsf stop
-fi
-
-%postun	-n kernel%{_alt_kernel}-misc-vboxsf
-%depmod %{_kernel_ver}
-
-%post	-n kernel%{_alt_kernel}-video-vboxvideo
-%depmod %{_kernel_ver}
-
-%postun	-n kernel%{_alt_kernel}-video-vboxvideo
-%depmod %{_kernel_ver}
-
-%post kernel-init-host
-/sbin/chkconfig --add vboxdrv
-/sbin/chkconfig --add vboxnetadp
-/sbin/chkconfig --add vboxnetflt
-/sbin/chkconfig --add vboxpci
-%systemd_reload
-
-%preun kernel-init-host
-if [ "$1" = "0" ]; then
-	/sbin/chkconfig --del vboxdrv
-	/sbin/chkconfig --del vboxnetadp
-	/sbin/chkconfig --del vboxnetflt
-	/sbin/chkconfig --del vboxpci
-fi
-
-%postun kernel-init-host
-%systemd_reload
-
-%post kernel-init-guest
-/sbin/chkconfig --add vboxguest
-/sbin/chkconfig --add vboxsf
-%systemd_reload
-
-%preun kernel-init-guest
-if [ "$1" = "0" ]; then
-	/sbin/chkconfig --del vboxguest
-	/sbin/chkconfig --del vboxsf
-fi
-
-%postun kernel-init-guest
-%systemd_reload
 
 %if %{with userspace}
 %files
@@ -1054,6 +793,7 @@ fi
 %defattr(644,root,root,755)
 %attr(755,root,root) /sbin/mount.vboxsf
 %attr(754,root,root) /etc/rc.d/init.d/vboxservice
+%{systemdunitdir}/vboxservice.service
 %attr(755,root,root) %{_bindir}/VBoxControl
 %attr(755,root,root) %{_bindir}/VBoxService
 
@@ -1114,55 +854,17 @@ fi
 %endif
 
 %if %{with kernel}
-%files kernel-init-host
+%files -n kernel%{_alt_kernel}-virtualbox-guest
 %defattr(644,root,root,755)
-%attr(754,root,root) /etc/rc.d/init.d/vboxdrv
-%attr(754,root,root) /etc/rc.d/init.d/vboxnetadp
-%attr(754,root,root) /etc/rc.d/init.d/vboxnetflt
-%attr(754,root,root) /etc/rc.d/init.d/vboxpci
-%{systemdunitdir}/vboxdrv.service
-%{systemdunitdir}/vboxnetadp.service
-%{systemdunitdir}/vboxnetflt.service
-%{systemdunitdir}/vboxpci.service
-
-%files kernel-init-guest
-%defattr(644,root,root,755)
-%attr(754,root,root) /etc/rc.d/init.d/vboxguest
-%attr(754,root,root) /etc/rc.d/init.d/vboxsf
-%{systemdunitdir}/vboxguest.service
-%{systemdunitdir}/vboxsf.service
-
-%files -n kernel%{_alt_kernel}-misc-vboxguest
-%defattr(644,root,root,755)
-%config(noreplace) %verify(not md5 mtime size) /etc/modules-load.d/vboxguest.conf
+%config(noreplace) %verify(not md5 mtime size) /etc/modules-load.d/virtualbox-guest.conf
 /lib/modules/%{_kernel_ver}/misc/vboxguest.ko*
-
-%files -n kernel%{_alt_kernel}-misc-vboxdrv
-%defattr(644,root,root,755)
-%config(noreplace) %verify(not md5 mtime size) /etc/modules-load.d/vboxdrv.conf
-/lib/modules/%{_kernel_ver}/misc/vboxdrv.ko*
-
-%files -n kernel%{_alt_kernel}-misc-vboxnetadp
-%defattr(644,root,root,755)
-%config(noreplace) %verify(not md5 mtime size) /etc/modules-load.d/vboxnetadp.conf
-/lib/modules/%{_kernel_ver}/misc/vboxnetadp.ko*
-
-%files -n kernel%{_alt_kernel}-misc-vboxnetflt
-%defattr(644,root,root,755)
-%config(noreplace) %verify(not md5 mtime size) /etc/modules-load.d/vboxnetflt.conf
-/lib/modules/%{_kernel_ver}/misc/vboxnetflt.ko*
-
-%files -n kernel%{_alt_kernel}-misc-vboxpci
-%defattr(644,root,root,755)
-%config(noreplace) %verify(not md5 mtime size) /etc/modules-load.d/vboxpci.conf
-/lib/modules/%{_kernel_ver}/misc/vboxpci.ko*
-
-%files -n kernel%{_alt_kernel}-misc-vboxsf
-%defattr(644,root,root,755)
-%config(noreplace) %verify(not md5 mtime size) /etc/modules-load.d/vboxsf.conf
 /lib/modules/%{_kernel_ver}/misc/vboxsf.ko*
-
-%files -n kernel%{_alt_kernel}-video-vboxvideo
-%defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}/misc/vboxvideo.ko*
+
+%files -n kernel%{_alt_kernel}-virtualbox-host
+%config(noreplace) %verify(not md5 mtime size) /etc/modules-load.d/virtualbox-host.conf
+/lib/modules/%{_kernel_ver}/misc/vboxdrv.ko*
+/lib/modules/%{_kernel_ver}/misc/vboxnetadp.ko*
+/lib/modules/%{_kernel_ver}/misc/vboxnetflt.ko*
+/lib/modules/%{_kernel_ver}/misc/vboxpci.ko*
 %endif
