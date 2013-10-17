@@ -107,7 +107,7 @@ BuildRequires:	device-mapper-devel
 BuildRequires:	gcc >= 5:3.2.3
 %{?with_webservice:BuildRequires:	gsoap-devel}
 BuildRequires:	issue
-BuildRequires:	kBuild >= 0.1.9998-2
+BuildRequires:	kBuild >= 0.1.9998.2700
 BuildRequires:	libIDL-devel
 BuildRequires:	libcap-static
 BuildRequires:	libdrm-devel
@@ -940,7 +940,6 @@ fi
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxAuth.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxAuthSimple.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxAutostart
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxBFE
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxBalloonCtrl
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxDbg.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxDD2.so
@@ -954,6 +953,9 @@ fi
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxHostChannel.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxKeyboard.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxManage
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxNetNAT
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxVolInfo
+%attr(755,root,root) %{_libdir}/%{pname}/iPxeBaseBin
 %if %{with doc}
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxManageHelp
 %endif
@@ -985,15 +987,20 @@ fi
 %attr(755,root,root) %{_libdir}/%{pname}/VirtualBox
 %attr(755,root,root) %{_libdir}/%{pname}/VirtualBox-wrapper.sh
 %attr(755,root,root) %{_libdir}/%{pname}/ExtensionPacks/VNC/linux*/VBoxVNC*.so
+%{_libdir}/%{pname}/VBoxDD2GC.debug
 %{_libdir}/%{pname}/VBoxDD2GC.gc
-%{_libdir}/%{pname}/VBoxDDGC.gc
-%{_libdir}/%{pname}/VMMGC.gc
+%{_libdir}/%{pname}/VBoxDD2R0.debug
 %{_libdir}/%{pname}/VBoxDD2R0.r0
+%{_libdir}/%{pname}/VBoxDDGC.debug
+%{_libdir}/%{pname}/VBoxDDGC.gc
+%{_libdir}/%{pname}/VBoxDDR0.debug
 %{_libdir}/%{pname}/VBoxDDR0.r0
-%{_libdir}/%{pname}/VMMR0.r0
-#%{_libdir}/%{pname}/EfiThunk
 %{_libdir}/%{pname}/VBoxEFI32.fd
 %{_libdir}/%{pname}/VBoxEFI64.fd
+%{_libdir}/%{pname}/VMMGC.debug
+%{_libdir}/%{pname}/VMMGC.gc
+%{_libdir}/%{pname}/VMMR0.debug
+%{_libdir}/%{pname}/VMMR0.r0
 %{_libdir}/%{pname}/components/VBoxXPCOMBase.xpt
 %{_libdir}/%{pname}/ExtensionPacks/VNC/ExtPack.xml
 %{_libdir}/%{pname}/components/VirtualBox_XPCOM.xpt

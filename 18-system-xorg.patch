@@ -8,9 +8,9 @@ Author: Michael Meskes <meskes@debian.org>, Felix Geyer <fgeyer@debian.org>
  ifndef VBOX_ONLY_TESTSUITE
   if1of ($(KBUILD_TARGET), freebsd linux netbsd openbsd)
 -  LIBRARIES += \
--  	VBoxGuestR3LibXFree86
+-        VBoxGuestR3LibXFree86
 +#  LIBRARIES += \
-+#  	VBoxGuestR3LibXFree86
++#       VBoxGuestR3LibXFree86
   endif
  endif
  LIBRARIES.win.amd64 += VBoxGuestR3Lib-x86 VBoxGuestR3LibShared-x86
