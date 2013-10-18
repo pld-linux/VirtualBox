@@ -163,16 +163,6 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		outdir		out/%{vbox_platform}/release/bin
 %define		objdir		out/%{vbox_platform}/release/obj
 
-# workaround buggy 'file' results:
-#
-# EfiThunk:     \0
-# qt_ro.qm:     \0 "<\270d\030\312\357\234\225\315!\034\277`\241\275\335B"
-# VBoxEFI32.fd: \0
-# VBoxEFI64.fd: \0
-#
-# which lead to 'Stripping ... ELF shared libraries... (...)/nls/qt_ro.qm: File format not recognized'
-#define		_noautostrip	.*%{_libdir}/%{name}/.*
-
 %description
 Oracle VirtualBox is a general-purpose full virtualizer for x86
 hardware. Targeted at server, desktop and embedded use, it is now the
