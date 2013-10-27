@@ -617,16 +617,15 @@ cp -p %{objdir}/Additions/Installer/linux/share/VBoxGuestAdditions/vbox-greeter.
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/scripts/install_service
 %endif
 
-# packaged by kernel part
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/mount.vboxsf
+
+install -p mount.vboxsf $RPM_BUILD_ROOT/sbin/mount.vboxsf
 %endif
 
 %if %{with kernel}
 install -d $RPM_BUILD_ROOT{/etc/modules-load.d,/sbin}
 
 cp -a PLD-MODULE-BUILD/installed/* $RPM_BUILD_ROOT
-
-install -p mount.vboxsf $RPM_BUILD_ROOT/sbin/mount.vboxsf
 
 # Tell systemd to load modules
 cp -p %{SOURCE7} $RPM_BUILD_ROOT/etc/modules-load.d/virtualbox-host.conf
