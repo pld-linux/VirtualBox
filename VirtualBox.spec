@@ -15,16 +15,12 @@
 %bcond_with	webservice	# webservice (SOAP) support
 %bcond_without	lightdm		# lightdm greeter
 %bcond_without	verbose
-%bcond_with	force_userspace # force userspace build (useful if alt_kernel is set)
 
 %if %{without kernel}
 %undefine	with_dist_kernel
 %endif
 %if "%{_alt_kernel}" != "%{nil}"
 %undefine	with_userspace
-%endif
-%if %{with force_userspace}
-%define		with_userspace 1
 %endif
 %if %{without userspace}
 # nothing to be placed to debuginfo package
