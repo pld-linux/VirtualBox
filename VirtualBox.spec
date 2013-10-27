@@ -18,22 +18,46 @@
 
 %if %{without kernel}
 %undefine	with_dist_kernel
+%else
+%define		_duplicate_files_terminate_build	0
 %endif
+
+# The goal here is to have main, userspace, package built once with
+# simple release number, and only rebuild kernel packages with kernel
+# version as part of release number, without the need to bump release
+# with every kernel change.
+%if 0%{?_pld_builder:1} && %{with kernel} && %{with userspace}
+%{error:kernel and userspace cannot be built at the same time on PLD builders}
+exit 1
+%endif
+
 %if "%{_alt_kernel}" != "%{nil}"
-%undefine	with_userspace
+%if 0%{?build_kernels:1}
+%{error:alt_kernel and build_kernels are mutually exclusive}
+exit 1
 %endif
+%undefine	with_userspace
+%global		_build_kernels		%{alt_kernel}
+%else
+%global		_build_kernels		%{?build_kernels:,%{?build_kernels}}
+%endif
+
 %if %{without userspace}
 # nothing to be placed to debuginfo package
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		0.1
+%define		kpkg	%(echo %{_build_kernels} | tr , '\\n' | while read n ; do echo %%undefine alt_kernel ; [ -z "$n" ] || echo %%define alt_kernel $n ; echo %%kernel_pkg ; done)
+%define		bkpkg	%(echo %{_build_kernels} | tr , '\\n' | while read n ; do echo %%undefine alt_kernel ; [ -z "$n" ] || echo %%define alt_kernel $n ; echo %%build_kernel_pkg ; done)
+%define		ikpkg	%(echo %{_build_kernels} | tr , '\\n' | while read n ; do echo %%undefine alt_kernel ; [ -z "$n" ] || echo %%define alt_kernel $n ; echo %%install_kernel_pkg ; done)
+
+%define		rel		1
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{_alt_kernel}
 Version:	4.3.0
-Release:	%{rel}
+Release:	%{rel}%{?with_kernel:@%{_kernel_ver_str}}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
@@ -115,7 +139,7 @@ BuildRequires:	python-devel
 BuildRequires:	python-modules
 BuildRequires:	qt4-build >= 4.2.0
 BuildRequires:	qt4-linguist
-BuildRequires:	rpmbuild(macros) >= 1.664
+BuildRequires:	rpmbuild(macros) >= 1.678
 BuildRequires:	sed >= 4.0
 %if %{with doc}
 BuildRequires:	texlive-fonts-bitstream
@@ -131,9 +155,7 @@ BuildRequires:	xerces-c-devel >= 2.6.0
 BuildRequires:	yasm
 BuildRequires:	zlib-devel >= 1.2.1
 %endif
-%if %{with dist_kernel}
-BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.20
-%endif
+%{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.20.2}
 Requires(post,preun):	/sbin/chkconfig
 Requires(postun):	/usr/sbin/groupdel
 Requires(pre):	/usr/bin/getgid
@@ -306,67 +328,121 @@ Sterownik grafiki dla systemu gościa w VirtualBoksie.
 
 # KEEP ALL REGULAR SUBPACKAGES BEFORE KERNEL PACKAGES.
 
-%package -n kernel%{_alt_kernel}-virtualbox-guest
-Summary:	VirtualBox kernel modules for Linux Guest
-Summary(pl.UTF-8):	Moduły VirtualBoksa do jądra Linuksa dla systemu gościa
-Release:	%{rel}@%{_kernel_ver_str}
-Group:		Base/Kernel
-Requires(post,postun):	/sbin/depmod
-Requires(post):	systemd-units >= 38
-Requires:	dev >= 2.9.0-7
-Requires:	systemd-units >= 38
-%if %{with dist_kernel}
-%requires_releq_kernel
-%requires_releq_kernel -n drm
-Requires(postun):	%releq_kernel
-%endif
-Suggests:	%{name}-kernel-init-guest >= %{version}-%{rel}
-Provides:	kernel(vboxguest) = %{version}-%{rel}
-Provides:	kernel(vboxsf) = %{version}-%{rel}
-Provides:	kernel(vboxvideo) = %{version}-%{rel}
-Obsoletes:	kernel-init-guest
-Conflicts:	kernel%{_alt_kernel}-virtualbox-host
+%define	kernel_pkg()\
+%package -n kernel%{_alt_kernel}-virtualbox-guest\
+Summary:	VirtualBox kernel modules for Linux Guest\
+Summary(pl.UTF-8):	Moduły VirtualBoksa do jądra Linuksa dla systemu gościa\
+Release:	%{rel}@%{_kernel_ver_str}\
+Group:		Base/Kernel\
+Requires(post,postun):	/sbin/depmod\
+Requires(post):	systemd-units >= 38\
+Requires:	dev >= 2.9.0-7\
+Requires:	systemd-units >= 38\
+%if %{with dist_kernel}\
+%requires_releq_kernel\
+%requires_releq_kernel -n drm\
+Requires(postun):	%releq_kernel\
+%endif\
+Suggests:	%{name}-kernel-init-guest >= %{version}-%{rel}\
+Provides:	kernel(vboxguest) = %{version}-%{rel}\
+Provides:	kernel(vboxsf) = %{version}-%{rel}\
+Provides:	kernel(vboxvideo) = %{version}-%{rel}\
+Obsoletes:	kernel-init-guest\
+Conflicts:	kernel%{_alt_kernel}-virtualbox-host\
+\
+%description -n kernel%{_alt_kernel}-virtualbox-guest\
+This package contains VirtualBox Guest Additions for Linux Module,\
+host file system access (Shared Folders) and DRM support for\
+Linux guest system.\
+\
+%description -n kernel%{_alt_kernel}-virtualbox-guest -l pl.UTF-8\
+Ten pakiet zawiera moduł jądra Linuksa vboxguest dla VirtualBoksa -\
+dodatki dla systemu gościa, dostęp do plików systemu głównego z\
+poziomu systemu gościa i sterownik obsługi DRM.\
+\
+%package -n kernel%{_alt_kernel}-virtualbox-host\
+Summary:	VirtualBox Support Drivers\
+Summary(pl.UTF-8):	Moduły jądra Linuksa dla VirtualBoksa\
+Release:	%{rel}@%{_kernel_ver_str}\
+Group:		Base/Kernel\
+Requires(post,postun):	/sbin/depmod\
+Requires(post):	systemd-units >= 38\
+Requires:	dev >= 2.9.0-7\
+%if %{with dist_kernel}\
+%requires_releq_kernel\
+Requires(postun):	%releq_kernel\
+%endif\
+Requires:	systemd-units >= 38\
+Suggests:	%{name}-kernel-init-host >= %{version}-%{rel}\
+Provides:	kernel(vboxdrv) = %{version}-%{rel}\
+Provides:	kernel(vboxnetadp) = %{version}-%{rel}\
+Provides:	kernel(vboxnetflt) = %{version}-%{rel}\
+Provides:	kernel(vboxpci) = %{version}-%{rel}\
+Obsoletes:	kernel-init-host\
+\
+%description -n kernel%{_alt_kernel}-virtualbox-host\
+This package contains VirtualBox Support Driver, Network Adapter\
+Driver, Network Filter Driver and PCI card passthrough driver that\
+works as host proxy between guest and PCI hardware.\
+\
+%description -n kernel%{_alt_kernel}-virtualbox-host -l pl.UTF-8\
+Ten pakiet zawiera sterownik wsparcia dla systemu głównego, sterownik\
+witrualnej karty sieciowej, sterownik filtrowania sieci dla systemu\
+głównego oraz sterownik, ktory działa jako proxy między gościem i\
+gospodarzem sprzętu PCI.\
+\
+%if %{with kernel}\
+%files -n kernel%{_alt_kernel}-virtualbox-guest\
+%defattr(644,root,root,755)\
+%config(noreplace) %verify(not md5 mtime size) /etc/modules-load.d/virtualbox-guest.conf\
+/lib/modules/%{_kernel_ver}/misc/vboxguest.ko*\
+/lib/modules/%{_kernel_ver}/misc/vboxsf.ko*\
+/lib/modules/%{_kernel_ver}/misc/vboxvideo.ko*\
+\
+%files -n kernel%{_alt_kernel}-virtualbox-host\
+%config(noreplace) %verify(not md5 mtime size) /etc/modules-load.d/virtualbox-host.conf\
+/lib/modules/%{_kernel_ver}/misc/vboxdrv.ko*\
+/lib/modules/%{_kernel_ver}/misc/vboxnetadp.ko*\
+/lib/modules/%{_kernel_ver}/misc/vboxnetflt.ko*\
+/lib/modules/%{_kernel_ver}/misc/vboxpci.ko*\
+%endif\
+\
+%post -n kernel%{_alt_kernel}-virtualbox-guest\
+%depmod %{_kernel_ver}\
+\
+%postun	-n kernel%{_alt_kernel}-virtualbox-guest\
+%depmod %{_kernel_ver}\
+\
+%post	-n kernel%{_alt_kernel}-virtualbox-host\
+%depmod %{_kernel_ver}\
+\
+%postun	-n kernel%{_alt_kernel}-virtualbox-host\
+%depmod %{_kernel_ver}\
+%{nil}
 
-%description -n kernel%{_alt_kernel}-virtualbox-guest
-This package contains VirtualBox Guest Additions for Linux Module,
-host file system access (Shared Folders) and DRM support for
-Linux guest system.
+%define build_kernel_pkg()\
+export KERN_DIR=%{_kernelsrcdir}\
+cd PLD-MODULE-BUILD/HostDrivers\
+%build_kernel_modules -m vboxdrv -C vboxdrv\
+%build_kernel_modules -m vboxnetadp -C vboxnetadp\
+%build_kernel_modules -m vboxnetflt -C vboxnetflt\
+%build_kernel_modules -m vboxpci -C vboxpci\
+cd ../GuestDrivers\
+%build_kernel_modules -m vboxguest -C vboxguest\
+cp -a vboxguest/Module.symvers vboxsf\
+%build_kernel_modules -m vboxsf -C vboxsf -c\
+%build_kernel_modules -m vboxvideo -C vboxvideo\
+cd ../..\
+%install_kernel_modules -D PLD-MODULE-BUILD/installed -m PLD-MODULE-BUILD/HostDrivers/vboxdrv/vboxdrv -d misc\
+%install_kernel_modules -D PLD-MODULE-BUILD/installed -m PLD-MODULE-BUILD/HostDrivers/vboxnetadp/vboxnetadp -d misc\
+%install_kernel_modules -D PLD-MODULE-BUILD/installed -m PLD-MODULE-BUILD/HostDrivers/vboxnetflt/vboxnetflt -d misc\
+%install_kernel_modules -D PLD-MODULE-BUILD/installed -m PLD-MODULE-BUILD/HostDrivers/vboxpci/vboxpci -d misc\
+%install_kernel_modules -D PLD-MODULE-BUILD/installed -m PLD-MODULE-BUILD/GuestDrivers/vboxguest/vboxguest -d misc\
+%install_kernel_modules -D PLD-MODULE-BUILD/installed -m PLD-MODULE-BUILD/GuestDrivers/vboxsf/vboxsf -d misc\
+%install_kernel_modules -D PLD-MODULE-BUILD/installed -m PLD-MODULE-BUILD/GuestDrivers/vboxvideo/vboxvideo -d misc\
+%{nil}
 
-%description -n kernel%{_alt_kernel}-virtualbox-guest -l pl.UTF-8
-Ten pakiet zawiera moduł jądra Linuksa vboxguest dla VirtualBoksa -
-dodatki dla systemu gościa, dostęp do plików systemu głównego z
-poziomu systemu gościa i sterownik obsługi DRM.
-
-%package -n kernel%{_alt_kernel}-virtualbox-host
-Summary:	VirtualBox Support Drivers
-Summary(pl.UTF-8):	Moduły jądra Linuksa dla VirtualBoksa
-Release:	%{rel}@%{_kernel_ver_str}
-Group:		Base/Kernel
-Requires(post,postun):	/sbin/depmod
-Requires(post):	systemd-units >= 38
-Requires:	dev >= 2.9.0-7
-%if %{with dist_kernel}
-%requires_releq_kernel
-Requires(postun):	%releq_kernel
-%endif
-Requires:	systemd-units >= 38
-Suggests:	%{name}-kernel-init-host >= %{version}-%{rel}
-Provides:	kernel(vboxdrv) = %{version}-%{rel}
-Provides:	kernel(vboxnetadp) = %{version}-%{rel}
-Provides:	kernel(vboxnetflt) = %{version}-%{rel}
-Provides:	kernel(vboxpci) = %{version}-%{rel}
-Obsoletes:	kernel-init-host
-
-%description -n kernel%{_alt_kernel}-virtualbox-host
-This package contains VirtualBox Support Driver, Network Adapter
-Driver, Network Filter Driver and PCI card passthrough driver that
-works as host proxy between guest and PCI hardware.
-
-%description -n kernel%{_alt_kernel}-virtualbox-host -l pl.UTF-8
-Ten pakiet zawiera sterownik wsparcia dla systemu głównego, sterownik
-witrualnej karty sieciowej, sterownik filtrowania sieci dla systemu
-głównego oraz sterownik, ktory działa jako proxy między gościem i
-gospodarzem sprzętu PCI.
+%{?with_kernel:%{expand:%kpkg}}
 
 %prep
 %setup -q -n %{pname}-%{version}
@@ -436,19 +512,7 @@ kmk %{?_smp_mflags}
 %endif
 
 %if %{with kernel}
-export KERN_DIR=%{_kernelsrcdir}
-cd PLD-MODULE-BUILD/HostDrivers
-%build_kernel_modules -m vboxdrv -C vboxdrv
-%build_kernel_modules -m vboxnetadp -C vboxnetadp
-%build_kernel_modules -m vboxnetflt -C vboxnetflt
-%build_kernel_modules -m vboxpci -C vboxpci
-
-cd ../GuestDrivers
-%build_kernel_modules -m vboxguest -C vboxguest
-cp -a vboxguest/Module.symvers vboxsf
-%build_kernel_modules -m vboxsf -C vboxsf -c
-%build_kernel_modules -m vboxvideo -C vboxvideo
-cd ../..
+%{expand:%bkpkg}
 %{__cc} %{rpmcflags} %{rpmldflags} -Wall -Werror src/VBox/Additions/linux/sharedfolders/{mount.vboxsf.c,vbsfmount.c} -o mount.vboxsf
 %endif
 
@@ -560,13 +624,8 @@ cp -p %{objdir}/Additions/Installer/linux/share/VBoxGuestAdditions/vbox-greeter.
 
 %if %{with kernel}
 install -d $RPM_BUILD_ROOT{/etc/modules-load.d,/sbin}
-%install_kernel_modules -m PLD-MODULE-BUILD/HostDrivers/vboxdrv/vboxdrv -d misc
-%install_kernel_modules -m PLD-MODULE-BUILD/HostDrivers/vboxnetadp/vboxnetadp -d misc
-%install_kernel_modules -m PLD-MODULE-BUILD/HostDrivers/vboxnetflt/vboxnetflt -d misc
-%install_kernel_modules -m PLD-MODULE-BUILD/HostDrivers/vboxpci/vboxpci -d misc
-%install_kernel_modules -m PLD-MODULE-BUILD/GuestDrivers/vboxguest/vboxguest -d misc
-%install_kernel_modules -m PLD-MODULE-BUILD/GuestDrivers/vboxsf/vboxsf -d misc
-%install_kernel_modules -m PLD-MODULE-BUILD/GuestDrivers/vboxvideo/vboxvideo -d misc
+
+cp -a PLD-MODULE-BUILD/installed/* $RPM_BUILD_ROOT
 
 install -p mount.vboxsf $RPM_BUILD_ROOT/sbin/mount.vboxsf
 
@@ -595,10 +654,10 @@ done
 
 cat << 'EOF'
 You must install vboxdrv kernel modules for this software to work:
-    kernel%{_alt_kernel}-virtualbox-host-%{version}-%{rel}@%{_kernel_ver_str}
+    kernel*-virtualbox-host-%{version}-%{rel}@*
 
 On Guest Linux system you might want to install:
-    kernel%{_alt_kernel}-virtualbox-guest-%{version}-%{rel}@%{_kernel_ver_str}
+    kernel*-virtualbox-guest-%{version}-%{rel}@*
 
 EOF
 
@@ -627,18 +686,6 @@ fi
 
 %pre -n lightdm-greeter-vbox
 %addusertogroup xdm vbox
-
-%post -n kernel%{_alt_kernel}-virtualbox-guest
-%depmod %{_kernel_ver}
-
-%postun	-n kernel%{_alt_kernel}-virtualbox-guest
-%depmod %{_kernel_ver}
-
-%post	-n kernel%{_alt_kernel}-virtualbox-host
-%depmod %{_kernel_ver}
-
-%postun	-n kernel%{_alt_kernel}-virtualbox-host
-%depmod %{_kernel_ver}
 
 %if %{with userspace}
 %files
@@ -837,20 +884,4 @@ fi
 %attr(755,root,root) %{_libdir}/VBoxOGLfeedbackspu.so
 %attr(755,root,root) %{_libdir}/VBoxOGLpackspu.so
 %attr(755,root,root) %{_libdir}/VBoxOGLpassthroughspu.so
-%endif
-
-%if %{with kernel}
-%files -n kernel%{_alt_kernel}-virtualbox-guest
-%defattr(644,root,root,755)
-%config(noreplace) %verify(not md5 mtime size) /etc/modules-load.d/virtualbox-guest.conf
-/lib/modules/%{_kernel_ver}/misc/vboxguest.ko*
-/lib/modules/%{_kernel_ver}/misc/vboxsf.ko*
-/lib/modules/%{_kernel_ver}/misc/vboxvideo.ko*
-
-%files -n kernel%{_alt_kernel}-virtualbox-host
-%config(noreplace) %verify(not md5 mtime size) /etc/modules-load.d/virtualbox-host.conf
-/lib/modules/%{_kernel_ver}/misc/vboxdrv.ko*
-/lib/modules/%{_kernel_ver}/misc/vboxnetadp.ko*
-/lib/modules/%{_kernel_ver}/misc/vboxnetflt.ko*
-/lib/modules/%{_kernel_ver}/misc/vboxpci.ko*
 %endif
