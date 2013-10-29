@@ -114,6 +114,7 @@ BuildRequires:	bin86
 BuildRequires:	curl-devel
 BuildRequires:	device-mapper-devel
 %{?with_doc:BuildRequires:	docbook-dtd44-xml}
+BuildRequires:	fltk-devel
 BuildRequires:	gcc >= 5:3.2.3
 %{?with_webservice:BuildRequires:	gsoap-devel}
 BuildRequires:	issue
