@@ -252,8 +252,8 @@ Summary:	VirtualBox Guest tools
 Group:		Base
 Requires(post,preun):	/sbin/chkconfig
 Requires(post):	systemd-units >= 38
-Requires:	systemd-units >= 38
 Requires:	rc-scripts
+Requires:	systemd-units >= 38
 Suggests:	kernel(vboxguest)
 Suggests:	kernel(vboxsf)
 Suggests:	pam-pam_vbox
@@ -319,6 +319,7 @@ Requires:	xorg-xserver-libdri >= 1.7.4
 Requires:	xorg-xserver-server >= 1.0.99.901
 Requires:	xorg-xserver-server(videodrv-abi) <= 14.1
 Requires:	xorg-xserver-server(videodrv-abi) >= 2.0
+Provides:	xorg-driver-video
 
 %description -n xorg-driver-video-vboxvideo
 X.org video driver for VirtualBox guest OS.
