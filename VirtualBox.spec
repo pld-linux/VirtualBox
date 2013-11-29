@@ -114,7 +114,7 @@ BuildRequires:	bin86
 BuildRequires:	curl-devel
 BuildRequires:	device-mapper-devel
 %{?with_doc:BuildRequires:	docbook-dtd44-xml}
-BuildRequires:	fltk-devel
+%{?with_lightdm:BuildRequires:	fltk-devel}
 BuildRequires:	gcc >= 5:3.2.3
 %{?with_webservice:BuildRequires:	gsoap-devel}
 BuildRequires:	issue
@@ -127,6 +127,7 @@ BuildRequires:	libstdc++-devel >= 5:3.2.3
 BuildRequires:	libstdc++-static >= 5:3.2.3
 BuildRequires:	libuuid-devel
 BuildRequires:	libvncserver-devel >= 0.9.9
+BuildRequires:	libvpx-devel
 BuildRequires:	libxml2-devel >= 2.6.26
 BuildRequires:	libxslt-devel >= 1.1.17
 BuildRequires:	libxslt-progs >= 1.1.17
