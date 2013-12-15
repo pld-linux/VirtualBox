@@ -52,7 +52,7 @@ exit 1
 %define		bkpkg	%(echo %{_build_kernels} | tr , '\\n' | while read n ; do echo %%undefine alt_kernel ; [ -z "$n" ] || echo %%define alt_kernel $n ; echo %%build_kernel_pkg ; done)
 %define		ikpkg	%(echo %{_build_kernels} | tr , '\\n' | while read n ; do echo %%undefine alt_kernel ; [ -z "$n" ] || echo %%define alt_kernel $n ; echo %%install_kernel_pkg ; done)
 
-%define		rel		2
+%define		rel		3
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
@@ -351,9 +351,6 @@ Provides:	kernel(vboxguest) = %{version}-%{rel}\
 Provides:	kernel(vboxsf) = %{version}-%{rel}\
 Provides:	kernel(vboxvideo) = %{version}-%{rel}\
 Obsoletes:	kernel-init-guest\
-Obsoletes:	kernel%{_alt_kernel}-misc-vboxguest\
-Obsoletes:	kernel%{_alt_kernel}-misc-vboxsf\
-Obsoletes:	kernel%{_alt_kernel}-video-vboxvideo\
 Conflicts:	kernel%{_alt_kernel}-virtualbox-host\
 \
 %description -n kernel%{_alt_kernel}-virtualbox-guest\
@@ -384,10 +381,6 @@ Provides:	kernel(vboxnetadp) = %{version}-%{rel}\
 Provides:	kernel(vboxnetflt) = %{version}-%{rel}\
 Provides:	kernel(vboxpci) = %{version}-%{rel}\
 Obsoletes:	kernel-init-host\
-Obsoletes:	kernel%{_alt_kernel}-misc-vboxdrv\
-Obsoletes:	kernel%{_alt_kernel}-misc-vboxnetadp\
-Obsoletes:	kernel%{_alt_kernel}-misc-vboxnetflt\
-Obsoletes:	kernel%{_alt_kernel}-misc-vboxpci\
 \
 %description -n kernel%{_alt_kernel}-virtualbox-host\
 This package contains VirtualBox Support Driver, Network Adapter\
