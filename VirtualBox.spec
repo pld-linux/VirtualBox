@@ -6,6 +6,7 @@
 # - guest x11 additions: currently incomplete/untested
 # - enable VDE networking: --enable-vde
 # - initscripts for webservice
+# - fix desc for dkms packages (proper wording needed), kernel modules desc is mess as well
 #
 # Conditional build:
 %bcond_without	doc		# don't build the documentation
@@ -14,6 +15,7 @@
 %bcond_without	userspace	# don't build userspace package
 %bcond_with	webservice	# webservice (SOAP) support
 %bcond_without	lightdm		# lightdm greeter
+%bcond_without	dkms	# build dkms package
 %bcond_without	verbose
 
 %if %{without kernel}
@@ -328,6 +330,50 @@ X.org video driver for VirtualBox guest OS.
 %description -n xorg-driver-video-vboxvideo -l pl.UTF-8
 Sterownik grafiki dla systemu gościa w VirtualBoksie.
 
+%package -n dkms-vboxguest
+Summary:	VirtualBox kernel modules source for Linux Guest
+Summary(pl.UTF-8):	Moduły VirtualBoksa do jądra Linuksa dla systemu gościa
+License:	GPL v2+
+Group:		Base/Kernel
+Requires(pre):	dkms
+Requires(post):	dkms
+%if "%{_rpmversion}" >= "5"
+BuildArch:	noarch
+%endif
+
+%description -n dkms-vboxguest
+This package contains DKMS-ready VirtualBox Guest Additions for Linux
+Module, host file system access (Shared Folders) and DRM support for
+Linux guest system.
+
+%description -n dkms-vboxguest -l pl.UTF-8
+Ten pakiet zawiera moduł jądra Linuksa vboxguest dla VirtualBoksa -
+dodatki dla systemu gościa, dostęp do plików systemu głównego z
+poziomu systemu gościa i sterownik obsługi DRM.
+
+%package -n dkms-vboxhost
+Summary:	VirtualBox Support Drivers source
+Summary(pl.UTF-8):	Moduły jądra Linuksa dla VirtualBoksa
+License:	GPL v2+
+Group:		Base/Kernel
+Requires(pre):	dkms
+Requires(post):	dkms
+%if "%{_rpmversion}" >= "5"
+BuildArch:	noarch
+%endif
+
+%description -n dkms-vboxhost
+This package contains DKMS enabled sourcecode of VirtualBox Support
+Driver, Network Adapter Driver, Network Filter Driver and PCI card
+passthrough driver that works as host proxy between guest and PCI
+hardware.
+
+%description -n dkms-vboxhost -l pl.UTF-8
+Ten pakiet zawiera sterownik wsparcia dla systemu głównego, sterownik
+witrualnej karty sieciowej, sterownik filtrowania sieci dla systemu
+głównego oraz sterownik, ktory działa jako proxy między gościem i
+gospodarzem sprzętu PCI.
+
 # KERNEL PACKAGES
 
 # KEEP ALL REGULAR SUBPACKAGES BEFORE KERNEL PACKAGES.
@@ -624,6 +670,19 @@ cp -p %{objdir}/Additions/Installer/linux/share/VBoxGuestAdditions/vbox-greeter.
 install -p mount.vboxsf $RPM_BUILD_ROOT/sbin/mount.vboxsf
 %endif
 
+%if %{with dkms}
+install -d $RPM_BUILD_ROOT%{_usrsrc}/vbox{host,guest}-%{version}-%{rel}
+cp -a PLD-MODULE-BUILD/HostDrivers/* $RPM_BUILD_ROOT%{_usrsrc}/vboxhost-%{version}-%{rel}
+cp -p src/VBox/HostDrivers/linux/dkms.conf $RPM_BUILD_ROOT%{_usrsrc}/vboxhost-%{version}-%{rel}
+%{__make} -C $RPM_BUILD_ROOT%{_usrsrc}/vboxhost-%{version}-%{rel} clean
+rm -r $RPM_BUILD_ROOT%{_usrsrc}/vboxhost-%{version}-%{rel}/*/o
+
+cp -a PLD-MODULE-BUILD/GuestDrivers/* $RPM_BUILD_ROOT%{_usrsrc}/vboxguest-%{version}-%{rel}
+cp -p src/VBox/Additions/common/VBoxGuest/linux/dkms.conf $RPM_BUILD_ROOT%{_usrsrc}/vboxguest-%{version}-%{rel}
+%{__make} -C $RPM_BUILD_ROOT%{_usrsrc}/vboxguest-%{version}-%{rel} clean
+rm -r $RPM_BUILD_ROOT%{_usrsrc}/vboxguest-%{version}-%{rel}/*/o
+%endif
+
 %if %{with kernel}
 install -d $RPM_BUILD_ROOT{/etc/modules-load.d,/sbin}
 
@@ -686,6 +745,26 @@ fi
 
 %pre -n lightdm-greeter-vbox
 %addusertogroup xdm vbox
+
+%post -n dkms-vboxguest
+set -x
+dkms add -m vboxguest -v %{version}-%{rel} --rpm_safe_upgrade && \
+dkms build -m vboxguest -v %{version}-%{rel} --rpm_safe_upgrade && \
+dkms install -m vboxguest -v %{version}-%{rel} --rpm_safe_upgrade || :
+
+%preun -n dkms-vboxguest
+set -x
+dkms remove -m vboxguest -v %{version}-%{rel} --rpm_safe_upgrade --all || :
+
+%post -n dkms-vboxhost
+set -x
+dkms add -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade && \
+dkms build -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade && \
+dkms install -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade || :
+
+%preun -n dkms-vboxhost
+set -x
+dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 
 %if %{with userspace}
 %files
@@ -884,4 +963,14 @@ fi
 %attr(755,root,root) %{_libdir}/VBoxOGLfeedbackspu.so
 %attr(755,root,root) %{_libdir}/VBoxOGLpackspu.so
 %attr(755,root,root) %{_libdir}/VBoxOGLpassthroughspu.so
+%endif
+
+%if %{with dkms}
+%files -n dkms-vboxguest
+%defattr(644,root,root,755)
+%{_usrsrc}/vboxguest-%{version}-%{rel}
+
+%files -n dkms-vboxhost
+%defattr(644,root,root,755)
+%{_usrsrc}/vboxhost-%{version}-%{rel}
 %endif
