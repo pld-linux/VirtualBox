@@ -675,12 +675,12 @@ install -d $RPM_BUILD_ROOT%{_usrsrc}/vbox{host,guest}-%{version}-%{rel}
 cp -a PLD-MODULE-BUILD/HostDrivers/* $RPM_BUILD_ROOT%{_usrsrc}/vboxhost-%{version}-%{rel}
 cp -p src/VBox/HostDrivers/linux/dkms.conf $RPM_BUILD_ROOT%{_usrsrc}/vboxhost-%{version}-%{rel}
 %{__make} -C $RPM_BUILD_ROOT%{_usrsrc}/vboxhost-%{version}-%{rel} clean
-rm -r $RPM_BUILD_ROOT%{_usrsrc}/vboxhost-%{version}-%{rel}/*/o
+rm -rf $RPM_BUILD_ROOT%{_usrsrc}/vboxhost-%{version}-%{rel}/*/o
 
 cp -a PLD-MODULE-BUILD/GuestDrivers/* $RPM_BUILD_ROOT%{_usrsrc}/vboxguest-%{version}-%{rel}
 cp -p src/VBox/Additions/common/VBoxGuest/linux/dkms.conf $RPM_BUILD_ROOT%{_usrsrc}/vboxguest-%{version}-%{rel}
 %{__make} -C $RPM_BUILD_ROOT%{_usrsrc}/vboxguest-%{version}-%{rel} clean
-rm -r $RPM_BUILD_ROOT%{_usrsrc}/vboxguest-%{version}-%{rel}/*/o
+rm -rf $RPM_BUILD_ROOT%{_usrsrc}/vboxguest-%{version}-%{rel}/*/o
 %endif
 
 %if %{with kernel}
