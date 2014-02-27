@@ -15,7 +15,7 @@
 %bcond_without	userspace	# don't build userspace package
 %bcond_with	webservice	# webservice (SOAP) support
 %bcond_without	lightdm		# lightdm greeter
-%bcond_without	dkms	# build dkms package
+%bcond_without	dkms		# build dkms package
 %bcond_without	verbose
 
 %if %{without kernel}
@@ -668,7 +668,6 @@ cp -p %{objdir}/Additions/Installer/linux/share/VBoxGuestAdditions/vbox-greeter.
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/mount.vboxsf
 
 install -p mount.vboxsf $RPM_BUILD_ROOT/sbin/mount.vboxsf
-%endif
 
 %if %{with dkms}
 install -d $RPM_BUILD_ROOT%{_usrsrc}/vbox{host,guest}-%{version}-%{rel}
@@ -681,6 +680,7 @@ cp -a PLD-MODULE-BUILD/GuestDrivers/* $RPM_BUILD_ROOT%{_usrsrc}/vboxguest-%{vers
 cp -p src/VBox/Additions/common/VBoxGuest/linux/dkms.conf $RPM_BUILD_ROOT%{_usrsrc}/vboxguest-%{version}-%{rel}
 %{__make} -C $RPM_BUILD_ROOT%{_usrsrc}/vboxguest-%{version}-%{rel} clean
 rm -rf $RPM_BUILD_ROOT%{_usrsrc}/vboxguest-%{version}-%{rel}/*/o
+%endif
 %endif
 
 %if %{with kernel}
@@ -963,7 +963,6 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/VBoxOGLfeedbackspu.so
 %attr(755,root,root) %{_libdir}/VBoxOGLpackspu.so
 %attr(755,root,root) %{_libdir}/VBoxOGLpassthroughspu.so
-%endif
 
 %if %{with dkms}
 %files -n dkms-vboxguest
@@ -973,4 +972,5 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %files -n dkms-vboxhost
 %defattr(644,root,root,755)
 %{_usrsrc}/vboxhost-%{version}-%{rel}
+%endif
 %endif
