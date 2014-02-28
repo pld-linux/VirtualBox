@@ -240,7 +240,7 @@ This package contains VirtualBox User Manual.
 %package additions
 Summary:	VirtualBox Guest Additions
 Group:		Base
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{name} = %{version}
 
 %description additions
 VirtualBox Guest Additions.
