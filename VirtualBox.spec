@@ -164,13 +164,8 @@ Requires(post,preun):	/sbin/chkconfig
 Requires(postun):	/usr/sbin/groupdel
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
-Requires:	QtCore >= 4.7.0
-Requires:	desktop-file-utils
-Requires:	fontconfig
-Requires:	fonts-Type1-urw
 Requires:	libvncserver >= 0.9.9
 Requires:	udev-core
-Suggests:	gxmessage
 Provides:	group(vbox)
 Obsoletes:	VirtualBox-udev < 4.2.10-5
 ExclusiveArch:	%{ix86} %{x8664}
@@ -229,6 +224,21 @@ Opisy maszyn wirtualnych w XML-u: konfiguracje poszczególnych maszyn
 wirtualnych są w całości przechowywane w XML-u i są niezależne od
 lokalnej maszyny. Dzięki temu można szybko i łatwo przenieść
 konfigurację maszyny wirtualnej na inny komputer.
+
+%package gui
+Summary:	Qt GUI part for VirtualBox
+Group:		X11/Applications
+Requires:	%{name} = %{version}-%{release}
+Requires:	QtCore >= 4.7.0
+Requires:	desktop-file-utils
+Requires:	desktop-file-utils
+Requires:	fontconfig
+Requires:	fonts-Type1-urw
+Requires:	shared-mime-info
+Suggests:	gxmessage
+
+%description gui
+Qt GUI part for VirtualBox.
 
 %package doc
 Summary:	VirtualBox documentation
@@ -571,7 +581,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %if %{with userspace}
 install -d $RPM_BUILD_ROOT{%{_bindir},/sbin,%{_sbindir},%{_libdir}/%{pname}/ExtensionPacks} \
-	$RPM_BUILD_ROOT{%{_pixmapsdir},%{_desktopdir}} \
+	$RPM_BUILD_ROOT{%{_pixmapsdir},%{_desktopdir},%{_datadir}/mime/packages} \
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/{drivers,dri,input} \
 	$RPM_BUILD_ROOT{/lib/udev,/etc/udev/rules.d} \
 	$RPM_BUILD_ROOT{/etc/rc.d/init.d,%{systemdunitdir}}
@@ -602,6 +612,7 @@ install -p %{SOURCE3} $RPM_BUILD_ROOT%{systemdunitdir}/vboxservice.service
 
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/VBox.png,%{_pixmapsdir}/virtualbox.png}
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname},%{_desktopdir}}/virtualbox.desktop
+%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname},%{_datadir}/mime/packages}/virtualbox.xml
 
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/vboxvideo_drv_system.so,%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so}
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/VBoxOGL.so,%{_libdir}/xorg/modules/dri/vboxvideo_dri.so}
@@ -703,7 +714,6 @@ rm -rf $RPM_BUILD_ROOT
 %groupadd -g 221 -r -f vbox
 
 %post
-%update_desktop_database
 for i in /sys/bus/usb/devices/*; do
 	if [ -r "$i/dev" ]; then
 		dev="`cat "$i/dev" 2>/dev/null || true`"
@@ -727,6 +737,14 @@ EOF
 if [ "$1" = "0" ]; then
 	%groupremove vbox
 fi
+
+%post gui
+%update_desktop_database
+%update_mime_database
+
+%postun gui
+%update_desktop_database
+%update_mime_database
 
 %post guest
 /sbin/chkconfig --add vboxservice
@@ -778,7 +796,6 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %dir %{_libdir}/%{pname}/ExtensionPacks/VNC/linux*
 %dir %{_libdir}/%{pname}/additions
 %dir %{_libdir}/%{pname}/components
-%dir %{_libdir}/%{pname}/nls
 %attr(755,root,root) %{_bindir}/VBoxBFE
 %attr(755,root,root) %{_bindir}/VBoxHeadless
 %attr(755,root,root) %{_bindir}/VBoxManage
@@ -786,14 +803,12 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_bindir}/VBoxSVC
 %attr(755,root,root) %{_bindir}/VBoxTunctl
 %attr(755,root,root) %{_bindir}/VBoxXPCOMIPCD
-%attr(755,root,root) %{_bindir}/VirtualBox
 %attr(755,root,root) /sbin/mount.vdi
 %attr(755,root,root) %{_libdir}/%{pname}/DBGCPlugInDiggers.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxAuth.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxAuthSimple.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxAutostart
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxBalloonCtrl
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxDbg.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxDD2.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxDD.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxDDU.so
@@ -829,14 +844,12 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxSharedFolders.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxSVC
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxSysInfo.sh
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxTestOGL
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxTunctl
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxVMM.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxVMMPreload
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxXPCOMC.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxXPCOMIPCD
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxXPCOM.so
-%attr(755,root,root) %{_libdir}/%{pname}/VirtualBox
 %attr(755,root,root) %{_libdir}/%{pname}/VirtualBox-wrapper.sh
 %attr(755,root,root) %{_libdir}/%{pname}/ExtensionPacks/VNC/linux*/VBoxVNC*.so
 %{_libdir}/%{pname}/VBoxDD2GC.debug
@@ -853,12 +866,24 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %{_libdir}/%{pname}/VMMGC.gc
 %{_libdir}/%{pname}/VMMR0.debug
 %{_libdir}/%{pname}/VMMR0.r0
-%{_libdir}/%{pname}/components/VBoxXPCOMBase.xpt
 %{_libdir}/%{pname}/ExtensionPacks/VNC/ExtPack.xml
+%{_libdir}/%{pname}/components/VBoxXPCOMBase.xpt
 %{_libdir}/%{pname}/components/VirtualBox_XPCOM.xpt
 %attr(755,root,root) %{_libdir}/%{pname}/components/VBoxC.so
 %attr(755,root,root) %{_libdir}/%{pname}/components/VBoxSVCM.so
 %attr(755,root,root) %{_libdir}/%{pname}/components/VBoxXPCOMIPCC.so
+
+%config(noreplace) %verify(not md5 mtime size) /etc/udev/rules.d/virtualbox.rules
+%attr(755,root,root) /lib/udev/VBoxCreateUSBNode.sh
+
+%files gui
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/VirtualBox
+%attr(755,root,root) %{_libdir}/%{pname}/VirtualBox
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxDbg.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxTestOGL
+%{_libdir}/%{pname}/icons
+%dir %{_libdir}/%{pname}/nls
 %lang(bg) %{_libdir}/%{pname}/nls/*_bg.qm
 %lang(ca) %{_libdir}/%{pname}/nls/*_ca.qm
 %lang(ca_VA) %{_libdir}/%{pname}/nls/*_ca_VA.qm
@@ -893,12 +918,8 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %lang(zh_CN) %{_libdir}/%{pname}/nls/*_zh_CN.qm
 %lang(zh_TW) %{_libdir}/%{pname}/nls/*_zh_TW.qm
 %{_pixmapsdir}/virtualbox.png
-%{_desktopdir}/*.desktop
-%{_libdir}/%{pname}/icons
-%{_libdir}/%{pname}/virtualbox.xml
-
-%config(noreplace) %verify(not md5 mtime size) /etc/udev/rules.d/virtualbox.rules
-%attr(755,root,root) /lib/udev/VBoxCreateUSBNode.sh
+%{_desktopdir}/virtualbox.desktop
+%{_datadir}/mime/packages/virtualbox.xml
 
 %files additions
 %defattr(644,root,root,755)
