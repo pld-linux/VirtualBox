@@ -236,6 +236,7 @@ Requires:	fontconfig
 Requires:	fonts-Type1-urw
 Requires:	shared-mime-info
 Suggests:	gxmessage
+Conflicts:	%{name} < 4.3.8-3
 
 %description gui
 Qt GUI part for VirtualBox.
