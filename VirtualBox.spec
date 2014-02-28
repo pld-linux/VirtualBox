@@ -81,10 +81,9 @@ Patch3:		%{pname}-dri.patch
 Patch5:		xserver-1.12.patch
 Patch7:		lightdm-greeter-glib-includes.patch
 Patch8:		lightdm-greeter-g++-link.patch
-# ubuntu patches
+Patch9:		pld-guest.patch
 Patch10:	16-no-update.patch
 Patch11:	18-system-xorg.patch
-# /ubuntu patches
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
 %ifarch %{x8664}
@@ -501,6 +500,7 @@ cd ../..\
 %patch5 -p1
 %patch7 -p1
 %patch8 -p1
+%patch9 -p1
 
 %{__sed} -i -e 's,@VBOX_DOC_PATH@,%{_docdir}/%{name}-%{version},' \
 	-e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/common/virtualbox.desktop.in
@@ -524,6 +524,10 @@ cd -
 
 # using system kBuild package
 %{__rm} -r kBuild
+
+# use linux icon for now
+cp -p src/VBox/Frontends/VirtualBox/images/os_{linux26,pld}.png
+cp -p src/VBox/Frontends/VirtualBox/images/os_{linux26,pld}_64.png
 
 cat <<'EOF'>> LocalConfig.kmk
 %{?with_verbose:KBUILD_VERBOSE=3}
@@ -555,7 +559,6 @@ EOF
 	%{__enable webservice} \
 	%{nil}
 
-XSERVER_VERSION=$(rpm -q --queryformat '%{VERSION}\n' xorg-xserver-server-devel | awk -F. ' { print $1 $2 } ' 2> /dev/null || echo ERROR)
 kmk %{?_smp_mflags}
 
 %{__cc} %{rpmcflags} %{rpmldflags} -Wall -Werror src/VBox/Additions/linux/sharedfolders/{mount.vboxsf.c,vbsfmount.c} -o mount.vboxsf

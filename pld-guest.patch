@@ -1,0 +1,82 @@
+--- VirtualBox-4.2.12/./src/VBox/Main/xml/Settings.cpp~	2013-04-12 13:38:26.000000000 +0300
++++ VirtualBox-4.2.12/./src/VBox/Main/xml/Settings.cpp	2013-05-13 15:49:30.035999373 +0300
+@@ -3408,6 +3408,7 @@
+     { "xandros", "Xandros" },
+     { "freebsd", "FreeBSD" },
+     { "openbsd", "OpenBSD" },
++    { "pld", "PLD" },
+     { "netbsd", "NetBSD" },
+     { "netware", "Netware" },
+     { "solaris", "Solaris" },
+--- VirtualBox-4.2.12/./src/VBox/Frontends/VirtualBox/VirtualBox2.qrc~	2013-04-12 13:37:50.000000000 +0300
++++ VirtualBox-4.2.12/./src/VBox/Frontends/VirtualBox/VirtualBox2.qrc	2013-05-13 15:51:14.323890458 +0300
+@@ -26,6 +26,8 @@
+         <file alias="os_netware.png">images/os_netware.png</file>
+         <file alias="os_openbsd.png">images/os_openbsd.png</file>
+         <file alias="os_openbsd_64.png">images/os_openbsd_64.png</file>
++        <file alias="os_pld.png">images/os_pld.png</file>
++        <file alias="os_pld_64.png">images/os_pld_64.png</file>
+         <file alias="os_oraclesolaris.png">images/os_oraclesolaris.png</file>
+         <file alias="os_oraclesolaris_64.png">images/os_oraclesolaris_64.png</file>
+         <file alias="os_opensuse.png">images/os_opensuse.png</file>
+--- VirtualBox-4.2.12/./src/VBox/Frontends/VirtualBox/src/globals/VBoxGlobal.cpp~	2013-04-12 13:37:59.000000000 +0300
++++ VirtualBox-4.2.12/./src/VBox/Frontends/VirtualBox/src/globals/VBoxGlobal.cpp	2013-05-13 15:51:51.668860824 +0300
+@@ -4445,6 +4445,8 @@
+         {"FreeBSD_64",      ":/os_freebsd_64.png"},
+         {"OpenBSD",         ":/os_openbsd.png"},
+         {"OpenBSD_64",      ":/os_openbsd_64.png"},
++        {"PLD",             ":/os_pld.png"},
++        {"PLD_64",          ":/os_pld_64.png"},
+         {"NetBSD",          ":/os_netbsd.png"},
+         {"NetBSD_64",       ":/os_netbsd_64.png"},
+         {"Solaris",         ":/os_solaris.png"},
+--- VirtualBox-4.3.8/src/VBox/Main/src-all/Global.cpp~	2014-02-25 19:09:14.000000000 +0200
++++ VirtualBox-4.3.8/src/VBox/Main/src-all/Global.cpp	2014-02-28 09:50:05.965655744 +0200
+@@ -245,6 +245,14 @@
+       VBOXOSTYPE_Linux_x64,       VBOXOSHINT_64BIT | VBOXOSHINT_PAE | VBOXOSHINT_HWVIRTEX | VBOXOSHINT_IOAPIC | VBOXOSHINT_RTCUTC | VBOXOSHINT_USBTABLET,
+        512,  12,  8 * _1G64, NetworkAdapterType_I82540EM, 0, StorageControllerType_PIIX4, StorageBus_IDE,
+         StorageControllerType_PIIX4, StorageBus_IDE, ChipsetType_PIIX3, AudioControllerType_AC97  },
++    { "Linux",   "Linux",             "PLD",                "PLD Linux 2.6 / 3.x (32 bit)",
++      VBOXOSTYPE_Linux26,         VBOXOSHINT_RTCUTC | VBOXOSHINT_USBTABLET,
++       256,  12,  8 * _1G64, NetworkAdapterType_I82540EM, 0, StorageControllerType_PIIX4, StorageBus_IDE,
++        StorageControllerType_IntelAhci, StorageBus_SATA, ChipsetType_PIIX3, AudioControllerType_AC97  },
++    { "Linux",   "Linux",             "PLD64",              "PLD Linux 2.6 / 3.x (64 bit)",
++      VBOXOSTYPE_Linux26_x64,     VBOXOSHINT_64BIT | VBOXOSHINT_HWVIRTEX | VBOXOSHINT_IOAPIC | VBOXOSHINT_RTCUTC | VBOXOSHINT_USBTABLET,
++       256,  12,  8 * _1G64, NetworkAdapterType_I82540EM, 0, StorageControllerType_PIIX4, StorageBus_IDE,
++        StorageControllerType_IntelAhci, StorageBus_SATA, ChipsetType_PIIX3, AudioControllerType_AC97  },
+     { "Solaris", "Solaris",           "Solaris",            "Oracle Solaris 10 5/09 and earlier (32 bit)",
+       VBOXOSTYPE_Solaris,         VBOXOSHINT_NONE,
+        768,  12, 16 * _1G64, NetworkAdapterType_I82540EM, 0, StorageControllerType_PIIX4, StorageBus_IDE,
+--- VirtualBox-4.3.8/src/VBox/Main/src-server/ApplianceImpl.cpp~	2014-02-25 19:09:15.000000000 +0200
++++ VirtualBox-4.3.8/src/VBox/Main/src-server/ApplianceImpl.cpp	2014-02-28 09:52:48.663191185 +0200
+@@ -141,6 +141,8 @@
+     { ovf::CIMOSType_CIMOS_Linux_2_6_x_64,                       VBOXOSTYPE_Xandros_x64 },
+     { ovf::CIMOSType_CIMOS_Solaris,                              VBOXOSTYPE_OpenSolaris },
+     { ovf::CIMOSType_CIMOS_Solaris_64,                           VBOXOSTYPE_OpenSolaris_x64 },
++    { ovf::CIMOSType_CIMOS_Linux_2_6_x,                          VBOXOSTYPE_PLD },
++    { ovf::CIMOSType_CIMOS_Linux_2_6_x_64,                       VBOXOSTYPE_PLD_x64 },
+ 
+     // types added with CIM 2.25.0 follow:
+     { ovf::CIMOSType_CIMOS_WindowsServer2008R2,                  VBOXOSTYPE_Win2k8 },           // duplicate, see above
+--- VirtualBox-4.3.8/include/VBox/ostypes.h~	2014-02-25 18:59:48.000000000 +0200
++++ VirtualBox-4.3.8/include/VBox/ostypes.h	2014-02-28 09:56:34.440314457 +0200
+@@ -103,6 +103,8 @@
+     VBOXOSTYPE_Xandros_x64      = 0x5D100,
+     VBOXOSTYPE_Oracle           = 0x5E000,
+     VBOXOSTYPE_Oracle_x64       = 0x5E100,
++    VBOXOSTYPE_PLD              = 0x5F000,
++    VBOXOSTYPE_PLD_x64          = 0x5F100,
+     VBOXOSTYPE_FreeBSD          = 0x60000,
+     VBOXOSTYPE_FreeBSD_x64      = 0x60100,
+     VBOXOSTYPE_OpenBSD          = 0x61000,
+--- VirtualBox-4.3.8/src/VBox/Frontends/VirtualBox/src/wizards/newvm/UIWizardNewVMPageBasic1.cpp~	2014-02-25 19:09:00.000000000 +0200
++++ VirtualBox-4.3.8/src/VBox/Frontends/VirtualBox/src/wizards/newvm/UIWizardNewVMPageBasic1.cpp	2014-02-28 09:58:59.493698505 +0200
+@@ -133,6 +133,8 @@
+     { QRegExp("Xa.*32",                            Qt::CaseInsensitive), "Xandros" },
+     { QRegExp("((Or)|(oel)).*64",                  Qt::CaseInsensitive), "Oracle_64" },
+     { QRegExp("((Or)|(oel)).*32",                  Qt::CaseInsensitive), "Oracle" },
++    { QRegExp("PLD.*64",                           Qt::CaseInsensitive), "PLD_64" },
++    { QRegExp("PLD.*32",                           Qt::CaseInsensitive), "PLD" },
+     { QRegExp("Knoppix",                           Qt::CaseInsensitive), "Linux26" },
+     { QRegExp("Dsl",                               Qt::CaseInsensitive), "Linux24" },
+     { QRegExp("((Lin)|(lnx)).*2.?2",               Qt::CaseInsensitive), "Linux22" },
