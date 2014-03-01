@@ -661,11 +661,13 @@ install -p %{SOURCE5} $RPM_BUILD_ROOT/sbin/mount.vdi
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/autorun.sh
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/runasroot.sh
 
-# unknown - checkme
-%if 1
+# scripts to setup modules, x11 and service. we have covered that in our packages
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/vboxadd
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/vboxadd-service
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/vboxadd-x11
+
+# unknown - checkme
+%if 1
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/helpers/generate_service_file
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/SUPInstall
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/SUPLoggerCtl
@@ -983,12 +985,6 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 /etc/xdg/autostart/vboxclient.desktop
 %attr(755,root,root) %{_bindir}/VBoxClient
 %attr(755,root,root) %{_bindir}/VBoxClient-all
-
-%if 0
-%attr(755,root,root) %{_libdir}/%{pname}/additions/vboxadd
-%attr(755,root,root) %{_libdir}/%{pname}/additions/vboxadd-service
-%attr(755,root,root) %{_libdir}/%{pname}/additions/vboxadd-x11
-%endif
 
 %if %{with webservice}
 %files webservice
