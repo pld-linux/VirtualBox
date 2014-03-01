@@ -588,9 +588,9 @@ install -d $RPM_BUILD_ROOT{%{_bindir},/sbin,%{_sbindir},%{_libdir}/%{pname}/Exte
 	$RPM_BUILD_ROOT{/etc/rc.d/init.d,%{systemdunitdir}}
 
 # test if we can hardlink -- %{_builddir} and $RPM_BUILD_ROOT on same partition
-if cp -al VBox.png $RPM_BUILD_ROOT/Vbox.png 2>/dev/null; then
+if cp -al COPYING $RPM_BUILD_ROOT/COPYING; then
 	l=l
-	%{__rm} -f $RPM_BUILD_ROOT/VBox.png
+	%{__rm} -f $RPM_BUILD_ROOT/COPYING
 fi
 
 cp -a$l %{outdir}/* $RPM_BUILD_ROOT%{_libdir}/%{pname}
