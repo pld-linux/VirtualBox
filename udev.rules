@@ -2,6 +2,8 @@
 KERNEL=="vboxdrv",    GROUP="vbox", MODE="0660"
 KERNEL=="vboxnetctl", GROUP="vbox", MODE="0660"
 
+# these lines below give access permission to vbox users to properly work with usb nodes, enabling them could be security risk:
+# https://bugzilla.novell.com/show_bug.cgi?id=664520
 SUBSYSTEM=="usb_device", ACTION=="add", RUN+="VBoxCreateUSBNode.sh $major $minor $attr{bDeviceClass} vbox"
 SUBSYSTEM=="usb", ACTION=="add", ENV{DEVTYPE}=="usb_device", RUN+="VBoxCreateUSBNode.sh $major $minor $attr{bDeviceClass} vbox"
 
