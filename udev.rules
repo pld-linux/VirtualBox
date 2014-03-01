@@ -1,4 +1,5 @@
 # udev rules for VirtualBox
+# Devices in Host
 KERNEL=="vboxdrv",    GROUP="vbox", MODE="0660"
 KERNEL=="vboxnetctl", GROUP="vbox", MODE="0660"
 
@@ -9,3 +10,7 @@ SUBSYSTEM=="usb", ACTION=="add", ENV{DEVTYPE}=="usb_device", RUN+="VBoxCreateUSB
 
 SUBSYSTEM=="usb_device", ACTION=="remove", RUN+="VBoxCreateUSBNode.sh --remove $major $minor"
 SUBSYSTEM=="usb", ACTION=="remove", ENV{DEVTYPE}=="usb_device", RUN+="VBoxCreateUSBNode.sh --remove $major $minor"
+
+# Devices in Guest, should use acl really
+KERNEL=="vboxguest",  GROUP="vbox", MODE="0600"
+KERNEL=="vboxuser",   GROUP="vbox", MODE="0666"
