@@ -71,7 +71,6 @@ Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions
 # Source1-md5:	f23d3980a509418b2dcb614483271ffa
 Source2:	vboxservice.init
 Source3:	vboxservice.service
-Source4:	%{pname}.sh
 Source5:	mount.vdi
 Source6:	udev.rules
 Source7:	%{pname}-virtualbox-host-modules-load.conf
@@ -532,7 +531,6 @@ cd ../..\
 %{__sed} -i -e "s@_LDFLAGS\.%{vbox_arch}*.*=@& %{rpmldflags}@g" \
 	-i Config.kmk src/libs/xpcom18a4/Config.kmk
 
-%{__sed} 's#@LIBDIR@#%{_libdir}#' < %{SOURCE4} > VirtualBox-wrapper.sh
 %{__sed} -i -e 's#@INSTALL_DIR@#%{_libdir}/%{pname}#' src/VBox/Installer/linux/VBox.sh
 
 install -d PLD-MODULE-BUILD/{GuestDrivers,HostDrivers}
@@ -831,58 +829,61 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %files
 %defattr(644,root,root,755)
 %attr(755,root,root) /sbin/mount.vdi
+%attr(755,root,root) %{_bindir}/VBox
+%attr(755,root,root) %{_bindir}/VBoxAutostart
+%attr(755,root,root) %{_bindir}/VBoxBalloonCtrl
 %attr(755,root,root) %{_bindir}/VBoxHeadless
 %attr(755,root,root) %{_bindir}/VBoxManage
 %attr(755,root,root) %{_bindir}/VBoxSDL
 %attr(755,root,root) %{_bindir}/VBoxTunctl
-%attr(755,root,root) %{_bindir}/VBox
-%attr(755,root,root) %{_bindir}/VBoxAutostart
-%attr(755,root,root) %{_bindir}/VBoxBalloonCtrl
 %dir %{_libdir}/%{pname}
+# libraries
 %attr(755,root,root) %{_libdir}/%{pname}/DBGCPlugInDiggers.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxAuth.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxAuthSimple.so
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxAutostart
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxBalloonCtrl
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxDD2.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxDD.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxDD2.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxDDU.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxDragAndDropSvc.so
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxExtPackHelperApp
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxGuestControlSvc.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxGuestPropSvc.so
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxHeadless
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxHostChannel.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxKeyboard.so
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxManage
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxNetNAT
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxVolInfo
-%attr(755,root,root) %{_libdir}/%{pname}/iPxeBaseBin
-%if %{with doc}
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxManageHelp
-%endif
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxNetAdpCtl
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxNetDHCP
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxOGLhostcrutil.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxOGLhosterrorspu.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxOGLrenderspu.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxPython*.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxREM.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxRT.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxSharedClipboard.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxSharedCrOpenGL.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxSharedFolders.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxVMM.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxXPCOM.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxXPCOMC.so
 %ifarch %{ix86}
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxREM32.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxREM64.so
 %endif
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxRT.so
+
+# binaries
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxAutostart
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxBalloonCtrl
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxExtPackHelperApp
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxHeadless
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxManage
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxNetAdpCtl
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxNetDHCP
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxNetNAT
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxSDL
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxSharedClipboard.so
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxSharedCrOpenGL.so
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxSharedFolders.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxSVC
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxVMM.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxVMMPreload
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxXPCOMC.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxVolInfo
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxXPCOMIPCD
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxXPCOM.so
+%attr(755,root,root) %{_libdir}/%{pname}/iPxeBaseBin
+%if %{with doc}
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxManageHelp
+%endif
 
 %dir %{_libdir}/%{pname}/ExtensionPacks
 %{_libdir}/%{pname}/ExtensionPacks/VNC/ExtPack.xml
@@ -921,9 +922,9 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %files gui
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/VirtualBox
-%attr(755,root,root) %{_libdir}/%{pname}/VirtualBox
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxDbg.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxTestOGL
+%attr(755,root,root) %{_libdir}/%{pname}/VirtualBox
 %dir %{_datadir}/%{pname}/nls
 %lang(bg) %{_datadir}/%{pname}/nls/*_bg.qm
 %lang(ca) %{_datadir}/%{pname}/nls/*_ca.qm

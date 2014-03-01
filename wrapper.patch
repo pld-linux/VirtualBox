@@ -1,6 +1,22 @@
---- VirtualBox-4.3.8/src/VBox/Installer/linux/VBox.sh~	2014-02-25 19:09:10.000000000 +0200
-+++ VirtualBox-4.3.8/src/VBox/Installer/linux/VBox.sh	2014-03-01 14:07:14.898417429 +0200
-@@ -19,9 +19,9 @@
+--- VirtualBox-4.3.8/src/VBox/Installer/linux/VBox.sh	2014-03-01 14:07:14.898417429 +0200
++++ VirtualBox-4.3.8/src/VBox/Installer/linux/VBox.sh	2014-03-01 18:25:47.973662413 +0200
+@@ -16,14 +16,27 @@
+ PATH="/usr/bin:/bin:/usr/sbin:/sbin"
+ CONFIG="/etc/vbox/vbox.cfg"
+ 
++show_message() {
++	local BINFILE=${0##*/} message
++
++	if [ -n "$DISPLAY" ] && [ -x /usr/bin/gxmessage ]; then
++		gxmessage --center --buttons GTK_STOCK_OK -wrap -geometry 400x150 -name $BINFILE -file -
++	elif [ -n "$DISPLAY" ] && [ -x /usr/bin/zenity ]; then
++		message=$(cat)
++		zenity --error --icon-name=virtualbox --text "$message"
++	else
++		cat >&2
++	fi
++}
++
  test -r "${CONFIG}" &&
      . "${CONFIG}"
  test -z "${INSTALL_DIR}" &&
@@ -8,8 +24,38 @@
 -        test -x /usr/lib/virtualbox/VirtualBox; then
 -        INSTALL_DIR=/usr/lib/virtualbox
 +    if test -f @INSTALL_DIR@/VBoxSVC &&
-+        test -x @INSTALL_DIR@/VBoxSVC; then
++        test -x @INSTALL_DIR@/VBoxSVCr; then
 +        INSTALL_DIR=@INSTALL_DIR@
      else
-         echo "Could not find VirtualBox installation. Please reinstall."
+-        echo "Could not find VirtualBox installation. Please reinstall."
++        echo "Could not find VirtualBox installation. Please reinstall." | show_message
          exit 1
+     fi
+ 
+@@ -33,7 +46,7 @@
+ if [ "$1" = "shutdown" ]; then
+     SHUTDOWN="true"
+ elif ! lsmod|grep -q vboxdrv; then
+-    cat << EOF
++    show_message << EOF
+ WARNING: The vboxdrv kernel module is not loaded. Either there is no module
+          available for the current kernel (`uname -r`) or it failed to
+          load. Please recompile the kernel module and install it by
+@@ -43,7 +56,7 @@
+          You will not be able to start VMs until this problem is fixed.
+ EOF
+ elif [ ! -c /dev/vboxdrv ]; then
+-    cat << EOF
++    show_message << EOF
+ WARNING: The character device /dev/vboxdrv does not exist. Try
+ 
+            sudo /etc/init.d/vboxdrv restart
+@@ -55,7 +68,7 @@
+ fi
+ 
+ if [ -f /etc/vbox/module_not_compiled ]; then
+-    cat << EOF
++    show_message << EOF
+ WARNING: The compilation of the vboxdrv.ko kernel module failed during the
+          installation for some reason. Starting a VM will not be possible.
+          Please consult the User Manual for build instructions.
