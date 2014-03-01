@@ -12,6 +12,7 @@
 #
 # Conditional build:
 %bcond_without	doc		# don't build the documentation
+%bcond_without	debuginfo		# disable debuginfo creation (to save space when compiling)
 %bcond_without	dist_kernel	# without distribution kernel
 %bcond_without	kernel		# don't build kernel module
 %bcond_without	userspace	# don't build userspace package
@@ -48,6 +49,10 @@ exit 1
 
 %if %{without userspace}
 # nothing to be placed to debuginfo package
+%undefine	with_debuginfo
+%endif
+
+%if %{without debuginfo}
 %define		_enable_debug_packages	0
 %endif
 
@@ -528,6 +533,8 @@ cd ../..\
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
+%patch11 -p1
 
 %{__sed} -i -e 's,@VBOX_DOC_PATH@,%{_docdir}/%{name}-%{version},' \
 	-e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/common/virtualbox.desktop.in
@@ -538,6 +545,7 @@ cd ../..\
 
 %{__sed} -i -e 's#@INSTALL_DIR@#%{_libdir}/%{pname}#' src/VBox/Installer/linux/VBox.sh
 
+%if %{with kernel}
 install -d PLD-MODULE-BUILD/{GuestDrivers,HostDrivers}
 cd PLD-MODULE-BUILD
 ../src/VBox/Additions/linux/export_modules guest-modules.tar.gz
@@ -546,8 +554,7 @@ tar -zxf guest-modules.tar.gz -C GuestDrivers
 ../src/VBox/HostDrivers/linux/export_modules host-modules.tar.gz --without-hardening
 tar -zxf host-modules.tar.gz -C HostDrivers
 cd -
-%patch10 -p1
-%patch11 -p1
+%endif
 
 # using system kBuild package
 %{__rm} -r kBuild
