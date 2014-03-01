@@ -1,0 +1,13 @@
+do not let without hardening disable /usr/share support by reseting
+VBOX_PATH_APP_PRIVATE & VBOX_PATH_APP_PRIVATE_ARCH
+--- VirtualBox-4.3.8/Config.kmk~	2014-03-01 16:38:18.000000000 +0200
++++ VirtualBox-4.3.8/Config.kmk	2014-03-01 17:13:27.958934414 +0200
+@@ -1079,7 +1079,7 @@
+ #
+ ifdef VBOX_WITHOUT_HARDENING
+  VBOX_WITH_HARDENING=
+- ifeq ($(VBOX_WITH_HARDENING),)
++ ifeq ($(VBOX_WITH_HARDENING),0)
+   VBOX_PATH_APP_PRIVATE=
+   VBOX_PATH_APP_PRIVATE_ARCH=
+   VBOX_PATH_APP_PRIVATE_ARCH_TOP=

@@ -1,0 +1,15 @@
+--- VirtualBox-4.3.8/src/VBox/Installer/linux/VBox.sh~	2014-02-25 19:09:10.000000000 +0200
++++ VirtualBox-4.3.8/src/VBox/Installer/linux/VBox.sh	2014-03-01 14:07:14.898417429 +0200
+@@ -19,9 +19,9 @@
+ test -r "${CONFIG}" &&
+     . "${CONFIG}"
+ test -z "${INSTALL_DIR}" &&
+-    if test -f /usr/lib/virtualbox/VirtualBox &&
+-        test -x /usr/lib/virtualbox/VirtualBox; then
+-        INSTALL_DIR=/usr/lib/virtualbox
++    if test -f @INSTALL_DIR@/VBoxSVC &&
++        test -x @INSTALL_DIR@/VBoxSVC; then
++        INSTALL_DIR=@INSTALL_DIR@
+     else
+         echo "Could not find VirtualBox installation. Please reinstall."
+         exit 1

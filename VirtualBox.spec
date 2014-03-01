@@ -1,3 +1,5 @@
+# NOTE
+# - https://www.virtualbox.org/wiki/Linux%20build%20instructions
 # TODO
 # - java bindings
 # - Package SDK.
@@ -78,7 +80,9 @@ Patch0:		%{pname}-configure-spaces.patch
 Patch1:		%{pname}-VBoxSysInfo.patch
 Patch2:		%{pname}-warning_workaround.patch
 Patch3:		%{pname}-dri.patch
+Patch4:		wrapper.patch
 Patch5:		xserver-1.12.patch
+Patch6:		hardening-shared.patch
 Patch7:		lightdm-greeter-glib-includes.patch
 Patch8:		lightdm-greeter-g++-link.patch
 Patch9:		pld-guest.patch
@@ -115,6 +119,7 @@ BuildRequires:	bin86
 BuildRequires:	curl-devel
 BuildRequires:	device-mapper-devel
 %{?with_doc:BuildRequires:	docbook-dtd44-xml}
+BuildRequires:	fakeroot
 %{?with_lightdm:BuildRequires:	fltk-devel}
 BuildRequires:	gcc >= 5:3.2.3
 %{?with_webservice:BuildRequires:	gsoap-devel}
@@ -234,6 +239,8 @@ Requires:	desktop-file-utils
 Requires:	desktop-file-utils
 Requires:	fontconfig
 Requires:	fonts-Type1-urw
+Requires:	gtk-update-icon-cache
+Requires:	hicolor-icon-theme
 Requires:	shared-mime-info
 Suggests:	gxmessage
 Conflicts:	%{name} < 4.3.8-3
@@ -252,6 +259,9 @@ This package contains VirtualBox User Manual.
 Summary:	VirtualBox Guest Additions
 Group:		Base
 Requires:	%{name} = %{version}
+%if "%{_rpmversion}" >= "5"
+BuildArch:	noarch
+%endif
 
 %description additions
 VirtualBox Guest Additions.
@@ -508,7 +518,9 @@ cd ../..\
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 %patch5 -p1
+%patch6 -p1
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
@@ -521,6 +533,7 @@ cd ../..\
 	-i Config.kmk src/libs/xpcom18a4/Config.kmk
 
 %{__sed} 's#@LIBDIR@#%{_libdir}#' < %{SOURCE4} > VirtualBox-wrapper.sh
+%{__sed} -i -e 's#@INSTALL_DIR@#%{_libdir}/%{pname}#' src/VBox/Installer/linux/VBox.sh
 
 install -d PLD-MODULE-BUILD/{GuestDrivers,HostDrivers}
 cd PLD-MODULE-BUILD
@@ -554,7 +567,17 @@ VBOX_WITH_LIGHTDM_GREETER_PACKING=1
 TOOL_GCC3_CFLAGS=%{rpmcflags}
 TOOL_GCC3_CXXFLAGS=%{rpmcxxflags}
 VBOX_GCC_OPT=%{rpmcxxflags}
-VBOX_WITH_TESTCASES=
+
+VBOX_PATH_APP_PRIVATE_ARCH := %{_libdir}/%{pname}
+VBOX_PATH_APP_PRIVATE := %{_datadir}/%{pname}
+VBOX_PATH_SHARED_LIBS := $(VBOX_PATH_APP_PRIVATE_ARCH)
+VBOX_WITH_ORIGIN :=
+VBOX_WITH_RUNPATH := $(VBOX_PATH_APP_PRIVATE_ARCH)
+#VBOX_PATH_APP_DOCS := %{_docdir}/%{pname}-doc-%{version}
+
+# don't build testcases to save time, they are not needed for the package
+VBOX_WITH_TESTCASES :=
+VBOX_WITH_TESTSUITE :=
 EOF
 
 %build
@@ -585,39 +608,20 @@ install -d $RPM_BUILD_ROOT{%{_bindir},/sbin,%{_sbindir},%{_libdir}/%{pname}/Exte
 	$RPM_BUILD_ROOT{%{_pixmapsdir},%{_desktopdir},%{_datadir}/mime/packages} \
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/{drivers,dri,input} \
 	$RPM_BUILD_ROOT{/lib/udev,/etc/udev/rules.d} \
-	$RPM_BUILD_ROOT{/etc/rc.d/init.d,%{systemdunitdir}}
+	$RPM_BUILD_ROOT{/etc/rc.d/init.d,%{systemdunitdir},%{_usrsrc}}
 
 # test if we can hardlink -- %{_builddir} and $RPM_BUILD_ROOT on same partition
 if cp -al COPYING $RPM_BUILD_ROOT/COPYING; then
 	l=l
-	%{__rm} -f $RPM_BUILD_ROOT/COPYING
+	%{__rm} $RPM_BUILD_ROOT/COPYING
 fi
 
 cp -a$l %{outdir}/* $RPM_BUILD_ROOT%{_libdir}/%{pname}
-
-%if %{with doc}
-ln -sf %{_docdir}/%{pname}-doc-%{version}/UserManual.pdf $RPM_BUILD_ROOT%{_libdir}/%{pname}/UserManual.pdf
-ln -sf %{_docdir}/%{pname}-doc-%{version}/UserManual_fr_FR.pdf $RPM_BUILD_ROOT%{_libdir}/%{pname}/UserManual_fr_FR.pdf
-%endif
-
-install -d $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions
 cp -a$l %{SOURCE1} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/VBoxGuestAdditions.iso
-install -p %{SOURCE5} $RPM_BUILD_ROOT/sbin/mount.vdi
-install -p VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_libdir}/%{pname}
-for f in {VBox{BFE,Headless,Manage,SDL,SVC,Tunctl,XPCOMIPCD},VirtualBox}; do
-	ln -s %{_libdir}/%{pname}/VirtualBox-wrapper.sh $RPM_BUILD_ROOT%{_bindir}/$f
-done
 
-install -p %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxservice
-install -p %{SOURCE3} $RPM_BUILD_ROOT%{systemdunitdir}/vboxservice.service
-
-%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/VBox.png,%{_pixmapsdir}/virtualbox.png}
-%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname},%{_desktopdir}}/virtualbox.desktop
-%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname},%{_datadir}/mime/packages}/virtualbox.xml
-
-%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/vboxvideo_drv_system.so,%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so}
+# vboxvideo
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/VBoxOGL.so,%{_libdir}/xorg/modules/dri/vboxvideo_dri.so}
-
+%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/vboxvideo_drv_system.so,%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so}
 # XXX: where else to install them that vboxvideo_dri.so finds them? patch with rpath?
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLarrayspu.so
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLcrutil.so
@@ -626,28 +630,17 @@ install -p %{SOURCE3} $RPM_BUILD_ROOT%{systemdunitdir}/vboxservice.service
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLpackspu.so
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLpassthroughspu.so
 
-cp -a %{SOURCE6} $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
-%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname},/lib/udev}/VBoxCreateUSBNode.sh
-
-install -d $RPM_BUILD_ROOT/%{_lib}/security
-%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,/%{_lib}/security}/pam_vbox.so
-
-# cleanup unpackaged
-%{__rm} -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/{src,sdk,testcase}
-%{__rm} -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/src
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/vboxkeyboard.tar.bz2
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/tst*
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/ExtensionPacks/VNC/ExtPack-license.*
-
 # Guest Only Tools
-install -d $RPM_BUILD_ROOT/etc/{X11/xinit/xinitrc.d,xdg/autostart}
-%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_bindir}}/VBoxService
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_bindir}}/VBoxClient
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_bindir}}/VBoxControl
+%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_bindir}}/VBoxService
+install -d $RPM_BUILD_ROOT/etc/{X11/xinit/xinitrc.d,xdg/autostart}
 install -p -D src/VBox/Additions/x11/Installer/98vboxadd-xclient \
 	$RPM_BUILD_ROOT/etc/X11/xinit/xinitrc.d/98vboxadd-xclient.sh
 cp -p src/VBox/Additions/x11/Installer/vboxclient.desktop \
 	$RPM_BUILD_ROOT/etc/xdg/autostart/vboxclient.desktop
+install -p %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxservice
+install -p %{SOURCE3} $RPM_BUILD_ROOT%{systemdunitdir}/vboxservice.service
 
 %if %{with lightdm}
 install -d $RPM_BUILD_ROOT%{_datadir}/xgreeters
@@ -655,34 +648,78 @@ install -d $RPM_BUILD_ROOT%{_datadir}/xgreeters
 cp -p %{objdir}/Additions/Installer/linux/share/VBoxGuestAdditions/vbox-greeter.desktop $RPM_BUILD_ROOT%{_datadir}/xgreeters
 %endif
 
+# pam
+install -d $RPM_BUILD_ROOT/%{_lib}/security
+%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,/%{_lib}/security}/pam_vbox.so
+
+# mount.vboxsf
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/mount.vboxsf
+install -p mount.vboxsf $RPM_BUILD_ROOT/sbin/mount.vboxsf
+
+# mount.vdi
+install -p %{SOURCE5} $RPM_BUILD_ROOT/sbin/mount.vdi
+
+# these belong to .iso
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/autorun.sh
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/runasroot.sh
+
 # unknown - checkme
 %if 1
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/vboxadd
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/vboxadd-service
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/vboxadd-x11
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/helpers/generate_service_file
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/SUPInstall
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/SUPLoggerCtl
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/SUPUninstall
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/VBox.sh
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/vboxshell.py
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/xpidl
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/runasroot.sh
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/load.sh
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/loadall.sh
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/%{vbox_arch}/CPUMInternal.d
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/%{vbox_arch}/cpumctx.d
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/%{vbox_arch}/vbox-arch-types.d
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/%{vbox_arch}/vbox-types.d
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/%{vbox_arch}/vm.d
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/lib/%{vbox_arch}/x86.d
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace/testcase/%{vbox_arch}/vbox-vm-struct-test.d
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/helpers/generate_service_file
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/scripts/VBoxHeadlessXOrg.sh
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/scripts/generated.sh
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/scripts/init_template.sh
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/scripts/install_service
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/vboxshell.py
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/xpidl
+%{__rm} -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/src
 %endif
 
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/mount.vboxsf
+# use upstream installer to relocate rest of the files, fakeroot because it forces uid/gid 0
+fakeroot sh -x $RPM_BUILD_ROOT%{_libdir}/%{pname}/scripts/install.sh \
+	--ose \
+	--prefix %{_prefix} \
+	%{!?with_webservice:--no-web-service} \
+	--root $RPM_BUILD_ROOT
 
-install -p mount.vboxsf $RPM_BUILD_ROOT/sbin/mount.vboxsf
+%{__mv} $RPM_BUILD_ROOT{%{_datadir}/%{pname},/lib/udev}/VBoxCreateUSBNode.sh
+cp -p %{SOURCE6} $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
+
+# cleanup lowercased variants, not used in any script (less cruft)
+%{__rm} -r $RPM_BUILD_ROOT%{_bindir}/vboxautostart
+%{__rm} -r $RPM_BUILD_ROOT%{_bindir}/vboxballoonctrl
+%{__rm} -r $RPM_BUILD_ROOT%{_bindir}/vboxheadless
+%{__rm} -r $RPM_BUILD_ROOT%{_bindir}/vboxmanage
+%{__rm} -r $RPM_BUILD_ROOT%{_bindir}/vboxsdl
+%{__rm} -r $RPM_BUILD_ROOT%{_bindir}/virtualbox
+
+# cleanup unpackaged
+%{__rm} -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/{sdk,testcase}
+%{__rm} -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace
+%{__rm} -r $RPM_BUILD_ROOT%{_datadir}/%{pname}/src
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/vboxkeyboard.tar.bz2
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/tst*
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/scripts/generated.sh
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/ExtensionPacks/VNC/ExtPack-license.*
+%{__rm} $RPM_BUILD_ROOT%{_usrsrc}/vboxhost-%{version}_PLD
+%{__rm} -r $RPM_BUILD_ROOT%{py_sitescriptdir}/vboxapi*
+
+# weird icon size
+%{__rm} -r $RPM_BUILD_ROOT%{_iconsdir}/hicolor/40x40
+# duplicate, we already have virtualbox.png (128x128), this is 32x32
+%{__rm} -r $RPM_BUILD_ROOT%{_pixmapsdir}/VBox.png
+
+%if %{with doc}
+ln -sf %{_docdir}/%{pname}-doc-%{version}/UserManual.pdf $RPM_BUILD_ROOT%{_libdir}/%{pname}/UserManual.pdf
+ln -sf %{_docdir}/%{pname}-doc-%{version}/UserManual_fr_FR.pdf $RPM_BUILD_ROOT%{_libdir}/%{pname}/UserManual_fr_FR.pdf
+%endif
 
 %if %{with dkms}
 install -d $RPM_BUILD_ROOT%{_usrsrc}/vbox{host,guest}-%{version}-%{rel}
@@ -741,10 +778,12 @@ fi
 
 %post gui
 %update_desktop_database
+%update_icon_cache hicolor
 %update_mime_database
 
 %postun gui
 %update_desktop_database
+%update_icon_cache hicolor
 %update_mime_database
 
 %post guest
@@ -791,20 +830,15 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %if %{with userspace}
 %files
 %defattr(644,root,root,755)
-%dir %{_libdir}/%{pname}
-%dir %{_libdir}/%{pname}/ExtensionPacks
-%dir %{_libdir}/%{pname}/ExtensionPacks/VNC
-%dir %{_libdir}/%{pname}/ExtensionPacks/VNC/linux*
-%dir %{_libdir}/%{pname}/additions
-%dir %{_libdir}/%{pname}/components
-%attr(755,root,root) %{_bindir}/VBoxBFE
+%attr(755,root,root) /sbin/mount.vdi
 %attr(755,root,root) %{_bindir}/VBoxHeadless
 %attr(755,root,root) %{_bindir}/VBoxManage
 %attr(755,root,root) %{_bindir}/VBoxSDL
-%attr(755,root,root) %{_bindir}/VBoxSVC
 %attr(755,root,root) %{_bindir}/VBoxTunctl
-%attr(755,root,root) %{_bindir}/VBoxXPCOMIPCD
-%attr(755,root,root) /sbin/mount.vdi
+%attr(755,root,root) %{_bindir}/VBox
+%attr(755,root,root) %{_bindir}/VBoxAutostart
+%attr(755,root,root) %{_bindir}/VBoxBalloonCtrl
+%dir %{_libdir}/%{pname}
 %attr(755,root,root) %{_libdir}/%{pname}/DBGCPlugInDiggers.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxAuth.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxAuthSimple.so
@@ -844,15 +878,18 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxSharedCrOpenGL.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxSharedFolders.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxSVC
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxSysInfo.sh
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxTunctl
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxVMM.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxVMMPreload
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxXPCOMC.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxXPCOMIPCD
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxXPCOM.so
-%attr(755,root,root) %{_libdir}/%{pname}/VirtualBox-wrapper.sh
+
+%dir %{_libdir}/%{pname}/ExtensionPacks
+%{_libdir}/%{pname}/ExtensionPacks/VNC/ExtPack.xml
+%dir %{_libdir}/%{pname}/ExtensionPacks/VNC
+%dir %{_libdir}/%{pname}/ExtensionPacks/VNC/linux*
 %attr(755,root,root) %{_libdir}/%{pname}/ExtensionPacks/VNC/linux*/VBoxVNC*.so
+
 %{_libdir}/%{pname}/VBoxDD2GC.debug
 %{_libdir}/%{pname}/VBoxDD2GC.gc
 %{_libdir}/%{pname}/VBoxDD2R0.debug
@@ -867,12 +904,16 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %{_libdir}/%{pname}/VMMGC.gc
 %{_libdir}/%{pname}/VMMR0.debug
 %{_libdir}/%{pname}/VMMR0.r0
-%{_libdir}/%{pname}/ExtensionPacks/VNC/ExtPack.xml
+
+%dir %{_libdir}/%{pname}/components
 %{_libdir}/%{pname}/components/VBoxXPCOMBase.xpt
 %{_libdir}/%{pname}/components/VirtualBox_XPCOM.xpt
 %attr(755,root,root) %{_libdir}/%{pname}/components/VBoxC.so
 %attr(755,root,root) %{_libdir}/%{pname}/components/VBoxSVCM.so
 %attr(755,root,root) %{_libdir}/%{pname}/components/VBoxXPCOMIPCC.so
+
+%dir %{_datadir}/%{pname}
+%attr(755,root,root) %{_datadir}/%{pname}/VBoxSysInfo.sh
 
 %config(noreplace) %verify(not md5 mtime size) /etc/udev/rules.d/virtualbox.rules
 %attr(755,root,root) /lib/udev/VBoxCreateUSBNode.sh
@@ -883,48 +924,50 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/%{pname}/VirtualBox
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxDbg.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxTestOGL
-%{_libdir}/%{pname}/icons
-%dir %{_libdir}/%{pname}/nls
-%lang(bg) %{_libdir}/%{pname}/nls/*_bg.qm
-%lang(ca) %{_libdir}/%{pname}/nls/*_ca.qm
-%lang(ca_VA) %{_libdir}/%{pname}/nls/*_ca_VA.qm
-%lang(cs) %{_libdir}/%{pname}/nls/*_cs.qm
-%lang(da) %{_libdir}/%{pname}/nls/*_da.qm
-%lang(de) %{_libdir}/%{pname}/nls/*_de.qm
-%lang(en) %{_libdir}/%{pname}/nls/*_en.qm
-%lang(es) %{_libdir}/%{pname}/nls/*_es.qm
-%lang(eu) %{_libdir}/%{pname}/nls/*_eu.qm
-%lang(fi) %{_libdir}/%{pname}/nls/*_fa_IR.qm
-%lang(fi) %{_libdir}/%{pname}/nls/*_fi.qm
-%lang(fr) %{_libdir}/%{pname}/nls/*_fr.qm
-%lang(gl_ES) %{_libdir}/%{pname}/nls/*_gl_ES.qm
-%lang(hu) %{_libdir}/%{pname}/nls/*_hu.qm
-%lang(id) %{_libdir}/%{pname}/nls/*_id.qm
-%lang(it) %{_libdir}/%{pname}/nls/*_it.qm
-%lang(ja) %{_libdir}/%{pname}/nls/*_ja.qm
-%lang(km_KH) %{_libdir}/%{pname}/nls/*_km_KH.qm
-%lang(ko) %{_libdir}/%{pname}/nls/*_ko.qm
-%lang(lt) %{_libdir}/%{pname}/nls/*_lt.qm
-%lang(nl) %{_libdir}/%{pname}/nls/*_nl.qm
-%lang(pl) %{_libdir}/%{pname}/nls/*_pl.qm
-%lang(pt) %{_libdir}/%{pname}/nls/*_pt.qm
-%lang(pt_BR) %{_libdir}/%{pname}/nls/*_pt_BR.qm
-%lang(ro) %{_libdir}/%{pname}/nls/*_ro.qm
-%lang(ru) %{_libdir}/%{pname}/nls/*_ru.qm
-%lang(sk) %{_libdir}/%{pname}/nls/*_sk.qm
-%lang(sr) %{_libdir}/%{pname}/nls/*_sr.qm
-%lang(sv) %{_libdir}/%{pname}/nls/*_sv.qm
-%lang(tr) %{_libdir}/%{pname}/nls/*_tr.qm
-%lang(uk) %{_libdir}/%{pname}/nls/*_uk.qm
-%lang(zh_CN) %{_libdir}/%{pname}/nls/*_zh_CN.qm
-%lang(zh_TW) %{_libdir}/%{pname}/nls/*_zh_TW.qm
-%{_pixmapsdir}/virtualbox.png
+%dir %{_datadir}/%{pname}/nls
+%lang(bg) %{_datadir}/%{pname}/nls/*_bg.qm
+%lang(ca) %{_datadir}/%{pname}/nls/*_ca.qm
+%lang(ca_VA) %{_datadir}/%{pname}/nls/*_ca_VA.qm
+%lang(cs) %{_datadir}/%{pname}/nls/*_cs.qm
+%lang(da) %{_datadir}/%{pname}/nls/*_da.qm
+%lang(de) %{_datadir}/%{pname}/nls/*_de.qm
+%lang(en) %{_datadir}/%{pname}/nls/*_en.qm
+%lang(es) %{_datadir}/%{pname}/nls/*_es.qm
+%lang(eu) %{_datadir}/%{pname}/nls/*_eu.qm
+%lang(fi) %{_datadir}/%{pname}/nls/*_fa_IR.qm
+%lang(fi) %{_datadir}/%{pname}/nls/*_fi.qm
+%lang(fr) %{_datadir}/%{pname}/nls/*_fr.qm
+%lang(gl_ES) %{_datadir}/%{pname}/nls/*_gl_ES.qm
+%lang(hu) %{_datadir}/%{pname}/nls/*_hu.qm
+%lang(id) %{_datadir}/%{pname}/nls/*_id.qm
+%lang(it) %{_datadir}/%{pname}/nls/*_it.qm
+%lang(ja) %{_datadir}/%{pname}/nls/*_ja.qm
+%lang(km_KH) %{_datadir}/%{pname}/nls/*_km_KH.qm
+%lang(ko) %{_datadir}/%{pname}/nls/*_ko.qm
+%lang(lt) %{_datadir}/%{pname}/nls/*_lt.qm
+%lang(nl) %{_datadir}/%{pname}/nls/*_nl.qm
+%lang(pl) %{_datadir}/%{pname}/nls/*_pl.qm
+%lang(pt) %{_datadir}/%{pname}/nls/*_pt.qm
+%lang(pt_BR) %{_datadir}/%{pname}/nls/*_pt_BR.qm
+%lang(ro) %{_datadir}/%{pname}/nls/*_ro.qm
+%lang(ru) %{_datadir}/%{pname}/nls/*_ru.qm
+%lang(sk) %{_datadir}/%{pname}/nls/*_sk.qm
+%lang(sr) %{_datadir}/%{pname}/nls/*_sr.qm
+%lang(sv) %{_datadir}/%{pname}/nls/*_sv.qm
+%lang(tr) %{_datadir}/%{pname}/nls/*_tr.qm
+%lang(uk) %{_datadir}/%{pname}/nls/*_uk.qm
+%lang(zh_CN) %{_datadir}/%{pname}/nls/*_zh_CN.qm
+%lang(zh_TW) %{_datadir}/%{pname}/nls/*_zh_TW.qm
 %{_desktopdir}/virtualbox.desktop
+%{_pixmapsdir}/virtualbox.png
+%{_iconsdir}/hicolor/*/apps/virtualbox.png
+%{_iconsdir}/hicolor/*/apps/virtualbox.svg
+%{_iconsdir}/hicolor/*/mimetypes/virtualbox-*.png
 %{_datadir}/mime/packages/virtualbox.xml
 
 %files additions
 %defattr(644,root,root,755)
-%{_libdir}/%{pname}/additions/VBoxGuestAdditions.iso
+%{_datadir}/%{pname}/VBoxGuestAdditions.iso
 
 %files guest
 %defattr(644,root,root,755)
@@ -943,14 +986,16 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 /etc/X11/xinit/xinitrc.d/98vboxadd-xclient.sh
 /etc/xdg/autostart/vboxclient.desktop
 
-%attr(755,root,root) %{_libdir}/%{pname}/additions/autorun.sh
+%if 0
 %attr(755,root,root) %{_libdir}/%{pname}/additions/vboxadd
 %attr(755,root,root) %{_libdir}/%{pname}/additions/vboxadd-service
 %attr(755,root,root) %{_libdir}/%{pname}/additions/vboxadd-x11
+%endif
 
 %if %{with webservice}
 %files webservice
 %defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/vboxwebsrv
 %attr(755,root,root) %{_libdir}/%{pname}/vboxwebsrv
 %attr(755,root,root) %{_libdir}/%{pname}/webtest
 %endif
