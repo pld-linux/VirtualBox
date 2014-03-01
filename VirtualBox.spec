@@ -288,9 +288,10 @@ You should install this package in your Guest OS for base VirtualBox
 communication
 
 %package guest-x11
-Summary:	VirtualBox Guest Additions
-Group:		Base
+Summary:	VirtualBox Guest X11 Additions
+Group:		X11/Applications
 Requires:	%{name}-guest = %{version}-%{release}
+Requires:	xorg-app-xrandr
 Requires:	xorg-driver-video-vboxvideo = %{version}-%{release}
 Suggests:	kernel(vboxvideo)
 Obsoletes:	xorg-driver-input-vboxmouse < %{version}-%{release}
