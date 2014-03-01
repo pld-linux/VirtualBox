@@ -633,11 +633,10 @@ cp -a$l %{SOURCE1} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/VBoxGuestAdditio
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_bindir}}/VBoxClient
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_bindir}}/VBoxControl
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_bindir}}/VBoxService
-install -d $RPM_BUILD_ROOT/etc/{X11/xinit/xinitrc.d,xdg/autostart}
-install -p -D src/VBox/Additions/x11/Installer/98vboxadd-xclient \
-	$RPM_BUILD_ROOT/etc/X11/xinit/xinitrc.d/98vboxadd-xclient.sh
+install -d $RPM_BUILD_ROOT/etc/xdg/autostart
 cp -p src/VBox/Additions/x11/Installer/vboxclient.desktop \
 	$RPM_BUILD_ROOT/etc/xdg/autostart/vboxclient.desktop
+install -p src/VBox/Additions/x11/Installer/98vboxadd-xclient $RPM_BUILD_ROOT%{_bindir}/VBoxClient-all
 install -p %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxservice
 install -p %{SOURCE3} $RPM_BUILD_ROOT%{systemdunitdir}/vboxservice.service
 
@@ -981,12 +980,9 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 
 %files guest-x11
 %defattr(644,root,root,755)
-# NOTE: unfinished, should contain .desktop files for starting up mouse
-# integration and other desktop services
-# NOTE: the filelist is incomplete too
-%attr(755,root,root) %{_bindir}/VBoxClient
-/etc/X11/xinit/xinitrc.d/98vboxadd-xclient.sh
 /etc/xdg/autostart/vboxclient.desktop
+%attr(755,root,root) %{_bindir}/VBoxClient
+%attr(755,root,root) %{_bindir}/VBoxClient-all
 
 %if 0
 %attr(755,root,root) %{_libdir}/%{pname}/additions/vboxadd
