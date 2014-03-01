@@ -272,8 +272,12 @@ You should install this package in your Host OS.
 %package guest
 Summary:	VirtualBox Guest tools
 Group:		Base
-Requires(post,preun):	/sbin/chkconfig
+Provides:	group(vboxsf)
 Requires(post):	systemd-units >= 38
+Requires(post,preun):	/sbin/chkconfig
+Requires(postun):	/usr/sbin/groupdel
+Requires(pre):	/usr/bin/getgid
+Requires(pre):	/usr/sbin/groupadd
 Requires:	rc-scripts
 Requires:	systemd-units >= 38
 Suggests:	kernel(vboxguest)
@@ -786,6 +790,11 @@ fi
 %update_icon_cache hicolor
 %update_mime_database
 
+%pre guest
+# Add a group "vboxsf" for Shared Folders access
+# All users which want to access the auto-mounted Shared Folders have to be added to this group.
+%groupadd -g 266 -r -f vboxsf
+
 %post guest
 /sbin/chkconfig --add vboxservice
 %service vboxservice restart
@@ -799,6 +808,9 @@ fi
 %systemd_preun vboxservice.service
 
 %postun guest
+if [ "$1" = "0" ]; then
+	%groupremove vboxsf
+fi
 %systemd_reload
 
 %triggerpostun guest -- VirtualBox-guest < 4.3.0-1
