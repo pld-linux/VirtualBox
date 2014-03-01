@@ -42,7 +42,7 @@
 +        StorageControllerType_IntelAhci, StorageBus_SATA, ChipsetType_PIIX3, AudioControllerType_AC97  },
 +    { "Linux",   "Linux",             "PLD_64",             "PLD Linux (64 bit)",
 +      VBOXOSTYPE_Linux26_x64,     VBOXOSHINT_64BIT | VBOXOSHINT_HWVIRTEX | VBOXOSHINT_IOAPIC | VBOXOSHINT_RTCUTC | VBOXOSHINT_USBTABLET,
-+       256,  12,  8 * _1G64, NetworkAdapterType_I82540EM, 0, StorageControllerType_PIIX4, StorageBus_IDE,
++       896,  12,  8 * _1G64, NetworkAdapterType_I82540EM, 0, StorageControllerType_PIIX4, StorageBus_IDE,
 +        StorageControllerType_IntelAhci, StorageBus_SATA, ChipsetType_PIIX3, AudioControllerType_AC97  },
      { "Solaris", "Solaris",           "Solaris",            "Oracle Solaris 10 5/09 and earlier (32 bit)",
        VBOXOSTYPE_Solaris,         VBOXOSHINT_NONE,
