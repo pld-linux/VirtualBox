@@ -352,7 +352,10 @@ Requires:	xorg-xserver-libdri >= 1.7.4
 Requires:	xorg-xserver-server >= 1.0.99.901
 Requires:	xorg-xserver-server(videodrv-abi) <= 15.0
 Requires:	xorg-xserver-server(videodrv-abi) >= 2.0
+Provides:	OpenGL = 2.1
+Provides:	OpenGL-GLX = 1.3
 Provides:	xorg-driver-video
+Provides:	xorg-xserver-module(glx)
 
 %description -n xorg-driver-video-vboxvideo
 X.org video driver for VirtualBox guest OS.
