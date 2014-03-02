@@ -80,6 +80,8 @@ Source5:	mount.vdi
 Source6:	udev.rules
 Source7:	%{pname}-virtualbox-host-modules-load.conf
 Source8:	%{pname}-virtualbox-guest-modules-load.conf
+Source9:	vboxautostart.init
+Source10:	autostart.cfg
 Patch0:		%{pname}-configure-spaces.patch
 Patch1:		%{pname}-VBoxSysInfo.patch
 Patch2:		%{pname}-warning_workaround.patch
@@ -620,6 +622,7 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with userspace}
 install -d $RPM_BUILD_ROOT{%{_bindir},/sbin,%{_sbindir},%{_libdir}/%{pname}/ExtensionPacks} \
 	$RPM_BUILD_ROOT{%{_pixmapsdir},%{_desktopdir},%{_datadir}/mime/packages} \
+	$RPM_BUILD_ROOT%{_sysconfdir}/vbox \
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/{drivers,dri,input} \
 	$RPM_BUILD_ROOT{/lib/udev,/etc/udev/rules.d} \
 	$RPM_BUILD_ROOT{/etc/rc.d/init.d,%{systemdunitdir},%{_usrsrc}}
@@ -654,6 +657,10 @@ cp -p src/VBox/Additions/x11/Installer/vboxclient.desktop \
 install -p src/VBox/Additions/x11/Installer/98vboxadd-xclient $RPM_BUILD_ROOT%{_bindir}/VBoxClient-all
 install -p %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxservice
 install -p %{SOURCE3} $RPM_BUILD_ROOT%{systemdunitdir}/vboxservice.service
+
+install -p %{SOURCE9} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxautostart
+%{__sed} -i -e 's#@INSTALL_DIR@#%{_libdir}/%{pname}#' $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxautostart
+cp -p %{SOURCE10} $RPM_BUILD_ROOT%{_sysconfdir}/vbox
 
 %if %{with lightdm}
 install -d $RPM_BUILD_ROOT%{_datadir}/xgreeters
@@ -760,6 +767,9 @@ rm -rf $RPM_BUILD_ROOT
 %groupadd -g 221 -r -f vbox
 
 %post
+/sbin/chkconfig --add vboxautostart
+%service -n vboxautostart restart
+
 for i in /sys/bus/usb/devices/*; do
 	if [ -r "$i/dev" ]; then
 		dev="`cat "$i/dev" 2>/dev/null || true`"
@@ -778,6 +788,13 @@ On Guest Linux system you might want to install:
     kernel*-virtualbox-guest-%{version}-%{rel}@*
 
 EOF
+
+%preun
+if [ "$1" = "0" ]; then
+	/sbin/chkconfig --del vboxautostart
+	%service vboxautostart -q stop
+fi
+
 
 %postun
 if [ "$1" = "0" ]; then
@@ -846,6 +863,9 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %if %{with userspace}
 %files
 %defattr(644,root,root,755)
+%dir %attr(750,root,vbox) %{_sysconfdir}/vbox
+%attr(640,root,vbox) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/vbox/autostart.cfg
+%attr(754,root,root) /etc/rc.d/init.d/vboxautostart
 %attr(755,root,root) /sbin/mount.vdi
 %attr(755,root,root) %{_bindir}/VBox
 %attr(755,root,root) %{_bindir}/VBoxAutostart
