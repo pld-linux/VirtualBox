@@ -1,0 +1,108 @@
+#!/bin/sh
+#
+# VirtualBox autostart service init script.
+#
+# chkconfig:	35 35 65
+# description: VirtualBox autostart service
+# processname:	VBoxAutostart
+# config:	/etc/vbox/autostart.cfg
+#
+
+# Source function library
+. /etc/rc.d/init.d/functions
+
+# Get service config - may override defaults
+[ -f /etc/sysconfig/virtualbox ] && . /etc/sysconfig/virtualbox
+
+start_daemon() {
+	local user="$1"
+	shift
+	daemon --user $user "$@"
+}
+
+start() {
+	# Check if the service is already running?
+	if [ -f /var/lock/subsys/vboxautostart ]; then
+		msg_already_running "VirtualBox Autostart"
+		return
+	fi
+
+    [ -z "$VBOXAUTOSTART_DB" ] && exit 0
+    [ -z "$VBOXAUTOSTART_CONFIG" ] && exit 0
+
+	msg_starting "Starting VirtualBox VMs configured for autostart"
+
+    local user PARAMS="--background --start --config $VBOXAUTOSTART_CONFIG"
+
+    # prevent inheriting this setting to VBoxSVC
+    unset VBOX_RELEASE_LOG_DEST
+
+    for user in `ls $VBOXAUTOSTART_DB/*.start 2>/dev/null`; do
+		user=$(basename $user | sed -ne "s/\(.*\).start/\1/p")
+        start_daemon $user $binary $PARAMS
+    done
+
+	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/vboxautostart
+}
+
+stop() {
+	if [ ! -f /var/lock/subsys/vboxautostart ]; then
+		msg_not_running "VirtualBox Autostart"
+		return
+	fi
+
+    [ -z "$VBOXAUTOSTART_DB" ] && exit 0
+    [ -z "$VBOXAUTOSTART_CONFIG" ] && exit 0
+
+	# Stop daemons.
+	msg_stopping "VirtualBox Autostart"
+
+    local user PARAMS="--stop --config $VBOXAUTOSTART_CONFIG"
+
+    # prevent inheriting this setting to VBoxSVC
+    unset VBOX_RELEASE_LOG_DEST
+
+    for user in `ls $VBOXAUTOSTART_DB/*.stop 2>/dev/null`; do
+		user=$(basename $user | sed -ne "s/\(.*\).stop/\1/p")
+        start_daemon $user $binary $PARAMS
+    done
+
+	rm -f /var/lock/subsys/vboxautostart
+}
+
+condrestart() {
+	if [ ! -f /var/lock/subsys/vboxautostart ]; then
+		msg_not_running "VirtualBox Autostart"
+		RETVAL=$1
+		return
+	fi
+
+	stop
+	start
+}
+
+RETVAL=0
+# See how we were called.
+case "$1" in
+  start)
+	start
+	;;
+  stop)
+	stop
+	;;
+  restart)
+	stop
+	start
+	;;
+  try-restart)
+	condrestart 0
+	;;
+  force-reload)
+	condrestart 7
+	;;
+  *)
+	msg_usage "$0 {start|stop|restart|try-restart|force-reload}"
+	exit 3
+esac
+
+exit $RETVAL
