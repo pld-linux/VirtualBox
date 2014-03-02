@@ -24,7 +24,7 @@
 -        test -x /usr/lib/virtualbox/VirtualBox; then
 -        INSTALL_DIR=/usr/lib/virtualbox
 +    if test -f @INSTALL_DIR@/VBoxSVC &&
-+        test -x @INSTALL_DIR@/VBoxSVCr; then
++        test -x @INSTALL_DIR@/VBoxSVC; then
 +        INSTALL_DIR=@INSTALL_DIR@
      else
 -        echo "Could not find VirtualBox installation. Please reinstall."
