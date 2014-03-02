@@ -549,7 +549,7 @@ cd ../..\
 
 %{__sed} -i -e 's#@INSTALL_DIR@#%{_libdir}/%{pname}#' src/VBox/Installer/linux/VBox.sh
 
-%if %{with kernel}
+%if %{with kernel} || %{with dkms}
 install -d PLD-MODULE-BUILD/{GuestDrivers,HostDrivers}
 cd PLD-MODULE-BUILD
 ../src/VBox/Additions/linux/export_modules guest-modules.tar.gz
