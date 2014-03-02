@@ -549,7 +549,7 @@ cd ../..\
 
 %{__sed} -i -e 's#@INSTALL_DIR@#%{_libdir}/%{pname}#' src/VBox/Installer/linux/VBox.sh
 
-%if %{with kernel} || %{with dkms}
+%if %{with kernel}
 install -d PLD-MODULE-BUILD/{GuestDrivers,HostDrivers}
 cd PLD-MODULE-BUILD
 ../src/VBox/Additions/linux/export_modules guest-modules.tar.gz
@@ -661,6 +661,10 @@ install -d $RPM_BUILD_ROOT%{_datadir}/xgreeters
 cp -p %{objdir}/Additions/Installer/linux/share/VBoxGuestAdditions/vbox-greeter.desktop $RPM_BUILD_ROOT%{_datadir}/xgreeters
 %endif
 
+%if %{with dkms}
+mv $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/src $RPM_BUILD_ROOT%{_usrsrc}/vboxguest-%{version}-%{rel}
+%endif
+
 # pam
 install -d $RPM_BUILD_ROOT/%{_lib}/security
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,/%{_lib}/security}/pam_vbox.so
@@ -694,7 +698,6 @@ install -p %{SOURCE5} $RPM_BUILD_ROOT/sbin/mount.vdi
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/scripts/install_service
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/vboxshell.py
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/xpidl
-%{__rm} -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/src
 %endif
 
 # use upstream installer to relocate rest of the files, fakeroot because it forces uid/gid 0
@@ -707,6 +710,11 @@ fakeroot sh -x $RPM_BUILD_ROOT%{_libdir}/%{pname}/scripts/install.sh \
 %{__mv} $RPM_BUILD_ROOT{%{_datadir}/%{pname},/lib/udev}/VBoxCreateUSBNode.sh
 cp -p %{SOURCE6} $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
 
+%if %{with dkms}
+mv $RPM_BUILD_ROOT%{_datadir}/%{pname}/src $RPM_BUILD_ROOT%{_usrsrc}/vboxhost-%{version}-%{rel}
+%{__rm} $RPM_BUILD_ROOT%{_usrsrc}/vboxhost-%{version}_PLD
+%endif
+
 # cleanup lowercased variants, not used in any script (less cruft)
 %{__rm} -r $RPM_BUILD_ROOT%{_bindir}/vboxautostart
 %{__rm} -r $RPM_BUILD_ROOT%{_bindir}/vboxballoonctrl
@@ -718,12 +726,10 @@ cp -p %{SOURCE6} $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
 # cleanup unpackaged
 %{__rm} -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/{sdk,testcase}
 %{__rm} -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace
-%{__rm} -r $RPM_BUILD_ROOT%{_datadir}/%{pname}/src
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/vboxkeyboard.tar.bz2
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/tst*
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/scripts/generated.sh
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/ExtensionPacks/VNC/ExtPack-license.*
-%{__rm} $RPM_BUILD_ROOT%{_usrsrc}/vboxhost-%{version}_PLD
 %{__rm} -r $RPM_BUILD_ROOT%{py_sitescriptdir}/vboxapi*
 
 # weird icon size
@@ -734,19 +740,6 @@ cp -p %{SOURCE6} $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
 %if %{with doc}
 ln -sf %{_docdir}/%{pname}-doc-%{version}/UserManual.pdf $RPM_BUILD_ROOT%{_libdir}/%{pname}/UserManual.pdf
 ln -sf %{_docdir}/%{pname}-doc-%{version}/UserManual_fr_FR.pdf $RPM_BUILD_ROOT%{_libdir}/%{pname}/UserManual_fr_FR.pdf
-%endif
-
-%if %{with dkms}
-install -d $RPM_BUILD_ROOT%{_usrsrc}/vbox{host,guest}-%{version}-%{rel}
-cp -a PLD-MODULE-BUILD/HostDrivers/* $RPM_BUILD_ROOT%{_usrsrc}/vboxhost-%{version}-%{rel}
-cp -p src/VBox/HostDrivers/linux/dkms.conf $RPM_BUILD_ROOT%{_usrsrc}/vboxhost-%{version}-%{rel}
-%{__make} -C $RPM_BUILD_ROOT%{_usrsrc}/vboxhost-%{version}-%{rel} clean
-rm -rf $RPM_BUILD_ROOT%{_usrsrc}/vboxhost-%{version}-%{rel}/*/o
-
-cp -a PLD-MODULE-BUILD/GuestDrivers/* $RPM_BUILD_ROOT%{_usrsrc}/vboxguest-%{version}-%{rel}
-cp -p src/VBox/Additions/common/VBoxGuest/linux/dkms.conf $RPM_BUILD_ROOT%{_usrsrc}/vboxguest-%{version}-%{rel}
-%{__make} -C $RPM_BUILD_ROOT%{_usrsrc}/vboxguest-%{version}-%{rel} clean
-rm -rf $RPM_BUILD_ROOT%{_usrsrc}/vboxguest-%{version}-%{rel}/*/o
 %endif
 %endif
 
