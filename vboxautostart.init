@@ -11,6 +11,9 @@
 # Source function library
 . /etc/rc.d/init.d/functions
 
+VBOXAUTOSTART_DB=/etc/vbox
+VBOXAUTOSTART_CONFIG=/etc/vbox/autostart.cfg
+
 # Get service config - may override defaults
 [ -f /etc/sysconfig/virtualbox ] && . /etc/sysconfig/virtualbox
 
