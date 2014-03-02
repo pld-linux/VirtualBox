@@ -13,6 +13,7 @@
 
 VBOXAUTOSTART_DB=/etc/vbox
 VBOXAUTOSTART_CONFIG=/etc/vbox/autostart.cfg
+VBOXAUTOSTART=@INSTALL_DIR@/VBoxAutostart
 
 # Get service config - may override defaults
 [ -f /etc/sysconfig/virtualbox ] && . /etc/sysconfig/virtualbox
@@ -33,7 +34,7 @@ start() {
     [ -z "$VBOXAUTOSTART_DB" ] && exit 0
     [ -z "$VBOXAUTOSTART_CONFIG" ] && exit 0
 
-	msg_starting "Starting VirtualBox VMs configured for autostart"
+	msg_starting "VirtualBox VMs configured for autostart"
 
     local user PARAMS="--background --start --config $VBOXAUTOSTART_CONFIG"
 
@@ -42,7 +43,7 @@ start() {
 
     for user in `ls $VBOXAUTOSTART_DB/*.start 2>/dev/null`; do
 		user=$(basename $user | sed -ne "s/\(.*\).start/\1/p")
-        start_daemon $user $binary $PARAMS
+        start_daemon $user $VBOXAUTOSTART $PARAMS
     done
 
 	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/vboxautostart
@@ -67,7 +68,7 @@ stop() {
 
     for user in `ls $VBOXAUTOSTART_DB/*.stop 2>/dev/null`; do
 		user=$(basename $user | sed -ne "s/\(.*\).stop/\1/p")
-        start_daemon $user $binary $PARAMS
+        start_daemon $user $VBOXAUTOSTART $PARAMS
     done
 
 	rm -f /var/lock/subsys/vboxautostart
