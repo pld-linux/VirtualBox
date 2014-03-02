@@ -11,7 +11,7 @@
 # Source function library
 . /etc/rc.d/init.d/functions
 
-VBOXAUTOSTART_DB=/etc/vbox
+VBOXAUTOSTART_DB=/etc/vbox/autostart
 VBOXAUTOSTART_CONFIG=/etc/vbox/autostart.cfg
 VBOXAUTOSTART=@INSTALL_DIR@/VBoxAutostart
 

@@ -622,7 +622,7 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with userspace}
 install -d $RPM_BUILD_ROOT{%{_bindir},/sbin,%{_sbindir},%{_libdir}/%{pname}/ExtensionPacks} \
 	$RPM_BUILD_ROOT{%{_pixmapsdir},%{_desktopdir},%{_datadir}/mime/packages} \
-	$RPM_BUILD_ROOT%{_sysconfdir}/vbox \
+	$RPM_BUILD_ROOT%{_sysconfdir}/vbox/autostart \
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/{drivers,dri,input} \
 	$RPM_BUILD_ROOT{/lib/udev,/etc/udev/rules.d} \
 	$RPM_BUILD_ROOT{/etc/rc.d/init.d,%{systemdunitdir},%{_usrsrc}}
@@ -863,7 +863,8 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %if %{with userspace}
 %files
 %defattr(644,root,root,755)
-%dir %attr(750,root,vbox) %{_sysconfdir}/vbox
+%dir %attr(751,root,root) %{_sysconfdir}/vbox
+%dir %attr(770,root,vbox) %{_sysconfdir}/vbox/autostart
 %attr(640,root,vbox) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/vbox/autostart.cfg
 %attr(754,root,root) /etc/rc.d/init.d/vboxautostart
 %attr(755,root,root) /sbin/mount.vdi
