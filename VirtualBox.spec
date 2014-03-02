@@ -329,6 +329,7 @@ Group:		Themes
 URL:		http://www.virtualbox.org/manual/ch09.html#autologon_unix_lightdm
 Requires:	kernel(vboxguest)
 Requires:	lightdm >= 1.0.1
+Requires:	pam-pam_vbox = %{version}-%{release}
 Provides:	lightdm-greeter
 
 %description -n lightdm-greeter-vbox
