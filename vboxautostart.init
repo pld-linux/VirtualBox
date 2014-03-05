@@ -21,6 +21,7 @@ VBOXAUTOSTART=@INSTALL_DIR@/VBoxAutostart
 start_daemon() {
 	local user="$1"
 	shift
+	show "VMs for user '%s'" "$user"
 	daemon --user $user "$@"
 }
 
@@ -34,15 +35,16 @@ start() {
 	[ -z "$VBOXAUTOSTART_DB" ] && exit 0
 	[ -z "$VBOXAUTOSTART_CONFIG" ] && exit 0
 
-	msg_starting "VirtualBox VMs configured for autostart"
+	msg_starting "VirtualBox VMs configured for autostart"; busy; echo
 
-	local user PARAMS="--background --start --config $VBOXAUTOSTART_CONFIG"
+	local file user PARAMS="--background --start --config $VBOXAUTOSTART_CONFIG"
 
 	# prevent inheriting this setting to VBoxSVC
 	unset VBOX_RELEASE_LOG_DEST
 
-	for user in `ls $VBOXAUTOSTART_DB/*.start 2>/dev/null`; do
-		user=$(basename $user | sed -ne "s/\(.*\).start/\1/p")
+	for file in $VBOXAUTOSTART_DB/*.start; do
+		test -f "$file" || continue
+		user=${file##*/}; user=${user%.start}
 		start_daemon $user $VBOXAUTOSTART $PARAMS
 	done
 
@@ -59,15 +61,16 @@ stop() {
 	[ -z "$VBOXAUTOSTART_CONFIG" ] && exit 0
 
 	# Stop daemons.
-	msg_stopping "VirtualBox Autostart"
+	msg_stopping "VirtualBox Autostart"; busy; echo
 
-	local user PARAMS="--stop --config $VBOXAUTOSTART_CONFIG"
+	local file user PARAMS="--stop --config $VBOXAUTOSTART_CONFIG"
 
 	# prevent inheriting this setting to VBoxSVC
 	unset VBOX_RELEASE_LOG_DEST
 
-	for user in `ls $VBOXAUTOSTART_DB/*.stop 2>/dev/null`; do
-		user=$(basename $user | sed -ne "s/\(.*\).stop/\1/p")
+	for file in $VBOXAUTOSTART_DB/*.stop; do
+		test -f "$file" || continue
+		user=${file##*/}; user=${user%.stop}
 		start_daemon $user $VBOXAUTOSTART $PARAMS
 	done
 
