@@ -329,6 +329,7 @@ Group:		Themes
 # NOTE: '#' in url is lost because rpm treats it as comment, even hacking with
 # macros doesn't help as rpmbuild takes final result to parse
 URL:		http://www.virtualbox.org/manual/ch09.html#autologon_unix_lightdm
+Requires:	%{name} = %{version}-%{release}
 Requires:	kernel(vboxguest)
 Requires:	lightdm >= 1.0.1
 Requires:	pam-pam_vbox = %{version}-%{release}
