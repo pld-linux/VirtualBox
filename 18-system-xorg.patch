@@ -55,15 +55,3 @@ Author: Michael Meskes <meskes@debian.org>, Felix Geyer <fgeyer@debian.org>
   ifdef VBoxOGL_FAKEDRI
    VBoxOGL_LIBS += \
    	dl
-diff -urN VirtualBox-4.3.8.orig/src/VBox/Additions/x11/vboxvideo/Makefile.kmk VirtualBox-4.3.8/src/VBox/Additions/x11/vboxvideo/Makefile.kmk
---- VirtualBox-4.3.8.orig/src/VBox/Additions/x11/vboxvideo/Makefile.kmk	2014-02-26 12:57:53.419736985 +0100
-+++ VirtualBox-4.3.8/src/VBox/Additions/x11/vboxvideo/Makefile.kmk	2014-02-26 12:59:09.746407116 +0100
-@@ -376,7 +376,7 @@
-         /usr/include/libdrm \
-         /usr/include/xorg \
-         /usr/include/pixman-1
-- vboxvideo_drv_system_SOURCES := $(vboxvideo_drv_15_SOURCES)
-+ vboxvideo_drv_system_SOURCES := $(vboxvideo_drv_17_SOURCES)
- endif
- 
- 
