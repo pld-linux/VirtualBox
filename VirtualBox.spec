@@ -371,8 +371,7 @@ Summary:	VirtualBox kernel modules source for Linux Guest
 Summary(pl.UTF-8):	Moduły VirtualBoksa do jądra Linuksa dla systemu gościa
 License:	GPL v2+
 Group:		Base/Kernel
-Requires(pre):	dkms
-Requires(post):	dkms
+Requires:	dkms
 %if "%{_rpmversion}" >= "5"
 BuildArch:	noarch
 %endif
@@ -392,8 +391,7 @@ Summary:	VirtualBox Support Drivers source
 Summary(pl.UTF-8):	Moduły jądra Linuksa dla VirtualBoksa
 License:	GPL v2+
 Group:		Base/Kernel
-Requires(pre):	dkms
-Requires(post):	dkms
+Requires:	dkms
 %if "%{_rpmversion}" >= "5"
 BuildArch:	noarch
 %endif
