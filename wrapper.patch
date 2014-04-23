@@ -1,13 +1,16 @@
---- VirtualBox-4.3.8/src/VBox/Installer/linux/VBox.sh	2014-03-01 14:07:14.898417429 +0200
-+++ VirtualBox-4.3.8/src/VBox/Installer/linux/VBox.sh	2014-03-01 18:25:47.973662413 +0200
-@@ -16,14 +16,27 @@
+--- VirtualBox-4.3.8/src/VBox/Installer/linux/VBox.sh	2014-03-01 18:25:47.973662413 +0200
++++ VirtualBox-4.3.10/src/VBox/Installer/linux/VBox.sh	2014-04-23 14:44:03.392690596 +0300
+@@ -16,14 +16,30 @@
  PATH="/usr/bin:/bin:/usr/sbin:/sbin"
  CONFIG="/etc/vbox/vbox.cfg"
  
 +show_message() {
 +	local BINFILE=${0##*/} message
 +
-+	if [ -n "$DISPLAY" ] && [ -x /usr/bin/gxmessage ]; then
++	if [ "$DESKTOP" = "kde" ]; then
++		message=$(cat)
++		PATH=$(kde4-config --path exe) kdialog --sorry "$message"
++	elif [ -n "$DISPLAY" ] && [ -x /usr/bin/gxmessage ]; then
 +		gxmessage --center --buttons GTK_STOCK_OK -wrap -geometry 400x150 -name $BINFILE -file -
 +	elif [ -n "$DISPLAY" ] && [ -x /usr/bin/zenity ]; then
 +		message=$(cat)
@@ -32,7 +35,7 @@
          exit 1
      fi
  
-@@ -33,7 +46,7 @@
+@@ -33,7 +49,7 @@
  if [ "$1" = "shutdown" ]; then
      SHUTDOWN="true"
  elif ! lsmod|grep -q vboxdrv; then
@@ -41,7 +44,7 @@
  WARNING: The vboxdrv kernel module is not loaded. Either there is no module
           available for the current kernel (`uname -r`) or it failed to
           load. Please recompile the kernel module and install it by
-@@ -43,7 +56,7 @@
+@@ -43,7 +59,7 @@
           You will not be able to start VMs until this problem is fixed.
  EOF
  elif [ ! -c /dev/vboxdrv ]; then
@@ -50,7 +53,7 @@
  WARNING: The character device /dev/vboxdrv does not exist. Try
  
             sudo /etc/init.d/vboxdrv restart
-@@ -55,7 +68,7 @@
+@@ -55,7 +71,7 @@
  fi
  
  if [ -f /etc/vbox/module_not_compiled ]; then
