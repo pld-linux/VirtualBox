@@ -353,7 +353,7 @@ Group:		X11/Applications
 Requires:	Mesa-dri-driver-swrast
 Requires:	xorg-xserver-libdri >= 1.7.4
 Requires:	xorg-xserver-server >= 1.0.99.901
-Requires:	xorg-xserver-server(videodrv-abi) <= 15.0
+Requires:	xorg-xserver-server(videodrv-abi) <= 16.0
 Requires:	xorg-xserver-server(videodrv-abi) >= 2.0
 Provides:	OpenGL = 2.1
 Provides:	OpenGL-GLX = 1.3
