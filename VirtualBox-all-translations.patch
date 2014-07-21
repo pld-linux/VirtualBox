@@ -1,0 +1,16 @@
+--- Config.kmk.orig	2014-07-21 18:09:34.045384761 +0200
++++ Config.kmk	2014-07-21 18:09:48.868718200 +0200
+@@ -342,12 +342,7 @@
+ ifn1of ($(KBUILD_TARGET), linux)
+  VBOX_WITH_DOCS_CHM = 1
+ endif
+-# By default only include translations in documentation-only builds
+-ifdef VBOX_ONLY_DOCS
+- ifndef VBOX_NO_DOCS_TRANSLATIONS
+-  VBOX_WITH_DOCS_TRANSLATIONS = 1
+- endif
+-endif
++VBOX_WITH_DOCS_TRANSLATIONS = 1
+ # Default languages
+ VBOX_MANUAL_LANGUAGES = en_US
+ ifdef VBOX_WITH_DOCS_TRANSLATIONS

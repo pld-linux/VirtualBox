@@ -95,6 +95,7 @@ Patch9:		pld-guest.patch
 Patch10:	16-no-update.patch
 Patch11:	18-system-xorg.patch
 Patch12:	x8664-build.patch
+Patch13:	%{name}-all-translations.patch
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
 %ifarch %{x8664}
@@ -542,6 +543,7 @@ cd ../..\
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
+%patch13 -p0
 
 %{__sed} -i -e 's,@VBOX_DOC_PATH@,%{_docdir}/%{name}-%{version},' \
 	-e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/common/virtualbox.desktop.in
@@ -924,6 +926,14 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %if %{with doc}
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxManageHelp
 %endif
+%dir %{_libdir}/%{pname}/tools
+%attr(755,root,root) %{_libdir}/%{pname}/tools/RTGzip
+%attr(755,root,root) %{_libdir}/%{pname}/tools/RTLdrFlt
+%attr(755,root,root) %{_libdir}/%{pname}/tools/RTManifest
+%attr(755,root,root) %{_libdir}/%{pname}/tools/RTRm
+%attr(755,root,root) %{_libdir}/%{pname}/tools/RTShutdown
+%attr(755,root,root) %{_libdir}/%{pname}/tools/RTSignTool
+%attr(755,root,root) %{_libdir}/%{pname}/tools/RTTar
 
 %dir %{_libdir}/%{pname}/ExtensionPacks
 %{_libdir}/%{pname}/ExtensionPacks/VNC/ExtPack.xml
