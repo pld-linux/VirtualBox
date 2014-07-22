@@ -749,6 +749,7 @@ mv $RPM_BUILD_ROOT%{_datadir}/%{pname}/src $RPM_BUILD_ROOT%{_usrsrc}/vboxhost-%{
 
 %if %{with doc}
 ln -sf %{_docdir}/%{pname}-doc-%{version}/UserManual.pdf $RPM_BUILD_ROOT%{_libdir}/%{pname}/UserManual.pdf
+ln -sf %{_docdir}/%{pname}-doc-%{version}/UserManual_fr_FR.pdf $RPM_BUILD_ROOT%{_libdir}/%{pname}/UserManual_fr_FR.pdf
 %endif
 %endif
 
@@ -1053,8 +1054,10 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %defattr(644,root,root,755)
 # this is a symlink...
 %doc %{_libdir}/%{pname}/UserManual.pdf
+%lang(fr) %doc %{_libdir}/%{pname}/UserManual_fr_FR.pdf
 # ..to this file
 %doc %{outdir}/UserManual.pdf
+%lang(fr) %doc %{outdir}/UserManual_fr_FR.pdf
 %endif
 
 %files -n xorg-driver-video-vboxvideo
