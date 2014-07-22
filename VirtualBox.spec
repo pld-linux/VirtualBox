@@ -61,7 +61,7 @@ exit 1
 %define		bkpkg	%(echo %{_build_kernels} | tr , '\\n' | while read n ; do echo %%undefine alt_kernel ; [ -z "$n" ] || echo %%define alt_kernel $n ; echo %%build_kernel_pkg ; done)
 %define		ikpkg	%(echo %{_build_kernels} | tr , '\\n' | while read n ; do echo %%undefine alt_kernel ; [ -z "$n" ] || echo %%define alt_kernel $n ; echo %%install_kernel_pkg ; done)
 
-%define		rel		1
+%define		rel		2
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
@@ -95,7 +95,7 @@ Patch9:		pld-guest.patch
 Patch10:	16-no-update.patch
 Patch11:	18-system-xorg.patch
 Patch12:	x8664-build.patch
-Patch13:	%{name}-all-translations.patch
+Patch13:	%{pname}-all-translations.patch
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
 %ifarch %{x8664}
@@ -749,7 +749,6 @@ mv $RPM_BUILD_ROOT%{_datadir}/%{pname}/src $RPM_BUILD_ROOT%{_usrsrc}/vboxhost-%{
 
 %if %{with doc}
 ln -sf %{_docdir}/%{pname}-doc-%{version}/UserManual.pdf $RPM_BUILD_ROOT%{_libdir}/%{pname}/UserManual.pdf
-ln -sf %{_docdir}/%{pname}-doc-%{version}/UserManual_fr_FR.pdf $RPM_BUILD_ROOT%{_libdir}/%{pname}/UserManual_fr_FR.pdf
 %endif
 %endif
 
@@ -1054,10 +1053,8 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %defattr(644,root,root,755)
 # this is a symlink...
 %doc %{_libdir}/%{pname}/UserManual.pdf
-%lang(fr) %doc %{_libdir}/%{pname}/UserManual_fr_FR.pdf
 # ..to this file
 %doc %{outdir}/UserManual.pdf
-%lang(fr) %doc %{outdir}/UserManual_fr_FR.pdf
 %endif
 
 %files -n xorg-driver-video-vboxvideo
