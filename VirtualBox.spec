@@ -718,7 +718,7 @@ fakeroot sh -x $RPM_BUILD_ROOT%{_libdir}/%{pname}/scripts/install.sh \
 	--root $RPM_BUILD_ROOT
 
 %{__mv} $RPM_BUILD_ROOT{%{_datadir}/%{pname},/lib/udev}/VBoxCreateUSBNode.sh
-cp -p %{SOURCE6} $RPM_BUILD_ROOT/etc/udev/rules.d/10-vboxdrv.rules
+cp -p %{SOURCE6} $RPM_BUILD_ROOT/etc/udev/rules.d/60-vboxdrv.rules
 
 %if %{with dkms}
 mv $RPM_BUILD_ROOT%{_datadir}/%{pname}/src $RPM_BUILD_ROOT%{_usrsrc}/vboxhost-%{version}-%{rel}
