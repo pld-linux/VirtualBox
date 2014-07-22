@@ -844,23 +844,19 @@ fi
 %addusertogroup xdm vbox
 
 %post -n dkms-vboxguest
-set -x
 dkms add -m vboxguest -v %{version}-%{rel} --rpm_safe_upgrade && \
 dkms build -m vboxguest -v %{version}-%{rel} --rpm_safe_upgrade && \
 dkms install -m vboxguest -v %{version}-%{rel} --rpm_safe_upgrade || :
 
 %preun -n dkms-vboxguest
-set -x
 dkms remove -m vboxguest -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 
 %post -n dkms-vboxhost
-set -x
 dkms add -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade && \
 dkms build -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade && \
 dkms install -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade || :
 
 %preun -n dkms-vboxhost
-set -x
 dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 
 %if %{with userspace}
