@@ -718,7 +718,7 @@ fakeroot sh -x $RPM_BUILD_ROOT%{_libdir}/%{pname}/scripts/install.sh \
 	--root $RPM_BUILD_ROOT
 
 %{__mv} $RPM_BUILD_ROOT{%{_datadir}/%{pname},/lib/udev}/VBoxCreateUSBNode.sh
-cp -p %{SOURCE6} $RPM_BUILD_ROOT/etc/udev/rules.d/virtualbox.rules
+cp -p %{SOURCE6} $RPM_BUILD_ROOT/etc/udev/rules.d/10-vboxdrv.rules
 
 %if %{with dkms}
 mv $RPM_BUILD_ROOT%{_datadir}/%{pname}/src $RPM_BUILD_ROOT%{_usrsrc}/vboxhost-%{version}-%{rel}
@@ -966,7 +966,7 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %dir %{_datadir}/%{pname}
 %attr(755,root,root) %{_datadir}/%{pname}/VBoxSysInfo.sh
 
-%config(noreplace) %verify(not md5 mtime size) /etc/udev/rules.d/virtualbox.rules
+%config(noreplace) %verify(not md5 mtime size) /etc/udev/rules.d/*.rules
 %attr(755,root,root) /lib/udev/VBoxCreateUSBNode.sh
 
 %files gui
