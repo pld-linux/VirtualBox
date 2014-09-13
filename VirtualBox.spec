@@ -145,7 +145,7 @@ BuildRequires:	libvpx-devel
 BuildRequires:	libxml2-devel >= 2.6.26
 BuildRequires:	libxslt-devel >= 1.1.17
 BuildRequires:	libxslt-progs >= 1.1.17
-%{?with_lightdm:BuildRequires:	lightdm-libs-qt-devel}
+%{?with_lightdm:BuildRequires:	lightdm-libs-qt4-devel}
 BuildRequires:	makeself
 BuildRequires:	mkisofs
 BuildRequires:	pam-devel
