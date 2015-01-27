@@ -29,17 +29,6 @@
 exit 1
 %endif
 
-%if "%{_alt_kernel}" != "%{nil}"
-%if 0%{?build_kernels:1}
-%{error:alt_kernel and build_kernels are mutually exclusive}
-exit 1
-%endif
-%undefine	with_userspace
-%global		_build_kernels		%{alt_kernel}
-%else
-%global		_build_kernels		%{?build_kernels:,%{?build_kernels}}
-%endif
-
 %if %{without userspace}
 # nothing to be placed to debuginfo package
 %undefine	with_debuginfo
@@ -149,7 +138,7 @@ BuildRequires:	python-devel
 BuildRequires:	python-modules
 BuildRequires:	qt4-build >= 4.2.0
 BuildRequires:	qt4-linguist
-BuildRequires:	rpmbuild(macros) >= 1.678
+BuildRequires:	rpmbuild(macros) >= 1.701
 BuildRequires:	sed >= 4.0
 %if %{with doc}
 BuildRequires:	texlive-fonts-bitstream
@@ -165,7 +154,7 @@ BuildRequires:	xerces-c-devel >= 2.6.0
 BuildRequires:	yasm
 BuildRequires:	zlib-devel >= 1.2.1
 %endif
-%{?with_kernel:%{expand:%kbrs}}
+%{?with_kernel:%{expand:%buildrequires_kernel kernel%%{_alt_kernel}-module-build >= 3:2.6.20.2}}
 Requires(post,preun):	/sbin/chkconfig
 Requires(postun):	/usr/sbin/groupdel
 Requires(pre):	/usr/bin/getgid
@@ -515,7 +504,7 @@ cd ../..\
 %install_kernel_modules -D PLD-MODULE-BUILD/installed -m PLD-MODULE-BUILD/GuestDrivers/vboxvideo/vboxvideo -d misc\
 %{nil}
 
-%{?with_kernel:%{expand:%kpkg}}
+%{?with_kernel:%{expand:%create_kernel_packages}}
 
 %prep
 %setup -q -n %{pname}-%{version}
@@ -606,7 +595,7 @@ kmk %{?_smp_mflags}
 %{__cc} %{rpmcflags} %{rpmldflags} -Wall -Werror src/VBox/Additions/linux/sharedfolders/{mount.vboxsf.c,vbsfmount.c} -o mount.vboxsf
 %endif
 
-%{?with_kernel:%{expand:%bkpkg}}
+%{?with_kernel:%{expand:%build_kernel_packages}}
 
 %install
 rm -rf $RPM_BUILD_ROOT
