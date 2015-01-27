@@ -13,19 +13,12 @@
 # Conditional build:
 %bcond_without	doc		# don't build the documentation
 %bcond_without	debuginfo		# disable debuginfo creation (to save space when compiling)
-%bcond_without	dist_kernel	# without distribution kernel
 %bcond_without	kernel		# don't build kernel module
 %bcond_without	userspace	# don't build userspace package
 %bcond_with	webservice	# webservice (SOAP) support
 %bcond_without	lightdm		# lightdm greeter
 %bcond_without	dkms		# build dkms package
 %bcond_without	verbose
-
-%if %{without kernel}
-%undefine	with_dist_kernel
-%else
-%define		_duplicate_files_terminate_build	0
-%endif
 
 # The goal here is to have main, userspace, package built once with
 # simple release number, and only rebuild kernel packages with kernel
@@ -172,7 +165,7 @@ BuildRequires:	xerces-c-devel >= 2.6.0
 BuildRequires:	yasm
 BuildRequires:	zlib-devel >= 1.2.1
 %endif
-%{?with_dist_kernel:%{expand:%kbrs}}
+%{?with_kernel:%{expand:%kbrs}}
 Requires(post,preun):	/sbin/chkconfig
 Requires(postun):	/usr/sbin/groupdel
 Requires(pre):	/usr/bin/getgid
@@ -424,11 +417,9 @@ Requires(post,postun):	/sbin/depmod\
 Requires(post):	systemd-units >= 38\
 Requires:	dev >= 2.9.0-7\
 Requires:	systemd-units >= 38\
-%if %{with dist_kernel}\
 %requires_releq_kernel\
 Requires:	%{releq_kernel -n drm}\
 Requires(postun):	%releq_kernel\
-%endif\
 Provides:	kernel(vboxguest) = %{version}-%{rel}\
 Provides:	kernel(vboxsf) = %{version}-%{rel}\
 Provides:	kernel(vboxvideo) = %{version}-%{rel}\
@@ -453,10 +444,8 @@ Group:		Base/Kernel\
 Requires(post,postun):	/sbin/depmod\
 Requires(post):	systemd-units >= 38\
 Requires:	dev >= 2.9.0-7\
-%if %{with dist_kernel}\
 %requires_releq_kernel\
 Requires(postun):	%releq_kernel\
-%endif\
 Requires:	systemd-units >= 38\
 Provides:	kernel(vboxdrv) = %{version}-%{rel}\
 Provides:	kernel(vboxnetadp) = %{version}-%{rel}\
