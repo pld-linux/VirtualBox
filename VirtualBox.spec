@@ -29,6 +29,10 @@
 exit 1
 %endif
 
+%if %{with kernel}
+%define		_duplicate_files_terminate_build	0
+%endif
+
 %if %{without userspace}
 # nothing to be placed to debuginfo package
 %undefine	with_debuginfo
