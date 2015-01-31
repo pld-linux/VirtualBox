@@ -167,7 +167,7 @@ Requires:	libvncserver >= 0.9.9
 Requires:	udev-core
 Provides:	group(vbox)
 Obsoletes:	VirtualBox-udev < 4.2.10-5
-ExclusiveArch:	%{ix86} %{x8664}
+ExclusiveArch:	%{ix86} %{x8664} x32
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %ifarch %{x8664}
