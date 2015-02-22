@@ -47,7 +47,7 @@ exit 1
 %define		bkpkg	%(echo %{_build_kernels} | tr , '\\n' | while read n ; do echo %%undefine alt_kernel ; [ -z "$n" ] || echo %%define alt_kernel $n ; echo %%build_kernel_pkg ; done)
 %define		ikpkg	%(echo %{_build_kernels} | tr , '\\n' | while read n ; do echo %%undefine alt_kernel ; [ -z "$n" ] || echo %%define alt_kernel $n ; echo %%install_kernel_pkg ; done)
 
-%define		rel		4
+%define		rel		5
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
@@ -341,8 +341,7 @@ Group:		X11/Applications
 Requires:	Mesa-dri-driver-swrast
 Requires:	xorg-xserver-libdri >= 1.7.4
 Requires:	xorg-xserver-server >= 1.0.99.901
-Requires:	xorg-xserver-server(videodrv-abi) <= 18.0
-Requires:	xorg-xserver-server(videodrv-abi) >= 2.0
+%{?requires_xorg_xserver_videodrv}
 Provides:	OpenGL = 2.1
 Provides:	OpenGL-GLX = 1.3
 Provides:	xorg-driver-video
