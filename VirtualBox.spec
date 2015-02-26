@@ -19,6 +19,7 @@
 %bcond_without	lightdm		# lightdm greeter
 %bcond_without	dkms		# build dkms package
 %bcond_without	verbose
+%bcond_without	gui			# disable Qt4 GUI frontend build
 
 # The goal here is to have main, userspace, package built once with
 # simple release number, and only rebuild kernel packages with kernel
@@ -590,6 +591,7 @@ EOF
 	--disable-hardening \
 	--disable-kmods \
 	--enable-vnc \
+	%{!?with_gui:--disable-qt} \
 	%{__enable webservice} \
 	%{nil}
 
@@ -619,6 +621,11 @@ fi
 
 cp -a$l %{outdir}/* $RPM_BUILD_ROOT%{_libdir}/%{pname}
 cp -a$l %{SOURCE1} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/VBoxGuestAdditions.iso
+
+%if %{without gui}
+%{__rm} -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/icons
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/virtualbox.xml
+%endif
 
 # vboxvideo
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/VBoxOGL.so,%{_libdir}/xorg/modules/dri/vboxvideo_dri.so}
@@ -696,6 +703,7 @@ fakeroot sh -x $RPM_BUILD_ROOT%{_libdir}/%{pname}/scripts/install.sh \
 	--ose \
 	--prefix %{_prefix} \
 	%{!?with_webservice:--no-web-service} \
+	%{!?with_gui:--no-qt} \
 	--root $RPM_BUILD_ROOT
 
 %{__mv} $RPM_BUILD_ROOT{%{_datadir}/%{pname},/lib/udev}/VBoxCreateUSBNode.sh
@@ -712,7 +720,6 @@ mv $RPM_BUILD_ROOT%{_datadir}/%{pname}/src $RPM_BUILD_ROOT%{_usrsrc}/vboxhost-%{
 %{__rm} -r $RPM_BUILD_ROOT%{_bindir}/vboxheadless
 %{__rm} -r $RPM_BUILD_ROOT%{_bindir}/vboxmanage
 %{__rm} -r $RPM_BUILD_ROOT%{_bindir}/vboxsdl
-%{__rm} -r $RPM_BUILD_ROOT%{_bindir}/virtualbox
 
 # cleanup unpackaged
 %{__rm} -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/{sdk,testcase}
@@ -723,8 +730,13 @@ mv $RPM_BUILD_ROOT%{_datadir}/%{pname}/src $RPM_BUILD_ROOT%{_usrsrc}/vboxhost-%{
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/ExtensionPacks/VNC/ExtPack-license.*
 %{__rm} -r $RPM_BUILD_ROOT%{py_sitescriptdir}/vboxapi*
 
+%if %{with gui}
+# cleanup lowercased variants, not used in any script (less cruft)
+%{__rm} -r $RPM_BUILD_ROOT%{_bindir}/virtualbox
 # weird icon size
 %{__rm} -r $RPM_BUILD_ROOT%{_iconsdir}/hicolor/40x40
+%endif
+
 # duplicate, we already have virtualbox.png (128x128), this is 32x32
 %{__rm} -r $RPM_BUILD_ROOT%{_pixmapsdir}/VBox.png
 
@@ -946,6 +958,7 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %config(noreplace) %verify(not md5 mtime size) /etc/udev/rules.d/*.rules
 %attr(755,root,root) /lib/udev/VBoxCreateUSBNode.sh
 
+%if %{with gui}
 %files gui
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/VirtualBox
@@ -992,6 +1005,7 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %{_iconsdir}/hicolor/*/apps/virtualbox.svg
 %{_iconsdir}/hicolor/*/mimetypes/virtualbox-*.png
 %{_datadir}/mime/packages/virtualbox.xml
+%endif
 
 %files additions
 %defattr(644,root,root,755)
