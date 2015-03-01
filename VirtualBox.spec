@@ -81,8 +81,7 @@ Patch8:		lightdm-greeter-g++-link.patch
 Patch9:		pld-guest.patch
 Patch10:	16-no-update.patch
 Patch11:	18-system-xorg.patch
-Patch12:	x8664-build.patch
-Patch13:	%{pname}-all-translations.patch
+Patch12:	%{pname}-all-translations.patch
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
 %ifarch %{x8664}
@@ -524,8 +523,7 @@ cd ../..\
 %patch9 -p1
 %patch10 -p1
 %patch11 -p1
-%patch12 -p1
-%patch13 -p0
+%patch12 -p0
 
 %{__sed} -i -e 's,@VBOX_DOC_PATH@,%{_docdir}/%{name}-%{version},' \
 	-e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/common/virtualbox.desktop.in
@@ -554,6 +552,11 @@ cd -
 cp -p src/VBox/Frontends/VirtualBox/images/os_{linux26,pld}.png
 cp -p src/VBox/Frontends/VirtualBox/images/os_{linux26,pld}_64.png
 
+# don't force whole userspace to be built with -fPIC
+# see https://www.virtualbox.org/pipermail/vbox-dev/2015-February/012863.html
+%define		filterout_c		-fPIC
+%define		filterout_cxx		-fPIC
+
 cat <<'EOF'>> LocalConfig.kmk
 %{?with_verbose:KBUILD_VERBOSE=3}
 USERNAME=%(id -un)
@@ -580,6 +583,9 @@ VBOX_WITH_RUNPATH := $(VBOX_PATH_APP_PRIVATE_ARCH)
 VBOX_WITH_TESTCASES :=
 VBOX_WITH_TESTSUITE :=
 EOF
+
+%undefine	filterout_c
+%undefine	filterout_cxx
 
 %build
 %if %{with userspace}
