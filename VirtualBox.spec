@@ -53,14 +53,14 @@ exit 1
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	4.3.22
+Version:	4.3.24
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	fc21ecc1044dc13cd6c6b601823c6df3
+# Source0-md5:	c9711ee4a040de131c638168d321f3ff
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	ebcb73f29d30a90df6d72dec554a7de7
+# Source1-md5:	a1a4ccd53257c881214aa889f28de9b6
 Source2:	vboxservice.init
 Source3:	vboxservice.service
 Source5:	mount.vdi
@@ -82,7 +82,6 @@ Patch9:		pld-guest.patch
 Patch10:	16-no-update.patch
 Patch11:	18-system-xorg.patch
 Patch12:	%{pname}-all-translations.patch
-Patch13:	xorg-version.patch
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
 %ifarch %{x8664}
@@ -525,7 +524,6 @@ cd ../..\
 %patch10 -p1
 %patch11 -p1
 %patch12 -p0
-%patch13 -p1
 
 %{__sed} -i -e 's,@VBOX_DOC_PATH@,%{_docdir}/%{name}-%{version},' \
 	-e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/common/virtualbox.desktop.in
