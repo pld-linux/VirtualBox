@@ -53,14 +53,14 @@ exit 1
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	4.3.24
+Version:	4.3.26
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	c9711ee4a040de131c638168d321f3ff
+# Source0-md5:	df8fa3b1820773556b33ae0405553120
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	a1a4ccd53257c881214aa889f28de9b6
+# Source1-md5:	0e81ff4d6014c7353df0f7b84db2c2b2
 Source2:	vboxservice.init
 Source3:	vboxservice.service
 Source5:	mount.vdi
