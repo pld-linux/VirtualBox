@@ -628,7 +628,8 @@ if cp -al COPYING $RPM_BUILD_ROOT/COPYING; then
 fi
 
 cp -a$l %{outdir}/* $RPM_BUILD_ROOT%{_libdir}/%{pname}
-cp -a$l %{SOURCE1} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/VBoxGuestAdditions.iso
+cp -p$l %{SOURCE1} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/VBoxGuestAdditions.iso ||
+cp -p %{SOURCE1} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/VBoxGuestAdditions.iso
 
 %if %{without gui}
 %{__rm} -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/icons
