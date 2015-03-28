@@ -82,6 +82,7 @@ Patch9:		pld-guest.patch
 Patch10:	16-no-update.patch
 Patch11:	18-system-xorg.patch
 Patch12:	%{pname}-all-translations.patch
+Patch13:	x32.patch
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
 %ifarch %{x8664}
@@ -524,6 +525,7 @@ cd ../..\
 %patch10 -p1
 %patch11 -p1
 %patch12 -p0
+%patch13 -p1
 
 %{__sed} -i -e 's,@VBOX_DOC_PATH@,%{_docdir}/%{name}-%{version},' \
 	-e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/common/virtualbox.desktop.in
