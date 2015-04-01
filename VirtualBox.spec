@@ -21,10 +21,6 @@
 %bcond_without	verbose
 %bcond_without	gui			# disable Qt4 GUI frontend build
 
-%if "%{?alt_kernel}" != "" && 0%{?build_kernels:1}
-	%{error:alt_kernel (%{?alt_kernel}) and build_kernels (%{?build_kernels}) defined}
-%endif
-
 %if 0%{?_pld_builder:1} && %{with kernel} && %{with userspace}
 %{error:kernel and userspace cannot be built at the same time on PLD builders}
 exit 1
@@ -43,7 +39,7 @@ exit 1
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		2
+%define		rel		3
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
