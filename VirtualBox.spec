@@ -11,6 +11,7 @@
 # - fix desc for dkms packages (proper wording needed), kernel modules desc is mess as well
 #
 # Conditional build:
+%bcond_with	all_langs	# build with all manual translations
 %bcond_without	doc		# don't build the documentation
 %bcond_without	debuginfo		# disable debuginfo creation (to save space when compiling)
 %bcond_without	kernel		# don't build kernel module
@@ -39,19 +40,19 @@ exit 1
 %define		_enable_debug_packages	0
 %endif
 
-%define		rel		2
+%define		rel		0.1
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	4.3.28
+Version:	5.0.0
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	53dcfb7d1cf13716410f7a5de6a75fba
+# Source0-md5:	1f43c53b49c50bd7700a86000ca85dda
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	ed0796a1ec2cfc75eae20e3b1211ab73
+# Source1-md5:	8d9f1d600ff65d1230b9b4e386f2ad48
 Source2:	vboxservice.init
 Source3:	vboxservice.service
 Source5:	mount.vdi
@@ -60,7 +61,7 @@ Source7:	%{pname}-virtualbox-host-modules-load.conf
 Source8:	%{pname}-virtualbox-guest-modules-load.conf
 Source9:	vboxautostart.init
 Source10:	autostart.cfg
-Patch0:		%{pname}-configure-spaces.patch
+Patch0:		%{pname}-version-error.patch
 Patch1:		%{pname}-VBoxSysInfo.patch
 Patch2:		%{pname}-warning_workaround.patch
 Patch3:		%{pname}-dri.patch
@@ -74,6 +75,7 @@ Patch10:	16-no-update.patch
 Patch11:	18-system-xorg.patch
 Patch12:	%{pname}-all-translations.patch
 Patch13:	x32.patch
+Patch14:	%{pname}-no-scrextend.patch
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
 %ifarch %{x8664}
@@ -509,8 +511,11 @@ cd ../..\
 %patch9 -p1
 %patch10 -p1
 %patch11 -p1
+%if %{with all_langs}
 %patch12 -p0
+%endif
 %patch13 -p1
+%patch14 -p1
 
 %{__sed} -i -e 's,@VBOX_DOC_PATH@,%{_docdir}/%{name}-%{version},' \
 	-e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/common/virtualbox.desktop.in
@@ -565,6 +570,7 @@ VBOX_PATH_SHARED_LIBS := $(VBOX_PATH_APP_PRIVATE_ARCH)
 VBOX_WITH_ORIGIN :=
 VBOX_WITH_RUNPATH := $(VBOX_PATH_APP_PRIVATE_ARCH)
 #VBOX_PATH_APP_DOCS := %{_docdir}/%{pname}-doc-%{version}
+VBOX_PATH_DOCBOOK_DTD := %{_datadir}/sgml/docbook/xml-dtd-4.4
 
 # don't build testcases to save time, they are not needed for the package
 VBOX_WITH_TESTCASES :=
@@ -736,7 +742,9 @@ mv $RPM_BUILD_ROOT%{_datadir}/%{pname}/src $RPM_BUILD_ROOT%{_usrsrc}/vboxhost-%{
 
 %if %{with doc}
 ln -sf %{_docdir}/%{pname}-doc-%{version}/UserManual.pdf $RPM_BUILD_ROOT%{_libdir}/%{pname}/UserManual.pdf
+%if %{with all_langs}
 ln -sf %{_docdir}/%{pname}-doc-%{version}/UserManual_fr_FR.pdf $RPM_BUILD_ROOT%{_libdir}/%{pname}/UserManual_fr_FR.pdf
+%endif
 %endif
 %endif
 
@@ -857,13 +865,15 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_bindir}/VBox
 %attr(755,root,root) %{_bindir}/VBoxAutostart
 %attr(755,root,root) %{_bindir}/VBoxBalloonCtrl
+%attr(755,root,root) %{_bindir}/VBoxDTrace
 %attr(755,root,root) %{_bindir}/VBoxHeadless
 %attr(755,root,root) %{_bindir}/VBoxManage
 %attr(755,root,root) %{_bindir}/VBoxSDL
 %attr(755,root,root) %{_bindir}/VBoxTunctl
+%attr(755,root,root) %{_bindir}/vbox-img
 %dir %{_libdir}/%{pname}
 # libraries
-%attr(755,root,root) %{_libdir}/%{pname}/DBGCPlugInDiggers.so
+%attr(755,root,root) %{_libdir}/%{pname}/DbgPlugInDiggers.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxAuth.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxAuthSimple.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxDD.so
@@ -910,6 +920,7 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxManageHelp
 %endif
 %dir %{_libdir}/%{pname}/tools
+%attr(755,root,root) %{_libdir}/%{pname}/tools/RTDbgSymCache
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTGzip
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTLdrFlt
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTManifest
@@ -917,25 +928,34 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTShutdown
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTSignTool
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTTar
+%attr(755,root,root) %{_libdir}/%{pname}/tools/RTUnzip
+%attr(755,root,root) %{_libdir}/%{pname}/tools/scm
 
 %dir %{_libdir}/%{pname}/ExtensionPacks
 %{_libdir}/%{pname}/ExtensionPacks/VNC/ExtPack.xml
 %dir %{_libdir}/%{pname}/ExtensionPacks/VNC
 %dir %{_libdir}/%{pname}/ExtensionPacks/VNC/linux*
 %attr(755,root,root) %{_libdir}/%{pname}/ExtensionPacks/VNC/linux*/VBoxVNC*.so
+%dir %{_libdir}/%{pname}/ExtensionPacks/Oracle_VBoxDTrace_Extension_Pack
+%{_libdir}/%{pname}/ExtensionPacks/Oracle_VBoxDTrace_Extension_Pack/ExtPack.xml
+%dir %{_libdir}/%{pname}/ExtensionPacks/Oracle_VBoxDTrace_Extension_Pack/linux*
+%attr(755,root,root) %{_libdir}/%{pname}/ExtensionPacks/Oracle_VBoxDTrace_Extension_Pack/linux*/VBoxDTrace*.so
+%{_libdir}/%{pname}/ExtensionPacks/Oracle_VBoxDTrace_Extension_Pack/linux*/VBoxDTraceR0.debug
+%{_libdir}/%{pname}/ExtensionPacks/Oracle_VBoxDTrace_Extension_Pack/linux*/VBoxDTraceR0.r0
 
-%{_libdir}/%{pname}/VBoxDD2GC.debug
-%{_libdir}/%{pname}/VBoxDD2GC.gc
+%{_libdir}/%{pname}/VBoxCpuReport
 %{_libdir}/%{pname}/VBoxDD2R0.debug
 %{_libdir}/%{pname}/VBoxDD2R0.r0
-%{_libdir}/%{pname}/VBoxDDGC.debug
-%{_libdir}/%{pname}/VBoxDDGC.gc
+%{_libdir}/%{pname}/VBoxDD2RC.debug
+%{_libdir}/%{pname}/VBoxDD2RC.rc
+%{_libdir}/%{pname}/VBoxDDRC.debug
+%{_libdir}/%{pname}/VBoxDDRC.rc
 %{_libdir}/%{pname}/VBoxDDR0.debug
 %{_libdir}/%{pname}/VBoxDDR0.r0
 %{_libdir}/%{pname}/VBoxEFI32.fd
 %{_libdir}/%{pname}/VBoxEFI64.fd
-%{_libdir}/%{pname}/VMMGC.debug
-%{_libdir}/%{pname}/VMMGC.gc
+%{_libdir}/%{pname}/VMMRC.debug
+%{_libdir}/%{pname}/VMMRC.rc
 %{_libdir}/%{pname}/VMMR0.debug
 %{_libdir}/%{pname}/VMMR0.r0
 
@@ -1043,10 +1063,14 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %defattr(644,root,root,755)
 # this is a symlink...
 %doc %{_libdir}/%{pname}/UserManual.pdf
+%if %{with all_langs}
 %lang(fr) %doc %{_libdir}/%{pname}/UserManual_fr_FR.pdf
+%endif
 # ..to this file
 %doc %{outdir}/UserManual.pdf
+%if %{with all_langs}
 %lang(fr) %doc %{outdir}/UserManual_fr_FR.pdf
+%endif
 %endif
 
 %files -n xorg-driver-video-vboxvideo

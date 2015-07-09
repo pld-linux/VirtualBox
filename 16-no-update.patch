@@ -14,49 +14,55 @@ diff a/src/VBox/Frontends/VirtualBox/src/net/UIUpdateManager.cpp b/src/VBox/Fron
      /* Force call for new version check: */
      sltCheckIfUpdateIsNecessary(true /* force call */);
  }
---- a/src/VBox/Frontends/VirtualBox/src/globals/UIActionPool.cpp
-+++ b/src/VBox/Frontends/VirtualBox/src/globals/UIActionPool.cpp
-@@ -538,7 +538,6 @@ void UIActionPool::createActions()
-     m_pool[UIActionIndex_Simple_ResetWarnings] = new UIActionSimpleResetWarnings(this);
+--- VirtualBox-5.0.0/src/VBox/./Frontends/VirtualBox/src/globals/UIActionPool.cpp.orig	2015-07-09 20:11:53.129742315 +0200
++++ VirtualBox-5.0.0/src/VBox/./Frontends/VirtualBox/src/globals/UIActionPool.cpp	2015-07-09 20:12:02.136424394 +0200
+@@ -991,7 +991,6 @@
+     m_pool[UIActionIndex_M_Application_S_Preferences] = new UIActionSimplePreferences(this);
  #ifdef VBOX_GUI_WITH_NETWORK_MANAGER
-     m_pool[UIActionIndex_Simple_NetworkAccessManager] = new UIActionSimpleNetworkAccessManager(this);
--    m_pool[UIActionIndex_Simple_CheckForUpdates] = new UIActionSimpleCheckForUpdates(this);
+     m_pool[UIActionIndex_M_Application_S_NetworkAccessManager] = new UIActionSimpleNetworkAccessManager(this);
+-    m_pool[UIActionIndex_M_Application_S_CheckForUpdates] = new UIActionSimpleCheckForUpdates(this);
  #endif /* VBOX_GUI_WITH_NETWORK_MANAGER */
-     m_pool[UIActionIndex_Simple_About] = new UIActionSimpleAbout(this);
- }
---- a/src/VBox/Frontends/VirtualBox/src/globals/UIActionPool.h
-+++ b/src/VBox/Frontends/VirtualBox/src/globals/UIActionPool.h
-@@ -47,7 +47,6 @@ enum UIActionIndex
-     UIActionIndex_Simple_ResetWarnings,
+     m_pool[UIActionIndex_M_Application_S_ResetWarnings] = new UIActionSimpleResetWarnings(this);
+     m_pool[UIActionIndex_M_Application_S_Close] = new UIActionSimplePerformClose(this);
+@@ -1033,8 +1033,6 @@
  #ifdef VBOX_GUI_WITH_NETWORK_MANAGER
-     UIActionIndex_Simple_NetworkAccessManager,
--    UIActionIndex_Simple_CheckForUpdates,
+     connect(action(UIActionIndex_M_Application_S_NetworkAccessManager), SIGNAL(triggered()),
+             gNetworkManager, SLOT(show()), Qt::UniqueConnection);
+-    connect(action(UIActionIndex_M_Application_S_CheckForUpdates), SIGNAL(triggered()),
+-            gUpdateManager, SLOT(sltForceCheck()), Qt::UniqueConnection);
  #endif /* VBOX_GUI_WITH_NETWORK_MANAGER */
-     UIActionIndex_Simple_About,
- 
---- a/src/VBox/Frontends/VirtualBox/src/selector/UISelectorWindow.cpp
-+++ b/src/VBox/Frontends/VirtualBox/src/selector/UISelectorWindow.cpp
-@@ -1301,12 +1301,6 @@ void UISelectorWindow::prepareMenuHelp(Q
-     pMenu->addSeparator();
-     m_pNetworkAccessManager = gActionPool->action(UIActionIndex_Simple_NetworkAccessManager);
-     pMenu->addAction(m_pNetworkAccessManager);
--    m_pUpdateAction = gActionPool->action(UIActionIndex_Simple_CheckForUpdates);
--    CVirtualBox vbox = vboxGlobal().virtualBox();
--    if (VBoxGlobal::shouldWeAllowApplicationUpdate(vbox))
--        pMenu->addAction(m_pUpdateAction);
--    else
--        m_pUpdateAction->setEnabled(false);
- #endif /* VBOX_GUI_WITH_NETWORK_MANAGER */
- #ifndef Q_WS_MAC
-     pMenu->addSeparator();
-@@ -1443,7 +1437,6 @@ void UISelectorWindow::prepareConnection
-     connect(m_pResetWarningsAction, SIGNAL(triggered()), &msgCenter(), SLOT(sltResetSuppressedMessages()));
+     connect(action(UIActionIndex_M_Application_S_ResetWarnings), SIGNAL(triggered()),
+             &msgCenter(), SLOT(sltResetSuppressedMessages()), Qt::UniqueConnection);
+--- VirtualBox-5.0.0/src/VBox/./Frontends/VirtualBox/src/globals/UIActionPool.h.orig	2015-07-09 20:13:36.439757556 +0200
++++ VirtualBox-5.0.0/src/VBox/./Frontends/VirtualBox/src/globals/UIActionPool.h	2015-07-09 20:13:40.446396985 +0200
+@@ -62,7 +62,6 @@
+     UIActionIndex_M_Application_S_Preferences,
  #ifdef VBOX_GUI_WITH_NETWORK_MANAGER
-     connect(m_pNetworkAccessManager, SIGNAL(triggered()), gNetworkManager, SLOT(show()));
--    connect(m_pUpdateAction, SIGNAL(triggered()), gUpdateManager, SLOT(sltForceCheck()));
+     UIActionIndex_M_Application_S_NetworkAccessManager,
+-    UIActionIndex_M_Application_S_CheckForUpdates,
  #endif /* VBOX_GUI_WITH_NETWORK_MANAGER */
-     connect(m_pAboutAction, SIGNAL(triggered()), &msgCenter(), SLOT(sltShowHelpAboutDialog()));
- 
+     UIActionIndex_M_Application_S_ResetWarnings,
+     UIActionIndex_M_Application_S_Close,
+--- VirtualBox-5.0.0/src/VBox/./Frontends/VirtualBox/src/selector/UISelectorWindow.cpp.orig	2015-07-09 20:09:22.239478146 +0200
++++ VirtualBox-5.0.0/src/VBox/./Frontends/VirtualBox/src/selector/UISelectorWindow.cpp	2015-07-09 20:17:20.635207663 +0200
+@@ -1211,8 +1211,6 @@
+     /* 'About' action goes to Application menu: */
+     pMenu->addAction(actionPool()->action(UIActionIndex_M_Application_S_About));
+ # ifdef VBOX_GUI_WITH_NETWORK_MANAGER
+-    /* 'Check for Updates' action goes to Application menu: */
+-    pMenu->addAction(actionPool()->action(UIActionIndex_M_Application_S_CheckForUpdates));
+     /* 'Network Access Manager' action goes to Application menu: */
+     pMenu->addAction(actionPool()->action(UIActionIndex_M_Application_S_NetworkAccessManager));
+ # endif /* VBOX_GUI_WITH_NETWORK_MANAGER */
+@@ -1255,8 +1253,6 @@
+ # ifdef VBOX_GUI_WITH_NETWORK_MANAGER
+     /* 'Network Access Manager' action goes to 'File' menu: */
+     pMenu->addAction(actionPool()->action(UIActionIndex_M_Application_S_NetworkAccessManager));
+-    /* 'Check for Updates' action goes to 'File' menu: */
+-    pMenu->addAction(actionPool()->action(UIActionIndex_M_Application_S_CheckForUpdates));
+ # endif /* VBOX_GUI_WITH_NETWORK_MANAGER */
+     /* 'Reset Warnings' action goes 'File' menu: */
+     pMenu->addAction(actionPool()->action(UIActionIndex_M_Application_S_ResetWarnings));
 diff a/src/VBox/Frontends/VirtualBox/src/settings/UISettingsDialogSpecific.cpp b/src/VBox/Frontends/VirtualBox/src/settings/UISettingsDialogSpecific.cpp
 --- a/src/VBox/Frontends/VirtualBox/src/settings/UISettingsDialogSpecific.cpp
 +++ b/src/VBox/Frontends/VirtualBox/src/settings/UISettingsDialogSpecific.cpp

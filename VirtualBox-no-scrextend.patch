@@ -1,0 +1,10 @@
+--- VirtualBox-5.0.0/doc/manual/docbook2latex.xsl.orig	2015-07-09 22:40:10.126159489 +0200
++++ VirtualBox-5.0.0/doc/manual/docbook2latex.xsl	2015-07-09 22:40:24.342836635 +0200
+@@ -117,7 +117,6 @@
+ \usepackage{fancyvrb}
+ \usepackage{alltt}
+ \usepackage{color}
+-\usepackage{scrextend}
+ \definecolor{darkgreen}{rgb}{0,0.6,0}
+ 
+ </xsl:text>

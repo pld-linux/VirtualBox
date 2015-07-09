@@ -1,0 +1,10 @@
+--- VirtualBox-5.0.0/include/VBox/version.h.orig	2015-07-09 21:39:54.770845993 +0200
++++ VirtualBox-5.0.0/include/VBox/version.h	2015-07-09 21:40:05.787518864 +0200
+@@ -143,7 +143,6 @@
+ #  define VBOX_RC_MORE_STRINGS          VALUE "PrivateBuild", VBOX_PRIVATE_BUILD_DESC "\0"
+ # else
+ #  define VBOX_RC_MORE_STRINGS          VALUE "PrivateBuild", "r" RT_XSTR(VBOX_SVN_REV) "\0"
+-# error
+ # endif
+ #endif
+ #define VBOX_RC_FILE_FLAGS              (VBOX_RC_FILE_FLAGS_DEBUG | VBOX_RC_FILE_FLAGS_PRERELEASE | VBOX_RC_FILE_FLAGS_BUILD)
