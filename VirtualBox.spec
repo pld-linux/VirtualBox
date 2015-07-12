@@ -40,6 +40,8 @@ exit 1
 %define		_enable_debug_packages	0
 %endif
 
+%define		qtver	4.8.0
+
 %define		rel		0.1
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
@@ -87,25 +89,32 @@ BuildRequires:	libstdc++-multilib-32-static
 %if "%{pld_release}" == "ac"
 BuildRequires:	XFree86-devel
 %else
+BuildRequires:	xorg-lib-libX11-devel
 BuildRequires:	xorg-lib-libXcomposite-devel
 BuildRequires:	xorg-lib-libXcursor-devel
+BuildRequires:	xorg-lib-libXdamage-devel
+BuildRequires:	xorg-lib-libXext-devel
+BuildRequires:	xorg-lib-libXinerama-devel
 BuildRequires:	xorg-lib-libXmu-devel
+BuildRequires:	xorg-lib-libXrandr-devel
 BuildRequires:	xorg-proto-glproto-devel
 BuildRequires:	xorg-xserver-server-devel
 %endif
 BuildRequires:	OpenGL-GLU-devel
 BuildRequires:	OpenGL-devel
-BuildRequires:	QtGui-devel
-BuildRequires:	QtNetwork-devel
-BuildRequires:	QtOpenGL-devel
+BuildRequires:	QtCore-devel >= %{qtver}
+BuildRequires:	QtGui-devel >= %{qtver}
+BuildRequires:	QtNetwork-devel >= %{qtver}
+BuildRequires:	QtOpenGL-devel >= %{qtver}
+BuildRequires:	QtXml-devel >= %{qtver}
 BuildRequires:	SDL-devel >= 1.2.7
 BuildRequires:	acpica
 BuildRequires:	alsa-lib-devel >= 1.0.6
 BuildRequires:	bash
 BuildRequires:	bcc
 BuildRequires:	bin86
-BuildRequires:	curl-devel
-BuildRequires:	device-mapper-devel
+BuildRequires:	curl-devel >= 7.19.1
+BuildRequires:	device-mapper-devel >= 1.02
 %{?with_doc:BuildRequires:	docbook-dtd44-xml}
 BuildRequires:	fakeroot
 %{?with_lightdm:BuildRequires:	fltk-devel}
@@ -121,20 +130,21 @@ BuildRequires:	libstdc++-devel >= 5:3.2.3
 BuildRequires:	libstdc++-static >= 5:3.2.3
 BuildRequires:	libuuid-devel
 BuildRequires:	libvncserver-devel >= 0.9.9
-BuildRequires:	libvpx-devel
+BuildRequires:	libvpx-devel >= 0.9.5
 BuildRequires:	libxml2-devel >= 2.6.26
 BuildRequires:	libxslt-devel >= 1.1.17
 BuildRequires:	libxslt-progs >= 1.1.17
 %{?with_lightdm:BuildRequires:	lightdm-libs-qt4-devel}
 BuildRequires:	makeself
 BuildRequires:	mkisofs
+BuildRequires:	openssl-devel >= 0.9.8
 BuildRequires:	pam-devel
 BuildRequires:	pixman-devel
 BuildRequires:	pkgconfig
 BuildRequires:	pulseaudio-devel >= 0.9.0
-BuildRequires:	python-devel
+BuildRequires:	python-devel >= 2.3
 BuildRequires:	python-modules
-BuildRequires:	qt4-build >= 4.2.0
+BuildRequires:	qt4-build
 BuildRequires:	qt4-linguist
 BuildRequires:	rpmbuild(macros) >= 1.701
 BuildRequires:	sed >= 4.0
@@ -149,7 +159,7 @@ BuildRequires:	texlive-xetex
 BuildRequires:	which
 BuildRequires:	xalan-c-devel >= 1.10.0
 BuildRequires:	xerces-c-devel >= 2.6.0
-BuildRequires:	yasm
+BuildRequires:	yasm >= 0.5.1
 BuildRequires:	zlib-devel >= 1.2.1
 %endif
 %{?with_kernel:%{expand:%buildrequires_kernel kernel%%{_alt_kernel}-module-build >= 3:2.6.20.2}}
@@ -222,7 +232,7 @@ konfigurację maszyny wirtualnej na inny komputer.
 Summary:	Qt GUI part for VirtualBox
 Group:		X11/Applications
 Requires:	%{name} = %{version}-%{release}
-Requires:	QtCore >= 4.7.0
+Requires:	QtCore >= %{qtver}
 Requires:	desktop-file-utils
 Requires:	desktop-file-utils
 Requires:	fontconfig
