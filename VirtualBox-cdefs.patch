@@ -1,0 +1,11 @@
+--- include/iprt/cdefs.h~	2015-09-09 22:38:49.039195210 +0200
++++ include/iprt/cdefs.h	2015-09-09 22:39:54.705032329 +0200
+@@ -978,8 +978,6 @@
+ # define RTCALL                 __cdecl
+ #elif defined(RT_OS_OS2)
+ # define RTCALL                 __cdecl
+-#elif defined(__GNUC__) && defined(RT_ARCH_X86)
+-# define RTCALL                 __attribute__((cdecl,regparm(0)))
+ #else
+ # define RTCALL
+ #endif
