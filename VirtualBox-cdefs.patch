@@ -1,11 +1,82 @@
---- include/iprt/cdefs.h~	2015-09-09 22:38:49.039195210 +0200
-+++ include/iprt/cdefs.h	2015-09-09 22:39:54.705032329 +0200
-@@ -978,8 +978,6 @@
- # define RTCALL                 __cdecl
+reverted:
+--- include/iprt/cdefs.h	(revision 57336)
++++ include/iprt/cdefs.h	(revision 57335)
+@@ -949,16 +949,13 @@
+ 
+ /** @def RTCALL
+  * The standard calling convention for the Runtime interfaces.
+- *
+- * @remarks The regparm(0) in the X86/GNUC variant deals with -mregparm=x use in
+- *          the linux kernel and potentially elsewhere (3rd party).
+  */
+ #ifdef _MSC_VER
++# define RTCALL     __cdecl
+-# define RTCALL                 __cdecl
  #elif defined(RT_OS_OS2)
- # define RTCALL                 __cdecl
++# define RTCALL     __cdecl
++#elif defined(__GNUC__) && defined(IN_RING0) && defined(RT_ARCH_X86) /** @todo consider dropping IN_RING0 here. */
++# define RTCALL     __attribute__((cdecl,regparm(0))) /* regparm(0) deals with -mregparm=x use in the linux kernel. */
+-# define RTCALL                 __cdecl
 -#elif defined(__GNUC__) && defined(RT_ARCH_X86)
 -# define RTCALL                 __attribute__((cdecl,regparm(0)))
  #else
  # define RTCALL
  #endif
+@@ -1026,9 +1023,21 @@
+  * @param   type    The return type of the function declaration.
+  */
+ #ifdef __cplusplus
++# if defined(_MSC_VER) || defined(RT_OS_OS2)
++#  define DECLASM(type)          extern "C" type __cdecl
++# elif defined(__GNUC__) && defined(RT_ARCH_X86)
++#  define DECLASM(type)          extern "C" type __attribute__((cdecl,regparm(0)))
++# else
++#  define DECLASM(type)          extern "C" type
++# endif
+-# define DECLASM(type)           extern "C" type RTCALL
+ #else
++# if defined(_MSC_VER) || defined(RT_OS_OS2)
++#  define DECLASM(type)          type __cdecl
++# elif defined(__GNUC__) && defined(RT_ARCH_X86)
++#  define DECLASM(type)          type __attribute__((cdecl,regparm(0)))
++# else
++#  define DECLASM(type)          type
++# endif
+-# define DECLASM(type)           type RTCALL
+ #endif
+ 
+ /** @def DECLASMTYPE
+@@ -1035,7 +1044,11 @@
+  * How to declare an internal assembly function type.
+  * @param   type    The return type of the function.
+  */
++# if defined(_MSC_VER) || defined(RT_OS_OS2)
++# define DECLASMTYPE(type)      type __cdecl
++#else
++# define DECLASMTYPE(type)      type
++#endif
+-#define DECLASMTYPE(type)       type RTCALL
+ 
+ /** @def DECLNORETURN
+  * How to declare a function which does not return.
+reverted:
+--- src/VBox/VMM/VMMR3/PGMDbg.cpp	(revision 57336)
++++ src/VBox/VMM/VMMR3/PGMDbg.cpp	(revision 57335)
+@@ -103,8 +103,15 @@
+  * @param   cbNeedle        Size of what we're searching for.
+  */
+ 
++#if defined(_MSC_VER) || defined(RT_OS_OS2)
++# define DECLASMCALLBACK(type)          type __cdecl
++#elif defined(__GNUC__) && defined(RT_ARCH_X86)
++# define DECLASMCALLBACK(type)          type __attribute__((cdecl,regparm(0)))
++#else
++# define DECLASMCALLBACK(type)          type
++#endif
++typedef DECLASMCALLBACK(uint8_t const *) FNPGMR3DBGFIXEDMEMSCAN(void const *pvHaystack, uint32_t cbHaystack,
++                                                                void const *pvNeedle, size_t cbNeedle);
+-typedef DECLCALLBACK(uint8_t const *) FNPGMR3DBGFIXEDMEMSCAN(void const *pvHaystack, uint32_t cbHaystack,
+-                                                             void const *pvNeedle, size_t cbNeedle);
+ /** Pointer to an fixed size and step assembly scanner function. */
+ typedef FNPGMR3DBGFIXEDMEMSCAN *PFNPGMR3DBGFIXEDMEMSCAN;
+ 
