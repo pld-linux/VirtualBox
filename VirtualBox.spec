@@ -78,7 +78,7 @@ Patch11:	18-system-xorg.patch
 Patch12:	%{pname}-all-translations.patch
 Patch13:	x32.patch
 Patch14:	%{pname}-no-scrextend.patch
-Patch15:	%{pname}-cdefs.patch
+Patch15:	%{pname}-vnc.patch
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
 %ifarch %{x8664}
