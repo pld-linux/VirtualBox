@@ -21,3 +21,24 @@ Index: src/VBox/ExtPacks/VNC/VBoxVNC.cpp
  
 
 ------------------------------------------------------------------------
+------------------------------------------------------------------------
+r57690 | vboxsync | 2015-09-10 15:23:58 +0200 (czw, 10 wrz 2015) | 2 lines
+
+Additions/vbox-greeter: build fix
+
+
+Index: src/VBox/Additions/linux/lightdm-greeter/vbox-greeter.cpp
+===================================================================
+--- src/VBox/Additions/linux/lightdm-greeter/vbox-greeter.cpp	(revision 57689)
++++ src/VBox/Additions/linux/lightdm-greeter/vbox-greeter.cpp	(revision 57690)
+@@ -842,7 +842,7 @@
+  * @param   enmPhase
+  * @param   pfnLog
+  */
+-static void vboxGreeterLogHeaderFooter(PRTLOGGER pLoggerRelease, RTLOGPHASE enmPhase, PFNRTLOGPHASEMSG pfnLog)
++static DECLCALLBACK(void) vboxGreeterLogHeaderFooter(PRTLOGGER pLoggerRelease, RTLOGPHASE enmPhase, PFNRTLOGPHASEMSG pfnLog)
+ {
+     /* Some introductory information. */
+     static RTTIMESPEC s_TimeSpec;
+
+------------------------------------------------------------------------
