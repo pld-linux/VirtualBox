@@ -606,6 +606,7 @@ EOF
 	%{__enable webservice} \
 	%{nil}
 
+. "$PWD/env.sh"
 kmk %{?_smp_mflags}
 
 %{__cc} %{rpmcflags} %{rpmldflags} -Wall -Werror src/VBox/Additions/linux/sharedfolders/{mount.vboxsf.c,vbsfmount.c} -o mount.vboxsf
