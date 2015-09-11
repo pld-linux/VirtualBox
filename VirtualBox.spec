@@ -42,7 +42,7 @@ exit 1
 
 %define		qtver	4.8.0
 
-%define		rel		1
+%define		rel		2
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
@@ -172,7 +172,7 @@ Requires:	libvncserver >= 0.9.9
 Requires:	udev-core
 Provides:	group(vbox)
 Obsoletes:	VirtualBox-udev < 4.2.10-5
-ExclusiveArch:	%{ix86} %{x8664} x32
+ExclusiveArch:	%{ix86} %{x8664}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %ifarch %{x8664}
