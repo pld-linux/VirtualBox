@@ -42,19 +42,19 @@ exit 1
 
 %define		qtver	4.8.0
 
-%define		rel		3
+%define		rel		1
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	5.0.4
+Version:	5.0.6
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	499abc66de7bb74a9117bda75e43ec4d
+# Source0-md5:	30163e68a0d89e9f4590aeb61cd237e5
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	6bec1f5d0bf22841cad08b7973e95588
+# Source1-md5:	51dc71be4e7988547b1a597744b0e33d
 Source2:	vboxservice.init
 Source3:	vboxservice.service
 Source5:	mount.vdi
@@ -78,7 +78,7 @@ Patch11:	18-system-xorg.patch
 Patch12:	%{pname}-all-translations.patch
 Patch13:	x32.patch
 Patch14:	%{pname}-no-scrextend.patch
-Patch15:	%{pname}-vnc.patch
+Patch15:	%{pname}-moc.patch
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
 %ifarch %{x8664}
@@ -935,6 +935,7 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %dir %{_libdir}/%{pname}/tools
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTDbgSymCache
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTGzip
+%attr(755,root,root) %{_libdir}/%{pname}/tools/RTHttp
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTLdrFlt
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTManifest
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTRm
