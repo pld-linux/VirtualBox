@@ -47,14 +47,14 @@ exit 1
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	5.0.8
+Version:	5.0.10
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	8853a2ba183ecf255d0dc19b7584515f
+# Source0-md5:	b978c28a021d637489beb23f7b1380e2
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	28aa52d82296604e698e281a33cdaa3d
+# Source1-md5:	cb17e3e74d1fb72bbc521586f9af10a4
 Source2:	vboxservice.init
 Source3:	vboxservice.service
 Source5:	mount.vdi
@@ -78,7 +78,6 @@ Patch11:	18-system-xorg.patch
 Patch12:	%{pname}-all-translations.patch
 Patch13:	x32.patch
 Patch14:	%{pname}-no-scrextend.patch
-Patch15:	%{pname}-moc.patch
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
 %ifarch %{x8664}
@@ -527,7 +526,6 @@ cd ../..\
 %endif
 %patch13 -p1
 %patch14 -p1
-%patch15 -p0
 
 %{__sed} -i -e 's,@VBOX_DOC_PATH@,%{_docdir}/%{name}-%{version},' \
 	-e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/common/virtualbox.desktop.in
@@ -608,8 +606,6 @@ EOF
 
 . "$PWD/env.sh"
 kmk %{?_smp_mflags}
-
-%{__cc} %{rpmcflags} %{rpmldflags} -Wall -Werror src/VBox/Additions/linux/sharedfolders/{mount.vboxsf.c,vbsfmount.c} -o mount.vboxsf
 %endif
 
 %{?with_kernel:%{expand:%build_kernel_packages}}
@@ -681,8 +677,7 @@ install -d $RPM_BUILD_ROOT/%{_lib}/security
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,/%{_lib}/security}/pam_vbox.so
 
 # mount.vboxsf
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/mount.vboxsf
-install -p mount.vboxsf $RPM_BUILD_ROOT/sbin/mount.vboxsf
+%{__mv} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/mount.vboxsf $RPM_BUILD_ROOT/sbin/mount.vboxsf
 
 # mount.vdi
 install -p %{SOURCE5} $RPM_BUILD_ROOT/sbin/mount.vdi
