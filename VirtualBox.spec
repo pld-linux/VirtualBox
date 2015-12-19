@@ -47,14 +47,14 @@ exit 1
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	5.0.10
+Version:	5.0.12
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	b978c28a021d637489beb23f7b1380e2
+# Source0-md5:	5912835882ef547e0559c7e73bc85828
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	cb17e3e74d1fb72bbc521586f9af10a4
+# Source1-md5:	2a48dcce3f53618d078d473bc91cead3
 Source2:	vboxservice.init
 Source3:	vboxservice.service
 Source5:	mount.vdi
@@ -585,6 +585,8 @@ VBOX_PATH_DOCBOOK_DTD := %{_datadir}/sgml/docbook/xml-dtd-4.4
 # don't build testcases to save time, they are not needed for the package
 VBOX_WITH_TESTCASES :=
 VBOX_WITH_TESTSUITE :=
+
+VBOX_WITH_VRDP_RDESKTOP=
 EOF
 
 %undefine	filterout_c
@@ -736,7 +738,7 @@ mv $RPM_BUILD_ROOT%{_datadir}/%{pname}/src $RPM_BUILD_ROOT%{_usrsrc}/vboxhost-%{
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/tst*
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/scripts/generated.sh
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/ExtensionPacks/VNC/ExtPack-license.*
-%{__rm} -r $RPM_BUILD_ROOT%{py_sitescriptdir}/vboxapi*
+%{__rm} -r $RPM_BUILD_ROOT%{py_sitedir}/vboxapi*
 
 %if %{with gui}
 # cleanup lowercased variants, not used in any script (less cruft)
@@ -995,6 +997,7 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %lang(cs) %{_datadir}/%{pname}/nls/*_cs.qm
 %lang(da) %{_datadir}/%{pname}/nls/*_da.qm
 %lang(de) %{_datadir}/%{pname}/nls/*_de.qm
+%lang(en) %{_datadir}/%{pname}/nls/*_el.qm
 %lang(en) %{_datadir}/%{pname}/nls/*_en.qm
 %lang(es) %{_datadir}/%{pname}/nls/*_es.qm
 %lang(eu) %{_datadir}/%{pname}/nls/*_eu.qm
