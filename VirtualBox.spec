@@ -47,14 +47,14 @@ exit 1
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	5.0.12
+Version:	5.0.14
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	5912835882ef547e0559c7e73bc85828
+# Source0-md5:	e0a02426ad09b475e630881efe911423
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	2a48dcce3f53618d078d473bc91cead3
+# Source1-md5:	875b430362791acdc5c9340220d39b75
 Source2:	vboxservice.init
 Source3:	vboxservice.service
 Source5:	mount.vdi
@@ -1019,6 +1019,7 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %lang(ro) %{_datadir}/%{pname}/nls/*_ro.qm
 %lang(ru) %{_datadir}/%{pname}/nls/*_ru.qm
 %lang(sk) %{_datadir}/%{pname}/nls/*_sk.qm
+%lang(sk) %{_datadir}/%{pname}/nls/*_sl.qm
 %lang(sr) %{_datadir}/%{pname}/nls/*_sr.qm
 %lang(sv) %{_datadir}/%{pname}/nls/*_sv.qm
 %lang(tr) %{_datadir}/%{pname}/nls/*_tr.qm
