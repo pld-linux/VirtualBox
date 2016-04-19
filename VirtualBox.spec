@@ -47,14 +47,14 @@ exit 1
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	5.0.16
+Version:	5.0.18
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	1752a485b1cb377cee5f196918cda741
+# Source0-md5:	5d57e400f4ab75696510aef308f6c7a9
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	c2792bbc09835d20f1d29d6851fb03da
+# Source1-md5:	c7f9dff1f996630a5eab9affbe27febd
 Source2:	vboxservice.init
 Source3:	vboxservice.service
 Source5:	mount.vdi
@@ -642,6 +642,7 @@ cp -p %{SOURCE1} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/VBoxGuestAdditions
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/VBoxOGL.so,%{_libdir}/xorg/modules/dri/vboxvideo_dri.so}
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/vboxvideo_drv_system.so,%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so}
 # XXX: where else to install them that vboxvideo_dri.so finds them? patch with rpath?
+%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxEGL.so
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLarrayspu.so
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLcrutil.so
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLerrorspu.so
@@ -1091,6 +1092,7 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/xorg/modules/drivers/vboxvideo_drv.so
 %attr(755,root,root) %{_libdir}/xorg/modules/dri/vboxvideo_dri.so
 # vboxvideo_dri.so deps
+%attr(755,root,root) %{_libdir}/VBoxEGL.so
 %attr(755,root,root) %{_libdir}/VBoxOGLarrayspu.so
 %attr(755,root,root) %{_libdir}/VBoxOGLcrutil.so
 %attr(755,root,root) %{_libdir}/VBoxOGLerrorspu.so
