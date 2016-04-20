@@ -42,7 +42,7 @@ exit 1
 
 %define		qtver	4.8.0
 
-%define		rel		1
+%define		rel		2
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
@@ -541,6 +541,7 @@ install -d PLD-MODULE-BUILD/{GuestDrivers,HostDrivers}
 cd PLD-MODULE-BUILD
 ../src/VBox/Additions/linux/export_modules guest-modules.tar.gz
 tar -zxf guest-modules.tar.gz -C GuestDrivers
+sed -i s/KERNELRELEASE/KERNELVERSION/ GuestDrivers/vboxvideo/Makefile
 
 ../src/VBox/HostDrivers/linux/export_modules host-modules.tar.gz --without-hardening
 tar -zxf host-modules.tar.gz -C HostDrivers
