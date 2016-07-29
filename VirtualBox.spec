@@ -57,6 +57,7 @@ Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions
 # Source1-md5:	cc94e3885689533e1214e1a73355dbba
 Source2:	vboxservice.init
 Source3:	vboxservice.service
+Source4:	vboxservice.sysconfig
 Source5:	mount.vdi
 Source6:	udev.rules
 Source7:	%{pname}-virtualbox-host-modules-load.conf
@@ -659,7 +660,8 @@ cp -p src/VBox/Additions/x11/Installer/vboxclient.desktop \
 	$RPM_BUILD_ROOT/etc/xdg/autostart/vboxclient.desktop
 install -p src/VBox/Additions/x11/Installer/98vboxadd-xclient $RPM_BUILD_ROOT%{_bindir}/VBoxClient-all
 install -p %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxservice
-install -p %{SOURCE3} $RPM_BUILD_ROOT%{systemdunitdir}/vboxservice.service
+cp -p %{SOURCE3} $RPM_BUILD_ROOT%{systemdunitdir}/vboxservice.service
+cp -p %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/vboxservice
 
 install -p %{SOURCE9} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxautostart
 %{__sed} -i -e 's#@INSTALL_DIR@#%{_libdir}/%{pname}#' $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxautostart
@@ -1043,6 +1045,7 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %defattr(644,root,root,755)
 %attr(755,root,root) /sbin/mount.vboxsf
 %attr(754,root,root) /etc/rc.d/init.d/vboxservice
+%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/vboxservice
 %{systemdunitdir}/vboxservice.service
 %attr(755,root,root) %{_bindir}/VBoxControl
 %attr(755,root,root) %{_bindir}/VBoxService
