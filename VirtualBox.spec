@@ -619,6 +619,7 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with userspace}
 install -d $RPM_BUILD_ROOT{%{_bindir},/sbin,%{_sbindir},%{_libdir}/%{pname}/ExtensionPacks} \
 	$RPM_BUILD_ROOT{%{_pixmapsdir},%{_desktopdir},%{_datadir}/mime/packages} \
+	$RPM_BUILD_ROOT/etc/sysconfig \
 	$RPM_BUILD_ROOT%{_sysconfdir}/vbox/autostart \
 	$RPM_BUILD_ROOT%{_libdir}/xorg/modules/{drivers,dri,input} \
 	$RPM_BUILD_ROOT{/lib/udev,/etc/udev/rules.d} \
