@@ -1,8 +1,29 @@
-VBOXADD_SERVICE_ARGS=""
-#VBOXADD_SERVICE_ARGS+=" --disable-timesync"
-#VBOXADD_SERVICE_ARGS+=" --timesync-interval 10000"
-#VBOXADD_SERVICE_ARGS+=" --timesync-min-adjust 1000"
-#VBOXADD_SERVICE_ARGS+=" --timesync-latency-factor 8"
-#VBOXADD_SERVICE_ARGS+=" --timesync-max-latency 250"
-#VBOXADD_SERVICE_ARGS+=" --disable-vminfo"
-#VBOXADD_SERVICE_ARGS+=" --vminfo-interval 10000"
+# Options for VBoxService
+
+# Disables the timesync service.
+#OPTIONS="$OPTIONS --disable-timesync"
+
+# Set the time when starting the time sync service.
+#OPTIONS="$OPTIONS --timesync-set-start"
+
+# Specifies the interval at which to synchronize the time with the host.
+# The default is 10000 ms.
+#OPTIONS="$OPTIONS --timesync-interval 10000"
+
+# The minimum absolute drift value measured in milliseconds to make adjustments for.
+#OPTIONS="$OPTIONS --timesync-min-adjust 1000"
+
+# The factor to multiply the time query latency with to calculate the dynamic minimum adjust time.
+# The default is 8 times.
+#OPTIONS="$OPTIONS --timesync-latency-factor 8"
+
+# The max host timer query latency to accept.
+# The default is 250 ms.
+#OPTIONS="$OPTIONS --timesync-max-latency 250"
+
+# Disables the vminfo service.
+#OPTIONS="$OPTIONS --disable-vminfo"
+
+# Specifies the interval at which to retrieve the VM information.
+# The default is 10000 ms.
+#OPTIONS="$OPTIONS --vminfo-interval 10000"
