@@ -40,21 +40,21 @@ exit 1
 %define		_enable_debug_packages	0
 %endif
 
-%define		qtver	4.8.0
+%define		qtver	5.3.2
 
 %define		rel		1
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	5.0.20
+Version:	5.1.2
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	2054e12c21cac025916df4162f18efd7
+# Source0-md5:	aff1647170dd92914cddfbd0254b9773
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	cc94e3885689533e1214e1a73355dbba
+# Source1-md5:	0a881c307e66ad963b3a4015b402035b
 Source2:	vboxservice.init
 Source3:	vboxservice.service
 Source4:	vboxservice.sysconfig
@@ -103,11 +103,15 @@ BuildRequires:	xorg-xserver-server-devel
 %endif
 BuildRequires:	OpenGL-GLU-devel
 BuildRequires:	OpenGL-devel
-BuildRequires:	QtCore-devel >= %{qtver}
-BuildRequires:	QtGui-devel >= %{qtver}
-BuildRequires:	QtNetwork-devel >= %{qtver}
-BuildRequires:	QtOpenGL-devel >= %{qtver}
-BuildRequires:	QtXml-devel >= %{qtver}
+BuildRequires:	Qt5Core-devel >= %{qtver}
+BuildRequires:	Qt5DBus-devel >= %{qtver}
+BuildRequires:	Qt5Gui-devel >= %{qtver}
+BuildRequires:	Qt5Network-devel >= %{qtver}
+BuildRequires:	Qt5OpenGL-devel >= %{qtver}
+BuildRequires:	Qt5PrintSupport-devel >= %{qtver}
+BuildRequires:	Qt5Widgets-devel >= %{qtver}
+BuildRequires:	Qt5X11Extras-devel >= %{qtver}
+BuildRequires:	Qt5Xml-devel >= %{qtver}
 BuildRequires:	SDL-devel >= 1.2.7
 BuildRequires:	acpica
 BuildRequires:	alsa-lib-devel >= 1.0.6
@@ -122,7 +126,7 @@ BuildRequires:	fakeroot
 BuildRequires:	gcc >= 5:3.2.3
 %{?with_webservice:BuildRequires:	gsoap-devel}
 BuildRequires:	issue
-BuildRequires:	kBuild >= 0.1.9998.2700
+BuildRequires:	kBuild >= 0.1.9998.2814
 BuildRequires:	libIDL-devel
 BuildRequires:	libcap-static
 BuildRequires:	libdrm-devel
@@ -135,7 +139,7 @@ BuildRequires:	libvpx-devel >= 0.9.5
 BuildRequires:	libxml2-devel >= 2.6.26
 BuildRequires:	libxslt-devel >= 1.1.17
 BuildRequires:	libxslt-progs >= 1.1.17
-%{?with_lightdm:BuildRequires:	lightdm-libs-qt4-devel}
+%{?with_lightdm:BuildRequires:	lightdm-libs-qt5-devel}
 BuildRequires:	makeself
 BuildRequires:	mkisofs
 BuildRequires:	openssl-devel >= 0.9.8
@@ -145,8 +149,8 @@ BuildRequires:	pkgconfig
 BuildRequires:	pulseaudio-devel >= 0.9.0
 BuildRequires:	python-devel >= 2.3
 BuildRequires:	python-modules
-BuildRequires:	qt4-build
-BuildRequires:	qt4-linguist
+BuildRequires:	qt5-build
+BuildRequires:	qt5-linguist
 BuildRequires:	rpmbuild(macros) >= 1.715
 BuildRequires:	sed >= 4.0
 %if %{with doc}
@@ -233,7 +237,7 @@ konfigurację maszyny wirtualnej na inny komputer.
 Summary:	Qt GUI part for VirtualBox
 Group:		X11/Applications
 Requires:	%{name} = %{version}-%{release}
-Requires:	QtCore >= %{qtver}
+Requires:	Qt5Core >= %{qtver}
 Requires:	desktop-file-utils
 Requires:	desktop-file-utils
 Requires:	fontconfig
@@ -699,41 +703,58 @@ install -p %{SOURCE5} $RPM_BUILD_ROOT/sbin/mount.vdi
 
 # unknown - checkme
 %if 1
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/helpers/generate_service_file
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/SUPInstall
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/SUPLoggerCtl
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/SUPUninstall
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/load.sh
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/loadall.sh
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/scripts/VBoxHeadlessXOrg.sh
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/scripts/init_template.sh
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/scripts/install_service
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/vboxshell.py
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/xpidl
 %endif
 
-# use upstream installer to relocate rest of the files, fakeroot because it forces uid/gid 0
-fakeroot sh -x $RPM_BUILD_ROOT%{_libdir}/%{pname}/scripts/install.sh \
-	--ose \
-	--prefix %{_prefix} \
-	%{!?with_webservice:--no-web-service} \
-	%{!?with_gui:--no-qt} \
-	--root $RPM_BUILD_ROOT
+# manual installation steps based on src/VBox/Installer/linux/install.sh
+ln -sf %{_libdir}/%{pname}/VBox.sh $RPM_BUILD_ROOT%{_bindir}/VirtualBox
+ln -sf %{_libdir}/%{pname}/VBox.sh $RPM_BUILD_ROOT%{_bindir}/VBoxManage
+ln -sf %{_libdir}/%{pname}/VBox.sh $RPM_BUILD_ROOT%{_bindir}/VBoxSDL
+ln -sf %{_libdir}/%{pname}/VBox.sh $RPM_BUILD_ROOT%{_bindir}/VBoxVRDP
+ln -sf %{_libdir}/%{pname}/VBox.sh $RPM_BUILD_ROOT%{_bindir}/VBoxHeadless
+ln -sf %{_libdir}/%{pname}/VBox.sh $RPM_BUILD_ROOT%{_bindir}/VBoxBalloonCtrl
+ln -sf %{_libdir}/%{pname}/VBox.sh $RPM_BUILD_ROOT%{_bindir}/VBoxAutostart
+ln -sf %{_libdir}/%{pname}/VBox.sh $RPM_BUILD_ROOT%{_bindir}/vboxwebsrv
+ln -sf %{_libdir}/%{pname}/vbox-img $RPM_BUILD_ROOT%{_bindir}/vbox-img
+ln -sf %{_libdir}/%{pname}/VBox.sh $RPM_BUILD_ROOT%{_bindir}/VBoxDTrace
+ln -sf %{_libdir}/%{pname}/rdesktop-vrdp $RPM_BUILD_ROOT%{_bindir}/rdesktop-vrd
+cp -p $RPM_BUILD_ROOT%{_libdir}/%{pname}/icons/128x128/virtualbox.png $RPM_BUILD_ROOT%{_pixmapsdir}/virtualbox.png
+mv $RPM_BUILD_ROOT%{_libdir}/%{pname}/virtualbox.desktop $RPM_BUILD_ROOT%{_desktopdir}/virtualbox.desktop
+mv $RPM_BUILD_ROOT%{_libdir}/%{pname}/virtualbox.xml $RPM_BUILD_ROOT%{_datadir}/mime/packages/virtualbox.xml
 
-%{__mv} $RPM_BUILD_ROOT{%{_datadir}/%{pname},/lib/udev}/VBoxCreateUSBNode.sh
+(
+cd $RPM_BUILD_ROOT%{_libdir}/%{pname}/icons
+for i in *; do
+cd $i
+    for j in *; do
+	if expr "$j" : "virtualbox\..*" > /dev/null; then
+	    dst=apps
+	else
+	    dst=mimetypes
+	fi
+        if [ ! -e $RPM_BUILD_ROOT%{_iconsdir}/hicolor/$i/$dst ]; then
+		install -d $RPM_BUILD_ROOT%{_iconsdir}/hicolor/$i/$dst
+	fi
+	mv $RPM_BUILD_ROOT%{_libdir}/%{pname}/icons/$i/$j $RPM_BUILD_ROOT%{_iconsdir}/hicolor/$i/$dst/$j
+    done
+cd -
+done
+)
+
+rm -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/icons	
+
+%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname},/lib/udev}/VBoxCreateUSBNode.sh
 cp -p %{SOURCE6} $RPM_BUILD_ROOT/etc/udev/rules.d/60-vboxdrv.rules
 
 %if %{with dkms}
-mv $RPM_BUILD_ROOT%{_datadir}/%{pname}/src $RPM_BUILD_ROOT%{_usrsrc}/vboxhost-%{version}-%{rel}
-%{__rm} $RPM_BUILD_ROOT%{_usrsrc}/vboxhost-%{version}_PLD
+mv $RPM_BUILD_ROOT%{_libdir}/%{pname}/src $RPM_BUILD_ROOT%{_usrsrc}/vboxhost-%{version}-%{rel}
 %endif
-
-# cleanup lowercased variants, not used in any script (less cruft)
-%{__rm} -r $RPM_BUILD_ROOT%{_bindir}/vboxautostart
-%{__rm} -r $RPM_BUILD_ROOT%{_bindir}/vboxballoonctrl
-%{__rm} -r $RPM_BUILD_ROOT%{_bindir}/vboxheadless
-%{__rm} -r $RPM_BUILD_ROOT%{_bindir}/vboxmanage
-%{__rm} -r $RPM_BUILD_ROOT%{_bindir}/vboxsdl
 
 # cleanup unpackaged
 %{__rm} -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/{sdk,testcase}
@@ -742,17 +763,14 @@ mv $RPM_BUILD_ROOT%{_datadir}/%{pname}/src $RPM_BUILD_ROOT%{_usrsrc}/vboxhost-%{
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/tst*
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/scripts/generated.sh
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/ExtensionPacks/VNC/ExtPack-license.*
-%{__rm} -r $RPM_BUILD_ROOT%{py_sitedir}/vboxapi*
 
 %if %{with gui}
-# cleanup lowercased variants, not used in any script (less cruft)
-%{__rm} -r $RPM_BUILD_ROOT%{_bindir}/virtualbox
 # weird icon size
 %{__rm} -r $RPM_BUILD_ROOT%{_iconsdir}/hicolor/40x40
 %endif
 
 # duplicate, we already have virtualbox.png (128x128), this is 32x32
-%{__rm} -r $RPM_BUILD_ROOT%{_pixmapsdir}/VBox.png
+%{__rm} -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/VBox.png
 
 %if %{with doc}
 ln -sf %{_docdir}/%{pname}-doc-%{version}/UserManual.pdf $RPM_BUILD_ROOT%{_libdir}/%{pname}/UserManual.pdf
@@ -876,14 +894,12 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(640,root,vbox) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/vbox/autostart.cfg
 %attr(754,root,root) /etc/rc.d/init.d/vboxautostart
 %attr(755,root,root) /sbin/mount.vdi
-%attr(755,root,root) %{_bindir}/VBox
 %attr(755,root,root) %{_bindir}/VBoxAutostart
 %attr(755,root,root) %{_bindir}/VBoxBalloonCtrl
 %attr(755,root,root) %{_bindir}/VBoxDTrace
 %attr(755,root,root) %{_bindir}/VBoxHeadless
 %attr(755,root,root) %{_bindir}/VBoxManage
 %attr(755,root,root) %{_bindir}/VBoxSDL
-%attr(755,root,root) %{_bindir}/VBoxTunctl
 %attr(755,root,root) %{_bindir}/vbox-img
 %dir %{_libdir}/%{pname}
 # libraries
@@ -916,8 +932,10 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %endif
 
 # binaries
+%attr(755,root,root) %{_libdir}/%{pname}/VBox.sh
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxAutostart
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxBalloonCtrl
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxDTrace
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxExtPackHelperApp
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxHeadless
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxManage
@@ -926,6 +944,7 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxNetNAT
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxSDL
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxSVC
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxTunctl
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxVMMPreload
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxVolInfo
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxXPCOMIPCD
@@ -980,9 +999,7 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/%{pname}/components/VBoxC.so
 %attr(755,root,root) %{_libdir}/%{pname}/components/VBoxSVCM.so
 %attr(755,root,root) %{_libdir}/%{pname}/components/VBoxXPCOMIPCC.so
-
-%dir %{_datadir}/%{pname}
-%attr(755,root,root) %{_datadir}/%{pname}/VBoxSysInfo.sh
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxSysInfo.sh
 
 %config(noreplace) %verify(not md5 mtime size) /etc/udev/rules.d/*.rules
 %attr(755,root,root) /lib/udev/VBoxCreateUSBNode.sh
@@ -990,46 +1007,49 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %if %{with gui}
 %files gui
 %defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/VBoxVRDP
 %attr(755,root,root) %{_bindir}/VirtualBox
+%attr(755,root,root) %{_bindir}/rdesktop-vrd
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxDbg.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxTestOGL
 %attr(755,root,root) %{_libdir}/%{pname}/VirtualBox
-%dir %{_datadir}/%{pname}/nls
-%lang(bg) %{_datadir}/%{pname}/nls/*_bg.qm
-%lang(ca) %{_datadir}/%{pname}/nls/*_ca.qm
-%lang(ca_VA) %{_datadir}/%{pname}/nls/*_ca_VA.qm
-%lang(cs) %{_datadir}/%{pname}/nls/*_cs.qm
-%lang(da) %{_datadir}/%{pname}/nls/*_da.qm
-%lang(de) %{_datadir}/%{pname}/nls/*_de.qm
-%lang(en) %{_datadir}/%{pname}/nls/*_el.qm
-%lang(en) %{_datadir}/%{pname}/nls/*_en.qm
-%lang(es) %{_datadir}/%{pname}/nls/*_es.qm
-%lang(eu) %{_datadir}/%{pname}/nls/*_eu.qm
-%lang(fi) %{_datadir}/%{pname}/nls/*_fa_IR.qm
-%lang(fi) %{_datadir}/%{pname}/nls/*_fi.qm
-%lang(fr) %{_datadir}/%{pname}/nls/*_fr.qm
-%lang(gl_ES) %{_datadir}/%{pname}/nls/*_gl_ES.qm
-%lang(hu) %{_datadir}/%{pname}/nls/*_hu.qm
-%lang(id) %{_datadir}/%{pname}/nls/*_id.qm
-%lang(it) %{_datadir}/%{pname}/nls/*_it.qm
-%lang(ja) %{_datadir}/%{pname}/nls/*_ja.qm
-%lang(km_KH) %{_datadir}/%{pname}/nls/*_km_KH.qm
-%lang(ko) %{_datadir}/%{pname}/nls/*_ko.qm
-%lang(lt) %{_datadir}/%{pname}/nls/*_lt.qm
-%lang(nl) %{_datadir}/%{pname}/nls/*_nl.qm
-%lang(pl) %{_datadir}/%{pname}/nls/*_pl.qm
-%lang(pt) %{_datadir}/%{pname}/nls/*_pt.qm
-%lang(pt_BR) %{_datadir}/%{pname}/nls/*_pt_BR.qm
-%lang(ro) %{_datadir}/%{pname}/nls/*_ro.qm
-%lang(ru) %{_datadir}/%{pname}/nls/*_ru.qm
-%lang(sk) %{_datadir}/%{pname}/nls/*_sk.qm
-%lang(sk) %{_datadir}/%{pname}/nls/*_sl.qm
-%lang(sr) %{_datadir}/%{pname}/nls/*_sr.qm
-%lang(sv) %{_datadir}/%{pname}/nls/*_sv.qm
-%lang(tr) %{_datadir}/%{pname}/nls/*_tr.qm
-%lang(uk) %{_datadir}/%{pname}/nls/*_uk.qm
-%lang(zh_CN) %{_datadir}/%{pname}/nls/*_zh_CN.qm
-%lang(zh_TW) %{_datadir}/%{pname}/nls/*_zh_TW.qm
+%dir %{_libdir}/%{pname}/nls
+%lang(bg) %{_libdir}/%{pname}/nls/*_bg.qm
+%lang(ca) %{_libdir}/%{pname}/nls/*_ca.qm
+%lang(ca_VA) %{_libdir}/%{pname}/nls/*_ca_VA.qm
+%lang(cs) %{_libdir}/%{pname}/nls/*_cs.qm
+%lang(da) %{_libdir}/%{pname}/nls/*_da.qm
+%lang(de) %{_libdir}/%{pname}/nls/*_de.qm
+%lang(en) %{_libdir}/%{pname}/nls/*_el.qm
+%lang(en) %{_libdir}/%{pname}/nls/*_en.qm
+%lang(es) %{_libdir}/%{pname}/nls/*_es.qm
+%lang(eu) %{_libdir}/%{pname}/nls/*_eu.qm
+%lang(fi) %{_libdir}/%{pname}/nls/*_fa_IR.qm
+%lang(fi) %{_libdir}/%{pname}/nls/*_fi.qm
+%lang(fr) %{_libdir}/%{pname}/nls/*_fr.qm
+%lang(gl_ES) %{_libdir}/%{pname}/nls/*_gl_ES.qm
+%lang(he) %{_libdir}/%{pname}/nls/*_he.qm
+%lang(hu) %{_libdir}/%{pname}/nls/*_hu.qm
+%lang(id) %{_libdir}/%{pname}/nls/*_id.qm
+%lang(it) %{_libdir}/%{pname}/nls/*_it.qm
+%lang(ja) %{_libdir}/%{pname}/nls/*_ja.qm
+%lang(km_KH) %{_libdir}/%{pname}/nls/*_km_KH.qm
+%lang(ko) %{_libdir}/%{pname}/nls/*_ko.qm
+%lang(lt) %{_libdir}/%{pname}/nls/*_lt.qm
+%lang(nl) %{_libdir}/%{pname}/nls/*_nl.qm
+%lang(pl) %{_libdir}/%{pname}/nls/*_pl.qm
+%lang(pt) %{_libdir}/%{pname}/nls/*_pt.qm
+%lang(pt_BR) %{_libdir}/%{pname}/nls/*_pt_BR.qm
+%lang(ro) %{_libdir}/%{pname}/nls/*_ro.qm
+%lang(ru) %{_libdir}/%{pname}/nls/*_ru.qm
+%lang(sk) %{_libdir}/%{pname}/nls/*_sk.qm
+%lang(sk) %{_libdir}/%{pname}/nls/*_sl.qm
+%lang(sr) %{_libdir}/%{pname}/nls/*_sr.qm
+%lang(sv) %{_libdir}/%{pname}/nls/*_sv.qm
+%lang(tr) %{_libdir}/%{pname}/nls/*_tr.qm
+%lang(uk) %{_libdir}/%{pname}/nls/*_uk.qm
+%lang(zh_CN) %{_libdir}/%{pname}/nls/*_zh_CN.qm
+%lang(zh_TW) %{_libdir}/%{pname}/nls/*_zh_TW.qm
 %{_desktopdir}/virtualbox.desktop
 %{_pixmapsdir}/virtualbox.png
 %{_iconsdir}/hicolor/*/apps/virtualbox.png
@@ -1040,7 +1060,8 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 
 %files additions
 %defattr(644,root,root,755)
-%{_datadir}/%{pname}/VBoxGuestAdditions.iso
+%dir %{_libdir}/%{pname}/additions
+%{_libdir}/%{pname}/additions/VBoxGuestAdditions.iso
 
 %files guest
 %defattr(644,root,root,755)

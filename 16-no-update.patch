@@ -54,6 +54,14 @@ diff a/src/VBox/Frontends/VirtualBox/src/net/UIUpdateManager.cpp b/src/VBox/Fron
      /* 'Network Access Manager' action goes to Application menu: */
      pMenu->addAction(actionPool()->action(UIActionIndex_M_Application_S_NetworkAccessManager));
  # endif /* VBOX_GUI_WITH_NETWORK_MANAGER */
+@@ -1303,7 +1301,6 @@
+     addAction(actionPool()->action(UIActionIndexST_M_File_S_ShowMediumManager));
+ #  ifdef VBOX_GUI_WITH_NETWORK_MANAGER
+     addAction(actionPool()->action(UIActionIndex_M_Application_S_NetworkAccessManager));
+-    addAction(actionPool()->action(UIActionIndex_M_Application_S_CheckForUpdates));
+ #  endif /* VBOX_GUI_WITH_NETWORK_MANAGER */
+     addAction(actionPool()->action(UIActionIndex_M_Application_S_ResetWarnings));
+     addAction(actionPool()->action(UIActionIndexST_M_File_S_Close));
 @@ -1255,8 +1253,6 @@
  # ifdef VBOX_GUI_WITH_NETWORK_MANAGER
      /* 'Network Access Manager' action goes to 'File' menu: */
