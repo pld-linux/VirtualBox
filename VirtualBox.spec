@@ -728,6 +728,9 @@ cp -p $RPM_BUILD_ROOT%{_libdir}/%{pname}/icons/128x128/virtualbox.png $RPM_BUILD
 mv $RPM_BUILD_ROOT%{_libdir}/%{pname}/virtualbox.desktop $RPM_BUILD_ROOT%{_desktopdir}/virtualbox.desktop
 mv $RPM_BUILD_ROOT%{_libdir}/%{pname}/virtualbox.xml $RPM_BUILD_ROOT%{_datadir}/mime/packages/virtualbox.xml
 
+install -d $RPM_BUILD_ROOT%{_datadir}/%{pname}
+mv $RPM_BUILD_ROOT%{_libdir}/%{pname}/nls $RPM_BUILD_ROOT%{_datadir}/%{pname}
+
 (
 cd $RPM_BUILD_ROOT%{_libdir}/%{pname}/icons
 for i in *; do
@@ -1001,6 +1004,8 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/%{pname}/components/VBoxXPCOMIPCC.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxSysInfo.sh
 
+%dir %{_datadir}/%{pname}
+
 %config(noreplace) %verify(not md5 mtime size) /etc/udev/rules.d/*.rules
 %attr(755,root,root) /lib/udev/VBoxCreateUSBNode.sh
 
@@ -1013,43 +1018,43 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxDbg.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxTestOGL
 %attr(755,root,root) %{_libdir}/%{pname}/VirtualBox
-%dir %{_libdir}/%{pname}/nls
-%lang(bg) %{_libdir}/%{pname}/nls/*_bg.qm
-%lang(ca) %{_libdir}/%{pname}/nls/*_ca.qm
-%lang(ca_VA) %{_libdir}/%{pname}/nls/*_ca_VA.qm
-%lang(cs) %{_libdir}/%{pname}/nls/*_cs.qm
-%lang(da) %{_libdir}/%{pname}/nls/*_da.qm
-%lang(de) %{_libdir}/%{pname}/nls/*_de.qm
-%lang(en) %{_libdir}/%{pname}/nls/*_el.qm
-%lang(en) %{_libdir}/%{pname}/nls/*_en.qm
-%lang(es) %{_libdir}/%{pname}/nls/*_es.qm
-%lang(eu) %{_libdir}/%{pname}/nls/*_eu.qm
-%lang(fi) %{_libdir}/%{pname}/nls/*_fa_IR.qm
-%lang(fi) %{_libdir}/%{pname}/nls/*_fi.qm
-%lang(fr) %{_libdir}/%{pname}/nls/*_fr.qm
-%lang(gl_ES) %{_libdir}/%{pname}/nls/*_gl_ES.qm
-%lang(he) %{_libdir}/%{pname}/nls/*_he.qm
-%lang(hu) %{_libdir}/%{pname}/nls/*_hu.qm
-%lang(id) %{_libdir}/%{pname}/nls/*_id.qm
-%lang(it) %{_libdir}/%{pname}/nls/*_it.qm
-%lang(ja) %{_libdir}/%{pname}/nls/*_ja.qm
-%lang(km_KH) %{_libdir}/%{pname}/nls/*_km_KH.qm
-%lang(ko) %{_libdir}/%{pname}/nls/*_ko.qm
-%lang(lt) %{_libdir}/%{pname}/nls/*_lt.qm
-%lang(nl) %{_libdir}/%{pname}/nls/*_nl.qm
-%lang(pl) %{_libdir}/%{pname}/nls/*_pl.qm
-%lang(pt) %{_libdir}/%{pname}/nls/*_pt.qm
-%lang(pt_BR) %{_libdir}/%{pname}/nls/*_pt_BR.qm
-%lang(ro) %{_libdir}/%{pname}/nls/*_ro.qm
-%lang(ru) %{_libdir}/%{pname}/nls/*_ru.qm
-%lang(sk) %{_libdir}/%{pname}/nls/*_sk.qm
-%lang(sk) %{_libdir}/%{pname}/nls/*_sl.qm
-%lang(sr) %{_libdir}/%{pname}/nls/*_sr.qm
-%lang(sv) %{_libdir}/%{pname}/nls/*_sv.qm
-%lang(tr) %{_libdir}/%{pname}/nls/*_tr.qm
-%lang(uk) %{_libdir}/%{pname}/nls/*_uk.qm
-%lang(zh_CN) %{_libdir}/%{pname}/nls/*_zh_CN.qm
-%lang(zh_TW) %{_libdir}/%{pname}/nls/*_zh_TW.qm
+%dir %{_datadir}/%{pname}/nls
+%lang(bg) %{_datadir}/%{pname}/nls/*_bg.qm
+%lang(ca) %{_datadir}/%{pname}/nls/*_ca.qm
+%lang(ca_VA) %{_datadir}/%{pname}/nls/*_ca_VA.qm
+%lang(cs) %{_datadir}/%{pname}/nls/*_cs.qm
+%lang(da) %{_datadir}/%{pname}/nls/*_da.qm
+%lang(de) %{_datadir}/%{pname}/nls/*_de.qm
+%lang(en) %{_datadir}/%{pname}/nls/*_el.qm
+%lang(en) %{_datadir}/%{pname}/nls/*_en.qm
+%lang(es) %{_datadir}/%{pname}/nls/*_es.qm
+%lang(eu) %{_datadir}/%{pname}/nls/*_eu.qm
+%lang(fi) %{_datadir}/%{pname}/nls/*_fa_IR.qm
+%lang(fi) %{_datadir}/%{pname}/nls/*_fi.qm
+%lang(fr) %{_datadir}/%{pname}/nls/*_fr.qm
+%lang(gl_ES) %{_datadir}/%{pname}/nls/*_gl_ES.qm
+%lang(he) %{_datadir}/%{pname}/nls/*_he.qm
+%lang(hu) %{_datadir}/%{pname}/nls/*_hu.qm
+%lang(id) %{_datadir}/%{pname}/nls/*_id.qm
+%lang(it) %{_datadir}/%{pname}/nls/*_it.qm
+%lang(ja) %{_datadir}/%{pname}/nls/*_ja.qm
+%lang(km_KH) %{_datadir}/%{pname}/nls/*_km_KH.qm
+%lang(ko) %{_datadir}/%{pname}/nls/*_ko.qm
+%lang(lt) %{_datadir}/%{pname}/nls/*_lt.qm
+%lang(nl) %{_datadir}/%{pname}/nls/*_nl.qm
+%lang(pl) %{_datadir}/%{pname}/nls/*_pl.qm
+%lang(pt) %{_datadir}/%{pname}/nls/*_pt.qm
+%lang(pt_BR) %{_datadir}/%{pname}/nls/*_pt_BR.qm
+%lang(ro) %{_datadir}/%{pname}/nls/*_ro.qm
+%lang(ru) %{_datadir}/%{pname}/nls/*_ru.qm
+%lang(sk) %{_datadir}/%{pname}/nls/*_sk.qm
+%lang(sk) %{_datadir}/%{pname}/nls/*_sl.qm
+%lang(sr) %{_datadir}/%{pname}/nls/*_sr.qm
+%lang(sv) %{_datadir}/%{pname}/nls/*_sv.qm
+%lang(tr) %{_datadir}/%{pname}/nls/*_tr.qm
+%lang(uk) %{_datadir}/%{pname}/nls/*_uk.qm
+%lang(zh_CN) %{_datadir}/%{pname}/nls/*_zh_CN.qm
+%lang(zh_TW) %{_datadir}/%{pname}/nls/*_zh_TW.qm
 %{_desktopdir}/virtualbox.desktop
 %{_pixmapsdir}/virtualbox.png
 %{_iconsdir}/hicolor/*/apps/virtualbox.png
