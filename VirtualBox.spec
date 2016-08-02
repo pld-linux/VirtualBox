@@ -42,7 +42,7 @@ exit 1
 
 %define		qtver	5.3.2
 
-%define		rel		1
+%define		rel		2
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
@@ -637,9 +637,11 @@ if cp -al COPYING $RPM_BUILD_ROOT/COPYING; then
 	%{__rm} $RPM_BUILD_ROOT/COPYING
 fi
 
+install -d $RPM_BUILD_ROOT%{_datadir}/%{pname}
+
 cp -a$l %{outdir}/* $RPM_BUILD_ROOT%{_libdir}/%{pname}
-cp -p$l %{SOURCE1} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/VBoxGuestAdditions.iso ||
-cp -p %{SOURCE1} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/VBoxGuestAdditions.iso
+cp -p$l %{SOURCE1} $RPM_BUILD_ROOT%{_datadir}/%{pname}/VBoxGuestAdditions.iso ||
+cp -p %{SOURCE1} $RPM_BUILD_ROOT%{_datadir}/%{pname}/VBoxGuestAdditions.iso
 
 %if %{without gui}
 %{__rm} -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/icons
@@ -730,7 +732,6 @@ cp -p $RPM_BUILD_ROOT%{_libdir}/%{pname}/icons/128x128/virtualbox.png $RPM_BUILD
 mv $RPM_BUILD_ROOT%{_libdir}/%{pname}/virtualbox.desktop $RPM_BUILD_ROOT%{_desktopdir}/virtualbox.desktop
 mv $RPM_BUILD_ROOT%{_libdir}/%{pname}/virtualbox.xml $RPM_BUILD_ROOT%{_datadir}/mime/packages/virtualbox.xml
 
-install -d $RPM_BUILD_ROOT%{_datadir}/%{pname}
 mv $RPM_BUILD_ROOT%{_libdir}/%{pname}/nls $RPM_BUILD_ROOT%{_datadir}/%{pname}
 
 (
@@ -1067,8 +1068,7 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 
 %files additions
 %defattr(644,root,root,755)
-%dir %{_libdir}/%{pname}/additions
-%{_libdir}/%{pname}/additions/VBoxGuestAdditions.iso
+%{_datadir}/%{pname}/VBoxGuestAdditions.iso
 
 %files guest
 %defattr(644,root,root,755)
