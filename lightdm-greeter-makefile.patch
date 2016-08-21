@@ -1,0 +1,20 @@
+--- VirtualBox-5.1.4/src/VBox/Additions/linux/lightdm-greeter/Makefile.kmk.orig	2016-08-21 15:55:34.233163799 +0200
++++ VirtualBox-5.1.4/src/VBox/Additions/linux/lightdm-greeter/Makefile.kmk	2016-08-21 15:55:46.509804204 +0200
+@@ -48,7 +48,7 @@
+  	GTK_DISABLE_SINGLE_INCLUDES \
+  	GDK_DISABLE_DEPRECATED
+ endif
+-vbox-greeter_CFLAGS  := $(if $(VBOX_OSE),%(filter-out -I%,$(shell pkg-config --cflags liblightdm-gobject-1)),)
++vbox-greeter_CFLAGS  := $(if $(VBOX_OSE),$(filter-out -I%,$(shell pkg-config --cflags liblightdm-gobject-1)),)
+ ## @todo r=bird: Why are we cooking our own lightdm-gobject-1 but using system headers?
+ ##               That sounds like a very risky business to me.  I've added  liblightdm-gobject-1.5.0
+ ##               to the INCS, however lightdm.h is missing and will be taken from the system.
+@@ -59,7 +59,7 @@
+ 	/usr/include/glib-2.0 \
+        $(if $(VBOX_OSE),,liblightdm-gobject-1.5.0) \
+ 	/usr/include/lightdm-gobject-1 \
+-	$(if $(VBOX_OSE),$(patsubst -I%,%,%(filter -I%,$(shell pkg-config --cflags liblightdm-gobject-1))),)
++	$(if $(VBOX_OSE),$(patsubst -I%,%,$(filter -I%,$(shell pkg-config --cflags liblightdm-gobject-1))),)
+ ifndef VBOX_WITH_FLTK
+  vbox-greeter_INCS   += \
+ 	/usr/include/glib-2.0 \

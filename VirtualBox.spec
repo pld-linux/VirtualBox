@@ -42,19 +42,19 @@ exit 1
 
 %define		qtver	5.3.2
 
-%define		rel		2
+%define		rel		1
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	5.1.2
+Version:	5.1.4
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	aff1647170dd92914cddfbd0254b9773
+# Source0-md5:	e25a6a1f3c113c373dc0433f9c2526f3
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	0a881c307e66ad963b3a4015b402035b
+# Source1-md5:	c24e2057a7dbc7d63e859c32638c321d
 Source2:	vboxservice.init
 Source3:	vboxservice.service
 Source4:	vboxservice.sysconfig
@@ -71,7 +71,7 @@ Patch3:		%{pname}-dri.patch
 Patch4:		wrapper.patch
 Patch5:		xserver-1.12.patch
 Patch6:		hardening-shared.patch
-Patch7:		lightdm-greeter-glib-includes.patch
+Patch7:		lightdm-greeter-makefile.patch
 Patch8:		lightdm-greeter-g++-link.patch
 Patch9:		pld-guest.patch
 Patch10:	16-no-update.patch
@@ -79,7 +79,6 @@ Patch11:	18-system-xorg.patch
 Patch12:	%{pname}-all-translations.patch
 Patch13:	x32.patch
 Patch14:	%{pname}-no-scrextend.patch
-Patch15:	%{pname}-cpu_has_pge.patch
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
 %ifarch %{x8664}
@@ -532,7 +531,6 @@ cd ../..\
 %endif
 %patch13 -p1
 %patch14 -p1
-%patch15 -p1
 
 %{__sed} -i -e 's,@VBOX_DOC_PATH@,%{_docdir}/%{name}-%{version},' \
 	-e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/common/virtualbox.desktop.in
