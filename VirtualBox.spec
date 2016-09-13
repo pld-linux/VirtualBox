@@ -754,7 +754,7 @@ cd -
 done
 )
 
-rm -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/icons	
+rm -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/icons
 
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname},/lib/udev}/VBoxCreateUSBNode.sh
 cp -p %{SOURCE6} $RPM_BUILD_ROOT/etc/udev/rules.d/60-vboxdrv.rules
