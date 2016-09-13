@@ -42,19 +42,19 @@ exit 1
 
 %define		qtver	5.3.2
 
-%define		rel		2
+%define		rel		1
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	5.1.4
+Version:	5.1.6
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	e25a6a1f3c113c373dc0433f9c2526f3
+# Source0-md5:	8c2331a718cfc038963c1214c2ba9811
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	c24e2057a7dbc7d63e859c32638c321d
+# Source1-md5:	712a7264ccdc0af459faa2c396f31d98
 Source2:	vboxservice.init
 Source3:	vboxservice.service
 Source4:	vboxservice.sysconfig
@@ -567,7 +567,7 @@ cp -p src/VBox/Frontends/VirtualBox/images/os_{linux26,pld}_64.png
 cat <<'EOF'>> LocalConfig.kmk
 %{?with_verbose:KBUILD_VERBOSE=3}
 USERNAME=%(id -un)
-__VBOX_BUILD_PUBLISHER=_PLD
+VBOX_BUILD_PUBLISHER=_PLD
 VBOX_VERSION_STRING=$(VBOX_VERSION_MAJOR).$(VBOX_VERSION_MINOR).$(VBOX_VERSION_BUILD)_PLD
 XSERVER_VERSION=%(rpm -q --queryformat '%{V}\n' xorg-xserver-server-devel | awk -F. '{ print $1 $2 }' 2>/dev/null || echo ERROR)
 VBOX_USE_SYSTEM_XORG_HEADERS=1
