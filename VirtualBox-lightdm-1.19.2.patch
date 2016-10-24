@@ -1,0 +1,63 @@
+--- src/VBox/Additions/linux/lightdm-greeter/vbox-greeter.cpp.orig	2016-10-24 22:48:30.177292847 +0200
++++ src/VBox/Additions/linux/lightdm-greeter/vbox-greeter.cpp	2016-10-24 22:53:43.351327894 +0200
+@@ -394,7 +394,11 @@
+ #endif
+                            pszDomain);
+             /* Trigger LightDM authentication with the user name just retrieved. */
++#ifdef HAVE_LIBLIGHTDMGOBJECT_1_19_2
++            lightdm_greeter_authenticate(pCtx->pGreeter, pszUsername, NULL); /* Must be the real user name from host! */
++#else
+             lightdm_greeter_authenticate(pCtx->pGreeter, pszUsername); /* Must be the real user name from host! */
++#endif
+ 
+             /* Securely wipe the user name + domain again. */
+             VbglR3CredentialsDestroy(pszUsername, NULL /* pszPassword */, pszDomain,
+@@ -448,7 +452,11 @@
+         {
+             if (pCtx->pszPassword)
+             {
++#ifdef HAVE_LIBLIGHTDMGOBJECT_1_19_2
++                lightdm_greeter_respond(pGreeter, pCtx->pszPassword, NULL);
++#else
+                 lightdm_greeter_respond(pGreeter, pCtx->pszPassword);
++#endif
+             }
+             else
+             {
+@@ -460,7 +468,11 @@
+                 AssertPtr(pEdtPwd);
+                 const gchar *pszPwd = gtk_entry_get_text(pEdtPwd);
+ #endif
++#ifdef HAVE_LIBLIGHTDMGOBJECT_1_19_2
++                lightdm_greeter_respond(pGreeter, pszPwd, NULL);
++#else
+                 lightdm_greeter_respond(pGreeter, pszPwd);
++#endif
+             }
+             break;
+         }
+@@ -587,8 +599,13 @@
+ #endif
+     if (strlen(pszUser)) /* Only authenticate if username is given. */
+     {
++#ifdef HAVE_LIBLIGHTDMGOBJECT_1_19_2
++        lightdm_greeter_respond(pCtx->pGreeter, pszPwd, NULL);
++        lightdm_greeter_authenticate(pCtx->pGreeter, pszUser, NULL);
++#else
+         lightdm_greeter_respond(pCtx->pGreeter, pszPwd);
+         lightdm_greeter_authenticate(pCtx->pGreeter, pszUser);
++#endif
+     }
+ }
+ 
+--- src/VBox/Additions/linux/lightdm-greeter/Makefile.kmk.orig	2016-10-24 23:14:30.007548938 +0200
++++ src/VBox/Additions/linux/lightdm-greeter/Makefile.kmk	2016-10-24 23:16:23.902737037 +0200
+@@ -48,7 +48,7 @@
+  	GTK_DISABLE_SINGLE_INCLUDES \
+  	GDK_DISABLE_DEPRECATED
+ endif
+-vbox-greeter_CFLAGS  := $(if $(VBOX_OSE),$(filter-out -I%,$(shell pkg-config --cflags liblightdm-gobject-1)),)
++vbox-greeter_CXXFLAGS  := $(if $(VBOX_OSE),$(filter-out -I%,$(shell pkg-config --cflags liblightdm-gobject-1)),) $(if $(shell pkg-config --exists 'liblightdm-gobject-1 >= 1.19.2' && echo 1),-DHAVE_LIBLIGHTDMGOBJECT_1_19_2,)
+ ## @todo r=bird: Why are we cooking our own lightdm-gobject-1 but using system headers?
+ ##               That sounds like a very risky business to me.  I've added  liblightdm-gobject-1.5.0
+ ##               to the INCS, however lightdm.h is missing and will be taken from the system.
