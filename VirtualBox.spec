@@ -304,7 +304,7 @@ Group:		X11/Applications
 Requires:	%{name}-guest = %{version}-%{release}
 Requires:	xorg-app-xrandr
 Requires:	xorg-driver-video-vboxvideo = %{version}-%{release}
-Suggests:	kernel(vboxvideo)
+Requires:	kernel(vboxvideo)
 Obsoletes:	xorg-driver-input-vboxmouse < %{version}-%{release}
 
 %description guest-x11
@@ -655,7 +655,6 @@ cp -p %{SOURCE1} $RPM_BUILD_ROOT%{_datadir}/%{pname}/VBoxGuestAdditions.iso
 
 # vboxvideo
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/VBoxOGL.so,%{_libdir}/xorg/modules/dri/vboxvideo_dri.so}
-%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/vboxvideo_drv_system.so,%{_libdir}/xorg/modules/drivers/vboxvideo_drv.so}
 # XXX: where else to install them that vboxvideo_dri.so finds them? patch with rpath?
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxEGL.so
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLarrayspu.so
@@ -1126,7 +1125,6 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 
 %files -n xorg-driver-video-vboxvideo
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/xorg/modules/drivers/vboxvideo_drv.so
 %attr(755,root,root) %{_libdir}/xorg/modules/dri/vboxvideo_dri.so
 # vboxvideo_dri.so deps
 %attr(755,root,root) %{_libdir}/VBoxEGL.so
