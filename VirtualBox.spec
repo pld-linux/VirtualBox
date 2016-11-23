@@ -351,12 +351,12 @@ Summary:	X.org video driver for VirtualBox guest OS
 Summary(pl.UTF-8):	Sterownik grafiki dla systemu gościa w VirtualBoksie
 Group:		X11/Applications
 Requires:	Mesa-dri-driver-swrast
+Requires:	xorg-driver-video-modesetting
 Requires:	xorg-xserver-libdri >= 1.7.4
 Requires:	xorg-xserver-server >= 1.0.99.901
 %{?requires_xorg_xserver_videodrv}
 Provides:	OpenGL = 2.1
 Provides:	OpenGL-GLX = 1.3
-Provides:	xorg-driver-video
 Provides:	xorg-xserver-module(glx)
 
 %description -n xorg-driver-video-vboxvideo
