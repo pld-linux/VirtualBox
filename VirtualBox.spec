@@ -42,7 +42,7 @@ exit 1
 
 %define		qtver	5.3.2
 
-%define		rel		2
+%define		rel		3
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
@@ -241,6 +241,7 @@ Summary:	Qt GUI part for VirtualBox
 Group:		X11/Applications
 Requires:	%{name} = %{version}-%{release}
 Requires:	Qt5Core >= %{qtver}
+Requires:	Qt5Gui-platform-xcb >= %{qtver}
 Requires:	desktop-file-utils
 Requires:	desktop-file-utils
 Requires:	fontconfig
@@ -248,6 +249,8 @@ Requires:	fonts-Type1-urw
 Requires:	gtk-update-icon-cache
 Requires:	hicolor-icon-theme
 Requires:	shared-mime-info
+Suggests:	Qt5Gui-platform-xcb-glx >= %{qtver}
+Suggests:	Qt5Gui-platform-xcb-egl >= %{qtver}
 Suggests:	gxmessage
 Conflicts:	%{name} < 4.3.8-3
 
