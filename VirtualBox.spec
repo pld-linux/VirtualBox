@@ -734,7 +734,6 @@ ln -sf %{_libdir}/%{pname}/VBox.sh $RPM_BUILD_ROOT%{_bindir}/VBoxAutostart
 ln -sf %{_libdir}/%{pname}/VBox.sh $RPM_BUILD_ROOT%{_bindir}/vboxwebsrv
 ln -sf %{_libdir}/%{pname}/vbox-img $RPM_BUILD_ROOT%{_bindir}/vbox-img
 ln -sf %{_libdir}/%{pname}/VBox.sh $RPM_BUILD_ROOT%{_bindir}/VBoxDTrace
-ln -sf %{_libdir}/%{pname}/rdesktop-vrdp $RPM_BUILD_ROOT%{_bindir}/rdesktop-vrd
 cp -p $RPM_BUILD_ROOT%{_libdir}/%{pname}/icons/128x128/virtualbox.png $RPM_BUILD_ROOT%{_pixmapsdir}/virtualbox.png
 mv $RPM_BUILD_ROOT%{_libdir}/%{pname}/virtualbox.desktop $RPM_BUILD_ROOT%{_desktopdir}/virtualbox.desktop
 mv $RPM_BUILD_ROOT%{_libdir}/%{pname}/virtualbox.xml $RPM_BUILD_ROOT%{_datadir}/mime/packages/virtualbox.xml
@@ -913,6 +912,7 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_bindir}/VBoxHeadless
 %attr(755,root,root) %{_bindir}/VBoxManage
 %attr(755,root,root) %{_bindir}/VBoxSDL
+%attr(755,root,root) %{_bindir}/VBoxVRDP
 %attr(755,root,root) %{_bindir}/vbox-img
 %dir %{_libdir}/%{pname}
 # libraries
@@ -1022,9 +1022,7 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %if %{with gui}
 %files gui
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/VBoxVRDP
 %attr(755,root,root) %{_bindir}/VirtualBox
-%attr(755,root,root) %{_bindir}/rdesktop-vrd
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxDbg.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxTestOGL
 %attr(755,root,root) %{_libdir}/%{pname}/VirtualBox
