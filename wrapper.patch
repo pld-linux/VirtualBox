@@ -1,6 +1,14 @@
---- VirtualBox-5.1.2/src/VBox/Installer/linux/VBox.sh.orig	2016-07-29 18:45:38.074668094 +0200
-+++ VirtualBox-5.1.2/src/VBox/Installer/linux/VBox.sh	2016-07-29 19:23:07.702016897 +0200
-@@ -40,6 +40,23 @@
+--- VirtualBox-5.1.14/src/VBox/Installer/linux/VBox.sh.orig	2017-02-03 07:40:16.928172726 +0100
++++ VirtualBox-5.1.14/src/VBox/Installer/linux/VBox.sh	2017-02-03 07:42:41.247214271 +0100
+@@ -21,6 +21,7 @@
+ # works on Solaris and OS X.
+ TARGET=`readlink -e -- "${0}"` || exit 1
+ MY_DIR="${TARGET%/[!/]*}"
++APP=`basename $0`
+ 
+ # (
+ #     path="${0}"
+@@ -40,14 +41,31 @@
  #         test -n "${path}" || pwd
  #     done
  # )
@@ -22,10 +30,13 @@
 +}
 +
  
- if test -f /usr/lib/virtualbox/VirtualBox &&
-     test -x /usr/lib/virtualbox/VirtualBox; then
-@@ -47,7 +64,7 @@
- elif test -f "${MY_DIR}/VirtualBox" && test -x "${MY_DIR}/VirtualBox"; then
+-if test -f /usr/lib/virtualbox/VirtualBox &&
+-    test -x /usr/lib/virtualbox/VirtualBox; then
++if test -f "/usr/lib/virtualbox/${APP}" &&
++    test -x "/usr/lib/virtualbox/${APP}"; then
+     INSTALL_DIR=/usr/lib/virtualbox
+-elif test -f "${MY_DIR}/VirtualBox" && test -x "${MY_DIR}/VirtualBox"; then
++elif test -f "${MY_DIR}/${APP}" && test -x "${MY_DIR}/${APP}"; then
      INSTALL_DIR="${MY_DIR}"
  else
 -    echo "Could not find VirtualBox installation. Please reinstall."
@@ -33,7 +44,7 @@
      exit 1
  fi
  
-@@ -57,7 +74,7 @@
+@@ -57,7 +75,7 @@
  if [ "$1" = "shutdown" ]; then
      SHUTDOWN="true"
  elif ! lsmod|grep -q vboxdrv; then
@@ -42,7 +53,7 @@
  WARNING: The vboxdrv kernel module is not loaded. Either there is no module
           available for the current kernel (`uname -r`) or it failed to
           load. Please recompile the kernel module and install it by
-@@ -67,7 +84,7 @@
+@@ -67,7 +85,7 @@
           You will not be able to start VMs until this problem is fixed.
  EOF
  elif [ ! -c /dev/vboxdrv ]; then
@@ -51,7 +62,7 @@
  WARNING: The character device /dev/vboxdrv does not exist. Try
  
             sudo /sbin/vboxconfig
-@@ -79,7 +96,7 @@
+@@ -79,7 +97,7 @@
  fi
  
  if [ -f /etc/vbox/module_not_compiled ]; then
@@ -60,3 +71,11 @@
  WARNING: The compilation of the vboxdrv.ko kernel module failed during the
           installation for some reason. Starting a VM will not be possible.
           Please consult the User Manual for build instructions.
+@@ -105,7 +123,6 @@
+     exit 0
+ fi
+ 
+-APP=`basename $0`
+ case "$APP" in
+     VirtualBox|virtualbox)
+         exec "$INSTALL_DIR/VirtualBox" "$@"
