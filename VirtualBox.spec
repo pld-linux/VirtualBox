@@ -82,6 +82,7 @@ Patch14:	%{pname}-no-scrextend.patch
 Patch15:	%{pname}-multipython.patch
 Patch16:	%{pname}-lightdm-1.19.2.patch
 Patch17:	%{pname}-no-vboxvideo.patch
+Patch18:	%{pname}-kernel-4.10.patch
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
 %ifarch %{x8664}
@@ -540,6 +541,7 @@ cd ../..\
 %patch15 -p0
 %patch16 -p0
 %patch17 -p0
+%patch18 -p1
 
 %{__sed} -i -e 's,@VBOX_DOC_PATH@,%{_docdir}/%{name}-%{version},' \
 	-e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/common/virtualbox.desktop.in

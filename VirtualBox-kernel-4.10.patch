@@ -1,0 +1,13 @@
+diff -urN VirtualBox-5.1.14.orig/src/VBox/Additions/linux/sharedfolders/lnkops.c VirtualBox-5.1.14/src/VBox/Additions/linux/sharedfolders/lnkops.c
+--- VirtualBox-5.1.14.orig/src/VBox/Additions/linux/sharedfolders/lnkops.c	2017-03-01 00:11:16.018923166 +0100
++++ VirtualBox-5.1.14/src/VBox/Additions/linux/sharedfolders/lnkops.c	2017-03-01 00:12:22.178411297 +0100
+@@ -90,7 +90,9 @@
+ 
+ struct inode_operations sf_lnk_iops =
+ {
++# if LINUX_VERSION_CODE < KERNEL_VERSION(4, 10, 0)
+     .readlink       = generic_readlink,
++# endif
+ # if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 5, 0)
+     .get_link       = sf_get_link
+ # elif LINUX_VERSION_CODE >= KERNEL_VERSION(4, 2, 0)
