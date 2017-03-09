@@ -42,19 +42,19 @@ exit 1
 
 %define		qtver	5.3.2
 
-%define		rel		2
+%define		rel		1
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	5.1.14
+Version:	5.1.16
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	21eaec9f21477d555559a63761779880
+# Source0-md5:	37ebbd51370841eed8ab80f2f38446d6
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	25576fe3fae42e51ea4766781c3100d2
+# Source1-md5:	967b230bd9fdedf7c9d05f9e23b3c8e6
 Source2:	vboxservice.init
 Source3:	vboxservice.service
 Source4:	vboxservice.sysconfig
@@ -82,7 +82,6 @@ Patch14:	%{pname}-no-scrextend.patch
 Patch15:	%{pname}-multipython.patch
 Patch16:	%{pname}-lightdm-1.19.2.patch
 Patch17:	%{pname}-no-vboxvideo.patch
-Patch18:	%{pname}-kernel-4.10.patch
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
 %ifarch %{x8664}
@@ -541,7 +540,6 @@ cd ../..\
 %patch15 -p0
 %patch16 -p0
 %patch17 -p0
-%patch18 -p1
 
 %{__sed} -i -e 's,@VBOX_DOC_PATH@,%{_docdir}/%{name}-%{version},' \
 	-e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/common/virtualbox.desktop.in
