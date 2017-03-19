@@ -42,19 +42,19 @@ exit 1
 
 %define		qtver	5.3.2
 
-%define		rel		2
+%define		rel		1
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	5.1.16
+Version:	5.1.18
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	37ebbd51370841eed8ab80f2f38446d6
+# Source0-md5:	1a7db64cd69ba6d39574fb333e031251
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	967b230bd9fdedf7c9d05f9e23b3c8e6
+# Source1-md5:	790f91aaf4eeee2a5e65c3428ce604af
 Source2:	vboxservice.init
 Source3:	vboxservice.service
 Source4:	vboxservice.sysconfig
@@ -1059,6 +1059,7 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %lang(sk) %{_datadir}/%{pname}/nls/*_sl.qm
 %lang(sr) %{_datadir}/%{pname}/nls/*_sr.qm
 %lang(sv) %{_datadir}/%{pname}/nls/*_sv.qm
+%lang(th) %{_datadir}/%{pname}/nls/*_th.qm
 %lang(tr) %{_datadir}/%{pname}/nls/*_tr.qm
 %lang(uk) %{_datadir}/%{pname}/nls/*_uk.qm
 %lang(zh_CN) %{_datadir}/%{pname}/nls/*_zh_CN.qm
