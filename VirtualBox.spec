@@ -47,14 +47,14 @@ exit 1
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	5.1.30
+Version:	5.2.2
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	4dadcb625f72b8b36a374a52526c682a
+# Source0-md5:	98733fd3dc74487ef5e66cb13be4a685
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	e9d77afca12e2fad2616963b1cb199c9
+# Source1-md5:	712dbeb12ac0ba49ec2bac3ad26dabc4
 Source2:	vboxservice.init
 Source3:	vboxservice.service
 Source4:	vboxservice.sysconfig
@@ -75,14 +75,12 @@ Patch7:		lightdm-greeter-makefile.patch
 Patch8:		lightdm-greeter-g++-link.patch
 Patch9:		pld-guest.patch
 Patch10:	16-no-update.patch
-Patch11:	18-system-xorg.patch
-Patch12:	%{pname}-all-translations.patch
-Patch13:	x32.patch
-Patch14:	%{pname}-no-scrextend.patch
-Patch15:	%{pname}-multipython.patch
-Patch16:	%{pname}-lightdm-1.19.2.patch
-Patch17:	%{pname}-no-vboxvideo.patch
-Patch18:	linux-4.14.patch
+Patch11:	%{pname}-all-translations.patch
+Patch12:	x32.patch
+Patch13:	%{pname}-no-scrextend.patch
+Patch14:	%{pname}-multipython.patch
+Patch15:	%{pname}-lightdm-1.19.2.patch
+Patch16:	%{pname}-no-vboxvideo.patch
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
 %ifarch %{x8664}
@@ -130,7 +128,7 @@ BuildRequires:	fakeroot
 BuildRequires:	gcc >= 5:3.2.3
 %{?with_webservice:BuildRequires:	gsoap-devel}
 BuildRequires:	issue
-BuildRequires:	kBuild >= 0.1.9998.2814
+BuildRequires:	kBuild >= 0.1.9998.3093
 BuildRequires:	libIDL-devel
 BuildRequires:	libcap-static
 BuildRequires:	libdrm-devel
@@ -534,16 +532,14 @@ cd ../..\
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
-%patch11 -p1
 %if %{with all_langs}
-%patch12 -p0
+%patch11 -p0
 %endif
+%patch12 -p1
 %patch13 -p1
-%patch14 -p1
+%patch14 -p0
 %patch15 -p0
 %patch16 -p0
-%patch17 -p0
-%patch18 -p0
 
 %{__sed} -i -e 's,@VBOX_DOC_PATH@,%{_docdir}/%{name}-%{version},' \
 	-e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/common/virtualbox.desktop.in
@@ -557,10 +553,10 @@ cd ../..\
 %if %{with kernel}
 install -d PLD-MODULE-BUILD/{GuestDrivers,HostDrivers}
 cd PLD-MODULE-BUILD
-../src/VBox/Additions/linux/export_modules guest-modules.tar.gz
+../src/VBox/Additions/linux/export_modules.sh guest-modules.tar.gz
 tar -zxf guest-modules.tar.gz -C GuestDrivers
 
-../src/VBox/HostDrivers/linux/export_modules host-modules.tar.gz --without-hardening
+../src/VBox/HostDrivers/linux/export_modules.sh host-modules.tar.gz --without-hardening
 tar -zxf host-modules.tar.gz -C HostDrivers
 cd -
 %endif
@@ -584,6 +580,7 @@ VBOX_BUILD_PUBLISHER=_PLD
 VBOX_VERSION_STRING=$(VBOX_VERSION_MAJOR).$(VBOX_VERSION_MINOR).$(VBOX_VERSION_BUILD)_PLD
 XSERVER_VERSION=%(rpm -q --queryformat '%{V}\n' xorg-xserver-server-devel | awk -F. '{ print $1 $2 }' 2>/dev/null || echo ERROR)
 VBOX_USE_SYSTEM_XORG_HEADERS=1
+VBOX_USE_SYSTEM_GL_HEADERS=1
 %if %{with lightdm}
 VBOX_WITH_LIGHTDM_GREETER=1
 VBOX_WITH_LIGHTDM_GREETER_PACKING=1
@@ -690,7 +687,7 @@ cp -p %{SOURCE10} $RPM_BUILD_ROOT%{_sysconfdir}/vbox
 %if %{with lightdm}
 install -d $RPM_BUILD_ROOT%{_datadir}/xgreeters
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_sbindir}}/vbox-greeter
-cp -p %{objdir}/Additions/Installer/linux/share/VBoxGuestAdditions/vbox-greeter.desktop $RPM_BUILD_ROOT%{_datadir}/xgreeters
+cp -p %{objdir}/Additions/Installer/linux/other/vbox-greeter.desktop $RPM_BUILD_ROOT%{_datadir}/xgreeters
 %endif
 
 %if %{with dkms}
@@ -710,11 +707,6 @@ install -p %{SOURCE5} $RPM_BUILD_ROOT/sbin/mount.vdi
 # these belong to .iso
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/autorun.sh
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/runasroot.sh
-
-# scripts to setup modules, x11 and service. we have covered that in our packages
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/vboxadd
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/vboxadd-service
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/vboxadd-x11
 
 # unknown - checkme
 %if 1
@@ -970,12 +962,19 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxManageHelp
 %endif
 %dir %{_libdir}/%{pname}/tools
+%attr(755,root,root) %{_libdir}/%{pname}/tools/RTCat
+%attr(755,root,root) %{_libdir}/%{pname}/tools/RTChMod
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTDbgSymCache
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTGzip
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTHttp
+%attr(755,root,root) %{_libdir}/%{pname}/tools/RTIsoMaker
+%attr(755,root,root) %{_libdir}/%{pname}/tools/RTKrnlModInfo
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTLdrFlt
+%attr(755,root,root) %{_libdir}/%{pname}/tools/RTLs
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTManifest
+%attr(755,root,root) %{_libdir}/%{pname}/tools/RTMkDir
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTRm
+%attr(755,root,root) %{_libdir}/%{pname}/tools/RTRmDir
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTShutdown
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTSignTool
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTTar
@@ -1018,6 +1017,8 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/%{pname}/components/VBoxXPCOMIPCC.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxSysInfo.sh
 
+%{_libdir}/%{pname}/UnattendedTemplates
+
 %dir %{_datadir}/%{pname}
 
 %config(noreplace) %verify(not md5 mtime size) /etc/udev/rules.d/*.rules
@@ -1041,10 +1042,10 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %lang(en) %{_datadir}/%{pname}/nls/*_en.qm
 %lang(es) %{_datadir}/%{pname}/nls/*_es.qm
 %lang(eu) %{_datadir}/%{pname}/nls/*_eu.qm
-%lang(fi) %{_datadir}/%{pname}/nls/*_fa_IR.qm
+%lang(fa) %{_datadir}/%{pname}/nls/*_fa.qm
 %lang(fi) %{_datadir}/%{pname}/nls/*_fi.qm
 %lang(fr) %{_datadir}/%{pname}/nls/*_fr.qm
-%lang(gl_ES) %{_datadir}/%{pname}/nls/*_gl_ES.qm
+%lang(gl) %{_datadir}/%{pname}/nls/*_gl.qm
 %lang(he) %{_datadir}/%{pname}/nls/*_he.qm
 %lang(hu) %{_datadir}/%{pname}/nls/*_hu.qm
 %lang(id) %{_datadir}/%{pname}/nls/*_id.qm
