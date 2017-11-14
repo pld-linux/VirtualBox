@@ -191,6 +191,8 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		outdir		out/%{vbox_platform}/release/bin
 %define		objdir		out/%{vbox_platform}/release/obj
 
+%define		filterout		-Werror=format-security
+
 %description
 Oracle VirtualBox is a general-purpose full virtualizer for x86
 hardware. Targeted at server, desktop and embedded use, it is now the
