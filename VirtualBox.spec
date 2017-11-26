@@ -479,7 +479,9 @@ gospodarzem sprzętu PCI.\
 %config(noreplace) %verify(not md5 mtime size) /etc/modules-load.d/virtualbox-guest.conf\
 /lib/modules/%{_kernel_ver}/misc/vboxguest.ko*\
 /lib/modules/%{_kernel_ver}/misc/vboxsf.ko*\
+%if %{_kernel_version_code} < %{_kernel_version_magic 4 13 0}\
 /lib/modules/%{_kernel_ver}/misc/vboxvideo.ko*\
+%endif\
 \
 %files -n kernel%{_alt_kernel}-virtualbox-host\
 %config(noreplace) %verify(not md5 mtime size) /etc/modules-load.d/virtualbox-host.conf\
@@ -513,9 +515,14 @@ cd ../GuestDrivers\
 %build_kernel_modules -m vboxguest -C vboxguest\
 cp -a vboxguest/Module.symvers vboxsf\
 %build_kernel_modules -m vboxsf -C vboxsf -c\
+%if %{_kernel_version_code} < %{_kernel_version_magic 4 13 0}\
 %build_kernel_modules -m vboxvideo -C vboxvideo\
+%endif\
 cd ../..\
-%install_kernel_modules -D PLD-MODULE-BUILD/installed -m PLD-MODULE-BUILD/HostDrivers/vboxdrv/vboxdrv,PLD-MODULE-BUILD/HostDrivers/vboxnetadp/vboxnetadp,PLD-MODULE-BUILD/HostDrivers/vboxnetflt/vboxnetflt,PLD-MODULE-BUILD/HostDrivers/vboxpci/vboxpci,PLD-MODULE-BUILD/GuestDrivers/vboxguest/vboxguest,PLD-MODULE-BUILD/GuestDrivers/vboxsf/vboxsf,PLD-MODULE-BUILD/GuestDrivers/vboxvideo/vboxvideo -d misc\
+%install_kernel_modules -D PLD-MODULE-BUILD/installed -m PLD-MODULE-BUILD/HostDrivers/vboxdrv/vboxdrv,PLD-MODULE-BUILD/HostDrivers/vboxnetadp/vboxnetadp,PLD-MODULE-BUILD/HostDrivers/vboxnetflt/vboxnetflt,PLD-MODULE-BUILD/HostDrivers/vboxpci/vboxpci,PLD-MODULE-BUILD/GuestDrivers/vboxguest/vboxguest,PLD-MODULE-BUILD/GuestDrivers/vboxsf/vboxsf -d misc\
+%if %{_kernel_version_code} < %{_kernel_version_magic 4 13 0}\
+%install_kernel_modules -D PLD-MODULE-BUILD/installed -m PLD-MODULE-BUILD/GuestDrivers/vboxvideo/vboxvideo -d misc\
+%endif\
 %{nil}
 
 %{?with_kernel:%{expand:%create_kernel_packages}}
