@@ -40,7 +40,7 @@ exit 1
 %define		_enable_debug_packages	0
 %endif
 
-%define		qtver	5.3.2
+%define		qtver	5.6.0
 
 %define		rel		1
 %define		pname		VirtualBox
