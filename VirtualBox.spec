@@ -42,19 +42,19 @@ exit 1
 
 %define		qtver	5.6.0
 
-%define		rel		2
+%define		rel		1
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	5.2.6
+Version:	5.2.8
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	4490d6929dfae41cdf05e34f583318c8
+# Source0-md5:	e731ea9c5c31096ec4c2a3bfba26665c
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	d14bad5aac3e2b6eb692e36478d95467
+# Source1-md5:	3fb71656e8720342ab6ea4022d3dec9c
 Source2:	vboxservice.init
 Source3:	vboxservice.service
 Source4:	vboxservice.sysconfig
@@ -82,7 +82,6 @@ Patch14:	%{pname}-multipython.patch
 Patch15:	%{pname}-lightdm-1.19.2.patch
 Patch16:	%{pname}-no-vboxvideo.patch
 Patch17:	%{pname}-kerndir.patch
-Patch18:	kernel-4.15.patch
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
 %ifarch %{x8664}
@@ -568,7 +567,6 @@ tar -zxf guest-modules.tar.gz -C GuestDrivers
 
 ../src/VBox/HostDrivers/linux/export_modules.sh host-modules.tar.gz --without-hardening
 tar -zxf host-modules.tar.gz -C HostDrivers
-%patch18 -p1
 cd -
 %endif
 
