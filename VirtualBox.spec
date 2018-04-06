@@ -477,7 +477,9 @@ gospodarzem sprzętu PCI.\
 %files -n kernel%{_alt_kernel}-virtualbox-guest\
 %defattr(644,root,root,755)\
 %config(noreplace) %verify(not md5 mtime size) /etc/modules-load.d/virtualbox-guest.conf\
+%if %{_kernel_version_code} < %{_kernel_version_magic 4 16 0}\
 /lib/modules/%{_kernel_ver}/misc/vboxguest.ko*\
+%endif\
 /lib/modules/%{_kernel_ver}/misc/vboxsf.ko*\
 %if %{_kernel_version_code} < %{_kernel_version_magic 4 13 0}\
 /lib/modules/%{_kernel_ver}/misc/vboxvideo.ko*\
