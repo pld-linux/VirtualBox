@@ -42,7 +42,7 @@ exit 1
 
 %define		qtver	5.6.0
 
-%define		rel		1
+%define		rel		2
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
@@ -514,14 +514,19 @@ cd PLD-MODULE-BUILD/HostDrivers\
 %build_kernel_modules -m vboxnetflt -C vboxnetflt\
 %build_kernel_modules -m vboxpci -C vboxpci\
 cd ../GuestDrivers\
+%if %{_kernel_version_code} < %{_kernel_version_magic 4 16 0}\
 %build_kernel_modules -m vboxguest -C vboxguest\
 cp -a vboxguest/Module.symvers vboxsf\
+%endif\
 %build_kernel_modules -m vboxsf -C vboxsf -c\
 %if %{_kernel_version_code} < %{_kernel_version_magic 4 13 0}\
 %build_kernel_modules -m vboxvideo -C vboxvideo\
 %endif\
 cd ../..\
-%install_kernel_modules -D PLD-MODULE-BUILD/installed -m PLD-MODULE-BUILD/HostDrivers/vboxdrv/vboxdrv,PLD-MODULE-BUILD/HostDrivers/vboxnetadp/vboxnetadp,PLD-MODULE-BUILD/HostDrivers/vboxnetflt/vboxnetflt,PLD-MODULE-BUILD/HostDrivers/vboxpci/vboxpci,PLD-MODULE-BUILD/GuestDrivers/vboxguest/vboxguest,PLD-MODULE-BUILD/GuestDrivers/vboxsf/vboxsf -d misc\
+%install_kernel_modules -D PLD-MODULE-BUILD/installed -m PLD-MODULE-BUILD/HostDrivers/vboxdrv/vboxdrv,PLD-MODULE-BUILD/HostDrivers/vboxnetadp/vboxnetadp,PLD-MODULE-BUILD/HostDrivers/vboxnetflt/vboxnetflt,PLD-MODULE-BUILD/HostDrivers/vboxpci/vboxpci,PLD-MODULE-BUILD/GuestDrivers/vboxsf/vboxsf -d misc\
+%if %{_kernel_version_code} < %{_kernel_version_magic 4 16 0}\
+%install_kernel_modules -D PLD-MODULE-BUILD/installed -m PLD-MODULE-BUILD/GuestDrivers/vboxguest/vboxguest -d misc\
+%endif\
 %if %{_kernel_version_code} < %{_kernel_version_magic 4 13 0}\
 %install_kernel_modules -D PLD-MODULE-BUILD/installed -m PLD-MODULE-BUILD/GuestDrivers/vboxvideo/vboxvideo -d misc\
 %endif\
