@@ -42,19 +42,19 @@ exit 1
 
 %define		qtver	5.6.0
 
-%define		rel		2
+%define		rel		1
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	5.2.14
+Version:	5.2.16
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	0f977d563c99f4dcf11d1fe52197d40e
+# Source0-md5:	c5fcd9088cc73c6a17935d12d3b210c2
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	023119d4c6f558d02369142568aa0281
+# Source1-md5:	2b42966f70a85de0a0d8550373b7f1df
 Source2:	vboxservice.init
 Source3:	vboxservice.service
 Source4:	vboxservice.sysconfig
@@ -989,6 +989,7 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTShutdown
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTSignTool
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTTar
+%attr(755,root,root) %{_libdir}/%{pname}/tools/RTTraceLogTool
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTUnzip
 %attr(755,root,root) %{_libdir}/%{pname}/tools/scm
 
