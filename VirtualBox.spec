@@ -42,7 +42,7 @@ exit 1
 
 %define		qtver	5.6.0
 
-%define		rel		2
+%define		rel		3
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
@@ -83,6 +83,7 @@ Patch15:	%{pname}-lightdm-1.19.2.patch
 Patch16:	%{pname}-no-vboxvideo.patch
 Patch17:	%{pname}-kerndir.patch
 Patch18:	kernel-4.18.patch
+Patch19:	gcc8.patch
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
 %ifarch %{x8664}
@@ -553,6 +554,7 @@ cd ../..\
 %patch16 -p0
 %patch17 -p1
 %patch18 -p1
+%patch19 -p0
 
 %{__sed} -i -e 's,@VBOX_DOC_PATH@,%{_docdir}/%{name}-%{version},' \
 	-e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/common/virtualbox.desktop.in
