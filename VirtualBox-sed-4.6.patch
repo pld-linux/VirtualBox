@@ -1,0 +1,11 @@
+--- VirtualBox-6.0.0/src/VBox/Additions/linux/export_modules.sh.orig	2018-12-20 18:52:22.251544899 +0100
++++ VirtualBox-6.0.0/src/VBox/Additions/linux/export_modules.sh	2018-12-20 18:52:43.561388418 +0100
+@@ -16,7 +16,7 @@
+ # hope that it will be useful, but WITHOUT ANY WARRANTY of any kind.
+ #
+ 
+-export LC_ALL=C
++export LC_ALL=C.UTF-8
+ 
+ # The below is GNU-specific.  See VBox.sh for the longer Solaris/OS X version.
+ TARGET=`readlink -e -- "${0}"` || exit 1
