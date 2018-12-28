@@ -1,0 +1,40 @@
+--- VirtualBox-6.0.0/PLD-MODULE-BUILD/HostDrivers/vboxdrv/r0drv/linux/memobj-r0drv-linux.c~	2018-12-28 14:24:08.000000000 +0100
++++ VirtualBox-6.0.0/PLD-MODULE-BUILD/HostDrivers/vboxdrv/r0drv/linux/memobj-r0drv-linux.c	2018-12-28 14:35:39.146820962 +0100
+@@ -1027,7 +1027,7 @@
+ 
+ /* openSUSE Leap 42.3 detection :-/ */
+ #if    LINUX_VERSION_CODE >= KERNEL_VERSION(4, 4, 0) \
+-    && LINUX_VERSION_CODE <  KERNEL_VERSION(4, 6, 0) \
++    && LINUX_VERSION_CODE <  KERNEL_VERSION(4, 4, 169) \
+     && defined(FAULT_FLAG_REMOTE)
+ # define GET_USER_PAGES_API     KERNEL_VERSION(4, 10, 0) /* no typo! */
+ #else
+@@ -1113,7 +1113,7 @@
+                                 pTask->mm,              /* Whose pages. */
+                                 R3Ptr,                  /* Where from. */
+                                 cPages,                 /* How many pages. */
+-# if GET_USER_PAGES_API >= KERNEL_VERSION(4, 9, 0)
++# if GET_USER_PAGES_API >= KERNEL_VERSION(4, 4, 169)
+                                 fWrite ? FOLL_WRITE |   /* Write to memory. */
+                                          FOLL_FORCE     /* force write access. */
+                                        : 0,             /* Write to memory. */
+--- VirtualBox-6.0.0/PLD-MODULE-BUILD/GuestDrivers/vboxguest/r0drv/linux/memobj-r0drv-linux.c~	2018-12-28 23:06:27.000000000 +0900
++++ VirtualBox-6.0.0/PLD-MODULE-BUILD/GuestDrivers/vboxguest/r0drv/linux/memobj-r0drv-linux.c	2018-12-28 23:17:25.075959807 +0900
+@@ -1027,7 +1027,7 @@
+ 
+ /* openSUSE Leap 42.3 detection :-/ */
+ #if    LINUX_VERSION_CODE >= KERNEL_VERSION(4, 4, 0) \
+-    && LINUX_VERSION_CODE <  KERNEL_VERSION(4, 6, 0) \
++    && LINUX_VERSION_CODE <  KERNEL_VERSION(4, 4, 169) \
+     && defined(FAULT_FLAG_REMOTE)
+ # define GET_USER_PAGES_API     KERNEL_VERSION(4, 10, 0) /* no typo! */
+ #else
+@@ -1113,7 +1113,7 @@
+                                 pTask->mm,              /* Whose pages. */
+                                 R3Ptr,                  /* Where from. */
+                                 cPages,                 /* How many pages. */
+-# if GET_USER_PAGES_API >= KERNEL_VERSION(4, 9, 0)
++# if GET_USER_PAGES_API >= KERNEL_VERSION(4, 4, 169)
+                                 fWrite ? FOLL_WRITE |   /* Write to memory. */
+                                          FOLL_FORCE     /* force write access. */
+                                        : 0,             /* Write to memory. */
