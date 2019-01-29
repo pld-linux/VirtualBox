@@ -1,0 +1,10 @@
+[Unit]
+Description=Start VMSVGA dynamic resizing for DRM
+
+[Service]
+Type=oneshot
+ExecStart=VBoxClient --vmsvga
+RemainAfterExit=yes
+
+[Install]
+WantedBy=graphical.target

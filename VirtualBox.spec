@@ -64,6 +64,7 @@ Source7:	%{pname}-virtualbox-host-modules-load.conf
 Source8:	%{pname}-virtualbox-guest-modules-load.conf
 Source9:	vboxautostart.init
 Source10:	autostart.cfg
+Source11:	vboxclient-vmsvga.service
 Patch0:		%{pname}-version-error.patch
 Patch1:		%{pname}-VBoxSysInfo.patch
 Patch2:		%{pname}-warning_workaround.patch
@@ -691,6 +692,8 @@ install -p %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxservice
 cp -p %{SOURCE3} $RPM_BUILD_ROOT%{systemdunitdir}/vboxservice.service
 cp -p %{SOURCE4} $RPM_BUILD_ROOT/etc/sysconfig/vboxservice
 
+cp -p %{SOURCE11} $RPM_BUILD_ROOT%{systemdunitdir}/vboxclient-vmsvga.service
+
 install -p %{SOURCE9} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxautostart
 %{__sed} -i -e 's#@INSTALL_DIR@#%{_libdir}/%{pname}#' $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxautostart
 cp -p %{SOURCE10} $RPM_BUILD_ROOT%{_sysconfdir}/vbox
@@ -868,14 +871,14 @@ fi
 %post guest
 /sbin/chkconfig --add vboxservice
 %service vboxservice restart
-%systemd_post vboxservice.service
+%systemd_post vboxservice.service vboxclient-vmsvga.service
 
 %preun guest
 if [ "$1" = "0" ]; then
 	/sbin/chkconfig --del vboxservice
 	%service vboxservice -q stop
 fi
-%systemd_preun vboxservice.service
+%systemd_preun vboxservice.service vboxclient-vmsvga.service
 
 %postun guest
 if [ "$1" = "0" ]; then
@@ -1103,6 +1106,7 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(754,root,root) /etc/rc.d/init.d/vboxservice
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/vboxservice
 %{systemdunitdir}/vboxservice.service
+%{systemdunitdir}/vboxclient-vmsvga.service
 %attr(755,root,root) %{_bindir}/VBoxControl
 %attr(755,root,root) %{_bindir}/VBoxService
 
