@@ -8,50 +8,17 @@
      { "netbsd", "NetBSD" },
      { "netware", "Netware" },
      { "solaris", "Solaris" },
---- VirtualBox-4.2.12/./src/VBox/Frontends/VirtualBox/VirtualBox2.qrc~	2013-04-12 13:37:50.000000000 +0300
-+++ VirtualBox-4.2.12/./src/VBox/Frontends/VirtualBox/VirtualBox2.qrc	2013-05-13 15:51:14.323890458 +0300
+--- VirtualBox-4.2.12/./src/VBox/Frontends/VirtualBox/VirtualBox1.qrc~	2013-04-12 13:37:50.000000000 +0300
++++ VirtualBox-4.2.12/./src/VBox/Frontends/VirtualBox/VirtualBox1.qrc	2013-05-13 15:51:14.323890458 +0300
 @@ -26,6 +26,8 @@
          <file alias="os_netware.png">images/os_netware.png</file>
-         <file alias="os_openbsd_64.png">images/os_openbsd_64.png</file>
          <file alias="os_openbsd.png">images/os_openbsd.png</file>
+         <file alias="os_openbsd_64.png">images/os_openbsd_64.png</file>
 +        <file alias="os_pld.png">images/os_pld.png</file>
 +        <file alias="os_pld_64.png">images/os_pld_64.png</file>
-         <file alias="os_opensuse_64.png">images/os_opensuse_64.png</file>
          <file alias="os_opensuse.png">images/os_opensuse.png</file>
-         <file alias="os_oracle_64.png">images/os_oracle_64.png</file>
---- VirtualBox-4.2.12/./src/VBox/Frontends/VirtualBox/VirtualBox2_x2.qrc~	2013-04-12 13:37:50.000000000 +0300
-+++ VirtualBox-4.2.12/./src/VBox/Frontends/VirtualBox/VirtualBox2_x2.qrc	2013-05-13 15:51:14.323890458 +0300
-@@ -26,6 +26,8 @@
-         <file alias="os_netware_x2.png">images/x2/os_netware_x2.png</file>
-         <file alias="os_openbsd_64_x2.png">images/x2/os_openbsd_64_x2.png</file>
-         <file alias="os_openbsd_x2.png">images/x2/os_openbsd_x2.png</file>
-+        <file alias="os_pld.png">images/os_pld.png</file>
-+        <file alias="os_pld_64.png">images/os_pld_64.png</file>
-         <file alias="os_opensuse_64_x2.png">images/x2/os_opensuse_64_x2.png</file>
-         <file alias="os_opensuse_x2.png">images/x2/os_opensuse_x2.png</file>
-         <file alias="os_oracle_64_x2.png">images/x2/os_oracle_64_x2.png</file>
---- VirtualBox-4.2.12/./src/VBox/Frontends/VirtualBox/VirtualBox2_x3.qrc~	2013-04-12 13:37:50.000000000 +0300
-+++ VirtualBox-4.2.12/./src/VBox/Frontends/VirtualBox/VirtualBox2_x3.qrc	2013-05-13 15:51:14.323890458 +0300
-@@ -26,6 +26,8 @@
-         <file alias="os_netware_x3.png">images/x3/os_netware_x3.png</file>
-         <file alias="os_openbsd_64_x3.png">images/x3/os_openbsd_64_x3.png</file>
-         <file alias="os_openbsd_x3.png">images/x3/os_openbsd_x3.png</file>
-+        <file alias="os_pld.png">images/os_pld.png</file>
-+        <file alias="os_pld_64.png">images/os_pld_64.png</file>
-         <file alias="os_opensuse_64_x3.png">images/x3/os_opensuse_64_x3.png</file>
-         <file alias="os_opensuse_x3.png">images/x3/os_opensuse_x3.png</file>
-         <file alias="os_oracle_64_x3.png">images/x3/os_oracle_64_x3.png</file>
---- VirtualBox-4.2.12/./src/VBox/Frontends/VirtualBox/VirtualBox2_x4.qrc~	2013-04-12 13:37:50.000000000 +0300
-+++ VirtualBox-4.2.12/./src/VBox/Frontends/VirtualBox/VirtualBox2_x4.qrc	2013-05-13 15:51:14.323890458 +0300
-@@ -26,6 +26,8 @@
-         <file alias="os_netware_x4.png">images/x4/os_netware_x4.png</file>
-         <file alias="os_openbsd_64_x4.png">images/x4/os_openbsd_64_x4.png</file>
-         <file alias="os_openbsd_x4.png">images/x4/os_openbsd_x4.png</file>
-+        <file alias="os_pld.png">images/os_pld.png</file>
-+        <file alias="os_pld_64.png">images/os_pld_64.png</file>
-         <file alias="os_opensuse_64_x4.png">images/x4/os_opensuse_64_x4.png</file>
-         <file alias="os_opensuse_x4.png">images/x4/os_opensuse_x4.png</file>
-         <file alias="os_oracle_64_x4.png">images/x4/os_oracle_64_x4.png</file>
+         <file alias="os_opensuse_64.png">images/os_opensuse_64.png</file>
+         <file alias="os_oracle.png">images/os_oracle.png</file>
 --- VirtualBox-5.1.2/src/VBox/Main/src-all/Global.cpp.orig	2016-07-29 19:25:16.731328887 +0200
 +++ VirtualBox-5.1.2/src/VBox/Main/src-all/Global.cpp	2016-07-29 19:31:59.252427682 +0200
 @@ -321,6 +321,17 @@
@@ -60,13 +27,13 @@
  
 +    { "Linux",   "Linux",             "PLD",            "PLD Linux (32-bit)",
 +      VBOXOSTYPE_Linux26,         VBOXOSHINT_RTCUTC | VBOXOSHINT_USBTABLET | VBOXOSHINT_X2APIC,
-+       512,  16,  8 * _1G64, GraphicsControllerType_VMSVGA, NetworkAdapterType_I82540EM, 0, StorageControllerType_PIIX4, StorageBus_IDE,
++       512,  16,  8 * _1G64, NetworkAdapterType_I82540EM, 0, StorageControllerType_PIIX4, StorageBus_IDE,
 +        StorageControllerType_IntelAhci, StorageBus_SATA, ChipsetType_PIIX3, AudioControllerType_AC97, AudioCodecType_AD1980  },
 +
 +    { "Linux",   "Linux",             "PLD_64",         "PLD Linux (64-bit)",
 +      VBOXOSTYPE_Linux26_x64,     VBOXOSHINT_64BIT | VBOXOSHINT_HWVIRTEX | VBOXOSHINT_IOAPIC | VBOXOSHINT_RTCUTC 
 +                                | VBOXOSHINT_USBTABLET | VBOXOSHINT_X2APIC,
-+      1024,  16,  8 * _1G64, GraphicsControllerType_VMSVGA, NetworkAdapterType_I82540EM, 0, StorageControllerType_PIIX4, StorageBus_IDE,
++      1024,  16,  8 * _1G64, NetworkAdapterType_I82540EM, 0, StorageControllerType_PIIX4, StorageBus_IDE,
 +        StorageControllerType_IntelAhci, StorageBus_SATA, ChipsetType_PIIX3, AudioControllerType_AC97, AudioCodecType_AD1980  },
 +
      { "Solaris", "Solaris",           "Solaris",            "Oracle Solaris 10 5/09 and earlier (32-bit)",
@@ -116,3 +83,4 @@
      m_guestOSTypeIconNames.insert("NetBSD",          ":/os_netbsd.png");
      m_guestOSTypeIconNames.insert("NetBSD_64",       ":/os_netbsd_64.png");
      m_guestOSTypeIconNames.insert("Solaris",         ":/os_solaris.png");
+

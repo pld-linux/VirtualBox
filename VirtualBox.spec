@@ -47,14 +47,14 @@ exit 1
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	6.0.4
+Version:	5.2.26
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	96e53b9e75a37cc6fd2d13d9c9f6881d
+# Source0-md5:	4e84cd1aecb67e3f59b3ee06292bb2d0
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	b5722fb63e3928e8829ca84132e49c7b
+# Source1-md5:	e97c15595392a7c918ae119bc85211c0
 Source2:	vboxservice.init
 Source3:	vboxservice.service
 Source4:	vboxservice.sysconfig
@@ -83,6 +83,7 @@ Patch14:	%{pname}-multipython.patch
 Patch15:	%{pname}-lightdm-1.19.2.patch
 Patch16:	%{pname}-no-vboxvideo.patch
 Patch17:	kernel-4.4.169.patch
+Patch18:    %{pname}-kerndir.patch
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
 %ifarch %{x8664}
@@ -551,6 +552,7 @@ cd ../..\
 %patch14 -p0
 %patch15 -p0
 %patch16 -p0
+%patch18 -p1
 
 %{__sed} -i -e 's,@VBOX_DOC_PATH@,%{_docdir}/%{name}-%{version},' \
 	-e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/common/virtualbox.desktop.in
@@ -933,7 +935,6 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxDD2.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxDDU.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxDragAndDropSvc.so
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxGlobal.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxGuestControlSvc.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxGuestPropSvc.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxHostChannel.so
@@ -944,7 +945,6 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxPython*.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxREM.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxRT.so
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxSVGA3D.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxSharedClipboard.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxSharedCrOpenGL.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxSharedFolders.so
@@ -973,8 +973,6 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxVMMPreload
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxVolInfo
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxXPCOMIPCD
-%attr(755,root,root) %{_libdir}/%{pname}/VirtualBoxVM
-%attr(755,root,root) %{_libdir}/%{pname}/bldRTLdrCheckImports
 %attr(755,root,root) %{_libdir}/%{pname}/iPxeBaseBin
 %if %{with doc}
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxManageHelp
@@ -982,14 +980,11 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %dir %{_libdir}/%{pname}/tools
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTCat
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTChMod
-%attr(755,root,root) %{_libdir}/%{pname}/tools/RTCp
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTDbgSymCache
-%attr(755,root,root) %{_libdir}/%{pname}/tools/RTFuzzMaster
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTGzip
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTHttp
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTIsoMaker
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTKrnlModInfo
-%attr(755,root,root) %{_libdir}/%{pname}/tools/RTLdrCheckImports
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTLdrFlt
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTLs
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTManifest

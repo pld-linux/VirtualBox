@@ -1,0 +1,11 @@
+--- VirtualBox-5.2.2/src/VBox/Installer/linux/Makefile.include.header.orig	2017-11-25 14:42:43.336204931 +0100
++++ VirtualBox-5.2.2/src/VBox/Installer/linux/Makefile.include.header	2017-11-25 14:43:00.666146939 +0100
+@@ -136,7 +136,7 @@
+ endif # neq($(KERNELRELEASE),)
+ 
+ # Kernel build folder
+-KERN_DIR := /lib/modules/$(KERN_VER)/build
++KERN_DIR ?= /lib/modules/$(KERN_VER)/build
+ ifneq ($(shell if test -d $(KERN_DIR); then echo yes; fi),yes)
+  $(error Error: unable to find the headers of the Linux kernel to build against. \
+           Specify KERN_VER=<version> (currently $(KERN_VER)) and run Make again)
