@@ -44,9 +44,10 @@ exit 1
 
 %define		rel		1
 %define		pname		VirtualBox
+%define		ver_suffix	52
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
-Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
+Name:		%{pname}%{ver_suffix}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
 Version:	5.2.26
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2
@@ -83,7 +84,7 @@ Patch14:	%{pname}-multipython.patch
 Patch15:	%{pname}-lightdm-1.19.2.patch
 Patch16:	%{pname}-no-vboxvideo.patch
 Patch17:	kernel-4.4.169.patch
-Patch18:    %{pname}-kerndir.patch
+Patch18:    	%{pname}-kerndir.patch
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
 %ifarch %{x8664}
@@ -181,7 +182,9 @@ Requires(pre):	/usr/sbin/groupadd
 Requires:	libvncserver >= 0.9.9
 Requires:	udev-core
 Provides:	group(vbox)
-Obsoletes:	VirtualBox-udev < 4.2.10-5
+Obsoletes:	%{pname}-udev < 4.2.10-5
+Obsoletes:	%{pname} < 6.0.0
+Conflicts:	%{pname} >= 6.0.0
 ExclusiveArch:	%{ix86} %{x8664} %{?with_kernel:x32}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -257,7 +260,9 @@ Requires:	shared-mime-info
 Suggests:	Qt5Gui-platform-xcb-glx >= %{qtver}
 Suggests:	Qt5Gui-platform-xcb-egl >= %{qtver}
 Suggests:	gxmessage
-Conflicts:	%{name} < 4.3.8-3
+Obsoletes:	%{pname} <= 6.0.0
+Conflicts:	%{pname} >= 6.0.0
+
 
 %description gui
 Qt GUI part for VirtualBox.
