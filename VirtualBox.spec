@@ -260,7 +260,7 @@ Requires:	shared-mime-info
 Suggests:	Qt5Gui-platform-xcb-glx >= %{qtver}
 Suggests:	Qt5Gui-platform-xcb-egl >= %{qtver}
 Suggests:	gxmessage
-Obsoletes:	%{pname} <= 6.0.0
+Obsoletes:	%{pname} < 6.0.0
 Conflicts:	%{pname} >= 6.0.0
 
 
@@ -270,6 +270,8 @@ Qt GUI part for VirtualBox.
 %package doc
 Summary:	VirtualBox documentation
 Group:		Documentation
+Obsoletes:	%{pname}-doc < 6.0.0
+Conflicts:	%{pname}-doc >= 6.0.0
 
 %description doc
 This package contains VirtualBox User Manual.
@@ -277,6 +279,8 @@ This package contains VirtualBox User Manual.
 %package additions
 Summary:	VirtualBox Guest Additions
 Group:		Base
+Obsoletes:	%{pname}-additions < 6.0.0
+Conflicts:	%{pname}-additions >= 6.0.0
 Requires:	%{name} = %{version}
 %if "%{_rpmversion}" >= "5"
 BuildArch:	noarch
@@ -299,6 +303,8 @@ Requires(postun):	/usr/sbin/groupdel
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
 Requires:	rc-scripts
+Obsoletes:	%{pname}-guest < 6.0.0
+Conflicts:	%{pname}-guest >= 6.0.0
 Requires:	systemd-units >= 38
 Suggests:	kernel(vboxguest)
 Suggests:	kernel(vboxsf)
@@ -319,6 +325,8 @@ Requires:	xorg-app-xrandr
 Requires:	xorg-driver-video-vboxvideo = %{version}-%{release}
 Requires:	kernel(vboxvideo)
 Obsoletes:	xorg-driver-input-vboxmouse < %{version}-%{release}
+Obsoletes:	%{pname}-guest-x11 < 6.0.0
+Conflicts:	%{pname}-guest-x11 >= 6.0.0
 
 %description guest-x11
 Tools for X11 session that utilize kernel modules for supporting
@@ -336,7 +344,7 @@ Requires:	%{name} = %{version}-%{release}
 This package contains VirtualBox web service API daemon. It allows to
 control virtual machines via web interface.
 
-%package -n lightdm-greeter-vbox
+%package -n lightdm-greeter-vbox%{ver_suffix}
 Summary:	VirtualBox greeter for lightdm
 Group:		Themes
 # NOTE: '#' in url is lost because rpm treats it as comment, even hacking with
@@ -345,21 +353,25 @@ URL:		http://www.virtualbox.org/manual/ch09.html#autologon_unix_lightdm
 Requires:	%{name} = %{version}-%{release}
 Requires:	kernel(vboxguest)
 Requires:	lightdm >= 1.0.1
-Requires:	pam-pam_vbox = %{version}-%{release}
+Requires:	pam-pam_vbox%{ver_suffix} = %{version}-%{release}
+Conflicts:	lightdm-greeter-vbox >= 6.0.0
+Obsoletes:	lightdm-greeter-vbox < 6.0.0
 Provides:	lightdm-greeter
 
-%description -n lightdm-greeter-vbox
+%description -n lightdm-greeter-vbox%{ver_suffix}
 VirtualBox greeter for LightDM.
 
-%package -n pam-pam_vbox
+%package -n pam-pam_vbox%{ver_suffix}
 Summary:	PAM module to perform automated guest logons
 Group:		Base
+Conflicts:	pam-pam_vbox >= 6.0.0
+Obsoletes:	pam-pam_vbox < 6.0.0
 
-%description  -n pam-pam_vbox
+%description  -n pam-pam_vbox%{ver_suffix}
 PAM module (Pluggable Authentication Module) which can be used to
 perform automated guest logons.
 
-%package -n xorg-driver-video-vboxvideo
+%package -n xorg-driver-video-vboxvideo%{ver_suffix}
 Summary:	X.org video driver for VirtualBox guest OS
 Summary(pl.UTF-8):	Sterownik grafiki dla systemu gościa w VirtualBoksie
 Group:		X11/Applications
@@ -368,53 +380,59 @@ Requires:	xorg-driver-video-modesetting
 Requires:	xorg-xserver-libdri >= 1.7.4
 Requires:	xorg-xserver-server >= 1.0.99.901
 %{?requires_xorg_xserver_videodrv}
+Conflicts:	xorg-driver-video-vboxvideo >= 6.0.0
+Obsoletes:	xorg-driver-video-vboxvideo < 6.0.0
 Provides:	OpenGL = 2.1
 Provides:	OpenGL-GLX = 1.3
 Provides:	xorg-xserver-module(glx)
 
-%description -n xorg-driver-video-vboxvideo
+%description -n xorg-driver-video-vboxvideo%{ver_suffix}
 X.org video driver for VirtualBox guest OS.
 
-%description -n xorg-driver-video-vboxvideo -l pl.UTF-8
+%description -n xorg-driver-video-vboxvideo%{ver_suffix} -l pl.UTF-8
 Sterownik grafiki dla systemu gościa w VirtualBoksie.
 
-%package -n dkms-vboxguest
+%package -n dkms-vboxguest%{ver_suffix}
 Summary:	VirtualBox kernel modules source for Linux Guest
 Summary(pl.UTF-8):	Moduły VirtualBoksa do jądra Linuksa dla systemu gościa
 License:	GPL v2+
 Group:		Base/Kernel
 Requires:	dkms
+Conflicts:	dkms-vboxguest >= 6.0.0
+Obsoletes:	dkms-vboxhost < 6.0.0
 %if "%{_rpmversion}" >= "5"
 BuildArch:	noarch
 %endif
 
-%description -n dkms-vboxguest
+%description -n dkms-vboxguest%{ver_suffix}
 This package contains DKMS-ready VirtualBox Guest Additions for Linux
 Module, host file system access (Shared Folders) and DRM support for
 Linux guest system.
 
-%description -n dkms-vboxguest -l pl.UTF-8
+%description -n dkms-vboxguest%{ver_suffix} -l pl.UTF-8
 Ten pakiet zawiera moduł jądra Linuksa vboxguest dla VirtualBoksa -
 dodatki dla systemu gościa, dostęp do plików systemu głównego z
 poziomu systemu gościa i sterownik obsługi DRM.
 
-%package -n dkms-vboxhost
+%package -n dkms-vboxhost%{ver_suffix}
 Summary:	VirtualBox Support Drivers source
 Summary(pl.UTF-8):	Moduły jądra Linuksa dla VirtualBoksa
 License:	GPL v2+
 Group:		Base/Kernel
 Requires:	dkms
+Conflicts:	dkms-vboxhost >= 6.0.0
+Obsoletes:	dkms-vboxhost < 6.0.0
 %if "%{_rpmversion}" >= "5"
 BuildArch:	noarch
 %endif
 
-%description -n dkms-vboxhost
+%description -n dkms-vboxhost%{ver_suffix}
 This package contains DKMS enabled sourcecode of VirtualBox Support
 Driver, Network Adapter Driver, Network Filter Driver and PCI card
 passthrough driver that works as host proxy between guest and PCI
 hardware.
 
-%description -n dkms-vboxhost -l pl.UTF-8
+%description -n dkms-vboxhost%{ver_suffix} -l pl.UTF-8
 Ten pakiet zawiera sterownik wsparcia dla systemu głównego, sterownik
 witrualnej karty sieciowej, sterownik filtrowania sieci dla systemu
 głównego oraz sterownik, ktory działa jako proxy między gościem i
@@ -425,7 +443,7 @@ gospodarzem sprzętu PCI.
 # KEEP ALL REGULAR SUBPACKAGES BEFORE KERNEL PACKAGES.
 
 %define	kernel_pkg()\
-%package -n kernel%{_alt_kernel}-virtualbox-guest\
+%package -n kernel%{_alt_kernel}-virtualbox%{ver_suffix}-guest\
 Summary:	VirtualBox kernel modules for Linux Guest\
 Summary(pl.UTF-8):	Moduły VirtualBoksa do jądra Linuksa dla systemu gościa\
 Release:	%{rel}@%{_kernel_ver_str}\
@@ -441,19 +459,21 @@ Provides:	kernel(vboxguest) = %{version}-%{rel}\
 Provides:	kernel(vboxsf) = %{version}-%{rel}\
 Provides:	kernel(vboxvideo) = %{version}-%{rel}\
 Obsoletes:	kernel-init-guest\
-Conflicts:	kernel%{_alt_kernel}-virtualbox-host\
+Obsoletes:	kernel%{_alt_kernel}-virtualbox%{ver_suffix}-guest < 6.0.0\
+Conflicts:	kernel%{_alt_kernel}-virtualbox%{ver_suffix}-guest >= 6.0.0\
+Conflicts:	kernel%{_alt_kernel}-virtualbox%{ver_suffix}-host\
 \
-%description -n kernel%{_alt_kernel}-virtualbox-guest\
+%description -n kernel%{_alt_kernel}-virtualbox%{ver_suffix}-guest\
 This package contains VirtualBox Guest Additions for Linux Module,\
 host file system access (Shared Folders) and DRM support for\
 Linux guest system.\
 \
-%description -n kernel%{_alt_kernel}-virtualbox-guest -l pl.UTF-8\
+%description -n kernel%{_alt_kernel}-virtualbox%{ver_suffix}-guest -l pl.UTF-8\
 Ten pakiet zawiera moduł jądra Linuksa vboxguest dla VirtualBoksa -\
 dodatki dla systemu gościa, dostęp do plików systemu głównego z\
 poziomu systemu gościa i sterownik obsługi DRM.\
 \
-%package -n kernel%{_alt_kernel}-virtualbox-host\
+%package -n kernel%{_alt_kernel}-virtualbox%{ver_suffix}-host\
 Summary:	VirtualBox Support Drivers\
 Summary(pl.UTF-8):	Moduły jądra Linuksa dla VirtualBoksa\
 Release:	%{rel}@%{_kernel_ver_str}\
@@ -469,20 +489,22 @@ Provides:	kernel(vboxnetadp) = %{version}-%{rel}\
 Provides:	kernel(vboxnetflt) = %{version}-%{rel}\
 Provides:	kernel(vboxpci) = %{version}-%{rel}\
 Obsoletes:	kernel-init-host\
+Obsoletes:	kernel%{_alt_kernel}-virtualbox-host < 6.0.0\
+Conflicts:	kernel%{_alt_kernel}-virtualbox-host >= 6.0.0\
 \
-%description -n kernel%{_alt_kernel}-virtualbox-host\
+%description -n kernel%{_alt_kernel}-virtualbox%{ver_suffix}-host\
 This package contains VirtualBox Support Driver, Network Adapter\
 Driver, Network Filter Driver and PCI card passthrough driver that\
 works as host proxy between guest and PCI hardware.\
 \
-%description -n kernel%{_alt_kernel}-virtualbox-host -l pl.UTF-8\
+%description -n kernel%{_alt_kernel}-virtualbox%{ver_suffix}-host -l pl.UTF-8\
 Ten pakiet zawiera sterownik wsparcia dla systemu głównego, sterownik\
 witrualnej karty sieciowej, sterownik filtrowania sieci dla systemu\
 głównego oraz sterownik, ktory działa jako proxy między gościem i\
 gospodarzem sprzętu PCI.\
 \
 %if %{with kernel}\
-%files -n kernel%{_alt_kernel}-virtualbox-guest\
+%files -n kernel%{_alt_kernel}-virtualbox%{ver_suffix}-guest\
 %defattr(644,root,root,755)\
 %config(noreplace) %verify(not md5 mtime size) /etc/modules-load.d/virtualbox-guest.conf\
 /lib/modules/%{_kernel_ver}/misc/vboxguest.ko*\
@@ -491,7 +513,7 @@ gospodarzem sprzętu PCI.\
 /lib/modules/%{_kernel_ver}/misc/vboxvideo.ko*\
 %endif\
 \
-%files -n kernel%{_alt_kernel}-virtualbox-host\
+%files -n kernel%{_alt_kernel}-virtualbox%{ver_suffix}-host\
 %config(noreplace) %verify(not md5 mtime size) /etc/modules-load.d/virtualbox-host.conf\
 /lib/modules/%{_kernel_ver}/misc/vboxdrv.ko*\
 /lib/modules/%{_kernel_ver}/misc/vboxnetadp.ko*\
@@ -499,16 +521,16 @@ gospodarzem sprzętu PCI.\
 /lib/modules/%{_kernel_ver}/misc/vboxpci.ko*\
 %endif\
 \
-%post -n kernel%{_alt_kernel}-virtualbox-guest\
+%post -n kernel%{_alt_kernel}-virtualbox%{ver_suffix}-guest\
 %depmod %{_kernel_ver}\
 \
-%postun	-n kernel%{_alt_kernel}-virtualbox-guest\
+%postun	-n kernel%{_alt_kernel}-virtualbox%{ver_suffix}-guest\
 %depmod %{_kernel_ver}\
 \
-%post	-n kernel%{_alt_kernel}-virtualbox-host\
+%post	-n kernel%{_alt_kernel}-virtualbox%{ver_suffix}-host\
 %depmod %{_kernel_ver}\
 \
-%postun	-n kernel%{_alt_kernel}-virtualbox-host\
+%postun	-n kernel%{_alt_kernel}-virtualbox%{ver_suffix}-host\
 %depmod %{_kernel_ver}\
 %{nil}
 
@@ -896,23 +918,23 @@ fi
 %triggerpostun guest -- VirtualBox-guest < 4.3.0-1
 %systemd_trigger vboxservice.service
 
-%pre -n lightdm-greeter-vbox
+%pre -n lightdm-greeter-vbox%{ver_suffix}
 %addusertogroup xdm vbox
 
-%post -n dkms-vboxguest
+%post -n dkms-vboxguest%{ver_suffix}
 dkms add -m vboxguest -v %{version}-%{rel} --rpm_safe_upgrade && \
 dkms build -m vboxguest -v %{version}-%{rel} --rpm_safe_upgrade && \
 dkms install -m vboxguest -v %{version}-%{rel} --rpm_safe_upgrade || :
 
-%preun -n dkms-vboxguest
+%preun -n dkms-vboxguest%{ver_suffix}
 dkms remove -m vboxguest -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 
-%post -n dkms-vboxhost
+%post -n dkms-vboxhost%{ver_suffix}
 dkms add -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade && \
 dkms build -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade && \
 dkms install -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade || :
 
-%preun -n dkms-vboxhost
+%preun -n dkms-vboxhost%{ver_suffix}
 dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 
 %if %{with userspace}
@@ -1125,13 +1147,13 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %endif
 
 %if %{with lightdm}
-%files -n lightdm-greeter-vbox
+%files -n lightdm-greeter-vbox%{ver_suffix}
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_sbindir}/vbox-greeter
 %{_datadir}/xgreeters/vbox-greeter.desktop
 %endif
 
-%files -n pam-pam_vbox
+%files -n pam-pam_vbox%{ver_suffix}
 %defattr(644,root,root,755)
 %attr(755,root,root) /%{_lib}/security/pam_vbox.so
 
@@ -1150,7 +1172,7 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %endif
 %endif
 
-%files -n xorg-driver-video-vboxvideo
+%files -n xorg-driver-video-vboxvideo%{ver_suffix}
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/xorg/modules/dri/vboxvideo_dri.so
 # vboxvideo_dri.so deps
@@ -1163,11 +1185,11 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/VBoxOGLpassthroughspu.so
 
 %if %{with dkms}
-%files -n dkms-vboxguest
+%files -n dkms-vboxguest%{ver_suffix}
 %defattr(644,root,root,755)
 %{_usrsrc}/vboxguest-%{version}-%{rel}
 
-%files -n dkms-vboxhost
+%files -n dkms-vboxhost%{ver_suffix}
 %defattr(644,root,root,755)
 %{_usrsrc}/vboxhost-%{version}-%{rel}
 %endif
