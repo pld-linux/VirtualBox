@@ -261,8 +261,8 @@ Requires:	shared-mime-info
 Suggests:	Qt5Gui-platform-xcb-glx >= %{qtver}
 Suggests:	Qt5Gui-platform-xcb-egl >= %{qtver}
 Suggests:	gxmessage
-Obsoletes:	%{pname} < 6.0.0
-Conflicts:	%{pname} >= 6.0.0
+Obsoletes:	%{pname}-gui < 6.0.0
+Conflicts:	%{pname}-gui >= 6.0.0
 
 
 %description gui
