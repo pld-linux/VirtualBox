@@ -150,6 +150,7 @@ BuildRequires:	libxslt-progs >= 1.1.17
 BuildRequires:	makeself
 BuildRequires:	mkisofs
 BuildRequires:	openssl-devel >= 1.0.1
+BuildRequires:	opus-devel
 BuildRequires:	pam-devel
 BuildRequires:	pixman-devel
 BuildRequires:	pkgconfig
