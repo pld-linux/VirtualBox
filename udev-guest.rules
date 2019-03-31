@@ -1,0 +1,3 @@
+# Devices in Guest, should use acl really
+KERNEL=="vboxguest",  OWNER="vboxadd", MODE="0660"
+KERNEL=="vboxuser",   OWNER="vboxadd", MODE="0666"

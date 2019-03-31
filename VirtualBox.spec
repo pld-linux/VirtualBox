@@ -65,6 +65,7 @@ Source8:	%{pname}-virtualbox-guest-modules-load.conf
 Source9:	vboxautostart.init
 Source10:	autostart.cfg
 Source11:	vboxclient-vmsvga.service
+Source12:	udev-guest.rules
 Patch0:		%{pname}-version-error.patch
 Patch1:		%{pname}-VBoxSysInfo.patch
 Patch2:		%{pname}-warning_workaround.patch
@@ -786,6 +787,7 @@ rm -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/icons
 
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname},/lib/udev}/VBoxCreateUSBNode.sh
 cp -p %{SOURCE6} $RPM_BUILD_ROOT/etc/udev/rules.d/60-vboxdrv.rules
+cp -p %{SOURCE12} $RPM_BUILD_ROOT/etc/udev/rules.d/60-vboxguest.rules
 
 %if %{with dkms}
 mv $RPM_BUILD_ROOT%{_libdir}/%{pname}/src $RPM_BUILD_ROOT%{_usrsrc}/vboxhost-%{version}-%{rel}
@@ -877,6 +879,7 @@ fi
 %update_mime_database
 
 %pre guest
+%useradd -u 336 -d /usr/share/empty -s /bin/false -c "VirtualBox guest additions" -g nobody vboxadd
 # Add a group "vboxsf" for Shared Folders access
 # All users which want to access the auto-mounted Shared Folders have to be added to this group.
 %groupadd -g 266 -r -f vboxsf
@@ -895,6 +898,7 @@ fi
 
 %postun guest
 if [ "$1" = "0" ]; then
+	%userremove vboxadd
 	%groupremove vboxsf
 fi
 %systemd_reload
@@ -1053,7 +1057,7 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 
 %dir %{_datadir}/%{pname}
 
-%config(noreplace) %verify(not md5 mtime size) /etc/udev/rules.d/*.rules
+%config(noreplace) %verify(not md5 mtime size) /etc/udev/rules.d/60-vboxdrv.rules
 %attr(755,root,root) /lib/udev/VBoxCreateUSBNode.sh
 
 %if %{with gui}
@@ -1122,6 +1126,7 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %{systemdunitdir}/vboxclient-vmsvga.service
 %attr(755,root,root) %{_bindir}/VBoxControl
 %attr(755,root,root) %{_bindir}/VBoxService
+%config(noreplace) %verify(not md5 mtime size) /etc/udev/rules.d/60-vboxguest.rules
 
 %files guest-x11
 %defattr(644,root,root,755)
