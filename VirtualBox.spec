@@ -479,6 +479,9 @@ gospodarzem sprzętu PCI.\
 %if %{with kernel}\
 %files -n kernel%{_alt_kernel}-virtualbox-guest\
 %defattr(644,root,root,755)\
+%if %{_kernel_version_code} >= %{_kernel_version_magic 4 16 0}\
+%config(noreplace) %verify(not md5 mtime size) /etc/depmod.d/%{_kernel_ver}/vboxguest.conf\
+%endif\
 %config(noreplace) %verify(not md5 mtime size) /etc/modules-load.d/virtualbox-guest.conf\
 /lib/modules/%{_kernel_ver}/misc/vboxguest.ko*\
 /lib/modules/%{_kernel_ver}/misc/vboxsf.ko*\
@@ -526,6 +529,13 @@ cd ../..\
 %install_kernel_modules -D PLD-MODULE-BUILD/installed -m PLD-MODULE-BUILD/GuestDrivers/vboxguest/vboxguest -d misc\
 %if %{_kernel_version_code} < %{_kernel_version_magic 4 13 0}\
 %install_kernel_modules -D PLD-MODULE-BUILD/installed -m PLD-MODULE-BUILD/GuestDrivers/vboxvideo/vboxvideo -d misc\
+%endif\
+%{nil}
+
+%define install_kernel_pkg()\
+%if %{_kernel_version_code} >= %{_kernel_version_magic 4 16 0}\
+install -d PLD-MODULE-BUILD/installed/etc/depmod.d/%{_kernel_ver}\
+echo override vboxguest %{_kernel_ver} misc > PLD-MODULE-BUILD/installed/etc/depmod.d/%{_kernel_ver}/vboxguest.conf\
 %endif\
 %{nil}
 
@@ -641,6 +651,7 @@ kmk %{?_smp_mflags}
 %endif
 
 %{?with_kernel:%{expand:%build_kernel_packages}}
+%{?with_kernel:%{expand:%install_kernel_packages}}
 
 %install
 rm -rf $RPM_BUILD_ROOT
