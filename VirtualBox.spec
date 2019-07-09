@@ -513,9 +513,9 @@ gospodarzem sprzętu PCI.\
 export KERN_DIR=%{_kernelsrcdir}\
 cd PLD-MODULE-BUILD/HostDrivers\
 %build_kernel_modules -m vboxdrv -C vboxdrv\
-%build_kernel_modules -m vboxnetadp -C vboxnetadp\
-%build_kernel_modules -m vboxnetflt -C vboxnetflt\
-%build_kernel_modules -m vboxpci -C vboxpci\
+%build_kernel_modules -m vboxnetadp -C vboxnetadp KBUILD_EXTRA_SYMBOLS=$PWD/../vboxdrv/Module.symvers\
+%build_kernel_modules -m vboxnetflt -C vboxnetflt KBUILD_EXTRA_SYMBOLS=$PWD/../vboxdrv/Module.symvers\
+%build_kernel_modules -m vboxpci -C vboxpci KBUILD_EXTRA_SYMBOLS=$PWD/../vboxdrv/Module.symvers\
 cd ../GuestDrivers\
 %build_kernel_modules -m vboxguest -C vboxguest\
 cp -a vboxguest/Module.symvers vboxsf\
