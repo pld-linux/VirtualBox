@@ -42,19 +42,19 @@ exit 1
 
 %define		qtver	5.6.0
 
-%define		rel		4
+%define		rel		1
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	6.0.8
+Version:	6.0.10
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	8f703ae98002f9e11dcb29eb01f87718
+# Source0-md5:	8428f7e27b244803df180213bc5d4a68
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	7fab0b92e88b57c19bcc9aa081de245f
+# Source1-md5:	70e94bf787490817ca0b8273ead377bd
 Source2:	vboxservice.init
 Source3:	vboxservice.service
 Source4:	vboxservice.sysconfig
@@ -685,12 +685,6 @@ cp -p %{SOURCE1} $RPM_BUILD_ROOT%{_datadir}/%{pname}/VBoxGuestAdditions.iso
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/VBoxOGL.so,%{_libdir}/xorg/modules/dri/vboxvideo_dri.so}
 # XXX: where else to install them that vboxvideo_dri.so finds them? patch with rpath?
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxEGL.so
-%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLarrayspu.so
-%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLcrutil.so
-%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLerrorspu.so
-%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLfeedbackspu.so
-%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLpackspu.so
-%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxOGLpassthroughspu.so
 
 # Guest Only Tools
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_bindir}}/VBoxClient
@@ -953,9 +947,6 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxGuestPropSvc.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxHostChannel.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxKeyboard.so
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxOGLhostcrutil.so
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxOGLhosterrorspu.so
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxOGLrenderspu.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxPython*.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxREM.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxRT.so
@@ -1171,12 +1162,6 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/xorg/modules/dri/vboxvideo_dri.so
 # vboxvideo_dri.so deps
 %attr(755,root,root) %{_libdir}/VBoxEGL.so
-%attr(755,root,root) %{_libdir}/VBoxOGLarrayspu.so
-%attr(755,root,root) %{_libdir}/VBoxOGLcrutil.so
-%attr(755,root,root) %{_libdir}/VBoxOGLerrorspu.so
-%attr(755,root,root) %{_libdir}/VBoxOGLfeedbackspu.so
-%attr(755,root,root) %{_libdir}/VBoxOGLpackspu.so
-%attr(755,root,root) %{_libdir}/VBoxOGLpassthroughspu.so
 
 %if %{with dkms}
 %files -n dkms-vboxguest
