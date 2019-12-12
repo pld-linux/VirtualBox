@@ -42,19 +42,19 @@ exit 1
 
 %define		qtver	5.6.0
 
-%define		rel		2
+%define		rel		0.1
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	6.0.14
+Version:	6.1.0
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	2766d6f628dcd8f0bc216d0f8a2abc8e
+# Source0-md5:	484b550f4692c9d61896b08bb0a1be7f
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	b6992ff74c65b964ddfe1ce951467493
+# Source1-md5:	24e170ad35727712a53d191b806428f5
 Source2:	vboxservice.init
 Source3:	vboxservice.service
 Source4:	vboxservice.sysconfig
@@ -69,9 +69,8 @@ Source12:	udev-guest.rules
 Patch0:		%{pname}-version-error.patch
 Patch1:		%{pname}-VBoxSysInfo.patch
 Patch2:		%{pname}-warning_workaround.patch
-Patch3:		%{pname}-dri.patch
+Patch3:		svn_rev.patch
 Patch4:		wrapper.patch
-Patch5:		xserver-1.12.patch
 Patch6:		hardening-shared.patch
 Patch7:		lightdm-greeter-makefile.patch
 Patch8:		lightdm-greeter-g++-link.patch
@@ -84,7 +83,6 @@ Patch14:	%{pname}-multipython.patch
 Patch15:	%{pname}-lightdm-1.19.2.patch
 Patch16:	%{pname}-no-vboxvideo.patch
 Patch17:	qt5-gl.patch
-Patch18:	linux-5.4.patch
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
 %ifarch %{x8664}
@@ -312,9 +310,9 @@ Summary:	VirtualBox Guest X11 Additions
 Group:		X11/Applications
 Requires:	%{name}-guest = %{version}-%{release}
 Requires:	xorg-app-xrandr
-Requires:	xorg-driver-video-vboxvideo = %{version}-%{release}
 Requires:	kernel(vboxvideo)
 Obsoletes:	xorg-driver-input-vboxmouse < %{version}-%{release}
+Obsoletes:	xorg-driver-video-vboxvideo < %{version}-%{release}
 
 %description guest-x11
 Tools for X11 session that utilize kernel modules for supporting
@@ -354,25 +352,6 @@ Group:		Base
 %description  -n pam-pam_vbox
 PAM module (Pluggable Authentication Module) which can be used to
 perform automated guest logons.
-
-%package -n xorg-driver-video-vboxvideo
-Summary:	X.org video driver for VirtualBox guest OS
-Summary(pl.UTF-8):	Sterownik grafiki dla systemu gościa w VirtualBoksie
-Group:		X11/Applications
-Requires:	Mesa-dri-driver-swrast
-Requires:	xorg-driver-video-modesetting
-Requires:	xorg-xserver-libdri >= 1.7.4
-Requires:	xorg-xserver-server >= 1.0.99.901
-%{?requires_xorg_xserver_videodrv}
-Provides:	OpenGL = 2.1
-Provides:	OpenGL-GLX = 1.3
-Provides:	xorg-xserver-module(glx)
-
-%description -n xorg-driver-video-vboxvideo
-X.org video driver for VirtualBox guest OS.
-
-%description -n xorg-driver-video-vboxvideo -l pl.UTF-8
-Sterownik grafiki dla systemu gościa w VirtualBoksie.
 
 %package -n dkms-vboxguest
 Summary:	VirtualBox kernel modules source for Linux Guest
@@ -435,7 +414,9 @@ Requires:	%{releq_kernel -n drm}\
 Requires(postun):	%releq_kernel\
 Provides:	kernel(vboxguest) = %{version}-%{rel}\
 Provides:	kernel(vboxsf) = %{version}-%{rel}\
+%if %{_kernel_version_code} < %{_kernel_version_magic 4 13 0}\
 Provides:	kernel(vboxvideo) = %{version}-%{rel}\
+%endif\
 Obsoletes:	kernel-init-guest\
 Conflicts:	kernel%{_alt_kernel}-virtualbox-host\
 \
@@ -549,7 +530,6 @@ echo override vboxguest %{_kernel_ver} misc > PLD-MODULE-BUILD/installed/etc/dep
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
@@ -564,7 +544,6 @@ echo override vboxguest %{_kernel_ver} misc > PLD-MODULE-BUILD/installed/etc/dep
 %patch15 -p0
 %patch16 -p0
 %patch17 -p1
-%patch18 -p1
 
 %{__sed} -i -e 's,@VBOX_DOC_PATH@,%{_docdir}/%{name}-%{version},' \
 	-e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/common/virtualbox.desktop.in
@@ -683,11 +662,6 @@ cp -p %{SOURCE1} $RPM_BUILD_ROOT%{_datadir}/%{pname}/VBoxGuestAdditions.iso
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/virtualbox.xml
 %endif
 
-# vboxvideo
-%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions/VBoxOGL.so,%{_libdir}/xorg/modules/dri/vboxvideo_dri.so}
-# XXX: where else to install them that vboxvideo_dri.so finds them? patch with rpath?
-%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_libdir}}/VBoxEGL.so
-
 # Guest Only Tools
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_bindir}}/VBoxClient
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_bindir}}/VBoxControl
@@ -791,7 +765,6 @@ mv $RPM_BUILD_ROOT%{_libdir}/%{pname}/src $RPM_BUILD_ROOT%{_usrsrc}/vboxhost-%{v
 %{__rm} -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/{sdk,testcase}
 %{__rm} -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/dtrace
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/vboxkeyboard.tar.bz2
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/tst*
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/scripts/generated.sh
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/ExtensionPacks/VNC/ExtPack-license.*
 
@@ -944,17 +917,14 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxDD2.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxDDU.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxDragAndDropSvc.so
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxGlobal.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxGuestControlSvc.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxGuestPropSvc.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxHostChannel.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxKeyboard.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxPython*.so
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxREM.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxRT.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxSVGA3D.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxSharedClipboard.so
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxSharedCrOpenGL.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxSharedFolders.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxVMM.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxXPCOM.so
@@ -992,6 +962,8 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTChMod
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTCp
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTDbgSymCache
+%attr(755,root,root) %{_libdir}/%{pname}/tools/RTEfiFatExtract
+%attr(755,root,root) %{_libdir}/%{pname}/tools/RTFuzzClient
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTFuzzMaster
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTGzip
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTHttp
@@ -1025,14 +997,10 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 
 %{_libdir}/%{pname}/VBoxBugReport
 %{_libdir}/%{pname}/VBoxCpuReport
-%{_libdir}/%{pname}/VBoxDDRC.debug
-%{_libdir}/%{pname}/VBoxDDRC.rc
 %{_libdir}/%{pname}/VBoxDDR0.debug
 %{_libdir}/%{pname}/VBoxDDR0.r0
 %{_libdir}/%{pname}/VBoxEFI32.fd
 %{_libdir}/%{pname}/VBoxEFI64.fd
-%{_libdir}/%{pname}/VMMRC.debug
-%{_libdir}/%{pname}/VMMRC.rc
 %{_libdir}/%{pname}/VMMR0.debug
 %{_libdir}/%{pname}/VMMR0.r0
 
@@ -1055,6 +1023,7 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %files gui
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/VirtualBox
+%attr(755,root,root) %{_libdir}/%{pname}/UICommon.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxDbg.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxTestOGL
 %attr(755,root,root) %{_libdir}/%{pname}/VirtualBox
@@ -1158,12 +1127,6 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %lang(fr) %doc %{outdir}/UserManual_fr_FR.pdf
 %endif
 %endif
-
-%files -n xorg-driver-video-vboxvideo
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/xorg/modules/dri/vboxvideo_dri.so
-# vboxvideo_dri.so deps
-%attr(755,root,root) %{_libdir}/VBoxEGL.so
 
 %if %{with dkms}
 %files -n dkms-vboxguest

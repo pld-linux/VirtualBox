@@ -1,0 +1,24 @@
+diff -urN VirtualBox-6.1.0.orig/src/VBox/Additions/linux/export_modules.sh VirtualBox-6.1.0/src/VBox/Additions/linux/export_modules.sh
+--- VirtualBox-6.1.0.orig/src/VBox/Additions/linux/export_modules.sh	2019-12-10 18:45:30.000000000 +0100
++++ VirtualBox-6.1.0/src/VBox/Additions/linux/export_modules.sh	2019-12-12 01:14:57.529314700 +0100
+@@ -46,7 +46,7 @@
+ VBOX_VERSION_MAJOR=`sed -e "s/^ *VBOX_VERSION_MAJOR *= \+\([0-9]\+\)/\1/;t;d" $PATH_ROOT/Version.kmk`
+ VBOX_VERSION_MINOR=`sed -e "s/^ *VBOX_VERSION_MINOR *= \+\([0-9]\+\)/\1/;t;d" $PATH_ROOT/Version.kmk`
+ VBOX_VERSION_BUILD=`sed -e "s/^ *VBOX_VERSION_BUILD *= \+\([0-9]\+\)/\1/;t;d" $PATH_ROOT/Version.kmk`
+-VBOX_SVN_REV=`sed -e 's/^ *VBOX_SVN_REV_FALLBACK *:= \+\$(patsubst *%:,, *\$Rev: *\([0-9]\+\) *\$ *) */\1/;t;d' $PATH_ROOT/Config.kmk`
++VBOX_SVN_REV=`sed -e 's/^ *VBOX_SVN_REV_CONFIG_FALLBACK *:= \+\$(patsubst *%:,, *\$Rev: *\([0-9]\+\) *\$ *) */\1/;t;d' $PATH_ROOT/Config.kmk`
+ VBOX_VENDOR=`sed -e 's/^ *VBOX_VENDOR *= \+\(.\+\)/\1/;t;d' $PATH_ROOT/Config.kmk`
+ VBOX_VENDOR_SHORT=`sed -e 's/^ *VBOX_VENDOR_SHORT *= \+\(.\+\)/\1/;t;d' $PATH_ROOT/Config.kmk`
+ VBOX_PRODUCT=`sed -e 's/^ *VBOX_PRODUCT *= \+\(.\+\)/\1/;t;d' $PATH_ROOT/Config.kmk`
+diff -urN VirtualBox-6.1.0.orig/src/VBox/HostDrivers/linux/export_modules.sh VirtualBox-6.1.0/src/VBox/HostDrivers/linux/export_modules.sh
+--- VirtualBox-6.1.0.orig/src/VBox/HostDrivers/linux/export_modules.sh	2019-12-10 18:52:40.000000000 +0100
++++ VirtualBox-6.1.0/src/VBox/HostDrivers/linux/export_modules.sh	2019-12-12 01:15:07.499246825 +0100
+@@ -100,7 +100,7 @@
+ VBOX_VERSION_MINOR=`sed -e "s/^ *VBOX_VERSION_MINOR *= \+\([0-9]\+\)/\1/;t;d" $PATH_ROOT/Version.kmk`
+ VBOX_VERSION_BUILD=`sed -e "s/^ *VBOX_VERSION_BUILD *= \+\([0-9]\+\)/\1/;t;d" $PATH_ROOT/Version.kmk`
+ VBOX_VERSION_STRING=$VBOX_VERSION_MAJOR.$VBOX_VERSION_MINOR.$VBOX_VERSION_BUILD
+-VBOX_SVN_REV=`sed -e 's/^ *VBOX_SVN_REV_FALLBACK *:= \+\$(patsubst *%:,, *\$Rev: *\([0-9]\+\) *\$ *) */\1/;t;d' $PATH_ROOT/Config.kmk`                                                                                                        VBOX_VENDOR=`sed -e 's/^ *VBOX_VENDOR *= \+\(.\+\)/\1/;t;d' $PATH_ROOT/Config.kmk`                                     VBOX_VENDOR_SHORT=`sed -e 's/^ *VBOX_VENDOR_SHORT *= \+\(.\+\)/\1/;t;d' $PATH_ROOT/Config.kmk`                         VBOX_PRODUCT=`sed -e 's/^ *VBOX_PRODUCT *= \+\(.\+\)/\1/;t;d' $PATH_ROOT/Config.kmk`                                   VBOX_C_YEAR=`date +%Y`
++VBOX_SVN_REV=`sed -e 's/^ *VBOX_SVN_REV_CONFIG_FALLBACK *:= \+\$(patsubst *%:,, *\$Rev: *\([0-9]\+\) *\$ *) */\1/;t;d' $PATH_ROOT/Config.kmk`                                                                                                        VBOX_VENDOR=`sed -e 's/^ *VBOX_VENDOR *= \+\(.\+\)/\1/;t;d' $PATH_ROOT/Config.kmk`                                     VBOX_VENDOR_SHORT=`sed -e 's/^ *VBOX_VENDOR_SHORT *= \+\(.\+\)/\1/;t;d' $PATH_ROOT/Config.kmk`                         VBOX_PRODUCT=`sed -e 's/^ *VBOX_PRODUCT *= \+\(.\+\)/\1/;t;d' $PATH_ROOT/Config.kmk`                                   VBOX_C_YEAR=`date +%Y`
+ 
+ . $PATH_VBOXDRV/linux/files_vboxdrv
+ . $PATH_VBOXNET/linux/files_vboxnetflt
