@@ -444,7 +444,6 @@ Requires:	systemd-units >= 38\
 Provides:	kernel(vboxdrv) = %{version}-%{rel}\
 Provides:	kernel(vboxnetadp) = %{version}-%{rel}\
 Provides:	kernel(vboxnetflt) = %{version}-%{rel}\
-Provides:	kernel(vboxpci) = %{version}-%{rel}\
 Obsoletes:	kernel-init-host\
 \
 %description -n kernel%{_alt_kernel}-virtualbox-host\
@@ -476,7 +475,6 @@ gospodarzem sprzętu PCI.\
 /lib/modules/%{_kernel_ver}/misc/vboxdrv.ko*\
 /lib/modules/%{_kernel_ver}/misc/vboxnetadp.ko*\
 /lib/modules/%{_kernel_ver}/misc/vboxnetflt.ko*\
-/lib/modules/%{_kernel_ver}/misc/vboxpci.ko*\
 %endif\
 \
 %post -n kernel%{_alt_kernel}-virtualbox-guest\
@@ -498,7 +496,6 @@ cd PLD-MODULE-BUILD/HostDrivers\
 %build_kernel_modules -m vboxdrv -C vboxdrv\
 %build_kernel_modules -m vboxnetadp -C vboxnetadp KBUILD_EXTRA_SYMBOLS=$PWD/../vboxdrv/Module.symvers\
 %build_kernel_modules -m vboxnetflt -C vboxnetflt KBUILD_EXTRA_SYMBOLS=$PWD/../vboxdrv/Module.symvers\
-%build_kernel_modules -m vboxpci -C vboxpci KBUILD_EXTRA_SYMBOLS=$PWD/../vboxdrv/Module.symvers\
 cd ../GuestDrivers\
 %build_kernel_modules -m vboxguest -C vboxguest\
 cp -a vboxguest/Module.symvers vboxsf\
@@ -507,7 +504,7 @@ cp -a vboxguest/Module.symvers vboxsf\
 %build_kernel_modules -m vboxvideo -C vboxvideo\
 %endif\
 cd ../..\
-%install_kernel_modules -D PLD-MODULE-BUILD/installed -m PLD-MODULE-BUILD/HostDrivers/vboxdrv/vboxdrv,PLD-MODULE-BUILD/HostDrivers/vboxnetadp/vboxnetadp,PLD-MODULE-BUILD/HostDrivers/vboxnetflt/vboxnetflt,PLD-MODULE-BUILD/HostDrivers/vboxpci/vboxpci,PLD-MODULE-BUILD/GuestDrivers/vboxsf/vboxsf -d misc\
+%install_kernel_modules -D PLD-MODULE-BUILD/installed -m PLD-MODULE-BUILD/HostDrivers/vboxdrv/vboxdrv,PLD-MODULE-BUILD/HostDrivers/vboxnetadp/vboxnetadp,PLD-MODULE-BUILD/HostDrivers/vboxnetflt/vboxnetflt,PLD-MODULE-BUILD/GuestDrivers/vboxsf/vboxsf -d misc\
 %install_kernel_modules -D PLD-MODULE-BUILD/installed -m PLD-MODULE-BUILD/GuestDrivers/vboxguest/vboxguest -d misc\
 %if %{_kernel_version_code} < %{_kernel_version_magic 4 13 0}\
 %install_kernel_modules -D PLD-MODULE-BUILD/installed -m PLD-MODULE-BUILD/GuestDrivers/vboxvideo/vboxvideo -d misc\
@@ -528,7 +525,7 @@ echo override vboxguest %{_kernel_ver} misc > PLD-MODULE-BUILD/installed/etc/dep
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
+%patch3 -p0
 %patch4 -p1
 %patch6 -p1
 %patch7 -p1
