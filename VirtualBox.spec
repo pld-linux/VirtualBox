@@ -21,6 +21,7 @@
 %bcond_without	dkms		# build dkms package
 %bcond_without	verbose
 %bcond_without	gui			# disable Qt4 GUI frontend build
+%bcond_without	host			# build guest packages only
 
 %if 0%{?_pld_builder:1} && %{with kernel} && %{with userspace}
 %{error:kernel and userspace cannot be built at the same time on PLD builders}
@@ -38,6 +39,10 @@ exit 1
 
 %if %{without debuginfo}
 %define		_enable_debug_packages	0
+%endif
+
+%ifnarch %{x8664}
+%undefine	with_host
 %endif
 
 %define		qtver	5.6.0
@@ -470,11 +475,13 @@ gospodarzem sprzętu PCI.\
 /lib/modules/%{_kernel_ver}/misc/vboxvideo.ko*\
 %endif\
 \
+%if %{with host}\
 %files -n kernel%{_alt_kernel}-virtualbox-host\
 %config(noreplace) %verify(not md5 mtime size) /etc/modules-load.d/virtualbox-host.conf\
 /lib/modules/%{_kernel_ver}/misc/vboxdrv.ko*\
 /lib/modules/%{_kernel_ver}/misc/vboxnetadp.ko*\
 /lib/modules/%{_kernel_ver}/misc/vboxnetflt.ko*\
+%endif\
 %endif\
 \
 %post -n kernel%{_alt_kernel}-virtualbox-guest\
@@ -483,20 +490,25 @@ gospodarzem sprzętu PCI.\
 %postun	-n kernel%{_alt_kernel}-virtualbox-guest\
 %depmod %{_kernel_ver}\
 \
+%if %{with host}\
 %post	-n kernel%{_alt_kernel}-virtualbox-host\
 %depmod %{_kernel_ver}\
 \
 %postun	-n kernel%{_alt_kernel}-virtualbox-host\
 %depmod %{_kernel_ver}\
+%endif\
 %{nil}
 
 %define build_kernel_pkg()\
 export KERN_DIR=%{_kernelsrcdir}\
+%if %{with host}\
 cd PLD-MODULE-BUILD/HostDrivers\
 %build_kernel_modules -m vboxdrv -C vboxdrv\
 %build_kernel_modules -m vboxnetadp -C vboxnetadp KBUILD_EXTRA_SYMBOLS=$PWD/../vboxdrv/Module.symvers\
 %build_kernel_modules -m vboxnetflt -C vboxnetflt KBUILD_EXTRA_SYMBOLS=$PWD/../vboxdrv/Module.symvers\
-cd ../GuestDrivers\
+cd ../..\
+%endif\
+cd PLD-MODULE-BUILD/GuestDrivers\
 %build_kernel_modules -m vboxguest -C vboxguest\
 cp -a vboxguest/Module.symvers vboxsf\
 %build_kernel_modules -m vboxsf -C vboxsf -c\
@@ -504,8 +516,10 @@ cp -a vboxguest/Module.symvers vboxsf\
 %build_kernel_modules -m vboxvideo -C vboxvideo\
 %endif\
 cd ../..\
-%install_kernel_modules -D PLD-MODULE-BUILD/installed -m PLD-MODULE-BUILD/HostDrivers/vboxdrv/vboxdrv,PLD-MODULE-BUILD/HostDrivers/vboxnetadp/vboxnetadp,PLD-MODULE-BUILD/HostDrivers/vboxnetflt/vboxnetflt,PLD-MODULE-BUILD/GuestDrivers/vboxsf/vboxsf -d misc\
-%install_kernel_modules -D PLD-MODULE-BUILD/installed -m PLD-MODULE-BUILD/GuestDrivers/vboxguest/vboxguest -d misc\
+%if %{with host}\
+%install_kernel_modules -D PLD-MODULE-BUILD/installed -m PLD-MODULE-BUILD/HostDrivers/vboxdrv/vboxdrv,PLD-MODULE-BUILD/HostDrivers/vboxnetadp/vboxnetadp,PLD-MODULE-BUILD/HostDrivers/vboxnetflt/vboxnetflt -d misc\
+%endif\
+%install_kernel_modules -D PLD-MODULE-BUILD/installed -m PLD-MODULE-BUILD/GuestDrivers/vboxsf/vboxsf,PLD-MODULE-BUILD/GuestDrivers/vboxguest/vboxguest -d misc\
 %if %{_kernel_version_code} < %{_kernel_version_magic 4 13 0}\
 %install_kernel_modules -D PLD-MODULE-BUILD/installed -m PLD-MODULE-BUILD/GuestDrivers/vboxvideo/vboxvideo -d misc\
 %endif\
@@ -604,6 +618,7 @@ VBOX_WITH_TESTSUITE :=
 
 VBOX_WITH_VRDP_RDESKTOP=
 VBOX_WITH_MULTIVERSION_PYTHON=0
+%{!?with_host:VBOX_ONLY_ADDITIONS_WITHOUT_RTISOMAKER=1}
 EOF
 
 %undefine	filterout_c
@@ -621,6 +636,7 @@ EOF
 	--enable-vnc \
 	%{!?with_gui:--disable-qt} \
 	%{__enable webservice} \
+	%{!?with_host:--only-additions} \
 	%{nil}
 
 . "$PWD/env.sh"
@@ -651,8 +667,6 @@ fi
 install -d $RPM_BUILD_ROOT%{_datadir}/%{pname}
 
 cp -a$l %{outdir}/* $RPM_BUILD_ROOT%{_libdir}/%{pname}
-cp -p$l %{SOURCE1} $RPM_BUILD_ROOT%{_datadir}/%{pname}/VBoxGuestAdditions.iso ||
-cp -p %{SOURCE1} $RPM_BUILD_ROOT%{_datadir}/%{pname}/VBoxGuestAdditions.iso
 
 %if %{without gui}
 %{__rm} -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/icons
@@ -701,6 +715,9 @@ install -p %{SOURCE5} $RPM_BUILD_ROOT/sbin/mount.vdi
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/autorun.sh
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/runasroot.sh
 
+cp -p %{SOURCE12} $RPM_BUILD_ROOT/etc/udev/rules.d/60-vboxguest.rules
+
+%if %{with host}
 # unknown - checkme
 %if 1
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/SUPInstall
@@ -711,6 +728,9 @@ install -p %{SOURCE5} $RPM_BUILD_ROOT/sbin/mount.vdi
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/vboxshell.py
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/xpidl
 %endif
+
+cp -p$l %{SOURCE1} $RPM_BUILD_ROOT%{_datadir}/%{pname}/VBoxGuestAdditions.iso ||
+cp -p %{SOURCE1} $RPM_BUILD_ROOT%{_datadir}/%{pname}/VBoxGuestAdditions.iso
 
 # manual installation steps based on src/VBox/Installer/linux/install.sh
 ln -sf %{_libdir}/%{pname}/VBox.sh $RPM_BUILD_ROOT%{_bindir}/VirtualBox
@@ -752,7 +772,6 @@ rm -r $RPM_BUILD_ROOT%{_libdir}/%{pname}/icons
 
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname},/lib/udev}/VBoxCreateUSBNode.sh
 cp -p %{SOURCE6} $RPM_BUILD_ROOT/etc/udev/rules.d/60-vboxdrv.rules
-cp -p %{SOURCE12} $RPM_BUILD_ROOT/etc/udev/rules.d/60-vboxguest.rules
 
 %if %{with dkms}
 mv $RPM_BUILD_ROOT%{_libdir}/%{pname}/src $RPM_BUILD_ROOT%{_usrsrc}/vboxhost-%{version}-%{rel}
@@ -777,6 +796,7 @@ mv $RPM_BUILD_ROOT%{_libdir}/%{pname}/src $RPM_BUILD_ROOT%{_usrsrc}/vboxhost-%{v
 ln -sf %{_docdir}/%{pname}-doc-%{version}/UserManual.pdf $RPM_BUILD_ROOT%{_libdir}/%{pname}/UserManual.pdf
 %if %{with all_langs}
 ln -sf %{_docdir}/%{pname}-doc-%{version}/UserManual_fr_FR.pdf $RPM_BUILD_ROOT%{_libdir}/%{pname}/UserManual_fr_FR.pdf
+%endif
 %endif
 %endif
 %endif
@@ -890,6 +910,7 @@ dkms install -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade || :
 dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 
 %if %{with userspace}
+%if %{with host}
 %files
 %defattr(644,root,root,755)
 %dir %attr(751,root,root) %{_sysconfdir}/vbox
@@ -1074,6 +1095,30 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %defattr(644,root,root,755)
 %{_datadir}/%{pname}/VBoxGuestAdditions.iso
 
+%if %{with webservice}
+%files webservice
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/vboxwebsrv
+%attr(755,root,root) %{_libdir}/%{pname}/vboxwebsrv
+%attr(755,root,root) %{_libdir}/%{pname}/webtest
+%endif
+
+%if %{with doc}
+%files doc
+%defattr(644,root,root,755)
+# this is a symlink...
+%doc %{_libdir}/%{pname}/UserManual.pdf
+%if %{with all_langs}
+%lang(fr) %doc %{_libdir}/%{pname}/UserManual_fr_FR.pdf
+%endif
+# ..to this file
+%doc %{outdir}/UserManual.pdf
+%if %{with all_langs}
+%lang(fr) %doc %{outdir}/UserManual_fr_FR.pdf
+%endif
+%endif
+%endif
+
 %files guest
 %defattr(644,root,root,755)
 %attr(755,root,root) /sbin/mount.vboxsf
@@ -1091,14 +1136,6 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_bindir}/VBoxClient
 %attr(755,root,root) %{_bindir}/VBoxClient-all
 
-%if %{with webservice}
-%files webservice
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/vboxwebsrv
-%attr(755,root,root) %{_libdir}/%{pname}/vboxwebsrv
-%attr(755,root,root) %{_libdir}/%{pname}/webtest
-%endif
-
 %if %{with lightdm}
 %files -n lightdm-greeter-vbox
 %defattr(644,root,root,755)
@@ -1110,28 +1147,15 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %defattr(644,root,root,755)
 %attr(755,root,root) /%{_lib}/security/pam_vbox.so
 
-%if %{with doc}
-%files doc
-%defattr(644,root,root,755)
-# this is a symlink...
-%doc %{_libdir}/%{pname}/UserManual.pdf
-%if %{with all_langs}
-%lang(fr) %doc %{_libdir}/%{pname}/UserManual_fr_FR.pdf
-%endif
-# ..to this file
-%doc %{outdir}/UserManual.pdf
-%if %{with all_langs}
-%lang(fr) %doc %{outdir}/UserManual_fr_FR.pdf
-%endif
-%endif
-
 %if %{with dkms}
 %files -n dkms-vboxguest
 %defattr(644,root,root,755)
 %{_usrsrc}/vboxguest-%{version}-%{rel}
 
+%if %{with host}
 %files -n dkms-vboxhost
 %defattr(644,root,root,755)
 %{_usrsrc}/vboxhost-%{version}-%{rel}
+%endif
 %endif
 %endif
