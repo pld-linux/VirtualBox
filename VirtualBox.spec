@@ -41,7 +41,7 @@ exit 1
 %define		_enable_debug_packages	0
 %endif
 
-%ifnarch %{x8664}
+%ifnarch %{x8664} %{?with_kernel:x32}
 %undefine	with_host
 %endif
 
