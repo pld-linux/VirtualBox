@@ -52,14 +52,14 @@ exit 1
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	6.1.0
+Version:	6.1.2
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	484b550f4692c9d61896b08bb0a1be7f
+# Source0-md5:	f4f42fd09857556b04b803fb99cc6905
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	24e170ad35727712a53d191b806428f5
+# Source1-md5:	85a1ecad6dade9f22ea0b94556b96898
 Source2:	vboxservice.init
 Source3:	vboxservice.service
 Source4:	vboxservice.sysconfig
@@ -74,7 +74,6 @@ Source12:	udev-guest.rules
 Patch0:		%{pname}-version-error.patch
 Patch1:		%{pname}-VBoxSysInfo.patch
 Patch2:		%{pname}-warning_workaround.patch
-Patch3:		svn_rev.patch
 Patch4:		wrapper.patch
 Patch6:		hardening-shared.patch
 Patch7:		lightdm-greeter-makefile.patch
@@ -539,7 +538,6 @@ echo override vboxguest %{_kernel_ver} misc > PLD-MODULE-BUILD/installed/etc/dep
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p0
 %patch4 -p1
 %patch6 -p1
 %patch7 -p1
@@ -981,6 +979,7 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTCp
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTDbgSymCache
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTEfiFatExtract
+%attr(755,root,root) %{_libdir}/%{pname}/tools/RTFTPServer
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTFuzzClient
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTFuzzMaster
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTGzip
