@@ -47,7 +47,7 @@ exit 1
 
 %define		qtver	5.6.0
 
-%define		rel		1
+%define		rel		2
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
@@ -509,10 +509,9 @@ cd ../..\
 %endif\
 cd PLD-MODULE-BUILD/GuestDrivers\
 %build_kernel_modules -m vboxguest -C vboxguest\
-cp -a vboxguest/Module.symvers vboxsf\
-%build_kernel_modules -m vboxsf -C vboxsf -c\
+%build_kernel_modules -m vboxsf -C vboxsf KBUILD_EXTRA_SYMBOLS=$PWD/../vboxguest/Module.symvers\
 %if %{_kernel_version_code} < %{_kernel_version_magic 4 13 0}\
-%build_kernel_modules -m vboxvideo -C vboxvideo\
+%build_kernel_modules -m vboxvideo -C vboxvideo KBUILD_EXTRA_SYMBOLS=$PWD/../vboxguest/Module.symvers\
 %endif\
 cd ../..\
 %if %{with host}\
