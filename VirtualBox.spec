@@ -501,13 +501,13 @@ gospodarzem sprzętu PCI.\
 %define build_kernel_pkg()\
 export KERN_DIR=%{_kernelsrcdir}\
 %if %{with host}\
-cd PLD-MODULE-BUILD/HostDrivers\
+cd kernel/HostDrivers\
 %build_kernel_modules -m vboxdrv -C vboxdrv\
 %build_kernel_modules -m vboxnetadp -C vboxnetadp KBUILD_EXTRA_SYMBOLS=$PWD/../vboxdrv/Module.symvers\
 %build_kernel_modules -m vboxnetflt -C vboxnetflt KBUILD_EXTRA_SYMBOLS=$PWD/../vboxdrv/Module.symvers\
 cd ../..\
 %endif\
-cd PLD-MODULE-BUILD/GuestDrivers\
+cd kernel/GuestDrivers\
 %build_kernel_modules -m vboxguest -C vboxguest\
 %build_kernel_modules -m vboxsf -C vboxsf KBUILD_EXTRA_SYMBOLS=$PWD/../vboxguest/Module.symvers\
 %if %{_kernel_version_code} < %{_kernel_version_magic 4 13 0}\
@@ -515,18 +515,18 @@ cd PLD-MODULE-BUILD/GuestDrivers\
 %endif\
 cd ../..\
 %if %{with host}\
-%install_kernel_modules -D PLD-MODULE-BUILD/installed -m PLD-MODULE-BUILD/HostDrivers/vboxdrv/vboxdrv,PLD-MODULE-BUILD/HostDrivers/vboxnetadp/vboxnetadp,PLD-MODULE-BUILD/HostDrivers/vboxnetflt/vboxnetflt -d misc\
+%install_kernel_modules -D kernel/installed -m kernel/HostDrivers/vboxdrv/vboxdrv,kernel/HostDrivers/vboxnetadp/vboxnetadp,kernel/HostDrivers/vboxnetflt/vboxnetflt -d misc\
 %endif\
-%install_kernel_modules -D PLD-MODULE-BUILD/installed -m PLD-MODULE-BUILD/GuestDrivers/vboxsf/vboxsf,PLD-MODULE-BUILD/GuestDrivers/vboxguest/vboxguest -d misc\
+%install_kernel_modules -D kernel/installed -m kernel/GuestDrivers/vboxsf/vboxsf,kernel/GuestDrivers/vboxguest/vboxguest -d misc\
 %if %{_kernel_version_code} < %{_kernel_version_magic 4 13 0}\
-%install_kernel_modules -D PLD-MODULE-BUILD/installed -m PLD-MODULE-BUILD/GuestDrivers/vboxvideo/vboxvideo -d misc\
+%install_kernel_modules -D kernel/installed -m kernel/GuestDrivers/vboxvideo/vboxvideo -d misc\
 %endif\
 %{nil}
 
 %define install_kernel_pkg()\
 %if %{_kernel_version_code} >= %{_kernel_version_magic 4 16 0}\
-install -d PLD-MODULE-BUILD/installed/etc/depmod.d/%{_kernel_ver}\
-echo override vboxguest %{_kernel_ver} misc > PLD-MODULE-BUILD/installed/etc/depmod.d/%{_kernel_ver}/vboxguest.conf\
+install -d kernel/installed/etc/depmod.d/%{_kernel_ver}\
+echo override vboxguest %{_kernel_ver} misc > kernel/installed/etc/depmod.d/%{_kernel_ver}/vboxguest.conf\
 %endif\
 %{nil}
 
@@ -563,8 +563,8 @@ echo override vboxguest %{_kernel_ver} misc > PLD-MODULE-BUILD/installed/etc/dep
 %{__sed} -i -e 's#@INSTALL_DIR@#%{_libdir}/%{pname}#' src/VBox/Installer/linux/VBox.sh
 
 %if %{with kernel}
-install -d PLD-MODULE-BUILD/{GuestDrivers,HostDrivers}
-cd PLD-MODULE-BUILD
+install -d kernel/{GuestDrivers,HostDrivers}
+cd kernel
 ../src/VBox/Additions/linux/export_modules.sh guest-modules.tar.gz
 tar -zxf guest-modules.tar.gz -C GuestDrivers
 
@@ -801,7 +801,7 @@ ln -sf %{_docdir}/%{pname}-doc-%{version}/UserManual_fr_FR.pdf $RPM_BUILD_ROOT%{
 %if %{with kernel}
 install -d $RPM_BUILD_ROOT{/etc/modules-load.d,/sbin}
 
-cp -a PLD-MODULE-BUILD/installed/* $RPM_BUILD_ROOT
+cp -a kernel/installed/* $RPM_BUILD_ROOT
 
 # Tell systemd to load modules
 cp -p %{SOURCE7} $RPM_BUILD_ROOT/etc/modules-load.d/virtualbox-host.conf
