@@ -505,22 +505,18 @@ cd kernel/HostDrivers\
 %build_kernel_modules -m vboxdrv -C vboxdrv\
 %build_kernel_modules -m vboxnetadp -C vboxnetadp KBUILD_EXTRA_SYMBOLS=$PWD/../vboxdrv/Module.symvers\
 %build_kernel_modules -m vboxnetflt -C vboxnetflt KBUILD_EXTRA_SYMBOLS=$PWD/../vboxdrv/Module.symvers\
+%install_kernel_modules -D ../../kernel/installed -m vboxdrv/vboxdrv,vboxnetadp/vboxnetadp,vboxnetflt/vboxnetflt -d misc\
 cd ../..\
 %endif\
 cd kernel/GuestDrivers\
 %build_kernel_modules -m vboxguest -C vboxguest\
 %build_kernel_modules -m vboxsf -C vboxsf KBUILD_EXTRA_SYMBOLS=$PWD/../vboxguest/Module.symvers\
+%install_kernel_modules -D ../../kernel/installed -m vboxsf/vboxsf,vboxguest/vboxguest -d misc\
 %if %{_kernel_version_code} < %{_kernel_version_magic 4 13 0}\
 %build_kernel_modules -m vboxvideo -C vboxvideo KBUILD_EXTRA_SYMBOLS=$PWD/../vboxguest/Module.symvers\
+%install_kernel_modules -D ../../kernel/installed -m vboxvideo/vboxvideo -d misc\
 %endif\
 cd ../..\
-%if %{with host}\
-%install_kernel_modules -D kernel/installed -m kernel/HostDrivers/vboxdrv/vboxdrv,kernel/HostDrivers/vboxnetadp/vboxnetadp,kernel/HostDrivers/vboxnetflt/vboxnetflt -d misc\
-%endif\
-%install_kernel_modules -D kernel/installed -m kernel/GuestDrivers/vboxsf/vboxsf,kernel/GuestDrivers/vboxguest/vboxguest -d misc\
-%if %{_kernel_version_code} < %{_kernel_version_magic 4 13 0}\
-%install_kernel_modules -D kernel/installed -m kernel/GuestDrivers/vboxvideo/vboxvideo -d misc\
-%endif\
 %{nil}
 
 %define install_kernel_pkg()\
