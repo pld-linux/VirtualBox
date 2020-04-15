@@ -47,7 +47,7 @@ exit 1
 
 %define		qtver	5.6.0
 
-%define		rel		1
+%define		rel		2
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
@@ -467,9 +467,6 @@ gospodarzem sprzętu PCI.\
 %defattr(644,root,root,755)\
 %if %{_kernel_version_code} >= %{_kernel_version_magic 4 16 0}\
 %config(noreplace) %verify(not md5 mtime size) /etc/depmod.d/%{_kernel_ver}/vboxguest.conf\
-%if %{_kernel_version_code} >= %{_kernel_version_magic 5 6 0}\
-%config(noreplace) %verify(not md5 mtime size) /etc/depmod.d/%{_kernel_ver}/vboxsf.conf\
-%endif\
 %endif\
 %config(noreplace) %verify(not md5 mtime size) /etc/modules-load.d/virtualbox-guest.conf\
 /lib/modules/%{_kernel_ver}/misc/vboxguest.ko*\
@@ -528,7 +525,7 @@ cd ../..\
 install -d kernel/installed/etc/depmod.d/%{_kernel_ver}\
 echo override vboxguest %{_kernel_ver} misc > kernel/installed/etc/depmod.d/%{_kernel_ver}/vboxguest.conf\
 %if %{_kernel_version_code} >= %{_kernel_version_magic 5 6 0}\
-echo override vboxsf %{_kernel_ver} misc > kernel/installed/etc/depmod.d/%{_kernel_ver}/vboxsf.conf\
+echo override vboxsf %{_kernel_ver} misc >> kernel/installed/etc/depmod.d/%{_kernel_ver}/vboxguest.conf\
 %endif\
 %endif\
 %{nil}
