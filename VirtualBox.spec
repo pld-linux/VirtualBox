@@ -52,14 +52,14 @@ exit 1
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	6.1.8
+Version:	6.1.10
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	17bf20786de812186f607f07ba7fa076
+# Source0-md5:	b690ab7f2b6c7f9e46eabc101df021ed
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	9e4f570698175108bc16415cdc31e280
+# Source1-md5:	abbfda1a505eedbd2bea255fb60bffe6
 Source2:	vboxservice.init
 Source3:	vboxservice.service
 Source4:	vboxservice.sysconfig
@@ -674,6 +674,7 @@ cp -a$l %{outdir}/* $RPM_BUILD_ROOT%{_libdir}/%{pname}
 # Guest Only Tools
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_bindir}}/VBoxClient
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_bindir}}/VBoxControl
+%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_bindir}}/VBoxDRMClient
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_bindir}}/VBoxService
 install -d $RPM_BUILD_ROOT/etc/xdg/autostart
 cp -p src/VBox/Additions/x11/Installer/vboxclient.desktop \
@@ -1134,6 +1135,7 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 /etc/xdg/autostart/vboxclient.desktop
 %attr(755,root,root) %{_bindir}/VBoxClient
 %attr(755,root,root) %{_bindir}/VBoxClient-all
+%attr(755,root,root) %{_bindir}/VBoxDRMClient
 
 %if %{with lightdm}
 %files -n lightdm-greeter-vbox
