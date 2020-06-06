@@ -1061,6 +1061,7 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %lang(fr) %{_datadir}/%{pname}/nls/*_fr.qm
 %lang(gl) %{_datadir}/%{pname}/nls/*_gl.qm
 %lang(he) %{_datadir}/%{pname}/nls/*_he.qm
+%lang(hr) %{_datadir}/%{pname}/nls/*_hr_HR.qm
 %lang(hu) %{_datadir}/%{pname}/nls/*_hu.qm
 %lang(id) %{_datadir}/%{pname}/nls/*_id.qm
 %lang(it) %{_datadir}/%{pname}/nls/*_it.qm
