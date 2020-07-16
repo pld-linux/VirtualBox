@@ -52,14 +52,14 @@ exit 1
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	6.1.10
+Version:	6.1.12
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	b690ab7f2b6c7f9e46eabc101df021ed
+# Source0-md5:	3c351f7fd6376e0bb3c8489505a9450c
 Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	abbfda1a505eedbd2bea255fb60bffe6
+# Source1-md5:	8df4a68f37ec84d1b98d0e09ed640ce5
 Source2:	vboxservice.init
 Source3:	vboxservice.service
 Source4:	vboxservice.sysconfig
@@ -87,7 +87,6 @@ Patch14:	%{pname}-multipython.patch
 Patch15:	%{pname}-lightdm-1.19.2.patch
 Patch16:	%{pname}-no-vboxvideo.patch
 Patch17:	qt5-gl.patch
-Patch18:	qt5.15.patch
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
 %ifarch %{x8664}
@@ -552,7 +551,6 @@ echo override vboxsf %{_kernel_ver} misc >> kernel/installed/etc/depmod.d/%{_ker
 %patch15 -p0
 %patch16 -p0
 %patch17 -p1
-%patch18 -p1
 
 %{__sed} -i -e 's,@VBOX_DOC_PATH@,%{_docdir}/%{name}-%{version},' \
 	-e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/common/virtualbox.desktop.in
@@ -617,6 +615,7 @@ VBOX_WITH_TESTSUITE :=
 VBOX_WITH_VRDP_RDESKTOP=
 VBOX_WITH_MULTIVERSION_PYTHON=0
 %{!?with_host:VBOX_ONLY_ADDITIONS_WITHOUT_RTISOMAKER=1}
+VBOX_WITH_CLOUD_NET=
 EOF
 
 %undefine	filterout_c
