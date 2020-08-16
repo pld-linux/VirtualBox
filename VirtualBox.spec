@@ -47,7 +47,7 @@ exit 1
 
 %define		qtver	5.6.0
 
-%define		rel		2
+%define		rel		3
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
@@ -199,6 +199,8 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		objdir		out/%{vbox_platform}/release/obj
 
 %define		filterout		-Werror=format-security
+
+%define		_noautochrpath	.*\\.debug$
 
 %description
 Oracle VirtualBox is a general-purpose full virtualizer for x86
