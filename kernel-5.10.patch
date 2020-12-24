@@ -1,0 +1,158 @@
+Index: b/src/VBox/Additions/linux/sharedfolders/regops.c
+===================================================================
+--- a/src/VBox/Additions/linux/sharedfolders/regops.c
++++ b/src/VBox/Additions/linux/sharedfolders/regops.c
+@@ -1401,7 +1401,10 @@ static int vbsf_lock_user_pages_failed_c
+     /*
+      * Check that this is valid user memory that is actually in the kernel range.
+      */
+-#if RTLNX_VER_MIN(5,0,0) || RTLNX_RHEL_MIN(8,1)
++#if RTLNX_VER_MIN(5,10,0)
++    if (   access_ok((void *)uPtrFrom, cPages << PAGE_SHIFT)
++        && uPtrFrom >= TASK_SIZE_MAX)
++#elif RTLNX_VER_MIN(5,0,0) || RTLNX_RHEL_MIN(8,1)
+     if (   access_ok((void *)uPtrFrom, cPages << PAGE_SHIFT)
+         && uPtrFrom >= USER_DS.seg)
+ #else
+Index: b/src/VBox/Additions/linux/drm/vbox_drv.h
+===================================================================
+--- a/src/VBox/Additions/linux/drm/vbox_drv.h
++++ b/src/VBox/Additions/linux/drm/vbox_drv.h
+@@ -205,6 +205,13 @@ static inline void drm_gem_object_put(st
+ }
+ #endif
+ 
++#ifndef TTM_PL_FLAG_SYSTEM
++#define TTM_PL_FLAG_SYSTEM      (1 << TTM_PL_SYSTEM)
++#endif
++#ifndef TTM_PL_FLAG_VRAM
++#define TTM_PL_FLAG_VRAM        (1 << TTM_PL_VRAM)
++#endif
++
+ #define DRIVER_AUTHOR       VBOX_VENDOR
+ 
+ #define DRIVER_NAME         "vboxvideo"
+Index: b/src/VBox/Additions/linux/drm/vbox_ttm.c
+===================================================================
+--- a/src/VBox/Additions/linux/drm/vbox_ttm.c
++++ b/src/VBox/Additions/linux/drm/vbox_ttm.c
+@@ -373,11 +373,23 @@ void vbox_ttm_placement(struct vbox_bo *
+ 	bo->placement.busy_placement = bo->placements;
+ 
+ 	if (domain & TTM_PL_FLAG_VRAM)
++#if RTLNX_VER_MIN(5,10,0)
++		bo->placements[c].mem_type = TTM_PL_VRAM;
++		PLACEMENT_FLAGS(bo->placements[c++]) =
++		    TTM_PL_FLAG_WC | TTM_PL_FLAG_UNCACHED;
++#else
+ 		PLACEMENT_FLAGS(bo->placements[c++]) =
+ 		    TTM_PL_FLAG_WC | TTM_PL_FLAG_UNCACHED | TTM_PL_FLAG_VRAM;
++#endif
+ 	if (domain & TTM_PL_FLAG_SYSTEM)
++#if RTLNX_VER_MIN(5,10,0)
++		bo->placements[c].mem_type = TTM_PL_SYSTEM;
++		PLACEMENT_FLAGS(bo->placements[c++]) =
++		    TTM_PL_MASK_CACHING;
++#else
+ 		PLACEMENT_FLAGS(bo->placements[c++]) =
+ 		    TTM_PL_MASK_CACHING | TTM_PL_FLAG_SYSTEM;
++#endif
+ 	if (!c)
+ 		PLACEMENT_FLAGS(bo->placements[c++]) =
+ 		    TTM_PL_MASK_CACHING | TTM_PL_FLAG_SYSTEM;
+Index: src/VBox/Runtime/r0drv/linux/memobj-r0drv-linux.c
+===================================================================
+--- a/src/VBox/Runtime/r0drv/linux/memobj-r0drv-linux.c	(Revision 141658)
++++ b/src/VBox/Runtime/r0drv/linux/memobj-r0drv-linux.c	(Arbeitskopie)
+@@ -56,9 +56,12 @@
+  * Whether we use alloc_vm_area (3.2+) for executable memory.
+  * This is a must for 5.8+, but we enable it all the way back to 3.2.x for
+  * better W^R compliance (fExecutable flag). */
+-#if RTLNX_VER_MIN(3,2,0) || defined(DOXYGEN_RUNNING)
++#if RTLNX_VER_RANGE(3,2,0, 5,10,0) || defined(DOXYGEN_RUNNING)
+ # define IPRT_USE_ALLOC_VM_AREA_FOR_EXEC
+ #endif
++#if RTLNX_VER_MIN(5,10,0) || defined(DOXYGEN_RUNNING)
++# define IPRT_USE_APPLY_TO_PAGE_RANGE_FOR_EXEC
++#endif
+ 
+ /*
+  * 2.6.29+ kernels don't work with remap_pfn_range() anymore because
+@@ -502,7 +505,43 @@
+ }
+ 
+ 
++#ifdef IPRT_USE_APPLY_TO_PAGE_RANGE_FOR_EXEC
+ /**
++ * User data passed to the apply_to_page_range() callback.
++ */
++typedef struct LNXAPPLYPGRANGE
++{
++    /** Pointer to the memory object. */
++    PRTR0MEMOBJLNX pMemLnx;
++    /** The page protection flags to apply. */
++    pgprot_t       fPg;
++} LNXAPPLYPGRANGE;
++/** Pointer to the user data. */
++typedef LNXAPPLYPGRANGE *PLNXAPPLYPGRANGE;
++/** Pointer to the const user data. */
++typedef const LNXAPPLYPGRANGE *PCLNXAPPLYPGRANGE;
++
++/**
++ * Callback called in apply_to_page_range().
++ *
++ * @returns Linux status code.
++ * @param   pPte                Pointer to the page table entry for the given address.
++ * @param   uAddr               The address to apply the new protection to.
++ * @param   pvUser              The opaque user data.
++ */
++static DECLCALLBACK(int) rtR0MemObjLinuxApplyPageRange(pte_t *pPte, unsigned long uAddr, void *pvUser)
++{
++    PCLNXAPPLYPGRANGE pArgs = (PCLNXAPPLYPGRANGE)pvUser;
++    PRTR0MEMOBJLNX pMemLnx = pArgs->pMemLnx;
++    uint32_t idxPg = (uAddr - (unsigned long)pMemLnx->Core.pv) >> PAGE_SHIFT;
++
++    set_pte(pPte, mk_pte(pMemLnx->apPages[idxPg], pArgs->fPg));
++    return 0;
++}
++#endif
++
++
++/**
+  * Maps the allocation into ring-0.
+  *
+  * This will update the RTR0MEMOBJLNX::Core.pv and RTR0MEMOBJ::fMappedToRing0 members.
+@@ -584,6 +623,11 @@
+         else
+ # endif
+         {
++#  if defined(IPRT_USE_APPLY_TO_PAGE_RANGE_FOR_EXEC)
++            if (fExecutable)
++                pgprot_val(fPg) |= _PAGE_NX; /* Uses RTR0MemObjProtect to clear NX when memory ready, W^X fashion. */
++#  endif
++
+ # ifdef VM_MAP
+             pMemLnx->Core.pv = vmap(&pMemLnx->apPages[0], pMemLnx->cPages, VM_MAP, fPg);
+ # else
+@@ -1851,6 +1895,21 @@
+         preempt_enable();
+         return VINF_SUCCESS;
+     }
++# elif defined(IPRT_USE_APPLY_TO_PAGE_RANGE_FOR_EXEC)
++    PRTR0MEMOBJLNX pMemLnx = (PRTR0MEMOBJLNX)pMem;
++    if (   pMemLnx->fExecutable
++        && pMemLnx->fMappedToRing0)
++    {
++        LNXAPPLYPGRANGE Args;
++        Args.pMemLnx = pMemLnx;
++        Args.fPg = rtR0MemObjLinuxConvertProt(fProt, true /*fKernel*/);
++        int rcLnx = apply_to_page_range(current->active_mm, (unsigned long)pMemLnx->Core.pv + offSub, cbSub,
++                                        rtR0MemObjLinuxApplyPageRange, (void *)&Args);
++        if (rcLnx)
++            return VERR_NOT_SUPPORTED;
++
++        return VINF_SUCCESS;
++    }
+ # endif
+ 
+     NOREF(pMem);
