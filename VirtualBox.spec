@@ -47,7 +47,7 @@ exit 1
 
 %define		qtver	5.6.0
 
-%define		rel		2
+%define		rel		3
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
@@ -88,6 +88,7 @@ Patch15:	%{pname}-lightdm-1.19.2.patch
 Patch16:	%{pname}-no-vboxvideo.patch
 Patch17:	qt5-gl.patch
 Patch18:	32bit.patch
+Patch19:	kernel-4.9.256.patch
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
 %ifarch %{x8664}
@@ -568,6 +569,7 @@ tar -zxf guest-modules.tar.gz -C GuestDrivers
 ../src/VBox/HostDrivers/linux/export_modules.sh --file host-modules.tar.gz --without-hardening
 tar -zxf host-modules.tar.gz -C HostDrivers
 cd -
+%patch19 -p1
 %endif
 
 # using system kBuild package
