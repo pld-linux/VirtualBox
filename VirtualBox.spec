@@ -47,7 +47,7 @@ exit 1
 
 %define		qtver	5.6.0
 
-%define		rel		3
+%define		rel		4
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
@@ -89,6 +89,7 @@ Patch16:	%{pname}-no-vboxvideo.patch
 Patch17:	qt5-gl.patch
 Patch18:	32bit.patch
 Patch19:	kernel-4.9.256.patch
+Patch20:	kernel-5.11.patch
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
 %ifarch %{x8664}
@@ -141,7 +142,7 @@ BuildRequires:	kBuild >= 0.1.9998.3093
 BuildRequires:	libIDL-devel
 BuildRequires:	libcap-static
 BuildRequires:	libdrm-devel
-BuildRequires:	libpng-devel >= 1.2.5
+BuildRequires:	libpng-devel >= 2:1.2.5
 BuildRequires:	libstdc++-devel >= 5:3.2.3
 BuildRequires:	libstdc++-static >= 5:3.2.3
 BuildRequires:	libuuid-devel
@@ -550,6 +551,7 @@ echo override vboxsf %{_kernel_ver} misc >> kernel/installed/etc/depmod.d/%{_ker
 %patch16 -p0
 %patch17 -p1
 %patch18 -p1
+%patch20 -p1
 
 %{__sed} -i -e 's,@VBOX_DOC_PATH@,%{_docdir}/%{name}-%{version},' \
 	-e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/common/virtualbox.desktop.in
