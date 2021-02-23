@@ -56,9 +56,9 @@ Version:	6.1.18
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2
 Group:		Applications/Emulators
-Source0:	http://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
+Source0:	https://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
 # Source0-md5:	c61001386eb3822ab8f06d688a82e84b
-Source1:	http://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
+Source1:	https://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
 # Source1-md5:	dc3c3f818d27a78f1accfcda05e13f85
 Source2:	vboxservice.init
 Source3:	vboxservice.service
