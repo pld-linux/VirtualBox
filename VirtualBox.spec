@@ -281,7 +281,7 @@ This package contains VirtualBox User Manual.
 Summary:	VirtualBox Guest Additions
 Group:		Base
 Requires:	%{name} = %{version}
-%{?noarchpackage}
+BuildArch:	noarch
 
 %description additions
 VirtualBox Guest Additions.
@@ -366,7 +366,7 @@ Summary(pl.UTF-8):	Moduły VirtualBoksa do jądra Linuksa dla systemu gościa
 License:	GPL v2+
 Group:		Base/Kernel
 Requires:	dkms
-%{?noarchpackage}
+BuildArch:	noarch
 
 %description -n dkms-vboxguest
 This package contains DKMS-ready VirtualBox Guest Additions for Linux
@@ -384,7 +384,7 @@ Summary(pl.UTF-8):	Moduły jądra Linuksa dla VirtualBoksa
 License:	GPL v2+
 Group:		Base/Kernel
 Requires:	dkms
-%{?noarchpackage}
+BuildArch:	noarch
 
 %description -n dkms-vboxhost
 This package contains DKMS enabled sourcecode of VirtualBox Support
