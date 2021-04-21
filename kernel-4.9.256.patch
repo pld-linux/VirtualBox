@@ -65,11 +65,11 @@ diff -ur VirtualBox-6.1.18/kernel/GuestDrivers/vboxsf/regops.c VirtualBox-6.1.18
  #  else
      SFLOGFLOW(("vbsf_vmlog_page_mkwrite: vma=%p vmf=%p flags=%#x addr=%p\n", vma, vmf, vmf->flags, vmf->virtual_address));
 @@ -3406,7 +3406,7 @@
- 
- 
- /* Special page fault callback for mapping pages: */
--# if RTLNX_VER_MIN(4,10,0)
-+# if RTLNX_VER_MIN(4,11,0)
+     SFLOGFLOW(("vbsf_vmlog_map_pages: returns\n"));
+     return rc;
+ }
+-# elif RTLNX_VER_MIN(4,10,0)
++# elif RTLNX_VER_MIN(4,11,0)
  static void vbsf_vmlog_map_pages(struct vm_fault *vmf, pgoff_t start, pgoff_t end)
  {
      SFLOGFLOW(("vbsf_vmlog_map_pages: vmf=%p (flags=%#x addr=%p) start=%p end=%p\n", vmf, vmf->flags, vmf->address, start, end));
@@ -176,11 +176,11 @@ diff -ur VirtualBox-6.1.18/src/VBox/Additions/linux/sharedfolders/regops.c Virtu
  #  else
      SFLOGFLOW(("vbsf_vmlog_page_mkwrite: vma=%p vmf=%p flags=%#x addr=%p\n", vma, vmf, vmf->flags, vmf->virtual_address));
 @@ -3406,7 +3406,7 @@
- 
- 
- /* Special page fault callback for mapping pages: */
--# if RTLNX_VER_MIN(4,10,0)
-+# if RTLNX_VER_MIN(4,11,0)
+     SFLOGFLOW(("vbsf_vmlog_map_pages: returns\n"));
+     return rc;
+ }
+-# elif RTLNX_VER_MIN(4,10,0)
++# elif RTLNX_VER_MIN(4,11,0)
  static void vbsf_vmlog_map_pages(struct vm_fault *vmf, pgoff_t start, pgoff_t end)
  {
      SFLOGFLOW(("vbsf_vmlog_map_pages: vmf=%p (flags=%#x addr=%p) start=%p end=%p\n", vmf, vmf->flags, vmf->address, start, end));
