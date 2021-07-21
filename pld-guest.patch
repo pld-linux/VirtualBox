@@ -71,7 +71,7 @@
 +
      { "Solaris", "Solaris",           "Solaris",            "Oracle Solaris 10 5/09 and earlier (32-bit)",
        VBOXOSTYPE_Solaris,         VBOXOSHINT_NONE,
-        768,  16, 16 * _1G64, GraphicsControllerType_VBoxVGA, NetworkAdapterType_I82540EM, 0, StorageControllerType_PIIX4, StorageBus_IDE,
+       1024,  16, 32 * _1G64, GraphicsControllerType_VBoxVGA, NetworkAdapterType_I82540EM, 0, StorageControllerType_PIIX4, StorageBus_IDE,
 --- VirtualBox-4.3.8/src/VBox/Main/src-server/ApplianceImpl.cpp~	2014-02-25 19:09:15.000000000 +0200
 +++ VirtualBox-4.3.8/src/VBox/Main/src-server/ApplianceImpl.cpp	2014-02-28 09:52:48.663191185 +0200
 @@ -141,6 +141,8 @@
