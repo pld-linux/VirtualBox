@@ -465,10 +465,12 @@ gospodarzem sprzętu PCI.\
 %config(noreplace) %verify(not md5 mtime size) /etc/depmod.d/%{_kernel_ver}/vboxguest.conf\
 %endif\
 %config(noreplace) %verify(not md5 mtime size) /etc/modules-load.d/virtualbox-guest.conf\
+%if %{_kernel_version_code} < %{_kernel_version_magic 5 14 0}\
 /lib/modules/%{_kernel_ver}/misc/vboxguest.ko*\
 /lib/modules/%{_kernel_ver}/misc/vboxsf.ko*\
 %if %{_kernel_version_code} < %{_kernel_version_magic 4 13 0}\
 /lib/modules/%{_kernel_ver}/misc/vboxvideo.ko*\
+%endif\
 %endif\
 \
 %if %{with host}\
@@ -505,6 +507,7 @@ cd kernel/HostDrivers\
 %install_kernel_modules -D ../../kernel/installed -m vboxdrv/vboxdrv,vboxnetadp/vboxnetadp,vboxnetflt/vboxnetflt -d misc\
 cd ../..\
 %endif\
+%if %{_kernel_version_code} < %{_kernel_version_magic 5 14 0}\
 cd kernel/GuestDrivers\
 %build_kernel_modules -m vboxguest -C vboxguest\
 %build_kernel_modules -m vboxsf -C vboxsf KBUILD_EXTRA_SYMBOLS=$PWD/../vboxguest/Module.symvers\
@@ -514,6 +517,7 @@ cd kernel/GuestDrivers\
 %install_kernel_modules -D ../../kernel/installed -m vboxvideo/vboxvideo -d misc\
 %endif\
 cd ../..\
+%endif\
 %{nil}
 
 %define install_kernel_pkg()\
