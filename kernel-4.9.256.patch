@@ -89,7 +89,7 @@ diff -ur VirtualBox-6.1.18/kernel/GuestDrivers/vboxvideo/vbox_ttm.c VirtualBox-6
 --- VirtualBox-6.1.18/kernel/GuestDrivers/vboxvideo/vbox_ttm.c	2021-02-06 22:09:21.000000000 +0100
 +++ VirtualBox-6.1.18-256/kernel/GuestDrivers/vboxvideo/vbox_ttm.c	2021-02-06 21:54:24.872380697 +0100
 @@ -314,7 +314,7 @@
- #if RTLNX_VER_MAX(5,10,0)
+ #if RTLNX_VER_MAX(5,10,0) && !RTLNX_RHEL_MAJ_PREREQ(8,5)
  	.init_mem_type = vbox_bo_init_mem_type,
  #endif
 -#if RTLNX_VER_MIN(4,10,0) || RTLNX_RHEL_MAJ_PREREQ(7,4)
@@ -134,7 +134,7 @@ diff -ur VirtualBox-6.1.18/src/VBox/Additions/linux/drm/vbox_ttm.c VirtualBox-6.
 --- VirtualBox-6.1.18/src/VBox/Additions/linux/drm/vbox_ttm.c	2021-01-07 16:34:24.000000000 +0100
 +++ VirtualBox-6.1.18-256/src/VBox/Additions/linux/drm/vbox_ttm.c	2021-02-06 21:54:24.869047375 +0100
 @@ -319,7 +319,7 @@
- #if RTLNX_VER_MAX(5,10,0)
+ #if RTLNX_VER_MAX(5,10,0) && !RTLNX_RHEL_MAJ_PREREQ(8,5)
  	.init_mem_type = vbox_bo_init_mem_type,
  #endif
 -#if RTLNX_VER_MIN(4,10,0) || RTLNX_RHEL_MAJ_PREREQ(7,4)
