@@ -47,19 +47,19 @@ exit 1
 
 %define		qtver	5.6.0
 
-%define		rel		3
+%define		rel		0.1
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	6.1.30
+Version:	6.1.34
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	https://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	2e408e56e92cf778eb8722dbbcb5c357
+# Source0-md5:	5ee5e141a7bd6251420e7d7a2cc76206
 Source1:	https://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	3f235b417ae90a3347afa3f787bc82b9
+# Source1-md5:	16cfa062d19f4578f6bd24648b99eca4
 Source2:	vboxservice.init
 Source3:	vboxservice.service
 Source4:	vboxservice.sysconfig
