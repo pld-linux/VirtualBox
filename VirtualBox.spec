@@ -89,6 +89,7 @@ Patch16:	%{pname}-no-vboxvideo.patch
 Patch17:	qt5-gl.patch
 Patch18:	qt-detect.patch
 Patch19:	kernel-4.9.256.patch
+Patch20:	kernel-5.18.patch
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
 %ifarch %{x8664}
@@ -574,6 +575,7 @@ tar -zxf guest-modules.tar.gz -C GuestDrivers
 tar -zxf host-modules.tar.gz -C HostDrivers
 cd -
 %patch19 -p1
+%patch20 -p1
 %endif
 
 # using system kBuild package
