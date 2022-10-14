@@ -52,14 +52,14 @@ exit 1
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	6.1.34
+Version:	6.1.40
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	https://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	5ee5e141a7bd6251420e7d7a2cc76206
+# Source0-md5:	19439dbfbd13bb8b9f1151052a432d8b
 Source1:	https://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	16cfa062d19f4578f6bd24648b99eca4
+# Source1-md5:	5299c1371e7ba61150a60954a4453149
 Source2:	vboxservice.init
 Source3:	vboxservice.service
 Source4:	vboxservice.sysconfig
@@ -88,8 +88,6 @@ Patch15:	%{pname}-lightdm-1.19.2.patch
 Patch16:	%{pname}-no-vboxvideo.patch
 Patch17:	qt5-gl.patch
 Patch18:	qt-detect.patch
-Patch19:	kernel-4.9.256.patch
-Patch20:	kernel-5.18.patch
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
 %ifarch %{x8664}
@@ -574,8 +572,6 @@ tar -zxf guest-modules.tar.gz -C GuestDrivers
 ../src/VBox/HostDrivers/linux/export_modules.sh --file host-modules.tar.gz --without-hardening
 tar -zxf host-modules.tar.gz -C HostDrivers
 cd -
-%patch19 -p1
-%patch20 -p1
 %endif
 
 # using system kBuild package
@@ -1071,6 +1067,7 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %lang(id) %{_datadir}/%{pname}/nls/*_id.qm
 %lang(it) %{_datadir}/%{pname}/nls/*_it.qm
 %lang(ja) %{_datadir}/%{pname}/nls/*_ja.qm
+%lang(ka) %{_datadir}/%{pname}/nls/*_ka.qm
 %lang(km_KH) %{_datadir}/%{pname}/nls/*_km_KH.qm
 %lang(ko) %{_datadir}/%{pname}/nls/*_ko.qm
 %lang(lt) %{_datadir}/%{pname}/nls/*_lt.qm

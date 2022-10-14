@@ -98,8 +98,8 @@
 +++ VirtualBox-4.3.8/src/VBox/Frontends/VirtualBox/src/wizards/newvm/UIWizardNewVMPageBasic1.cpp	2014-02-28 09:58:59.493698505 +0200
 @@ -133,6 +133,8 @@
      { QRegExp("Xa.*32",                            Qt::CaseInsensitive), "Xandros" },
-     { QRegExp("((Or)|(oel)|(ol)).*64",             Qt::CaseInsensitive), "Oracle_64" },
-     { QRegExp("((Or)|(oel)|(ol)).*32",             Qt::CaseInsensitive), "Oracle" },
+     { QRegExp("((Or)|(oel)|(^ol)).*64",            Qt::CaseInsensitive), "Oracle_64" },
+     { QRegExp("((Or)|(oel)|(^ol)).*32",            Qt::CaseInsensitive), "Oracle" },
 +    { QRegExp("PLD.*64",                           Qt::CaseInsensitive), "PLD_64" },
 +    { QRegExp("PLD.*32",                           Qt::CaseInsensitive), "PLD" },
      { QRegExp("Knoppix",                           Qt::CaseInsensitive), "Linux26" },
