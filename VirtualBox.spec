@@ -81,7 +81,6 @@ Patch8:		lightdm-greeter-g++-link.patch
 Patch9:		pld-guest.patch
 Patch10:	16-no-update.patch
 Patch11:	%{pname}-all-translations.patch
-Patch12:	x32.patch
 Patch13:	%{pname}-no-scrextend.patch
 Patch14:	%{pname}-multipython.patch
 Patch15:	%{pname}-lightdm-1.19.2.patch
@@ -546,7 +545,6 @@ echo override vboxsf %{_kernel_ver} misc >> kernel/installed/etc/depmod.d/%{_ker
 %if %{with all_langs}
 %patch11 -p0
 %endif
-%patch12 -p1
 %patch13 -p1
 %patch14 -p0
 %patch15 -p0
