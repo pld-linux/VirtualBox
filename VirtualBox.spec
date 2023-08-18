@@ -47,7 +47,7 @@ exit 1
 
 %define		qtver	5.6.0
 
-%define		rel		1
+%define		rel		2
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
@@ -74,6 +74,7 @@ Source12:	udev-guest.rules
 Patch0:		%{pname}-version-error.patch
 Patch1:		%{pname}-VBoxSysInfo.patch
 Patch2:		%{pname}-warning_workaround.patch
+Patch3:		kernel-6.4.10.patch
 Patch4:		wrapper.patch
 Patch6:		hardening-shared.patch
 Patch7:		lightdm-greeter-makefile.patch
@@ -536,6 +537,7 @@ echo override vboxsf %{_kernel_ver} misc >> kernel/installed/etc/depmod.d/%{_ker
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 %patch4 -p1
 %patch6 -p1
 %patch7 -p1
