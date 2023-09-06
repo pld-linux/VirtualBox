@@ -11,10 +11,10 @@
  ##               to the INCS, however lightdm.h is missing and will be taken from the system.
 @@ -59,7 +59,7 @@
  	/usr/include/glib-2.0 \
-        $(if $(VBOX_OSE),,liblightdm-gobject-1.5.0) \
+ 	$(if $(VBOX_OSE),,liblightdm-gobject-1.5.0) \
  	/usr/include/lightdm-gobject-1 \
 -	$(if $(VBOX_OSE),$(patsubst -I%,%,%(filter -I%,$(shell pkg-config --cflags liblightdm-gobject-1))),)
 +	$(if $(VBOX_OSE),$(patsubst -I%,%,$(filter -I%,$(shell pkg-config --cflags liblightdm-gobject-1))),)
  ifndef VBOX_WITH_FLTK
   vbox-greeter_INCS   += \
- 	/usr/include/glib-2.0 \
+  	/usr/include/glib-2.0 \

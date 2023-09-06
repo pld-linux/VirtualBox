@@ -47,19 +47,19 @@ exit 1
 
 %define		qtver	5.6.0
 
-%define		rel		2
+%define		rel		0.1
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	6.1.46
+Version:	7.0.10
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	https://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	43a729bd9e0e3a9559188abd16df2a38
+# Source0-md5:	dea0dbd1aa2012b4a35c0d416f8155c8
 Source1:	https://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	640a09d26d46ae72268d6bdc7f4669bb
+# Source1-md5:	536e5176026317c9e3b364ecb558fd02
 Source2:	vboxservice.init
 Source3:	vboxservice.service
 Source4:	vboxservice.sysconfig
@@ -83,11 +83,13 @@ Patch9:		pld-guest.patch
 Patch10:	16-no-update.patch
 Patch11:	%{pname}-all-translations.patch
 Patch13:	%{pname}-no-scrextend.patch
-Patch14:	%{pname}-multipython.patch
 Patch15:	%{pname}-lightdm-1.19.2.patch
 Patch16:	%{pname}-no-vboxvideo.patch
 Patch17:	qt5-gl.patch
 Patch18:	qt-detect.patch
+Patch19:	python3.patch
+Patch20:	gcc-13.patch
+Patch21:	xsl-style-dir.patch
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
 %ifarch %{x8664}
@@ -116,6 +118,7 @@ BuildRequires:	OpenGL-devel
 BuildRequires:	Qt5Core-devel >= %{qtver}
 BuildRequires:	Qt5DBus-devel >= %{qtver}
 BuildRequires:	Qt5Gui-devel >= %{qtver}
+BuildRequires:	Qt5Help-devel >= %{qtver}
 BuildRequires:	Qt5Network-devel >= %{qtver}
 BuildRequires:	Qt5OpenGL-devel >= %{qtver}
 BuildRequires:	Qt5PrintSupport-devel >= %{qtver}
@@ -130,13 +133,16 @@ BuildRequires:	bcc
 BuildRequires:	bin86
 BuildRequires:	curl-devel >= 7.19.1
 BuildRequires:	device-mapper-devel >= 1.02
-%{?with_doc:BuildRequires:	docbook-dtd44-xml}
+%if %{with doc}
+BuildRequires:	docbook-dtd45-xml
+BuildRequires:	docbook-style-xsl
+%endif
 BuildRequires:	fakeroot
 %{?with_lightdm:BuildRequires:	fltk-devel}
 BuildRequires:	gcc >= 5:3.2.3
 %{?with_webservice:BuildRequires:	gsoap-devel}
 BuildRequires:	issue
-BuildRequires:	kBuild >= 0.1.9998.3093
+BuildRequires:	kBuild >= 0.1.9998.3598
 BuildRequires:	libIDL-devel
 BuildRequires:	libcap-static
 BuildRequires:	libdrm-devel
@@ -157,8 +163,9 @@ BuildRequires:	pam-devel
 BuildRequires:	pixman-devel
 BuildRequires:	pkgconfig
 BuildRequires:	pulseaudio-devel >= 0.9.0
-BuildRequires:	python-devel >= 2.3
-BuildRequires:	python-modules
+BuildRequires:	python3-devel >= 1:3.6
+BuildRequires:	python3-modules
+BuildRequires:	qt5-assistant
 BuildRequires:	qt5-build
 BuildRequires:	qt5-linguist
 BuildRequires:	rpmbuild(macros) >= 1.752
@@ -548,11 +555,13 @@ echo override vboxsf %{_kernel_ver} misc >> kernel/installed/etc/depmod.d/%{_ker
 %patch11 -p0
 %endif
 %patch13 -p1
-%patch14 -p0
 %patch15 -p0
 %patch16 -p0
 %patch17 -p1
 %patch18 -p1
+%patch19 -p1
+%patch20 -p1
+%patch21 -p1
 
 %{__sed} -i -e 's,@VBOX_DOC_PATH@,%{_docdir}/%{name}-%{version},' \
 	-e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/common/virtualbox.desktop.in
@@ -734,7 +743,6 @@ cp -p %{SOURCE1} $RPM_BUILD_ROOT%{_datadir}/%{pname}/VBoxGuestAdditions.iso
 # manual installation steps based on src/VBox/Installer/linux/install.sh
 ln -sf %{_libdir}/%{pname}/VBox.sh $RPM_BUILD_ROOT%{_bindir}/VirtualBox
 ln -sf %{_libdir}/%{pname}/VBox.sh $RPM_BUILD_ROOT%{_bindir}/VBoxManage
-ln -sf %{_libdir}/%{pname}/VBox.sh $RPM_BUILD_ROOT%{_bindir}/VBoxSDL
 ln -sf %{_libdir}/%{pname}/VBox.sh $RPM_BUILD_ROOT%{_bindir}/VBoxVRDP
 ln -sf %{_libdir}/%{pname}/VBox.sh $RPM_BUILD_ROOT%{_bindir}/VBoxHeadless
 ln -sf %{_libdir}/%{pname}/VBox.sh $RPM_BUILD_ROOT%{_bindir}/VBoxBalloonCtrl
@@ -922,7 +930,6 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_bindir}/VBoxDTrace
 %attr(755,root,root) %{_bindir}/VBoxHeadless
 %attr(755,root,root) %{_bindir}/VBoxManage
-%attr(755,root,root) %{_bindir}/VBoxSDL
 %attr(755,root,root) %{_bindir}/VBoxVRDP
 %attr(755,root,root) %{_bindir}/vbox-img
 %dir %{_libdir}/%{pname}
@@ -962,9 +969,7 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxNetAdpCtl
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxNetDHCP
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxNetNAT
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxSDL
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxSVC
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxTunctl
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxVMMPreload
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxVolInfo
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxXPCOMIPCD
@@ -972,16 +977,12 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/%{pname}/bldRTLdrCheckImports
 %attr(755,root,root) %{_libdir}/%{pname}/iPxeBaseBin
 %attr(755,root,root) %{_libdir}/%{pname}/vboximg-mount
-%if %{with doc}
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxManageHelp
-%endif
 %dir %{_libdir}/%{pname}/tools
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTCat
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTChMod
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTCp
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTDbgSymCache
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTEfiFatExtract
-%attr(755,root,root) %{_libdir}/%{pname}/tools/RTFTPServer
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTFuzzClient
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTFuzzMaster
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTGzip

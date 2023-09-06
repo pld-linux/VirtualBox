@@ -1,0 +1,12 @@
+diff --git a/src/libs/dxvk-native-1.9.2a/src/util/util_bit.h b/src/libs/dxvk-native-1.9.2a/src/util/util_bit.h
+index 3c65c70df..d283792f2 100644
+--- a/src/libs/dxvk-native-1.9.2a/src/util/util_bit.h
++++ b/src/libs/dxvk-native-1.9.2a/src/util/util_bit.h
+@@ -16,6 +16,7 @@
+ #include "util_likely.h"
+ #include "util_math.h"
+ 
++#include <cstdint>
+ #include <cstring>
+ #include <iterator>
+ #include <type_traits>
