@@ -147,9 +147,11 @@ BuildRequires:	kBuild >= 0.1.9998.3598
 BuildRequires:	libIDL-devel
 BuildRequires:	libcap-static
 BuildRequires:	libdrm-devel
+BuildRequires:	liblzf-devel
 BuildRequires:	libpng-devel >= 2:1.2.5
 BuildRequires:	libstdc++-devel >= 5:3.2.3
 BuildRequires:	libstdc++-static >= 5:3.2.3
+BuildRequires:	libtpms-devel
 BuildRequires:	libuuid-devel
 BuildRequires:	libvncserver-devel >= 0.9.9
 BuildRequires:	libvpx-devel >= 0.9.5
@@ -688,6 +690,7 @@ cp -a$l %{outdir}/* $RPM_BUILD_ROOT%{_libdir}/%{pname}
 %endif
 
 # Guest Only Tools
+%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_bindir}}/VBoxAudioTest
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_bindir}}/VBoxClient
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_bindir}}/VBoxControl
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_bindir}}/VBoxDRMClient
@@ -947,6 +950,7 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxDD.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxDD2.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxDDU.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxDxVk.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxDragAndDropSvc.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxGuestControlSvc.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxGuestPropSvc.so
@@ -967,6 +971,7 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 
 # binaries
 %attr(755,root,root) %{_libdir}/%{pname}/VBox.sh
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxAudioTest
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxAutostart
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxBalloonCtrl
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxDTrace
@@ -985,15 +990,19 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/%{pname}/iPxeBaseBin
 %attr(755,root,root) %{_libdir}/%{pname}/vboximg-mount
 %dir %{_libdir}/%{pname}/tools
+%attr(755,root,root) %{_libdir}/%{pname}/tools/LnxPerfHack
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTCat
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTChMod
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTCp
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTDbgSymCache
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTEfiFatExtract
+%attr(755,root,root) %{_libdir}/%{pname}/tools/RTEfiSigDb
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTFuzzClient
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTFuzzMaster
+%attr(755,root,root) %{_libdir}/%{pname}/tools/RTFtpServer
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTGzip
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTHttp
+%attr(755,root,root) %{_libdir}/%{pname}/tools/RTHttpServer
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTIsoMaker
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTKrnlModInfo
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTLdrCheckImports
@@ -1117,6 +1126,8 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %if %{with doc}
 %files doc
 %defattr(644,root,root,755)
+%doc %{_libdir}/%{pname}/UserManual.qch
+%doc %{_libdir}/%{pname}/UserManual.qhc
 # this is a symlink...
 %doc %{_libdir}/%{pname}/UserManual.pdf
 %if %{with all_langs}
@@ -1137,6 +1148,7 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/vboxservice
 %{systemdunitdir}/vboxservice.service
 %{systemdunitdir}/vboxclient-vmsvga.service
+%attr(755,root,root) %{_bindir}/VBoxAudioTest
 %attr(755,root,root) %{_bindir}/VBoxControl
 %attr(755,root,root) %{_bindir}/VBoxService
 %config(noreplace) %verify(not md5 mtime size) /etc/udev/rules.d/60-vboxguest.rules
