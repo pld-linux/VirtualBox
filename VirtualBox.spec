@@ -617,6 +617,8 @@ VBOX_GCC_OPT=%{rpmcxxflags}
 
 TOOL_YASM_AS := /usr/bin/yasm
 
+VBOX_BLD_PYTHON := %{__python3}
+
 VBOX_PATH_APP_PRIVATE_ARCH := %{_libdir}/%{pname}
 VBOX_PATH_APP_PRIVATE := %{_datadir}/%{pname}
 VBOX_PATH_SHARED_LIBS := $(VBOX_PATH_APP_PRIVATE_ARCH)
