@@ -90,6 +90,7 @@ Patch18:	qt-detect.patch
 Patch19:	python3.patch
 Patch20:	gcc-13.patch
 Patch21:	xsl-style-dir.patch
+Patch22:	build-arch.patch
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
 %ifarch %{x8664}
@@ -562,6 +563,7 @@ echo override vboxsf %{_kernel_ver} misc >> kernel/installed/etc/depmod.d/%{_ker
 %patch19 -p1
 %patch20 -p1
 %patch21 -p1
+%patch22 -p1
 
 %{__sed} -i -e 's,@VBOX_DOC_PATH@,%{_docdir}/%{name}-%{version},' \
 	-e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/common/virtualbox.desktop.in
@@ -611,6 +613,8 @@ TOOL_GCC3_CFLAGS=%{rpmcflags}
 TOOL_GCC3_CXXFLAGS=%{rpmcxxflags}
 VBOX_GCC_OPT=%{rpmcxxflags}
 
+TOOL_YASM_AS := /usr/bin/yasm
+
 VBOX_PATH_APP_PRIVATE_ARCH := %{_libdir}/%{pname}
 VBOX_PATH_APP_PRIVATE := %{_datadir}/%{pname}
 VBOX_PATH_SHARED_LIBS := $(VBOX_PATH_APP_PRIVATE_ARCH)
@@ -625,7 +629,10 @@ VBOX_WITH_TESTSUITE :=
 
 VBOX_WITH_VRDP_RDESKTOP=
 VBOX_WITH_MULTIVERSION_PYTHON=0
-%{!?with_host:VBOX_ONLY_ADDITIONS_WITHOUT_RTISOMAKER=1}
+%if %{without host}
+VBOX_ONLY_ADDITIONS_WITHOUT_RTISOMAKER=1
+VBOX_ONLY_ADDITIONS=1
+%endif
 EOF
 
 %undefine	filterout_c
@@ -647,7 +654,7 @@ EOF
 	%{nil}
 
 . "$PWD/env.sh"
-kmk %{?_smp_mflags}
+kmk %{?_smp_mflags} %{!?with_host:VBOX_ONLY_ADDITIONS_WITHOUT_RTISOMAKER=1 VBOX_ONLY_ADDITIONS=1}
 %endif
 
 %{?with_kernel:%{expand:%build_kernel_packages}}

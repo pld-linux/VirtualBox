@@ -1,0 +1,11 @@
+--- VirtualBox-7.0.10/configure.orig	2023-09-07 02:11:31.000000000 +0200
++++ VirtualBox-7.0.10/configure	2023-09-07 02:20:09.875202421 +0200
+@@ -381,7 +381,7 @@
+ check_environment()
+ {
+   test_header environment
+-  BUILD_CPU=`uname -m`
++  BUILD_CPU=`rpm -E '%{_host_cpu}'`
+   [ "$OS" = "solaris" ] && BUILD_CPU=`isainfo | cut -f 1 -d ' '`
+   case "$BUILD_CPU" in
+     i[3456789]86|x86|i86pc|BePC)
