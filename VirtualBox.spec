@@ -47,7 +47,7 @@ exit 1
 
 %define		qtver	5.6.0
 
-%define		rel		1
+%define		rel		2
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
@@ -618,6 +618,7 @@ VBOX_GCC_OPT=%{rpmcxxflags}
 TOOL_YASM_AS := /usr/bin/yasm
 
 VBOX_BLD_PYTHON := %{__python3}
+VBOX_WITHOUT_PYTHON_LIMITED_API=1
 
 VBOX_PATH_APP_PRIVATE_ARCH := %{_libdir}/%{pname}
 VBOX_PATH_APP_PRIVATE := %{_datadir}/%{pname}
