@@ -47,19 +47,19 @@ exit 1
 
 %define		qtver	5.6.0
 
-%define		rel		3
+%define		rel		1
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	7.0.10
+Version:	7.0.12
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v2
 Group:		Applications/Emulators
 Source0:	https://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	dea0dbd1aa2012b4a35c0d416f8155c8
+# Source0-md5:	b89fb26c765764ee0e2d14305c0411d5
 Source1:	https://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	536e5176026317c9e3b364ecb558fd02
+# Source1-md5:	beedd5530d469b38079e4fe066d1ef32
 Source2:	vboxservice.init
 Source3:	vboxservice.service
 Source4:	vboxservice.sysconfig
@@ -74,7 +74,6 @@ Source12:	udev-guest.rules
 Patch0:		%{pname}-version-error.patch
 Patch1:		%{pname}-VBoxSysInfo.patch
 Patch2:		%{pname}-warning_workaround.patch
-Patch3:		kernel-6.4.10.patch
 Patch4:		wrapper.patch
 Patch6:		hardening-shared.patch
 Patch7:		lightdm-greeter-makefile.patch
@@ -91,6 +90,7 @@ Patch19:	python3.patch
 Patch20:	gcc-13.patch
 Patch21:	xsl-style-dir.patch
 Patch22:	build-arch.patch
+Patch23:	libxml2.12.patch
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
 %ifarch %{x8664}
@@ -547,7 +547,6 @@ echo override vboxsf %{_kernel_ver} misc >> kernel/installed/etc/depmod.d/%{_ker
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
 %patch4 -p1
 %patch6 -p1
 %patch7 -p1
@@ -566,6 +565,7 @@ echo override vboxsf %{_kernel_ver} misc >> kernel/installed/etc/depmod.d/%{_ker
 %patch20 -p1
 %patch21 -p1
 %patch22 -p1
+%patch23 -p1
 
 %{__sed} -i -e 's,@VBOX_DOC_PATH@,%{_docdir}/%{name}-%{version},' \
 	-e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/common/virtualbox.desktop.in
