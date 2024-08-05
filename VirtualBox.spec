@@ -47,19 +47,19 @@ exit 1
 
 %define		qtver	5.6.0
 
-%define		rel		1
+%define		rel		0.1
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	7.0.18
+Version:	7.0.20
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
-License:	GPL v2
+License:	GPL v3
 Group:		Applications/Emulators
 Source0:	https://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	b1259b71044ab24671d6f5757855548d
+# Source0-md5:	ffbcd4bfa09e12b1fd6686c3a10acd0f
 Source1:	https://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	c31a1845868d0913012f1dc481461e8f
+# Source1-md5:	46ed708d7994dc36bb99159542e4444e
 Source2:	vboxservice.init
 Source3:	vboxservice.service
 Source4:	vboxservice.sysconfig
@@ -624,7 +624,7 @@ VBOX_PATH_SHARED_LIBS := $(VBOX_PATH_APP_PRIVATE_ARCH)
 VBOX_WITH_ORIGIN :=
 VBOX_WITH_RUNPATH := $(VBOX_PATH_APP_PRIVATE_ARCH)
 #VBOX_PATH_APP_DOCS := %{_docdir}/%{pname}-doc-%{version}
-VBOX_PATH_DOCBOOK_DTD := %{_datadir}/sgml/docbook/xml-dtd-4.4
+VBOX_PATH_DOCBOOK_DTD := %{_datadir}/sgml/docbook/xml-dtd-4.5
 
 # don't build testcases to save time, they are not needed for the package
 VBOX_WITH_TESTCASES :=
