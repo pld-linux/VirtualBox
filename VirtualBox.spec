@@ -12,16 +12,17 @@
 #
 # Conditional build:
 %bcond_with	all_langs	# build with all manual translations
-%bcond_without	doc		# don't build the documentation
-%bcond_without	debuginfo		# disable debuginfo creation (to save space when compiling)
+# UserManual.xml does not validate with libxml2-progs >= 2.13
+%bcond_with	doc		# don't build the documentation
+%bcond_without	debuginfo	# disable debuginfo creation (to save space when compiling)
 %bcond_without	kernel		# don't build kernel module
 %bcond_without	userspace	# don't build userspace package
 %bcond_with	webservice	# webservice (SOAP) support
 %bcond_without	lightdm		# lightdm greeter
 %bcond_without	dkms		# build dkms package
 %bcond_without	verbose
-%bcond_without	gui			# disable Qt4 GUI frontend build
-%bcond_without	host			# build guest packages only
+%bcond_without	gui		# disable Qt4 GUI frontend build
+%bcond_without	host		# build guest packages only
 
 %if 0%{?_pld_builder:1} && %{with kernel} && %{with userspace}
 %{error:kernel and userspace cannot be built at the same time on PLD builders}
@@ -47,7 +48,7 @@ exit 1
 
 %define		qtver	5.6.0
 
-%define		rel		0.1
+%define		rel		1
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
