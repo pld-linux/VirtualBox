@@ -639,7 +639,6 @@ VBOX_ONLY_ADDITIONS=1
 %endif
 EOF
 
-#VBOX_WITH_PYTHON=0
 %undefine	filterout_c
 %undefine	filterout_cxx
 
