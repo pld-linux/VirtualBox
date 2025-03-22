@@ -48,19 +48,19 @@ exit 1
 
 %define		qtver	5.6.0
 
-%define		rel		2
+%define		rel		1
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	7.0.20
+Version:	7.0.24
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v3
 Group:		Applications/Emulators
 Source0:	https://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	ffbcd4bfa09e12b1fd6686c3a10acd0f
+# Source0-md5:	b589c3d999f0ff1ddb1cd03c59f766aa
 Source1:	https://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	46ed708d7994dc36bb99159542e4444e
+# Source1-md5:	2681c7d1be1dc145983f24c4bca96fa8
 Source2:	vboxservice.init
 Source3:	vboxservice.service
 Source4:	vboxservice.sysconfig
@@ -639,6 +639,7 @@ VBOX_ONLY_ADDITIONS=1
 %endif
 EOF
 
+#VBOX_WITH_PYTHON=0
 %undefine	filterout_c
 %undefine	filterout_cxx
 
@@ -649,6 +650,7 @@ EOF
 	--with-g++="%{__cxx}" \
 	%{!?with_doc:--disable-docs} \
 	--disable-java \
+	--disable-python \
 	--disable-hardening \
 	--disable-kmods \
 	--enable-vnc \

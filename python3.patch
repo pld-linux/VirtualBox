@@ -5,7 +5,7 @@
  EOF
    found=
 -  SUPPYTHONLIBS="python2.7 python2.6 python3.1 python3.2 python3.3 python3.4 python3.4m python3.5 python3.5m python3.6 python3.6m python3.7 python3.7m python3.8 python3.9 python3.10 python3.11 python3.12"
-+  SUPPYTHONLIBS="python3.1 python3.2 python3.3 python3.4 python3.4m python3.5 python3.5m python3.6 python3.6m python3.7 python3.7m python3.8 python3.9 python3.10 python3.11 python3.12"
++  SUPPYTHONLIBS="python3.1 python3.2 python3.3 python3.4 python3.4m python3.5 python3.5m python3.6 python3.6m python3.7 python3.7m python3.8 python3.9 python3.10 python3.11 python3.12 python3.13"
    for p in $PYTHONDIR; do
      for d in $SUPPYTHONLIBS; do
        for b in lib/x86_64-linux-gnu lib/i386-linux-gnu lib64 lib/64 lib; do
@@ -22,7 +22,7 @@
  from distutils.version import StrictVersion
  
 -versions = ["2.6", "2.7", "3.1", "3.2", "3.2m", "3.3", "3.3m", "3.4", "3.4m", "3.5", "3.5m", "3.6", "3.6m", "3.7", "3.7m", "3.8", "3.9", "3.10", "3.11", "3.12" ]
-+versions = ["3.1", "3.2", "3.2m", "3.3", "3.3m", "3.4", "3.4m", "3.5", "3.5m", "3.6", "3.6m", "3.7", "3.7m", "3.8", "3.9", "3.10", "3.11", "3.12" ]
++versions = ["3.1", "3.2", "3.2m", "3.3", "3.3m", "3.4", "3.4m", "3.5", "3.5m", "3.6", "3.6m", "3.7", "3.7m", "3.8", "3.9", "3.10", "3.11", "3.12", "3.13" ]
  prefixes = ["/usr", "/usr/local", "/opt", "/opt/local"]
  known = {}
  
@@ -37,3 +37,44 @@
  # Build the Validation Kit.
  VBOX_WITH_VALIDATIONKIT = 1
  # Include unit tests (testcases) on the Validation Kit .ISO
+--- VirtualBox-7.0.24/src/libs/xpcom18a4/python/src/PyGBase.cpp~	2025-01-21 15:11:16.000000000 +0100
++++ VirtualBox-7.0.24/src/libs/xpcom18a4/python/src/PyGBase.cpp	2025-03-22 00:49:21.276649368 +0100
+@@ -224,7 +224,7 @@
+ 		if (obIID==NULL) goto done;
+ 		args = Py_BuildValue("OOzi", ob, obIID, NULL, 0);
+ 		if (args==NULL) goto done;
+-		wrap_ret = PyEval_CallObject(func, args);
++		wrap_ret = PyObject_CallObject(func, args);
+ 		if (wrap_ret==NULL) goto done;
+ 		ok = Py_nsISupports::InterfaceFromPyObject(wrap_ret, iid, ppret, PR_FALSE, PR_FALSE);
+ #ifdef DEBUG
+@@ -572,7 +572,7 @@
+ 		goto done;
+ 	}
+ 	// Make the call
+-	*ppResult = PyEval_CallObject(method, args);
++	*ppResult = PyObject_CallObject(method, args);
+ 	ret = *ppResult ? NS_OK : NS_ERROR_FAILURE;
+ done:
+ 	Py_XDECREF(method);
+--- VirtualBox-7.0.24/src/libs/xpcom18a4/python/src/PyGInputStream.cpp~	2025-01-21 15:11:16.000000000 +0100
++++ VirtualBox-7.0.24/src/libs/xpcom18a4/python/src/PyGInputStream.cpp	2025-03-22 00:54:42.396649345 +0100
+@@ -103,15 +103,15 @@
+ 	const char *methodName = "read";
+ 	nsresult nr = InvokeNativeViaPolicy(methodName, &ret, "i", count);
+ 	if (NS_SUCCEEDED(nr)) {
+-#if 0 /* VBox: new buffer protocol (though I could use it for Py_LIMITED_API and ditch the warning, but cpython specific) */
++#if 1 /* VBox: new buffer protocol (though I could use it for Py_LIMITED_API and ditch the warning, but cpython specific) */
+ 		Py_buffer py_view;
+ 		if (PyObject_GetBuffer(ret, &py_view, PyBUF_SIMPLE) == 0) {
+ 			if (py_view.len <= count) {
+ 				count = py_view.len;
+ 			} else {
+-				PyXPCOM_LogWarning("nsIInputStream::read() was asked for %d bytes, but the string returned is %d bytes - truncating!\n", count, py_size);
++				PyXPCOM_LogWarning("nsIInputStream::read() was asked for %d bytes, but the string returned is %d bytes - truncating!\n", count, py_view.len);
+ 			}
+-			memcpy(buf, py_view.py_buf, count);
++			memcpy(buf, py_view.buf, count);
+ 			PyBuffer_Release(&py_view);
+ 			*_retval = count;
+ 		} else {
