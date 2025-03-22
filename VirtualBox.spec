@@ -23,6 +23,7 @@
 %bcond_without	verbose
 %bcond_without	gui		# disable Qt4 GUI frontend build
 %bcond_without	host		# build guest packages only
+%bcond_with	python		# Python3 support
 
 %if 0%{?_pld_builder:1} && %{with kernel} && %{with userspace}
 %{error:kernel and userspace cannot be built at the same time on PLD builders}
@@ -166,8 +167,10 @@ BuildRequires:	pam-devel
 BuildRequires:	pixman-devel
 BuildRequires:	pkgconfig
 BuildRequires:	pulseaudio-devel >= 0.9.0
+%if %{with python}
 BuildRequires:	python3-devel >= 1:3.6
 BuildRequires:	python3-modules
+%endif
 BuildRequires:	qt5-assistant
 BuildRequires:	qt5-build
 BuildRequires:	qt5-linguist
@@ -649,7 +652,7 @@ EOF
 	--with-g++="%{__cxx}" \
 	%{!?with_doc:--disable-docs} \
 	--disable-java \
-	--disable-python \
+	%{!?with_python:--disable-python} \
 	--disable-hardening \
 	--disable-kmods \
 	--enable-vnc \
@@ -746,7 +749,9 @@ cp -p %{SOURCE12} $RPM_BUILD_ROOT/etc/udev/rules.d/60-vboxguest.rules
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/SUPUninstall
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/load.sh
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/loadall.sh
+%if %{with python}
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/vboxshell.py
+%endif
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/%{pname}/xpidl
 %endif
 
@@ -959,7 +964,7 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxGuestPropSvc.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxHostChannel.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxKeyboard.so
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxPython*.so
+%{?with_python:%attr(755,root,root) %{_libdir}/%{pname}/VBoxPython*.so}
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxRT.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxSVGA3D.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxSharedClipboard.so
