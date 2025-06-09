@@ -21,7 +21,7 @@
 %bcond_without	lightdm		# lightdm greeter
 %bcond_without	dkms		# build dkms package
 %bcond_without	verbose
-%bcond_without	gui		# disable Qt4 GUI frontend build
+%bcond_without	gui		# disable Qt6 GUI frontend build
 %bcond_without	host		# build guest packages only
 %bcond_with	python		# Python3 support
 
@@ -47,21 +47,21 @@ exit 1
 %undefine	with_host
 %endif
 
-%define		qtver	5.6.0
+%define		qtver	6.3.0
 
-%define		rel		1
+%define		rel		0.1
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	7.0.26
+Version:	7.1.10
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v3
 Group:		Applications/Emulators
 Source0:	https://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	f7cd263b31deb675b1e62e56141b775c
+# Source0-md5:	74f699410356334618ab6c00e329d810
 Source1:	https://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	cd8cba640cff687188392fc8771ccf5c
+# Source1-md5:	95cc508dcb2e5b1cd0bca47f31b17dfe
 Source2:	vboxservice.init
 Source3:	vboxservice.service
 Source4:	vboxservice.sysconfig
@@ -86,10 +86,7 @@ Patch11:	%{pname}-all-translations.patch
 Patch13:	%{pname}-no-scrextend.patch
 Patch15:	%{pname}-lightdm-1.19.2.patch
 Patch16:	%{pname}-no-vboxvideo.patch
-Patch17:	qt5-gl.patch
-Patch18:	qt-detect.patch
 Patch19:	python3.patch
-Patch20:	gcc-13.patch
 Patch21:	xsl-style-dir.patch
 Patch22:	build-arch.patch
 URL:		http://www.virtualbox.org/
@@ -117,16 +114,15 @@ BuildRequires:	xorg-xserver-server-devel
 BuildRequires:	EGL-devel
 BuildRequires:	OpenGL-GLU-devel
 BuildRequires:	OpenGL-devel
-BuildRequires:	Qt5Core-devel >= %{qtver}
-BuildRequires:	Qt5DBus-devel >= %{qtver}
-BuildRequires:	Qt5Gui-devel >= %{qtver}
-BuildRequires:	Qt5Help-devel >= %{qtver}
-BuildRequires:	Qt5Network-devel >= %{qtver}
-BuildRequires:	Qt5OpenGL-devel >= %{qtver}
-BuildRequires:	Qt5PrintSupport-devel >= %{qtver}
-BuildRequires:	Qt5Widgets-devel >= %{qtver}
-BuildRequires:	Qt5X11Extras-devel >= %{qtver}
-BuildRequires:	Qt5Xml-devel >= %{qtver}
+BuildRequires:	Qt6Core-devel >= %{qtver}
+BuildRequires:	Qt6DBus-devel >= %{qtver}
+BuildRequires:	Qt6Gui-devel >= %{qtver}
+BuildRequires:	Qt6Help-devel >= %{qtver}
+BuildRequires:	Qt6Network-devel >= %{qtver}
+BuildRequires:	Qt6OpenGL-devel >= %{qtver}
+BuildRequires:	Qt6PrintSupport-devel >= %{qtver}
+BuildRequires:	Qt6Widgets-devel >= %{qtver}
+BuildRequires:	Qt6Xml-devel >= %{qtver}
 BuildRequires:	SDL-devel >= 1.2.7
 BuildRequires:	acpica
 BuildRequires:	alsa-lib-devel >= 1.0.6
@@ -159,7 +155,7 @@ BuildRequires:	libvpx-devel >= 0.9.5
 BuildRequires:	libxml2-devel >= 2.6.26
 BuildRequires:	libxslt-devel >= 1.1.17
 BuildRequires:	libxslt-progs >= 1.1.17
-%{?with_lightdm:BuildRequires:	lightdm-libs-qt5-devel}
+%{?with_lightdm:BuildRequires:	lightdm-libs-gobject-devel}
 BuildRequires:	makeself
 BuildRequires:	mkisofs
 BuildRequires:	openssl-devel >= 1.0.1
@@ -171,9 +167,9 @@ BuildRequires:	pulseaudio-devel >= 0.9.0
 BuildRequires:	python3-devel >= 1:3.6
 BuildRequires:	python3-modules
 %endif
-BuildRequires:	qt5-assistant
-BuildRequires:	qt5-build
-BuildRequires:	qt5-linguist
+BuildRequires:	qt6-assistant
+BuildRequires:	qt6-build
+BuildRequires:	qt6-linguist
 BuildRequires:	rpmbuild(macros) >= 1.752
 BuildRequires:	sed >= 4.0
 %if %{with doc}
@@ -264,8 +260,8 @@ konfigurację maszyny wirtualnej na inny komputer.
 Summary:	Qt GUI part for VirtualBox
 Group:		X11/Applications
 Requires:	%{name} = %{version}-%{release}
-Requires:	Qt5Core >= %{qtver}
-Requires:	Qt5Gui-platform-xcb >= %{qtver}
+Requires:	Qt6Core >= %{qtver}
+Requires:	Qt6Gui-platform-xcb >= %{qtver}
 Requires:	desktop-file-utils
 Requires:	desktop-file-utils
 Requires:	fontconfig
@@ -273,8 +269,8 @@ Requires:	fonts-Type1-urw
 Requires:	gtk-update-icon-cache
 Requires:	hicolor-icon-theme
 Requires:	shared-mime-info
-Suggests:	Qt5Gui-platform-xcb-glx >= %{qtver}
-Suggests:	Qt5Gui-platform-xcb-egl >= %{qtver}
+Suggests:	Qt6Gui-platform-xcb-glx >= %{qtver}
+Suggests:	Qt6Gui-platform-xcb-egl >= %{qtver}
 Suggests:	gxmessage
 Conflicts:	%{name} < 4.3.8-3
 
@@ -555,17 +551,14 @@ echo override vboxsf %{_kernel_ver} misc >> kernel/installed/etc/depmod.d/%{_ker
 %patch -P 7 -p1
 %patch -P 8 -p1
 %patch -P 9 -p1
-%patch -P 10 -p1
+#patch -P 10 -p1
 %if %{with all_langs}
 %patch -P 11 -p0
 %endif
 %patch -P 13 -p1
 %patch -P 15 -p0
 %patch -P 16 -p0
-%patch -P 17 -p1
-%patch -P 18 -p1
 %patch -P 19 -p1
-%patch -P 20 -p1
 %patch -P 21 -p1
 %patch -P 22 -p1
 
@@ -594,7 +587,6 @@ cd -
 
 # use linux icon for now
 cp -p src/VBox/Frontends/VirtualBox/images/os_{linux26,pld}.png
-cp -p src/VBox/Frontends/VirtualBox/images/os_{linux26,pld}_64.png
 
 # don't force whole userspace to be built with -fPIC
 # see https://www.virtualbox.org/pipermail/vbox-dev/2015-February/012863.html
@@ -616,6 +608,7 @@ VBOX_WITH_LIGHTDM_GREETER_PACKING=1
 TOOL_GCC3_CFLAGS=%{rpmcflags}
 TOOL_GCC3_CXXFLAGS=%{rpmcxxflags}
 VBOX_GCC_OPT=%{rpmcxxflags}
+VBOX_DO_STRIP :=
 
 TOOL_YASM_AS := /usr/bin/yasm
 
@@ -992,7 +985,6 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxSVC
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxVMMPreload
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxVolInfo
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxXPCOMIPCD
 %attr(755,root,root) %{_libdir}/%{pname}/VirtualBoxVM
 %attr(755,root,root) %{_libdir}/%{pname}/bldRTLdrCheckImports
 %attr(755,root,root) %{_libdir}/%{pname}/iPxeBaseBin
@@ -1069,7 +1061,6 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_bindir}/VirtualBox
 %attr(755,root,root) %{_libdir}/%{pname}/UICommon.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxDbg.so
-%attr(755,root,root) %{_libdir}/%{pname}/VBoxTestOGL
 %attr(755,root,root) %{_libdir}/%{pname}/VirtualBox
 %dir %{_datadir}/%{pname}/nls
 %lang(bg) %{_datadir}/%{pname}/nls/*_bg.qm

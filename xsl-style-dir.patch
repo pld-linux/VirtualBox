@@ -1,11 +1,11 @@
 --- VirtualBox-7.0.10/doc/manual/Config.kmk.orig	2023-07-12 18:25:05.000000000 +0200
 +++ VirtualBox-7.0.10/doc/manual/Config.kmk	2023-09-06 16:49:17.062393789 +0200
 @@ -135,7 +135,7 @@
-   VBOX_PATH_DOCBOOK_DTD   ?= $(KBUILD_DEVTOOLS)/common/docbook-xml/v4.5
+   VBOX_PATH_DITA_DTD      ?= $(VBOX_DITA_OT_PATH)/plugins/org.dita.specialization.dita11/dtd/
   else
    # use docbook of the build host
 -  VBOX_PATH_DOCBOOK       ?= /usr/share/xml/docbook/stylesheet/docbook-xsl
 +  VBOX_PATH_DOCBOOK       ?= /usr/share/sgml/docbook/xsl-stylesheets
    VBOX_PATH_DOCBOOK_DTD   ?= /usr/share/xml/docbook/schema/dtd/4.5
+   VBOX_PATH_DITA_DTD      ?= $(VBOX_DITA_OT_PATH)/plugins/org.dita.specialization.dita11/dtd/
   endif
-  VBOX_XML_CATALOG         ?= $(VBOX_PATH_MANUAL_OUTBASE)/vbox-doc.cat

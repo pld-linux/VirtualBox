@@ -1,110 +1,106 @@
 --- VirtualBox-4.2.12/./src/VBox/Main/xml/Settings.cpp~	2013-04-12 13:38:26.000000000 +0300
 +++ VirtualBox-4.2.12/./src/VBox/Main/xml/Settings.cpp	2013-05-13 15:49:30.035999373 +0300
-@@ -3408,6 +3408,7 @@
-     { "xandros", "Xandros" },
-     { "freebsd", "FreeBSD" },
-     { "openbsd", "OpenBSD" },
-+    { "pld", "PLD" },
-     { "netbsd", "NetBSD" },
-     { "netware", "Netware" },
-     { "solaris", "Solaris" },
+@@ -6885,6 +6885,7 @@
+     { "fedoracore",     GUEST_OS_ID_STR_X86("Fedora") },
+     { "gentoo",         GUEST_OS_ID_STR_X86("Gentoo") },
+     { "mandriva",       GUEST_OS_ID_STR_X86("Mandriva") },
++    { "pld",            GUEST_OS_ID_STR_X86("PLD") },
+     { "redhat",         GUEST_OS_ID_STR_X86("RedHat") },
+     { "ubuntu",         GUEST_OS_ID_STR_X86("Ubuntu") },
+     { "xandros",        GUEST_OS_ID_STR_X86("Xandros") },
 --- VirtualBox-4.2.12/./src/VBox/Frontends/VirtualBox/VirtualBox2.qrc~	2013-04-12 13:37:50.000000000 +0300
 +++ VirtualBox-4.2.12/./src/VBox/Frontends/VirtualBox/VirtualBox2.qrc	2013-05-13 15:51:14.323890458 +0300
-@@ -26,6 +26,8 @@
-         <file alias="os_netware.png">images/os_netware.png</file>
-         <file alias="os_openbsd_64.png">images/os_openbsd_64.png</file>
-         <file alias="os_openbsd.png">images/os_openbsd.png</file>
-+        <file alias="os_pld_64.png">images/os_pld_64.png</file>
+@@ -118,6 +118,7 @@
+         <file alias="os_os2warp45.png">images/os_os2warp45.png</file>
+         <file alias="os_os2warp4.png">images/os_os2warp4.png</file>
+         <file alias="os_other.png">images/os_other.png</file>
 +        <file alias="os_pld.png">images/os_pld.png</file>
-         <file alias="os_opensuse_64.png">images/os_opensuse_64.png</file>
-         <file alias="os_opensuse.png">images/os_opensuse.png</file>
-         <file alias="os_oracle_64.png">images/os_oracle_64.png</file>
+         <file alias="os_qnx.png">images/os_qnx.png</file>
+         <file alias="os_redhat.png">images/os_redhat.png</file>
+         <file alias="os_solaris.png">images/os_solaris.png</file>
 --- VirtualBox-4.2.12/./src/VBox/Frontends/VirtualBox/VirtualBox2_x2.qrc~	2013-04-12 13:37:50.000000000 +0300
 +++ VirtualBox-4.2.12/./src/VBox/Frontends/VirtualBox/VirtualBox2_x2.qrc	2013-05-13 15:51:14.323890458 +0300
-@@ -26,6 +26,8 @@
-         <file alias="os_netware_x2.png">images/x2/os_netware_x2.png</file>
-         <file alias="os_openbsd_64_x2.png">images/x2/os_openbsd_64_x2.png</file>
-         <file alias="os_openbsd_x2.png">images/x2/os_openbsd_x2.png</file>
+@@ -129,6 +129,7 @@
+         <file alias="os_os2warp45_x2.png">images/x2/os_os2warp45_x2.png</file>
+         <file alias="os_os2warp4_x2.png">images/x2/os_os2warp4_x2.png</file>
+         <file alias="os_other_x2.png">images/x2/os_other_x2.png</file>
 +        <file alias="os_pld.png">images/os_pld.png</file>
-+        <file alias="os_pld_64.png">images/os_pld_64.png</file>
-         <file alias="os_opensuse_64_x2.png">images/x2/os_opensuse_64_x2.png</file>
-         <file alias="os_opensuse_x2.png">images/x2/os_opensuse_x2.png</file>
-         <file alias="os_oracle_64_x2.png">images/x2/os_oracle_64_x2.png</file>
+         <file alias="os_qnx_x2.png">images/x2/os_qnx_x2.png</file>
+         <file alias="os_redhat_x2.png">images/x2/os_redhat_x2.png</file>
+         <file alias="os_solaris_x2.png">images/x2/os_solaris_x2.png</file>
 --- VirtualBox-4.2.12/./src/VBox/Frontends/VirtualBox/VirtualBox2_x3.qrc~	2013-04-12 13:37:50.000000000 +0300
 +++ VirtualBox-4.2.12/./src/VBox/Frontends/VirtualBox/VirtualBox2_x3.qrc	2013-05-13 15:51:14.323890458 +0300
-@@ -26,6 +26,8 @@
-         <file alias="os_netware_x3.png">images/x3/os_netware_x3.png</file>
-         <file alias="os_openbsd_64_x3.png">images/x3/os_openbsd_64_x3.png</file>
-         <file alias="os_openbsd_x3.png">images/x3/os_openbsd_x3.png</file>
+@@ -129,6 +129,7 @@
+         <file alias="os_os2warp45_x3.png">images/x3/os_os2warp45_x3.png</file>
+         <file alias="os_os2warp4_x3.png">images/x3/os_os2warp4_x3.png</file>
+         <file alias="os_other_x3.png">images/x3/os_other_x3.png</file>
 +        <file alias="os_pld.png">images/os_pld.png</file>
-+        <file alias="os_pld_64.png">images/os_pld_64.png</file>
-         <file alias="os_opensuse_64_x3.png">images/x3/os_opensuse_64_x3.png</file>
-         <file alias="os_opensuse_x3.png">images/x3/os_opensuse_x3.png</file>
-         <file alias="os_oracle_64_x3.png">images/x3/os_oracle_64_x3.png</file>
+         <file alias="os_qnx_x3.png">images/x3/os_qnx_x3.png</file>
+         <file alias="os_redhat_x3.png">images/x3/os_redhat_x3.png</file>
+         <file alias="os_solaris_x3.png">images/x3/os_solaris_x3.png</file>
 --- VirtualBox-4.2.12/./src/VBox/Frontends/VirtualBox/VirtualBox2_x4.qrc~	2013-04-12 13:37:50.000000000 +0300
 +++ VirtualBox-4.2.12/./src/VBox/Frontends/VirtualBox/VirtualBox2_x4.qrc	2013-05-13 15:51:14.323890458 +0300
-@@ -26,6 +26,8 @@
-         <file alias="os_netware_x4.png">images/x4/os_netware_x4.png</file>
-         <file alias="os_openbsd_64_x4.png">images/x4/os_openbsd_64_x4.png</file>
-         <file alias="os_openbsd_x4.png">images/x4/os_openbsd_x4.png</file>
+@@ -129,6 +129,7 @@
+         <file alias="os_os2warp45_x4.png">images/x4/os_os2warp45_x4.png</file>
+         <file alias="os_os2warp4_x4.png">images/x4/os_os2warp4_x4.png</file>
+         <file alias="os_other_x4.png">images/x4/os_other_x4.png</file>
 +        <file alias="os_pld.png">images/os_pld.png</file>
-+        <file alias="os_pld_64.png">images/os_pld_64.png</file>
-         <file alias="os_opensuse_64_x4.png">images/x4/os_opensuse_64_x4.png</file>
-         <file alias="os_opensuse_x4.png">images/x4/os_opensuse_x4.png</file>
-         <file alias="os_oracle_64_x4.png">images/x4/os_oracle_64_x4.png</file>
+         <file alias="os_qnx_x4.png">images/x4/os_qnx_x4.png</file>
+         <file alias="os_redhat_x4.png">images/x4/os_redhat_x4.png</file>
+         <file alias="os_solaris_x4.png">images/x4/os_solaris_x4.png</file>
 --- VirtualBox-5.1.2/src/VBox/Main/src-all/Global.cpp.orig	2016-07-29 19:25:16.731328887 +0200
 +++ VirtualBox-5.1.2/src/VBox/Main/src-all/Global.cpp	2016-07-29 19:31:59.252427682 +0200
-@@ -321,6 +321,9 @@
-     VBOX_LINUX_SUBTYPE_A_32(SUSE_LE,             "SUSE Linux Enterprise (32-bit)",  2048, 16, 8),
-     VBOX_LINUX_SUBTYPE_A_64(SUSE_LE,             "SUSE Linux Enterprise (64-bit)",  2048, 16, 8),
+@@ -400,6 +400,9 @@
+     VBOX_LINUX_SUBTYPE_B_X64("Oracle Linux", Oracle9,            "Oracle Linux 9.x (64-bit)",       2048, 16, 20),  // 64-bit only
+     VBOX_LINUX_SUBTYPE_B_A64("Oracle Linux", Oracle9,            "Oracle Linux 9.x (ARM 64-bit)",   2048, 16, 20),  // 64-bit only
  
-+    VBOX_LINUX_SUBTYPE_A_32(PLD,             "PLD Linux (32-bit)",  1024, 16, 8),
-+    VBOX_LINUX_SUBTYPE_A_64(PLD,             "PLD Linux (64-bit)",  1024, 16, 8),
++    VBOX_LINUX_SUBTYPE_A_X86("PLD Linux",    PLD,                "PLD Linux (32-bit)",              1024, 16, 8),
++    VBOX_LINUX_SUBTYPE_A_X64("PLD Linux",    PLD,                "PLD Linux (64-bit)",              2048, 16, 16),
 +
-     VBOX_LINUX_SUBTYPE_A_32(Turbolinux, "Turbolinux (32-bit)", 384, 16, 8),
-     VBOX_LINUX_SUBTYPE_A_64(Turbolinux, "Turbolinux (64-bit)", 384, 16, 8),
- 
+     VBOX_LINUX_SUBTYPE_B_X86("Red Hat",     RedHat,              "Red Hat (32-bit)",                2048, 16, 20),
+     VBOX_LINUX_SUBTYPE_B_X64("Red Hat",     RedHat,              "Red Hat (64-bit)",                2048, 16, 20),
+     VBOX_LINUX_SUBTYPE_B_X86("Red Hat",     RedHat3,             "Red Hat 3.x (32-bit)",            1024, 16, 8),
 --- VirtualBox-4.3.8/src/VBox/Main/src-server/ApplianceImpl.cpp~	2014-02-25 19:09:15.000000000 +0200
 +++ VirtualBox-4.3.8/src/VBox/Main/src-server/ApplianceImpl.cpp	2014-02-28 09:52:48.663191185 +0200
-@@ -141,6 +141,8 @@
-     { ovf::CIMOSType_CIMOS_Linux_2_6_x_64,                       VBOXOSTYPE_Xandros_x64 },
-     { ovf::CIMOSType_CIMOS_Solaris,                              VBOXOSTYPE_OpenSolaris },
-     { ovf::CIMOSType_CIMOS_Solaris_64,                           VBOXOSTYPE_OpenSolaris_x64 },
+@@ -238,6 +238,8 @@
+     { ovf::CIMOSType_CIMOS_Debian_64,                            VBOXOSTYPE_Debian11_x64 },
+     { ovf::CIMOSType_CIMOS_Debian,                               VBOXOSTYPE_Debian12 },
+     { ovf::CIMOSType_CIMOS_Debian_64,                            VBOXOSTYPE_Debian12_x64 },
 +    { ovf::CIMOSType_CIMOS_Linux_2_6_x,                          VBOXOSTYPE_PLD },
 +    { ovf::CIMOSType_CIMOS_Linux_2_6_x_64,                       VBOXOSTYPE_PLD_x64 },
- 
-     // types added with CIM 2.25.0 follow:
-     { ovf::CIMOSType_CIMOS_WindowsServer2008R2,                  VBOXOSTYPE_Win2k8 },           // duplicate, see above
+     { ovf::CIMOSType_CIMOS_Linux_2_4_x,                          VBOXOSTYPE_Linux24 },
+     { ovf::CIMOSType_CIMOS_Linux_2_4_x_64,                       VBOXOSTYPE_Linux24_x64 },
+     { ovf::CIMOSType_CIMOS_Linux_2_6_x,                          VBOXOSTYPE_Linux26 },
 --- VirtualBox-4.3.8/include/VBox/ostypes.h~	2014-02-25 18:59:48.000000000 +0200
 +++ VirtualBox-4.3.8/include/VBox/ostypes.h	2014-02-28 09:56:34.440314457 +0200
 @@ -103,6 +103,8 @@
-     VBOXOSTYPE_Oracle8_x64      = 0x5E105,  // 64-bit only
-     VBOXOSTYPE_Oracle9_x64      = 0x5E106,  // 64-bit only
+     VBOXOSTYPE_Oracle9_arm64    = 0x5E306,
      VBOXOSTYPE_Oracle_latest_x64 = VBOXOSTYPE_Oracle9_x64,
+     VBOXOSTYPE_Oracle_latest_arm64 = VBOXOSTYPE_Oracle9_arm64,
 +    VBOXOSTYPE_PLD              = 0x5F000,
 +    VBOXOSTYPE_PLD_x64          = 0x5F100,
-     VBOXOSTYPE_FreeBSD          = 0x60000,
-     VBOXOSTYPE_FreeBSD_x64      = 0x60100,
-     VBOXOSTYPE_OpenBSD          = 0x61000,
+     /** @} */
+     /** @name BSD and it's descendants
+      * @{ */
 --- VirtualBox-4.3.8/src/VBox/Frontends/VirtualBox/src/wizards/newvm/UIWizardNewVMNameOSTypePage.cpp~	2014-02-25 19:09:00.000000000 +0200
 +++ VirtualBox-4.3.8/src/VBox/Frontends/VirtualBox/src/wizards/newvm/UIWizardNewVMNameOSTypePage.cpp	2014-02-28 09:58:59.493698505 +0200
 @@ -133,6 +133,8 @@
-     { QRegularExpression("Xa.*32",                            QRegularExpression::CaseInsensitiveOption), "Xandros" },
-     { QRegularExpression("((Or)|(oel)|(^ol)).*64",            QRegularExpression::CaseInsensitiveOption), "Oracle_64" },
-     { QRegularExpression("((Or)|(oel)|(^ol)).*32",            QRegularExpression::CaseInsensitiveOption), "Oracle" },
-+    { QRegularExpression("PLD.*64",                           QRegularExpression::CaseInsensitiveOption), "PLD_64" },
-+    { QRegularExpression("PLD.*32",                           QRegularExpression::CaseInsensitiveOption), "PLD" },
-     { QRegularExpression("Knoppix",                           QRegularExpression::CaseInsensitiveOption), "Linux26" },
-     { QRegularExpression("Dsl",                               QRegularExpression::CaseInsensitiveOption), "Linux24" },
-     { QRegularExpression("((Lin)|(lnx)).*2.?2",               QRegularExpression::CaseInsensitiveOption), "Linux22" },
---- VirtualBox-5.0.0/src/VBox/./Frontends/VirtualBox/src/globals/UIIconPool.cpp.orig	2015-07-09 20:00:01.339965485 +0200
-+++ VirtualBox-5.0.0/src/VBox/./Frontends/VirtualBox/src/globals/UIIconPool.cpp	2015-07-09 20:00:40.670058835 +0200
+     { QRegularExpression("((Or)|(oel)|(^ol)).*32",            QRegularExpression::CaseInsensitiveOption), GUEST_OS_ID_STR_X86("Oracle") },
+     { QRegularExpression("((Or)|(oel)|(^ol)).*64",            QRegularExpression::CaseInsensitiveOption), GUEST_OS_ID_STR_ARM64("Oracle") },
+     { QRegularExpression("((Or)|(oel)|(^ol)).*32",            QRegularExpression::CaseInsensitiveOption), GUEST_OS_ID_STR_ARM32("Oracle") },
++    { QRegularExpression("PLD.*64",                           QRegularExpression::CaseInsensitiveOption), GUEST_OS_ID_STR_X64("PLD") },
++    { QRegularExpression("PLD.*32",                           QRegularExpression::CaseInsensitiveOption), GUEST_OS_ID_STR_X86("PLD") },
+     { QRegularExpression("Knoppix",                           QRegularExpression::CaseInsensitiveOption), GUEST_OS_ID_STR_X86("Linux26") },
+     { QRegularExpression("Dsl",                               QRegularExpression::CaseInsensitiveOption), GUEST_OS_ID_STR_X86("Linux24") },
+     { QRegularExpression("((Lin)|(lnx)).*2.?2",               QRegularExpression::CaseInsensitiveOption), GUEST_OS_ID_STR_X86("Linux22") },
+--- VirtualBox-5.0.0/src/VBox/Frontends/VirtualBox/src/globals/UIIconPool.cpp.orig	2015-07-09 20:00:01.339965485 +0200
++++ VirtualBox-5.0.0/src/VBox/Frontends/VirtualBox/src/globals/UIIconPool.cpp	2015-07-09 20:00:40.670058835 +0200
 @@ -332,6 +332,8 @@
-     m_guestOSTypeIconNames.insert("FreeBSD_64",      ":/os_freebsd_64.png");
-     m_guestOSTypeIconNames.insert("OpenBSD",         ":/os_openbsd.png");
-     m_guestOSTypeIconNames.insert("OpenBSD_64",      ":/os_openbsd_64.png");
-+    m_guestOSTypeIconNames.insert("PLD",             ":/os_pld.png");
-+    m_guestOSTypeIconNames.insert("PLD_64",          ":/os_pld_64.png");
-     m_guestOSTypeIconNames.insert("NetBSD",          ":/os_netbsd.png");
-     m_guestOSTypeIconNames.insert("NetBSD_64",       ":/os_netbsd_64.png");
-     m_guestOSTypeIconNames.insert("Solaris",         ":/os_solaris.png");
+     m_guestOSTypeIconNames.insert(GUEST_OS_ID_STR_X86("Oracle"),                ":/os_oracle.png");
+     m_guestOSTypeIconNames.insert(GUEST_OS_ID_STR_X64("Oracle"),                ":/os_oracle.png");
+     m_guestOSTypeIconNames.insert(GUEST_OS_ID_STR_A64("Oracle"),                ":/os_oracle.png");
++    m_guestOSTypeIconNames.insert(GUEST_OS_ID_STR_X86("PLD"),                   ":/os_pld.png");
++    m_guestOSTypeIconNames.insert(GUEST_OS_ID_STR_X64("PLD"),                   ":/os_pld.png");
+     m_guestOSTypeIconNames.insert(GUEST_OS_ID_STR_X86("Linux"),                 ":/os_linux.png");
+     m_guestOSTypeIconNames.insert(GUEST_OS_ID_STR_X64("Linux"),                 ":/os_linux.png");
+     m_guestOSTypeIconNames.insert(GUEST_OS_ID_STR_X86("FreeBSD"),               ":/os_freebsd.png");
