@@ -962,9 +962,11 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxSVGA3D.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxSharedClipboard.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxSharedFolders.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxTraceLogDecoders.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxVMM.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxXPCOM.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxXPCOMC.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxXPCOMIPCD.so
 %ifarch %{ix86}
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxREM32.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxREM64.so
@@ -995,11 +997,12 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTChMod
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTCp
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTDbgSymCache
+%attr(755,root,root) %{_libdir}/%{pname}/tools/RTDtc
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTEfiFatExtract
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTEfiSigDb
+%attr(755,root,root) %{_libdir}/%{pname}/tools/RTFtpServer
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTFuzzClient
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTFuzzMaster
-%attr(755,root,root) %{_libdir}/%{pname}/tools/RTFtpServer
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTGzip
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTHttp
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTHttpServer
@@ -1010,6 +1013,7 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTLs
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTManifest
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTMkDir
+%attr(755,root,root) %{_libdir}/%{pname}/tools/RTMkPasswd
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTRm
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTRmDir
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTShutdown
@@ -1018,6 +1022,7 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTTraceLogTool
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTUnzip
 %attr(755,root,root) %{_libdir}/%{pname}/tools/scm
+%attr(755,root,root) %{_libdir}/%{pname}/tools/VBoxDumpImage
 
 %dir %{_libdir}/%{pname}/ExtensionPacks
 %{_libdir}/%{pname}/ExtensionPacks/VNC/ExtPack.xml
