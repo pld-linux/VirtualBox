@@ -510,19 +510,19 @@ gospodarzem sprzętu PCI.\
 export KERN_DIR=%{_kernelsrcdir}\
 %if %{with host}\
 cd kernel/HostDrivers\
-%build_kernel_modules -m vboxdrv -C vboxdrv\
-%build_kernel_modules -m vboxnetadp -C vboxnetadp KBUILD_EXTRA_SYMBOLS=$PWD/../vboxdrv/Module.symvers\
-%build_kernel_modules -m vboxnetflt -C vboxnetflt KBUILD_EXTRA_SYMBOLS=$PWD/../vboxdrv/Module.symvers\
+%build_kernel_modules -m vboxdrv -C vboxdrv CONFIG_OBJTOOL_WERROR=n\
+%build_kernel_modules -m vboxnetadp -C vboxnetadp CONFIG_OBJTOOL_WERROR=n KBUILD_EXTRA_SYMBOLS=$PWD/../vboxdrv/Module.symvers\
+%build_kernel_modules -m vboxnetflt -C vboxnetflt  CONFIG_OBJTOOL_WERROR=n KBUILD_EXTRA_SYMBOLS=$PWD/../vboxdrv/Module.symvers\
 %install_kernel_modules -D ../../kernel/installed -m vboxdrv/vboxdrv,vboxnetadp/vboxnetadp,vboxnetflt/vboxnetflt -d misc\
 cd ../..\
 %endif\
 %if %{_kernel_version_code} < %{_kernel_version_magic 5 14 0}\
 cd kernel/GuestDrivers\
-%build_kernel_modules -m vboxguest -C vboxguest\
-%build_kernel_modules -m vboxsf -C vboxsf KBUILD_EXTRA_SYMBOLS=$PWD/../vboxguest/Module.symvers\
+%build_kernel_modules -m vboxguest -C vboxguest CONFIG_OBJTOOL_WERROR=n\
+%build_kernel_modules -m vboxsf -C vboxsf CONFIG_OBJTOOL_WERROR=n KBUILD_EXTRA_SYMBOLS=$PWD/../vboxguest/Module.symvers\
 %install_kernel_modules -D ../../kernel/installed -m vboxsf/vboxsf,vboxguest/vboxguest -d misc\
 %if %{_kernel_version_code} < %{_kernel_version_magic 4 13 0}\
-%build_kernel_modules -m vboxvideo -C vboxvideo KBUILD_EXTRA_SYMBOLS=$PWD/../vboxguest/Module.symvers\
+%build_kernel_modules -m vboxvideo -C vboxvideo CONFIG_OBJTOOL_WERROR=n KBUILD_EXTRA_SYMBOLS=$PWD/../vboxguest/Module.symvers\
 %install_kernel_modules -D ../../kernel/installed -m vboxvideo/vboxvideo -d misc\
 %endif\
 cd ../..\
