@@ -49,7 +49,7 @@ exit 1
 
 %define		qtver	6.3.0
 
-%define		rel		4
+%define		rel		5
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
