@@ -49,7 +49,7 @@ exit 1
 
 %define		qtver	6.3.0
 
-%define		rel		1
+%define		rel		2
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
@@ -89,6 +89,7 @@ Patch16:	%{pname}-no-vboxvideo.patch
 Patch19:	python3.patch
 Patch21:	xsl-style-dir.patch
 Patch22:	build-arch.patch
+Patch23:	curl-types.patch
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
 %ifarch %{x8664}
@@ -561,6 +562,7 @@ echo override vboxsf %{_kernel_ver} misc >> kernel/installed/etc/depmod.d/%{_ker
 %patch -P 19 -p1
 %patch -P 21 -p1
 %patch -P 22 -p1
+%patch -P 23 -p1
 
 %{__sed} -i -e 's,@VBOX_DOC_PATH@,%{_docdir}/%{name}-%{version},' \
 	-e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/common/virtualbox.desktop.in
