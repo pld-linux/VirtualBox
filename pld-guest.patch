@@ -51,8 +51,8 @@
 --- VirtualBox-5.1.2/src/VBox/Main/src-all/Global.cpp.orig	2016-07-29 19:25:16.731328887 +0200
 +++ VirtualBox-5.1.2/src/VBox/Main/src-all/Global.cpp	2016-07-29 19:31:59.252427682 +0200
 @@ -400,6 +400,9 @@
-     VBOX_LINUX_SUBTYPE_B_X64("Oracle Linux", Oracle9,            "Oracle Linux 9.x (64-bit)",       2048, 16, 20),  // 64-bit only
-     VBOX_LINUX_SUBTYPE_B_A64("Oracle Linux", Oracle9,            "Oracle Linux 9.x (ARM 64-bit)",   2048, 16, 20),  // 64-bit only
+     VBOX_LINUX_SUBTYPE_B_X64("Oracle Linux", Oracle10,           "Oracle Linux 10.x (64-bit)",      2048, 16, 20),  // 64-bit only
+     VBOX_LINUX_SUBTYPE_B_A64("Oracle Linux", Oracle10,           "Oracle Linux 10.x (ARM 64-bit)",  2048, 16, 20),  // 64-bit only
  
 +    VBOX_LINUX_SUBTYPE_A_X86("PLD Linux",    PLD,                "PLD Linux (32-bit)",              1024, 16, 8),
 +    VBOX_LINUX_SUBTYPE_A_X64("PLD Linux",    PLD,                "PLD Linux (64-bit)",              2048, 16, 16),
@@ -63,9 +63,9 @@
 --- VirtualBox-4.3.8/src/VBox/Main/src-server/ApplianceImpl.cpp~	2014-02-25 19:09:15.000000000 +0200
 +++ VirtualBox-4.3.8/src/VBox/Main/src-server/ApplianceImpl.cpp	2014-02-28 09:52:48.663191185 +0200
 @@ -238,6 +238,8 @@
-     { ovf::CIMOSType_CIMOS_Debian_64,                            VBOXOSTYPE_Debian11_x64 },
-     { ovf::CIMOSType_CIMOS_Debian,                               VBOXOSTYPE_Debian12 },
-     { ovf::CIMOSType_CIMOS_Debian_64,                            VBOXOSTYPE_Debian12_x64 },
+     { ovf::CIMOSType_CIMOS_Debian_64,                            VBOXOSTYPE_Debian12_arm64 },
+     { ovf::CIMOSType_CIMOS_Debian_64,                            VBOXOSTYPE_Debian13_x64 },
+     { ovf::CIMOSType_CIMOS_Debian_64,                            VBOXOSTYPE_Debian13_arm64 },
 +    { ovf::CIMOSType_CIMOS_Linux_2_6_x,                          VBOXOSTYPE_PLD },
 +    { ovf::CIMOSType_CIMOS_Linux_2_6_x_64,                       VBOXOSTYPE_PLD_x64 },
      { ovf::CIMOSType_CIMOS_Linux_2_4_x,                          VBOXOSTYPE_Linux24 },
@@ -74,9 +74,9 @@
 --- VirtualBox-4.3.8/include/VBox/ostypes.h~	2014-02-25 18:59:48.000000000 +0200
 +++ VirtualBox-4.3.8/include/VBox/ostypes.h	2014-02-28 09:56:34.440314457 +0200
 @@ -103,6 +103,8 @@
-     VBOXOSTYPE_Oracle9_arm64    = 0x5E306,
-     VBOXOSTYPE_Oracle_latest_x64 = VBOXOSTYPE_Oracle9_x64,
-     VBOXOSTYPE_Oracle_latest_arm64 = VBOXOSTYPE_Oracle9_arm64,
+     VBOXOSTYPE_Oracle10_arm64   = 0x5E307,  // 64-bit only
+     VBOXOSTYPE_Oracle_latest_x64 = VBOXOSTYPE_Oracle10_x64,
+     VBOXOSTYPE_Oracle_latest_arm64 = VBOXOSTYPE_Oracle10_arm64,
 +    VBOXOSTYPE_PLD              = 0x5F000,
 +    VBOXOSTYPE_PLD_x64          = 0x5F100,
      /** @} */
@@ -85,9 +85,9 @@
 --- VirtualBox-4.3.8/src/VBox/Frontends/VirtualBox/src/wizards/newvm/UIWizardNewVMNameOSTypePage.cpp~	2014-02-25 19:09:00.000000000 +0200
 +++ VirtualBox-4.3.8/src/VBox/Frontends/VirtualBox/src/wizards/newvm/UIWizardNewVMNameOSTypePage.cpp	2014-02-28 09:58:59.493698505 +0200
 @@ -133,6 +133,8 @@
+     { QRegularExpression("((Or)|(oel)|(^ol)).*64",            QRegularExpression::CaseInsensitiveOption), GUEST_OS_ID_STR_X64("Oracle") },
      { QRegularExpression("((Or)|(oel)|(^ol)).*32",            QRegularExpression::CaseInsensitiveOption), GUEST_OS_ID_STR_X86("Oracle") },
      { QRegularExpression("((Or)|(oel)|(^ol)).*64",            QRegularExpression::CaseInsensitiveOption), GUEST_OS_ID_STR_ARM64("Oracle") },
-     { QRegularExpression("((Or)|(oel)|(^ol)).*32",            QRegularExpression::CaseInsensitiveOption), GUEST_OS_ID_STR_ARM32("Oracle") },
 +    { QRegularExpression("PLD.*64",                           QRegularExpression::CaseInsensitiveOption), GUEST_OS_ID_STR_X64("PLD") },
 +    { QRegularExpression("PLD.*32",                           QRegularExpression::CaseInsensitiveOption), GUEST_OS_ID_STR_X86("PLD") },
      { QRegularExpression("Knoppix",                           QRegularExpression::CaseInsensitiveOption), GUEST_OS_ID_STR_X86("Linux26") },
@@ -96,9 +96,9 @@
 --- VirtualBox-5.0.0/src/VBox/Frontends/VirtualBox/src/globals/UIIconPool.cpp.orig	2015-07-09 20:00:01.339965485 +0200
 +++ VirtualBox-5.0.0/src/VBox/Frontends/VirtualBox/src/globals/UIIconPool.cpp	2015-07-09 20:00:40.670058835 +0200
 @@ -332,6 +332,8 @@
-     m_guestOSTypeIconNames.insert(GUEST_OS_ID_STR_X86("Oracle"),                ":/os_oracle.png");
-     m_guestOSTypeIconNames.insert(GUEST_OS_ID_STR_X64("Oracle"),                ":/os_oracle.png");
-     m_guestOSTypeIconNames.insert(GUEST_OS_ID_STR_A64("Oracle"),                ":/os_oracle.png");
+     m_guestOSTypeIconNames.insert(GUEST_OS_ID_STR_A64("Oracle9"),               ":/os_oracle.png");
+     m_guestOSTypeIconNames.insert(GUEST_OS_ID_STR_X64("Oracle10"),              ":/os_oracle.png");
+     m_guestOSTypeIconNames.insert(GUEST_OS_ID_STR_A64("Oracle10"),              ":/os_oracle.png");
 +    m_guestOSTypeIconNames.insert(GUEST_OS_ID_STR_X86("PLD"),                   ":/os_pld.png");
 +    m_guestOSTypeIconNames.insert(GUEST_OS_ID_STR_X64("PLD"),                   ":/os_pld.png");
      m_guestOSTypeIconNames.insert(GUEST_OS_ID_STR_X86("Linux"),                 ":/os_linux.png");

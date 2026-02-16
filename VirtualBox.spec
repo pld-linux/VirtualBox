@@ -49,19 +49,19 @@ exit 1
 
 %define		qtver	6.3.0
 
-%define		rel		2
+%define		rel		1
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	7.1.12
+Version:	7.1.16
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v3
 Group:		Applications/Emulators
 Source0:	https://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	b39c575da947f3b29913f13afa855469
+# Source0-md5:	c1883348bd92770d060b4cef1445a735
 Source1:	https://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	78dd355f75daa35aad66dfbdc1cefdc0
+# Source1-md5:	94d74a48ff3b9b42e53c1f43a71c3ccc
 Source2:	vboxservice.init
 Source3:	vboxservice.service
 Source4:	vboxservice.sysconfig
@@ -89,7 +89,6 @@ Patch16:	%{pname}-no-vboxvideo.patch
 Patch19:	python3.patch
 Patch21:	xsl-style-dir.patch
 Patch22:	build-arch.patch
-Patch23:	curl-types.patch
 URL:		http://www.virtualbox.org/
 %if %{with userspace}
 %ifarch %{x8664}
@@ -139,7 +138,7 @@ BuildRequires:	docbook-style-xsl
 BuildRequires:	fakeroot
 %{?with_lightdm:BuildRequires:	fltk-devel}
 BuildRequires:	gcc >= 5:3.2.3
-%{?with_webservice:BuildRequires:	gsoap-devel}
+%{?with_webservice:BuildRequires:	gsoap-devel >= 2.8.140}
 BuildRequires:	issue
 BuildRequires:	kBuild >= 0.1.9998.3598
 BuildRequires:	libIDL-devel
@@ -562,7 +561,6 @@ echo override vboxsf %{_kernel_ver} misc >> kernel/installed/etc/depmod.d/%{_ker
 %patch -P 19 -p1
 %patch -P 21 -p1
 %patch -P 22 -p1
-%patch -P 23 -p1
 
 %{__sed} -i -e 's,@VBOX_DOC_PATH@,%{_docdir}/%{name}-%{version},' \
 	-e 's/Categories=.*/Categories=Utility;Emulator;/' src/VBox/Installer/common/virtualbox.desktop.in
@@ -616,6 +614,8 @@ TOOL_YASM_AS := /usr/bin/yasm
 
 VBOX_BLD_PYTHON := %{__python3}
 VBOX_WITHOUT_PYTHON_LIMITED_API=1
+
+VBOX_WITHOUT_SPLIT_SOAPC=1
 
 VBOX_PATH_APP_PRIVATE_ARCH := %{_libdir}/%{pname}
 VBOX_PATH_APP_PRIVATE := %{_datadir}/%{pname}
