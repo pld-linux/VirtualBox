@@ -17,7 +17,7 @@
 %bcond_without	debuginfo	# disable debuginfo creation (to save space when compiling)
 %bcond_without	kernel		# don't build kernel module
 %bcond_without	userspace	# don't build userspace package
-%bcond_with	webservice	# webservice (SOAP) support
+%bcond_without	webservice	# webservice (SOAP) support
 %bcond_without	lightdm		# lightdm greeter
 %bcond_without	dkms		# build dkms package
 %bcond_without	verbose
@@ -49,19 +49,19 @@ exit 1
 
 %define		qtver	6.3.0
 
-%define		rel		2
+%define		rel		1
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	7.1.16
+Version:	7.1.18
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v3
 Group:		Applications/Emulators
 Source0:	https://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	c1883348bd92770d060b4cef1445a735
+# Source0-md5:	a70777c89830f5327b92c172c7ed9946
 Source1:	https://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	94d74a48ff3b9b42e53c1f43a71c3ccc
+# Source1-md5:	ab6a6b388f5cbf5041568951de34270c
 Source2:	vboxservice.init
 Source3:	vboxservice.service
 Source4:	vboxservice.sysconfig
