@@ -659,6 +659,10 @@ cp -a$l %{outdir}/* $RPM_BUILD_ROOT%{_libdir}/%{pname}
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_bindir}}/VBoxControl
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_bindir}}/VBoxDRMClient
 %{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_bindir}}/VBoxService
+
+# Clipboard helper
+%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_bindir}}/vboxwl
+
 install -d $RPM_BUILD_ROOT/etc/xdg/autostart
 cp -p src/VBox/Additions/x11/Installer/vboxclient.desktop \
 	$RPM_BUILD_ROOT/etc/xdg/autostart/vboxclient.desktop
@@ -1114,6 +1118,7 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_bindir}/VBoxAudioTest
 %attr(755,root,root) %{_bindir}/VBoxControl
 %attr(755,root,root) %{_bindir}/VBoxService
+%attr(755,root,root) %{_bindir}/vboxwl
 %config(noreplace) %verify(not md5 mtime size) /etc/udev/rules.d/60-vboxguest.rules
 
 %files guest-x11
