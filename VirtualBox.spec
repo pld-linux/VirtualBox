@@ -18,7 +18,6 @@
 %bcond_without	kernel		# don't build kernel module
 %bcond_without	userspace	# don't build userspace package
 %bcond_without	webservice	# webservice (SOAP) support
-%bcond_without	lightdm		# lightdm greeter
 %bcond_without	dkms		# build dkms package
 %bcond_without	verbose
 %bcond_without	gui		# disable Qt6 GUI frontend build
@@ -49,19 +48,19 @@ exit 1
 
 %define		qtver	6.3.0
 
-%define		rel		1
+%define		rel		0.1
 %define		pname		VirtualBox
 Summary:	VirtualBox - x86 hardware virtualizer
 Summary(pl.UTF-8):	VirtualBox - wirtualizator sprzętu x86
 Name:		%{pname}%{?_pld_builder:%{?with_kernel:-kernel}}%{_alt_kernel}
-Version:	7.1.18
+Version:	7.2.8
 Release:	%{rel}%{?_pld_builder:%{?with_kernel:@%{_kernel_ver_str}}}
 License:	GPL v3
 Group:		Applications/Emulators
 Source0:	https://download.virtualbox.org/virtualbox/%{version}/%{pname}-%{version}.tar.bz2
-# Source0-md5:	a70777c89830f5327b92c172c7ed9946
+# Source0-md5:	1afc7cc70ae09f169b0f39541c98a250
 Source1:	https://download.virtualbox.org/virtualbox/%{version}/VBoxGuestAdditions_%{version}.iso
-# Source1-md5:	ab6a6b388f5cbf5041568951de34270c
+# Source1-md5:	02aad2b81633ea1ed1322041bd9eece8
 Source2:	vboxservice.init
 Source3:	vboxservice.service
 Source4:	vboxservice.sysconfig
@@ -75,16 +74,12 @@ Source11:	vboxclient-vmsvga.service
 Source12:	udev-guest.rules
 Patch0:		%{pname}-version-error.patch
 Patch1:		%{pname}-VBoxSysInfo.patch
-Patch2:		%{pname}-warning_workaround.patch
 Patch4:		wrapper.patch
 Patch6:		hardening-shared.patch
-Patch7:		lightdm-greeter-makefile.patch
-Patch8:		lightdm-greeter-g++-link.patch
 Patch9:		pld-guest.patch
 Patch10:	16-no-update.patch
 Patch11:	%{pname}-all-translations.patch
 Patch13:	%{pname}-no-scrextend.patch
-Patch15:	%{pname}-lightdm-1.19.2.patch
 Patch16:	%{pname}-no-vboxvideo.patch
 Patch19:	python3.patch
 Patch21:	xsl-style-dir.patch
@@ -136,11 +131,10 @@ BuildRequires:	docbook-dtd45-xml
 BuildRequires:	docbook-style-xsl
 %endif
 BuildRequires:	fakeroot
-%{?with_lightdm:BuildRequires:	fltk-devel}
 BuildRequires:	gcc >= 5:3.2.3
 %{?with_webservice:BuildRequires:	gsoap-devel >= 2.8.140}
 BuildRequires:	issue
-BuildRequires:	kBuild >= 0.1.9998.3598
+BuildRequires:	kBuild >= 0.1.9998.3692
 BuildRequires:	libIDL-devel
 BuildRequires:	libcap-static
 BuildRequires:	libdrm-devel
@@ -155,7 +149,6 @@ BuildRequires:	libvpx-devel >= 0.9.5
 BuildRequires:	libxml2-devel >= 2.6.26
 BuildRequires:	libxslt-devel >= 1.1.17
 BuildRequires:	libxslt-progs >= 1.1.17
-%{?with_lightdm:BuildRequires:	lightdm-libs-gobject-devel}
 BuildRequires:	makeself
 BuildRequires:	mkisofs
 BuildRequires:	openssl-devel >= 1.0.1
@@ -327,6 +320,7 @@ Requires:	xorg-app-xrandr
 Requires:	kernel(vboxvideo)
 Obsoletes:	xorg-driver-input-vboxmouse < %{version}-%{release}
 Obsoletes:	xorg-driver-video-vboxvideo < %{version}-%{release}
+Obsoletes:	lightdm-greeter-vbox < 7.2
 
 %description guest-x11
 Tools for X11 session that utilize kernel modules for supporting
@@ -343,21 +337,6 @@ Requires:	%{name} = %{version}-%{release}
 %description webservice
 This package contains VirtualBox web service API daemon. It allows to
 control virtual machines via web interface.
-
-%package -n lightdm-greeter-vbox
-Summary:	VirtualBox greeter for lightdm
-Group:		Themes
-# NOTE: '#' in url is lost because rpm treats it as comment, even hacking with
-# macros doesn't help as rpmbuild takes final result to parse
-URL:		http://www.virtualbox.org/manual/ch09.html#autologon_unix_lightdm
-Requires:	%{name} = %{version}-%{release}
-Requires:	kernel(vboxguest)
-Requires:	lightdm >= 1.0.1
-Requires:	pam-pam_vbox = %{version}-%{release}
-Provides:	lightdm-greeter
-
-%description -n lightdm-greeter-vbox
-VirtualBox greeter for LightDM.
 
 %package -n pam-pam_vbox
 Summary:	PAM module to perform automated guest logons
@@ -545,18 +524,14 @@ echo override vboxsf %{_kernel_ver} misc >> kernel/installed/etc/depmod.d/%{_ker
 %setup -q -n %{pname}-%{version}
 %patch -P 0 -p1
 %patch -P 1 -p1
-%patch -P 2 -p1
 %patch -P 4 -p1
 %patch -P 6 -p1
-%patch -P 7 -p1
-%patch -P 8 -p1
 %patch -P 9 -p1
-#patch -P 10 -p1
+%patch -P 10 -p1
 %if %{with all_langs}
 %patch -P 11 -p0
 %endif
 %patch -P 13 -p1
-%patch -P 15 -p0
 %patch -P 16 -p0
 %patch -P 19 -p1
 %patch -P 21 -p1
@@ -588,11 +563,6 @@ cd -
 # use linux icon for now
 cp -p src/VBox/Frontends/VirtualBox/images/os_{linux26,pld}.png
 
-# don't force whole userspace to be built with -fPIC
-# see https://www.virtualbox.org/pipermail/vbox-dev/2015-February/012863.html
-%define		filterout_c		-fPIC
-%define		filterout_cxx		-fPIC
-
 cat <<'EOF'>> LocalConfig.kmk
 %{?with_verbose:KBUILD_VERBOSE=3}
 USERNAME=%(id -un)
@@ -601,10 +571,6 @@ VBOX_VERSION_STRING=$(VBOX_VERSION_MAJOR).$(VBOX_VERSION_MINOR).$(VBOX_VERSION_B
 XSERVER_VERSION=%(rpm -q --queryformat '%{V}\n' xorg-xserver-server-devel | awk -F. '{ print $1 $2 }' 2>/dev/null || echo ERROR)
 VBOX_USE_SYSTEM_XORG_HEADERS=1
 VBOX_USE_SYSTEM_GL_HEADERS=1
-%if %{with lightdm}
-VBOX_WITH_LIGHTDM_GREETER=1
-VBOX_WITH_LIGHTDM_GREETER_PACKING=1
-%endif
 TOOL_GCC3_CFLAGS=%{rpmcflags}
 TOOL_GCC3_CXXFLAGS=%{rpmcxxflags}
 VBOX_GCC_OPT=%{rpmcxxflags}
@@ -637,9 +603,6 @@ VBOX_ONLY_ADDITIONS=1
 %endif
 EOF
 
-%undefine	filterout_c
-%undefine	filterout_cxx
-
 %build
 %if %{with userspace}
 ./configure \
@@ -657,7 +620,7 @@ EOF
 	%{nil}
 
 . "$PWD/env.sh"
-kmk %{?_smp_mflags} %{!?with_host:VBOX_ONLY_ADDITIONS_WITHOUT_RTISOMAKER=1 VBOX_ONLY_ADDITIONS=1}
+KBUILD_PATH=/usr/share/kBuild kmk %{?_smp_mflags} %{!?with_host:VBOX_ONLY_ADDITIONS_WITHOUT_RTISOMAKER=1 VBOX_ONLY_ADDITIONS=1}
 %endif
 
 %{?with_kernel:%{expand:%build_kernel_packages}}
@@ -709,12 +672,6 @@ cp -p %{SOURCE11} $RPM_BUILD_ROOT%{systemdunitdir}/vboxclient-vmsvga.service
 install -p %{SOURCE9} $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxautostart
 %{__sed} -i -e 's#@INSTALL_DIR@#%{_libdir}/%{pname}#' $RPM_BUILD_ROOT/etc/rc.d/init.d/vboxautostart
 cp -p %{SOURCE10} $RPM_BUILD_ROOT%{_sysconfdir}/vbox
-
-%if %{with lightdm}
-install -d $RPM_BUILD_ROOT%{_datadir}/xgreeters
-%{__mv} $RPM_BUILD_ROOT{%{_libdir}/%{pname}/additions,%{_sbindir}}/vbox-greeter
-cp -p %{objdir}/Additions/Installer/linux/other/vbox-greeter.desktop $RPM_BUILD_ROOT%{_datadir}/xgreeters
-%endif
 
 %if %{with dkms}
 mv $RPM_BUILD_ROOT%{_libdir}/%{pname}/additions/src $RPM_BUILD_ROOT%{_usrsrc}/vboxguest-%{version}-%{rel}
@@ -910,9 +867,6 @@ fi
 %triggerpostun guest -- VirtualBox-guest < 4.3.0-1
 %systemd_trigger vboxservice.service
 
-%pre -n lightdm-greeter-vbox
-%addusertogroup xdm vbox
-
 %post -n dkms-vboxguest
 dkms add -m vboxguest -v %{version}-%{rel} --rpm_safe_upgrade && \
 dkms build -m vboxguest -v %{version}-%{rel} --rpm_safe_upgrade && \
@@ -966,6 +920,7 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxSharedFolders.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxTraceLogDecoders.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxVMM.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxVMMArm.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxXPCOM.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxXPCOMC.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxXPCOMIPCD.so
@@ -1042,8 +997,10 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %{_libdir}/%{pname}/VBoxCpuReport
 %{_libdir}/%{pname}/VBoxDDR0.debug
 %{_libdir}/%{pname}/VBoxDDR0.r0
-%{_libdir}/%{pname}/VBoxEFI32.fd
-%{_libdir}/%{pname}/VBoxEFI64.fd
+%{_libdir}/%{pname}/VBoxEFI-amd64.fd
+%{_libdir}/%{pname}/VBoxEFI-arm32.fd
+%{_libdir}/%{pname}/VBoxEFI-arm64.fd
+%{_libdir}/%{pname}/VBoxEFI-x86.fd
 %{_libdir}/%{pname}/VMMR0.debug
 %{_libdir}/%{pname}/VMMR0.r0
 
@@ -1165,13 +1122,6 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_bindir}/VBoxClient
 %attr(755,root,root) %{_bindir}/VBoxClient-all
 %attr(755,root,root) %{_bindir}/VBoxDRMClient
-
-%if %{with lightdm}
-%files -n lightdm-greeter-vbox
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_sbindir}/vbox-greeter
-%{_datadir}/xgreeters/vbox-greeter.desktop
-%endif
 
 %files -n pam-pam_vbox
 %defattr(644,root,root,755)
