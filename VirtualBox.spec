@@ -595,7 +595,6 @@ VBOX_PATH_DOCBOOK_DTD := %{_datadir}/sgml/docbook/xml-dtd-4.5
 VBOX_WITH_TESTCASES :=
 VBOX_WITH_TESTSUITE :=
 
-VBOX_WITH_VRDP_RDESKTOP=
 VBOX_WITH_MULTIVERSION_PYTHON=0
 %if %{without host}
 VBOX_ONLY_ADDITIONS_WITHOUT_RTISOMAKER=1
@@ -925,6 +924,7 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxTraceLogDecoders.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxVMM.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxVMMArm.so
+%attr(755,root,root) %{_libdir}/%{pname}/VBoxVRDP.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxXPCOM.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxXPCOMC.so
 %attr(755,root,root) %{_libdir}/%{pname}/VBoxXPCOMIPCD.so
@@ -958,6 +958,7 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTChMod
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTCp
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTDbgSymCache
+%attr(755,root,root) %{_libdir}/%{pname}/tools/RTDbgSymSrv
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTDtc
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTEfiFatExtract
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTEfiSigDb
@@ -967,6 +968,7 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTGzip
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTHttp
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTHttpServer
+%attr(755,root,root) %{_libdir}/%{pname}/tools/RTIasl
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTIsoMaker
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTKrnlModInfo
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTLdrCheckImports
@@ -982,8 +984,9 @@ dkms remove -m vboxhost -v %{version}-%{rel} --rpm_safe_upgrade --all || :
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTTar
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTTraceLogTool
 %attr(755,root,root) %{_libdir}/%{pname}/tools/RTUnzip
-%attr(755,root,root) %{_libdir}/%{pname}/tools/scm
+%attr(755,root,root) %{_libdir}/%{pname}/tools/VBoxCpuProfile
 %attr(755,root,root) %{_libdir}/%{pname}/tools/VBoxDumpImage
+%attr(755,root,root) %{_libdir}/%{pname}/tools/scm
 
 %dir %{_libdir}/%{pname}/ExtensionPacks
 %{_libdir}/%{pname}/ExtensionPacks/VNC/ExtPack.xml
