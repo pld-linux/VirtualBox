@@ -388,7 +388,7 @@ gospodarzem sprzętu PCI.
 
 # KEEP ALL REGULAR SUBPACKAGES BEFORE KERNEL PACKAGES.
 
-%define	kernel_pkg()\
+%define	kernel_pkg() \
 %package -n kernel%{_alt_kernel}-virtualbox-guest\
 Summary:	VirtualBox kernel modules for Linux Guest\
 Summary(pl.UTF-8):	Moduły VirtualBoksa do jądra Linuksa dla systemu gościa\
@@ -485,7 +485,7 @@ gospodarzem sprzętu PCI.\
 %endif\
 %{nil}
 
-%define build_kernel_pkg()\
+%define build_kernel_pkg() \
 export KERN_DIR=%{_kernelsrcdir}\
 %if %{with host}\
 cd kernel/HostDrivers\
@@ -508,7 +508,7 @@ cd ../..\
 %endif\
 %{nil}
 
-%define install_kernel_pkg()\
+%define install_kernel_pkg() \
 %if %{_kernel_version_code} >= %{_kernel_version_magic 4 16 0}\
 install -d kernel/installed/etc/depmod.d/%{_kernel_ver}\
 echo override vboxguest %{_kernel_ver} misc > kernel/installed/etc/depmod.d/%{_kernel_ver}/vboxguest.conf\
